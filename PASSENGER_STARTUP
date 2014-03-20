@@ -1,0 +1,6 @@
+#!/bin/bash
+# The passenger (start|stop) command will be appended to this script.
+# This is a great place to put things like environment variables, rvm
+# commands and other useful tidbits.
+# NOTICE:  If this file doesn't exist, the control script will
+#          try to run the application with webrick.
