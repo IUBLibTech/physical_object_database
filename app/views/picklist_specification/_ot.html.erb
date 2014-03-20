@@ -17,7 +17,9 @@
 				<%= f.text_area(:description) %>
 			</td>
 		</tr>
-		
+		<%= f.fields_for @ps.technical_metadata.each |tm_fields| %>
+      <% tm = @ps.technical_metadatum.specialize %>
+    <% end %>
 	</table>
 	<%= submit_tag("Save Picklist Specification") %>
 <% end %>
