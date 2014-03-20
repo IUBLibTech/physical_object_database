@@ -1,0 +1,6 @@
+class WorkflowStatusController < ApplicationController
+
+	
+
+
+end

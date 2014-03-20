@@ -1,0 +1,14 @@
+--- 
+open_files: 
+  - app/controllers/physical_objects_controller.rb
+  - app/controllers/search_controller.rb
+  - app/views/search/index.html.erb
+  - app/models/physical_object.rb
+  - app/views/physical_objects/index.html.erb
+  - db/migrate/20140225155118_create_batches.rb
+  - db/migrate/20140225160445_create_bins.rb
+  - app/controllers/batch_controller.rb
+  - app/views/batch/index.html.erb
+  - app/views/layouts/application.html.erb
+  - app/views/physical_objects/edit.html.erb
+  - app/views/physical_objects/show.html.erb

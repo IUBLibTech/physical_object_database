@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="2752029130">
+    <data-source source="LOCAL" name="Rails pod: development" uuid="56b94633-68fc-41d0-8dba-c2fd1c2e3bb9">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://127.0.0.1:3307/pod_development</jdbc-url>
+      <user-name>rails</user-name>
+      <user-password>dfd8dfcbdfc3dfc6dfd9dff5dfcedfcfdfdc</user-password>
+      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="Rails pod: test" uuid="3bd7cc41-8475-433c-8fda-083442f010d1">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://127.0.0.1:3307/pod_test</jdbc-url>
+      <user-name>rails</user-name>
+      <user-password>dfd8dfcbdfc3dfc6dfd9dff5dfcedfcfdfdc</user-password>
+      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="Rails pod: production" uuid="acbca9b5-90d8-4dc2-a35a-c3d327b2cff4">
+      <driver-ref>mysql</driver-ref>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://127.0.0.1:3307/pod_production</jdbc-url>
+      <user-name>rails</user-name>
+      <user-password>dfd8dfcbdfc3dfc6dfd9dff5dfcedfcfdfdc</user-password>
+      <libraries />
+    </data-source>
+  </component>
+</project>
+

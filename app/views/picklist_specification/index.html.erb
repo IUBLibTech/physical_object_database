@@ -1,0 +1,25 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Create Picklist Specification", {action: 'new'}) %>
+  </div>
+<% end %>
+<h2>Picklist Specifications</h2>
+<table>
+	<% count = 0 %>
+	<% @picklists.each do |p| %>
+	  <% if count.odd? %>
+	  <tr class='odd'>
+	  <%else%>
+	  <tr class='even'>
+	  <%end%>
+	    <td><%= p.name %></td>
+	    <td><%= p.description %></td>
+	    <td>
+	      <%= link_to("Show", {action: 'show', id: p.id}) %>
+	      <%= link_to("Edit", {action: 'edit', id: p.id}) %>
+	      <%= link_to("Delete", {action: 'delete', id: p.id}) %>
+	    </td>
+	  </tr>
+	<% count += 1 %>
+	<% end %>
+</table>

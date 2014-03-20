@@ -1,0 +1,35 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+	  <%= link_to("Create Bin", {:action => 'new'}) %>
+	</div>
+	<div class="contextMenuItem">
+	  <%= link_to("Search Bins", {:action => 'search'}) %>
+	</div>
+<% end %>
+<h2>Bins</h2>
+<table>
+	<tr>
+		<th>Barcode</th>
+		<th>Identifier</th>
+		<th>Description</th>
+		<th>Batch</th>
+		<th>Status</th>
+		<th>Actions</th>
+	</tr>
+	<% count = 0 %>
+	<% @bins.each do |b|%>
+		<tr>
+			<td><%= b.barcode %></td>
+			<td><%= b.identifier %></td>
+			<td><%= b.description %></td>
+			<td><%= b.batch.nil? ? "" : b.batch.name %></td>
+			<td><%= b.status %></td>
+			<td>
+				<%= link_to("Show", {:action => 'show', :id => b.id}, :class => 'action show') %>
+        <%= link_to("Edit", {:action => 'edit', :id => b.id}, :class => 'action edit') %>
+        <%= link_to("Delete", {:action => 'delete', :id => b.id}, :class => 'action delete')%>
+			</td>
+		</tr>
+	<% end %>
+
+</table>

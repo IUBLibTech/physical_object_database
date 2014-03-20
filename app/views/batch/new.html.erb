@@ -1,0 +1,12 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+	  <%= link_to("Cancel", {:action => 'index'}) %>
+	</div>
+<% end %>
+<div>
+  <h2>Create Batch</h2>
+    <% @edit_mode = true %>
+    <% @action = "create" %>
+    <% @submit_text = "Create Batch" %>
+    <%= render(:partial => "batch") %>
+</div>

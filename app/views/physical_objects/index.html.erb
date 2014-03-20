@@ -1,0 +1,42 @@
+  <% content_for :context_menu do %>
+    <div class="contextMenuItem">
+      <%= link_to("Create New Physcial Object", :action => 'new') %>
+    </div>
+    <div class="contextMenuItem">
+      <%= link_to("Upload Spreadsheet", :action => 'upload_show') %>
+    </div>
+  <% end %>
+
+  <h2>Physical Objects</h2> 
+  <table class="po list" summary="Physical Object List">
+    <tr class="header">
+      <th>ID</th>
+      <th>Memnon barcode</th>
+      <th>IU barcode</th>
+      <th>Shelf number</th>
+      <th>Call number</th>
+      <th>Actions</th>
+    </tr>
+    <% count = 0 %>
+    <% @physical_objects.each do |po| %>
+    <% if count.odd? %>
+    <tr class='odd'>
+    <%else%>
+    <tr class='even'>
+    <%end%>
+      <td><%= po.id %></td>
+      <td><%= po.memnon_barcode %></td>
+      <td><%= po.iu_barcode %></td>
+      <td><%= po.shelf_number %></td>
+      <td><%= po.call_number %></td>
+      <td>
+        <%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => po.id}, :class => 'action show') %>
+        <%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => po.id}, :class => 'action edit') %>
+        <%= link_to("Split", {:controller => 'physical_objects', :action => 'split_show', :id => po.id}, :class => 'action split')%>
+        <%= link_to("Delete", {:controller => 'physical_objects', :action => 'delete', :id => po.id}, :class => 'action delete')%>
+      </td>
+    </tr>
+    <% count += 1 %>
+    <% end %>
+  </table>
+

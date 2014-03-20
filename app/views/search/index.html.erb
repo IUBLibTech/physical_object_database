@@ -1,0 +1,11 @@
+<h2>Physical Object Search</h2>
+<div>
+  <p>Please enter a unique identifier (barcode, shelf nummber, call number)</p>
+  <%= form_tag "/search/search_results" do %>
+  <%= label_tag :identifier %>
+  <%= text_field_tag :identifier, params[:identifier] %>
+  <%= submit_tag "Search" %>
+<%end%>
+</div>
+
+<h2>Advanced Search</h2>

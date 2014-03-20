@@ -1,0 +1,47 @@
+<%= form_for(:bin, :url => {:action => @action, :id => @bin.id}) do |f| %>
+	<table>
+		<tr>
+			<th>Barcode</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.text_field(:barcode) %>
+				<% else %>
+					<%= @bin.barcode %>
+				<% end %>
+ 			</td>
+ 		</tr>
+ 		<tr>
+			<th>Identifier</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.text_field(:identifier) %>
+				<% else %>
+					<%= @bin.identifier %>
+				<% end %>
+ 			</td>
+ 		</tr>
+ 		<tr>
+			<th>Description</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.text_field(:description) %>
+				<% else %>
+					<%= @bin.description %>
+				<% end %>
+ 			</td>
+ 		</tr>
+ 		<tr>
+			<th>Status</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.text_field(:status) %>
+				<% else %>
+					<%= @bin.status %>
+				<% end %>
+ 			</td>
+		</tr>
+	</table>
+	<%if @edit_mode or @action == 'destroy' %>
+	  <div class="clear" ><%= submit_tag(@submit_text) %></div>
+	<% end %>
+<% end %>

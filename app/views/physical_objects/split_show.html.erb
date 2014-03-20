@@ -1,0 +1,20 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'show', :id => @physical_object.id}, :class => 'action split')%>
+  </div>
+<% end %>
+<div>
+  <h2>Split Physical Object</h2>
+  </div>
+    <%= form_for(:physical_object, :url => {:action => "split_update", :id => @physical_object.id}) do |f| %>
+      <table>
+        <tr>
+          <td>Count</td>
+          <td><%= text_field_tag :count, params[:count] %></td>
+          <td><%= submit_tag("Split") %></td>
+        </tr>
+      </table>
+    <%end%>
+  </div>
+  <% @submit_text = "" %>
+  <%= render(:partial => "physical_object_form") %>

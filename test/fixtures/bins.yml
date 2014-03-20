@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  barcode: 1
+  identifier: MyString
+  batch_id: 1
+  status_id: 
+
+two:
+  barcode: 1
+  identifier: MyString
+  batch_id: 1
+  status_id: 

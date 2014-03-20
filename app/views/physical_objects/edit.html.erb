@@ -1,0 +1,10 @@
+  <% content_for :context_menu do %>
+    <div class="contextMenuItem">
+      <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'show', :id => @physical_object.id}, :class => 'action split')%>
+    </div>
+  <% end %>
+<div>
+  <h2>Create Physical Object</h2>
+    <% @submit_text = "Update Physcial Object" %>
+    <%= render(:partial => "physical_object_form") %>
+</div>

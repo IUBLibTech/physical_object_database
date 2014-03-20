@@ -1,0 +1,10 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Edit", {action: 'edit'}) %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Delete", {action: 'delete'}) %>
+  </div>
+<% end %>
+<% @edit_mode = false %>
+<%= render(partial: 'ot') %>

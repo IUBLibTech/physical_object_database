@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pod</title>
+  <%= stylesheet_link_tag "application", media: "all" %>
+  <%= javascript_include_tag "public" %>
+</head>
+<body>
+  <div id="branding">
+    <img src="/branding.png">
+  </div>
+  <div id="menu">
+    <div class="menuItem">
+      <%= link_to("Physical Objects", :controller => 'physical_objects', :action => 'index') %>
+    </div>
+    <div class="menuItem">
+      <%= link_to("Batches", :controller => 'batch', :action => 'index') %>
+    </div>
+    <div class="menuItem">
+      <%= link_to("Bins", :controller => 'bin', :action => 'index') %>
+    </div>
+    <div class="menuItem">
+      <%= link_to("Pick Lists", controller: 'picklist_specification', action: 'index') %>
+    </div>
+    <div class="menuItem">
+      <%= link_to("Statuses", :controller => 'workflow_status_template', :action => 'index') %>
+    </div>
+    <div class="menuItem">
+      <%= link_to("Search", :controller => 'search', :action => 'index') %>
+    </div>
+  </div>
+  <div id="contextMenu">
+    <%= yield :context_menu %>
+  </div>
+  <% if !flash[:notice].blank? %>
+    <div class="notice">
+      <%= flash[:notice]%>
+    </div>
+  <% end %>
+  
+  <%= yield %>
+
+</body>
+</html>

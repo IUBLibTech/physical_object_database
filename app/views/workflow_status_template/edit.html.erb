@@ -1,0 +1,11 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Cancel", {action: 'show', id: @workflow_status_template.id}) %>
+  </div>
+<% end %>
+<div>
+  	<% @submit_text = "Update Workflow Status" %>
+  	<% @edit_mode = true %>
+  	<% @action = 'update' %>
+   	<%= render(:partial => "new_physical_object_workflow_status_form") %>
+</div>

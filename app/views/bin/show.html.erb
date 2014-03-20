@@ -1,0 +1,16 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+	  <%= link_to("Create Bin", {:action => 'new'}) %>
+	</div>
+	<div class="contextMenuItem">
+	  <%= link_to("Edit Bin", {:action => 'edit', :id => @bin.id}) %>
+	</div>
+	<div class="contextMenuItem">
+	  <%= link_to("Delete Bin", {:action => 'delete', :id => @bin.id}) %>
+	</div>
+<% end %>
+<div>
+  <h2>Bin</h2>
+    <% @edit_mode = false %>
+    <%= render(:partial => "bin") %>
+</div>

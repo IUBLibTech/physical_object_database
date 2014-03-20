@@ -1,0 +1,35 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+	  <%= link_to("Create Batch", {:action => 'new'}) %>
+	</div>
+	<div class="contextMenuItem">
+	  <%= link_to("Search Batches", {:action => 'search'}) %>
+	</div>
+<% end %>
+<h2>Batches</h2>
+	
+<table>
+	<tr>
+		<th>Batch Identifier</th>
+		<th>Name</th>
+		<th>Desription</th>
+		<th>Actions</th>
+	</tr>
+	<% count = 0 %>
+	<% @batches.each do |b| %>
+	<% if count.odd? %>
+		<tr class='odd'>
+	<% else %>
+		<tr>
+	<% end %>
+	<td><%= b.identifier %></td>
+	<td><%= b.name %></td>
+	<td><%= b.description %></td>
+	<td>
+		<%= link_to("Show", {:action => 'show', :id => b.id}, :class => 'action show') %>
+    <%= link_to("Edit", {:action => 'edit', :id => b.id}, :class => 'action edit') %>
+    <%= link_to("Delete", {:action => 'delete', :id => b.id}, :class => 'action delete')%>
+	</td>
+</tr>
+	<% end %>
+</table>

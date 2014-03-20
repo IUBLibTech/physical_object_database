@@ -1,0 +1,23 @@
+<h2>Open Reel Tape Query Interface</h2>
+<%= form_for(:ps, url: {action: 'create'}) do |f| %>
+	<table>
+		<tr>
+			<th>Format</th>
+			<td><%= f.text_field(:format) %></td>
+		</tr>
+		<tr>
+			<th>Name</th>
+			<td>
+				<%= f.text_field(:name) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Description</th>
+			<td>
+				<%= f.text_area(:description) %>
+			</td>
+		</tr>
+		
+	</table>
+	<%= submit_tag("Save Picklist Specification") %>
+<% end %>

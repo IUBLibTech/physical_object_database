@@ -1,0 +1,20 @@
+  <% content_for :context_menu do %>
+    <div class="contextMenuItem">
+      <%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => @physical_object.id}, :class => 'action edit') %>
+    </div>
+    <div class="contextMenuItem">
+      <%= link_to("Delete", {:controller => 'physical_objects', :action => 'delete', :id => @physical_object.id}, :class => 'action delete')%>
+    </div>
+    <div class="contextMenuItem">
+      <%= link_to("Split Record", {:controller => 'physical_objects', :action => 'split_show', :id => @physical_object.id}, :class => 'action split')%>
+    </div>
+
+    <div class="contextMenuItem">
+      <%= link_to("Create New Physcial Object", :action => 'new') %>
+    </div>
+    <div class="contextMenuItem">
+      <%= link_to("Upload Spreadsheet", :action => 'upload_show') %>
+    </div>
+
+  <% end %>
+<%= render :partial => "physical_object_form" %>

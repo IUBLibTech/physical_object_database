@@ -1,0 +1,12 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'index', :id => @physical_object.id}, :class => 'action split')%>
+  </div>
+<% end %>
+<h1>Upload Spread Sheet (CSV)</h1>
+
+<%= form_for(:physical_object, :url => {:action => 'upload_update'}) do |f| %>
+  <%= f.file_field :csv_file %>
+  <br/>
+  <%= submit_tag("Upload")%>
+<% end %>

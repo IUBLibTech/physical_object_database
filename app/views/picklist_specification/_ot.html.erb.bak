@@ -1,0 +1,86 @@
+<h2>Open Reel Tape Query Interface</h2>
+<%= form_for(:ps, url: {action: 'create'}) do |f| %>
+	<table>
+		<tr>
+			<th>Format</th>
+			<td><%= f.text_field(:format) %></td>
+		</tr>
+		<tr>
+			<th>Name</th>
+			<td>
+				<%= f.text_field(:name) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Description</th>
+			<td>
+				<%= f.text_area(:description) %>
+			</td>
+		</tr>
+		<%= f.fields_for :fields do |fields| %>
+		<tr>
+			<th>Pack Deformation</th>
+			<td>
+					<%= fields.select(:pack_deformation, @tm.pack_deformations) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Preservation Problems</th>
+			<td>
+					<%= fields.select(:preservation_problems, @tm.preservation_problems) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Reel Size</th>
+			<td>
+					<%= fields.select(:reel_size, @tm.reel_sizes) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Playback Speed</th>
+			<td>
+					<%= fields.select(:playback_speed, @tm.playback_speeds) %>
+			</td>
+		</tr>  
+		<tr>
+			<th>Track Configuration</th>
+			<td>
+					<%= fields.select(:track_configuration, @tm.track_configurations) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Tape Thickness</th>
+			<td>
+					<%= fields.select(:tape_thickness, @tm.tape_thicknesses) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Sound Field</th>
+			<td>
+					<%= fields.select(:sound_field, @tm.sound_fields) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Tape Stock Brand</th>
+			<td>
+					<%= fields.select(:tape_stock_brand, @tm.tape_stock_brands) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Tape Base</th>
+			<td>
+					<%= fields.select(:tape_base, @tm.tape_bases) %>
+			</td>
+		</tr>
+		<tr>
+		</tr>
+		<tr>
+			<th>Directions Recorded</th>
+			<td>
+				<%= fields.select(:directions_recorded, 0..4) %>
+			</td>
+		</tr>
+	<% end %>
+	</table>
+	<%= submit_tag("Save Picklist Specification") %>
+<% end %>

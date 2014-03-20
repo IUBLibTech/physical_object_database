@@ -1,0 +1,93 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require physical_objects
+ */
+
+body {
+  width: 1000px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+h2 {
+  margin: 5px 0 0 0;
+  font-size: 1.2em;
+  color: #7D110C;
+}
+
+tr, th, td {
+  
+}
+
+td.no-border {
+  border: 0px;
+}
+
+#branding {
+  height: 100px;
+}
+
+#menu {
+  height: 42px;
+  background: #7D110C;
+}
+#contextMenu {
+  height: 18px;
+  background: #CD894E;
+}
+
+.menuItem {
+  float: left;
+  padding: 10px 0 0 32px;
+  font-family: 'Tahoma';
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.contextMenuItem {
+  float: left;
+  padding: 0 0 0 20px;
+  font-family: 'Tahoma';
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.menuItem:first-child {
+  padding: 10px 0 0 154px;
+}
+
+a:link {
+  color: #7D110C;
+  font-weight: bold;
+  text-decoration: none;
+}
+a:visited {
+  color: #7D110C;
+}
+a:hover {
+  color: #7D110C;
+}
+
+.menuItem a:link {
+  color: white; 
+}
+.menuItem a:visited {
+  color: white;
+}
+.menuItem a:hover {
+  color: #DBCEAC;
+}
+
+.clear {
+  clear: both;
+}
+

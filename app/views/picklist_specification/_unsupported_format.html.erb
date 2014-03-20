@@ -1,0 +1,9 @@
+<h2><%= @format %> format is not currently supported</h2>
+<table>
+	<tr>
+		<th>Format</th>
+		<td>
+			<%= select_tag :format, options_for_select(@formats), :onchange => "set_format_div(this.value)" %>
+		</td>
+	</tr>
+</table>
