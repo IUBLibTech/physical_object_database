@@ -6,5 +6,5 @@
 <div id="formatDiv">
 <h2>Select Format</h2>
 Format: 
-<%= select_tag :format, options_for_select(@formats), :onchange => "set_format_div(this.value)" %>
+<%= select_tag :format, options_for_select(@formats), :onchange => "set_format_div(this.value, true)" %>
 </div>

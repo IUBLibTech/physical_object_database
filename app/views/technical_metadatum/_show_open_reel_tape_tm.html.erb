@@ -1,13 +1,12 @@
-<% if @physical_object.technical_metadatum != nil %>
-	<% tm = @physical_object.technical_metadatum.specialize %>
+<% if !@tm.nil? %>
 	<table>
 		<tr>
 			<th>Pack Deformation</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:pack_deformation, tm.pack_deformations) %>
+					<%= f.select(:pack_deformation, @tm.pack_deformations) %>
 				<% else %>
-					<%= tm.pack_deformation %>
+					<%= f.text_field(:pack_deformation, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
@@ -15,9 +14,9 @@
 			<th>Preservation Problems</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:preservation_problem, tm.preservation_problems) %>
+					<%= f.select(:preservation_problem, @tm.preservation_problems) %>
 				<% else %>
-					<%= tm.preservation_problem %>
+					<%= f.text_field(:preservation_problem, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
@@ -25,9 +24,9 @@
 			<th>Reel Size</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:reel_size, tm.reel_sizes) %>
+					<%= f.select(:reel_size, @tm.reel_sizes) %>
 				<% else %>
-					<%= tm.reel_size %>
+					<%= f.text_field(:reel_size, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
@@ -35,9 +34,9 @@
 			<th>Playback Speed</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:playback_speed, tm.playback_speeds) %>
+					<%= f.select(:playback_speed, @tm.playback_speeds) %>
 				<% else %>
-					<%= tm.playback_speed %>
+					<%= f.text_field(:playback_speed, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>  
@@ -45,9 +44,9 @@
 			<th>Track Configuration</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:track_configuration, tm.track_configurations) %>
+					<%= f.select(:track_configuration, @tm.track_configurations) %>
 				<% else %>
-					<%= tm.track_configuration %>
+					<%= f.text_field(:track_configuration, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
@@ -55,9 +54,9 @@
 			<th>Tape Thickness</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:tape_thickness, tm.tape_thicknesses) %>
+					<%= f.select(:tape_thickness, @tm.tape_thicknesses) %>
 				<% else %>
-					<%= tm.tape_thickness %>
+					<%= f.text_field(:tape_thickness, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
@@ -65,9 +64,9 @@
 			<th>Sound Field</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:sound_field, tm.sound_fields) %>
+					<%= f.select(:sound_field, @tm.sound_fields) %>
 				<% else %>
-					<%= tm.sound_field %>
+					<%= f.text_field(:sound_field, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
@@ -75,9 +74,9 @@
 			<th>Tape Stock Brand</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:tape_stock_brand, tm.tape_stock_brands) %>
+					<%= f.select(:tape_stock_brand, @tm.tape_stock_brands) %>
 				<% else %>
-					<%= tm.tape_stock_brand %>
+					<%= f.text_field(:tape_stock_brand, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
@@ -85,9 +84,9 @@
 			<th>Tape Base</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:tape_base, tm.tape_bases) %>
+					<%= f.select(:tape_base, @tm.tape_bases) %>
 				<% else %>
-					<%= tm.tape_base %>
+					<%= f.text_field(:tape_base, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
@@ -97,7 +96,7 @@
 				<% if @edit_mode %>
 					<%= f.text_field(:year_of_recording) %>
 				<% else %>
-					<%= tm.tape_base %>
+					<%= f.text_field(:year_of_recording, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
@@ -105,13 +104,11 @@
 			<th>Directions Recorded</th>
 			<td>
 			<% if @edit_mode %>
-				<%= f.select(:directions_recorded, 0..4) %>
+				<%= f.select(:directions_recorded, @tm.directions_recorded_vals) %>
 			<% else %>
-				<%= tm.directions_recorded %>	
+				<%= f.text_field(:directions_recorded, readonly: true) %>	
 			<% end %>
 			</td>
 		</tr>
 	</table>
-<%else%>
-<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => @physical_object.id}, :class => 'action edit') %>
-<%end%>
+<% end %>

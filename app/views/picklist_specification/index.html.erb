@@ -17,7 +17,7 @@
 	    <td>
 	      <%= link_to("Show", {action: 'show', id: p.id}) %>
 	      <%= link_to("Edit", {action: 'edit', id: p.id}) %>
-	      <%= link_to("Delete", {action: 'delete', id: p.id}) %>
+	      <%= link_to("Delete", {action: 'destroy', id: p.id}, {:confirm=>'Are you sure you want to delete this Picklist Specification?'}) %>
 	    </td>
 	  </tr>
 	<% count += 1 %>

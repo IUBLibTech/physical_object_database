@@ -6,8 +6,7 @@ class PicklistSpecification < ActiveRecord::Base
 	def init_tm
 		if !format.nil?
 			if format == "Open Reel Tape"
-				tm = OpenReelTm.new
-				tm.picklist_specification = self
+				OpenReelTm.new(picklist_specification: self)
 			end
 		end
 	end

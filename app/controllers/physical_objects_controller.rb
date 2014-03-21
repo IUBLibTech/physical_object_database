@@ -120,7 +120,6 @@ class PhysicalObjectsController < ApplicationController
         "technical_metadatum/show_cassette_tape_tm"
     else
       flash[:notice] = "Unknown format: #{po.format}"
-
     end
   end
   

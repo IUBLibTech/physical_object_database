@@ -1,5 +1,5 @@
 <%= form_for(:physical_object, :url => {:action => @action, :id => @physical_object.id}) do |f| %>
-<div id="physicalObject">
+<div id="physicalObject" class="left">
   <h2>Physical Object</h2>
   <table summary="Physical Object Fields">
     <% @physical_object.attributes.each do |name, value|%>
@@ -25,7 +25,7 @@
   </table>
 </div>
 
-<div id="technicalMetadatum">
+<div id="technicalMetadatum" class="left">
   <h2><%= @physical_object.format %> Technical Metadata</h2>
   <% if ! @physical_object.technical_metadatum.nil? %>
     <%= f.fields_for @physical_object.technical_metadatum.specialize do |tm_fields| %>

@@ -1,0 +1,11 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Cancel", {action: 'show', id: @ps.id}) %>
+  </div>
+<% end %>
+
+<% if @ps.format == "Open Reel Tape" %>
+	<%= render(partial: 'ot') %>
+<% else %>
+
+<% end %>

@@ -52,6 +52,10 @@ class OpenReelTm < ActiveRecord::Base
 		{"" => "", "Polyester" => "Polyester", "Acetate" => "Acetate", "PVC" => "PVC"}
 	end
 
+	attr_accessor :directions_recorded_vals
+	def directions_recorded_vals
+		{"" => "", "1" => "1", "2" => "2", "3" => "3", "4" => "4"}
+	end
 
 	def generalize
     TechnicalMetadatum.find_by(as_technical_metadatum_id: self.id)

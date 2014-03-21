@@ -1,25 +1,36 @@
-<h2>Open Reel Tape Query Interface</h2>
-<%= form_for(:ps, url: {action: 'create'}) do |f| %>
-	<table>
-		<tr>
-			<th>Format</th>
-			<td><%= f.text_field(:format) %></td>
-		</tr>
-		<tr>
-			<th>Name</th>
-			<td>
-				<%= f.text_field(:name) %>
-			</td>
-		</tr>
-		<tr>
-			<th>Description</th>
-			<td>
-				<%= f.text_area(:description) %>
-			</td>
-		</tr>
-		<%= f.fields_for @ps.technical_metadata.each |tm_fields| %>
-      <% tm = @ps.technical_metadatum.specialize %>
-    <% end %>
-	</table>
-	<%= submit_tag("Save Picklist Specification") %>
+<%= form_for(:ps, url: {action: @action}) do |f| %>
+	<div id="picklistSpec" class="left">
+		<h2>Picklist Attributes</h2>
+		<table>
+			<tr>
+				<th>Name</th>
+				<td>
+					<%= f.text_field(:name, :readonly => !@edit_mode) %>
+				</td>
+			</tr>
+			<tr>
+				<th>Description</th>
+				<td>
+					<%= f.text_area(:description, :readonly => !@edit_mode) %>
+				</td>
+			</tr>
+			<tr>
+				<th>Format</th>
+				<td>
+					<%= f.text_field(:format, :readonly => !@edit_mode) %>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div id="technicalMetadatum" class="left">
+	  <h2><%= @ps.format %> Technical Metadata</h2>
+	  <%= f.fields_for @tm do |tm| %>
+	    <%= render(:partial => "technical_metadatum/show_open_reel_tape_tm", :locals => {:f => tm}) %>
+	  <% end %>
+	</div>
+	<div class="clear" >
+	<% if @edit_mode %>
+		<%= submit_tag(@submit_text) %>
+	<% end %>
+	</div>
 <% end %>

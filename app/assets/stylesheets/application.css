@@ -91,3 +91,11 @@ a:hover {
   clear: both;
 }
 
+tr.even {
+  background: rgba(125, 18, 12, 0.15);
+}
+
+.left {
+  float: left;
+  margin-right: 15px;
+}
