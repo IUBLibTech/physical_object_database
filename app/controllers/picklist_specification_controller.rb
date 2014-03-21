@@ -30,8 +30,13 @@ class PicklistSpecificationController < ApplicationController
 
 	def update
 		@ps = PicklistSpecification.find(params[:id])
-		@tm = @ps.technical_metadata[0].specialize
-		
+		if (@ps.update_attributes(picklist_specification_params))
+			@tm = @ps.technical_metadata[0].specialize
+			@tm.update_attributes(@tm.update_form_params(params[:ps]))
+			flash[:notice] = "#{@ps.name} successfully updated."
+		else
+			flash[:notice] = "Failed to update #{@ps.name}."
+		end
 		redirect_to(action: 'index')
 	end
 

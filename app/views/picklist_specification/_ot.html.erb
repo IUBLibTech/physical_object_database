@@ -1,4 +1,4 @@
-<%= form_for(:ps, url: {action: @action}) do |f| %>
+<%= form_for(:ps, url: {action: @action, id: @ps.id}) do |f| %>
 	<div id="picklistSpec" class="left">
 		<h2>Picklist Attributes</h2>
 		<table>
@@ -17,7 +17,7 @@
 			<tr>
 				<th>Format</th>
 				<td>
-					<%= f.text_field(:format, :readonly => !@edit_mode) %>
+					<%= f.text_field(:format, :readonly => true) %>
 				</td>
 			</tr>
 		</table>
