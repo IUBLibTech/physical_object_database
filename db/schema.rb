@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140313180232) do
+ActiveRecord::Schema.define(version: 20140403152552) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -29,6 +29,13 @@ ActiveRecord::Schema.define(version: 20140313180232) do
     t.string   "identifier",                          null: false
     t.text     "description"
     t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "boxes", force: true do |t|
+    t.integer  "bin_id",       limit: 8
+    t.integer  "mdpi_barcode", limit: 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -52,6 +59,21 @@ ActiveRecord::Schema.define(version: 20140313180232) do
   end
 
   add_index "condition_status_templates", ["name"], name: "index_condition_status_templates_on_name", unique: true, using: :btree
+
+  create_table "containers", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "digital_files", force: true do |t|
+    t.integer  "physical_object_id", limit: 8
+    t.string   "filename"
+    t.string   "role"
+    t.string   "format"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "lp_tms", force: true do |t|
     t.datetime "created_at"
@@ -86,18 +108,27 @@ ActiveRecord::Schema.define(version: 20140313180232) do
 
   create_table "physical_objects", force: true do |t|
     t.integer  "bin_id"
-    t.integer  "memnon_barcode",     limit: 8
-    t.integer  "iu_barcode",         limit: 8
+    t.integer  "box_id",               limit: 8
+    t.integer  "picklist_id",          limit: 8
+    t.integer  "container_id",         limit: 8
+    t.integer  "memnon_barcode",       limit: 8
+    t.integer  "iu_barcode",           limit: 8
     t.string   "shelf_number"
     t.string   "call_number"
+    t.string   "title_control_number"
     t.text     "title"
     t.string   "format"
     t.string   "unit"
     t.string   "collection_id"
+    t.string   "collection_name"
     t.string   "primary_location"
     t.string   "secondary_location"
     t.string   "composer_performer"
-    t.integer  "sequence",                     default: 0
+    t.string   "generation"
+    t.string   "duration"
+    t.string   "duration_type"
+    t.integer  "carrier_stream_index",           default: 0
+    t.boolean  "has_media"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -106,10 +137,18 @@ ActiveRecord::Schema.define(version: 20140313180232) do
     t.string   "name"
     t.string   "format"
     t.text     "description"
-    t.text     "fields"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "picklists", force: true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "picklists", ["name"], name: "index_picklists_on_name", unique: true, using: :btree
 
   create_table "technical_metadata", force: true do |t|
     t.integer  "as_technical_metadatum_id"

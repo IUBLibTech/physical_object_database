@@ -76,8 +76,6 @@ GEM
     sdoc (0.4.0)
       json (~> 1.8)
       rdoc (~> 4.0, < 5.0)
-    simple_enum (1.6.8)
-      activesupport (>= 3.0.0)
     sprockets (2.10.1)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -110,5 +108,4 @@ DEPENDENCIES
   rails (= 4.0.2)
   sass-rails (~> 4.0.0)
   sdoc
-  simple_enum
   uglifier (>= 1.3.0)

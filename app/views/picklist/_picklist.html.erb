@@ -1,0 +1,48 @@
+<%= form_for(:picklist, :url => {:action => @action, :id => @picklist.id}) do |f| %>
+<div class="left">
+	<h2>Picklist</h2>
+		<table>
+			<tr>
+				<th>Name</th>
+				<td>
+					<%= f.text_field(:name, readonly: !@edit_mode) %>
+				</td>
+			</tr>
+			<tr>
+				<th>Description</th>
+				<td>
+					<%= f.text_area(:description, readonly: !@edit_mode) %>
+				</td>
+			</tr>
+		</table>
+</div>
+<div class="clear">
+	<% if @edit_mode %>
+		<%= f.submit(@submit_text) %>
+	<% end %>
+</div>
+<% end %>
+<h2>Physical Objects in this picklist</h2>
+<table>
+	<tr>
+		<th>Shelf_number</th>
+		<th>Format</th>
+		<th>Actions</th>
+	</tr>
+	<% count = 0 %>
+	<% @physical_objects.each do |p| %>
+		<% if count.odd? %>
+    <tr class='odd'>
+    <%else%>
+    <tr class='even'>
+    <%end%>
+			<td><%= p.shelf_number %></td>
+			<td><%= p.format %> </td>
+			<td>
+				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, :class => 'action show') %>
+        <%= link_to("Remove", {:action => 'remove', :id => @picklist.id, po_id: p.id}, {:confirm=>'Are you sure you want to remove this Physical Object from the Picklist?'})%>
+			</td>
+		</tr>
+		<% count += 1 %>
+	<% end %>
+</table>

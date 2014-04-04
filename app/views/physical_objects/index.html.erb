@@ -15,6 +15,7 @@
       <th>IU barcode</th>
       <th>Shelf number</th>
       <th>Call number</th>
+      <th>Format</th>
       <th>Actions</th>
     </tr>
     <% count = 0 %>
@@ -29,11 +30,12 @@
       <td><%= po.iu_barcode %></td>
       <td><%= po.shelf_number %></td>
       <td><%= po.call_number %></td>
+      <td><%= po.format %></td>
       <td>
         <%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => po.id}, :class => 'action show') %>
         <%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => po.id}, :class => 'action edit') %>
         <%= link_to("Split", {:controller => 'physical_objects', :action => 'split_show', :id => po.id}, :class => 'action split')%>
-        <%= link_to("Delete", {:controller => 'physical_objects', :action => 'delete', :id => po.id}, :class => 'action delete')%>
+        <%= link_to("Delete", {:controller => 'physical_objects', :action => 'destroy', :id => po.id}, {:confirm=>'Are you sure you want to delete this Physical Object?'})%>
       </td>
     </tr>
     <% count += 1 %>

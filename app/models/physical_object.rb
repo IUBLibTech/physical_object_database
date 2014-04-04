@@ -1,8 +1,12 @@
 class PhysicalObject < ActiveRecord::Base
 
-  has_one :technical_metadatum
+  belongs_to :box
   belongs_to :bin
+  belongs_to :picklist
+  belongs_to :container
+  has_one :technical_metadatum
   has_many :workflow_statuses
+  has_many :digital_files
   
 
   attr_accessor :formats 
@@ -24,26 +28,23 @@ class PhysicalObject < ActiveRecord::Base
     s.include? "-" or s.include? ","
   end
 
-  def init_tm
-    if format == "Cassette Tape"
-      ctm = CassetteTapeTm.new
-      ctm.physical_object = self
-      ctm.save
-    elsif format == "Compact Disc"
-      cdtm = CompactDiscTm.new
-      cdtm.physical_object = self
-      cdtm.save
-    elsif format == "LP"
-      lptm = LpTm.new
-      lptm.physical_object = self
-      lptm.save
-    elsif format == "Open Reel Tape"
-      ortm = OpenReelTm.new
-      ortm.physical_object = self
-      ortm.save
+  def create_tm(f)
+    if f == "Cassette Tape"
+      CassetteTapeTm.new
+    elsif f == "Compact Disc"
+      CompactDiscTm.new
+    elsif f == "LP"
+      LpTm.new
+    elsif f == "Open Reel Tape"
+      OpenReelTm.new
     else
       raise 'Unknown format type' + format
     end 
-      
+  end
+
+  def format_class
+    if format == "OpenReelTm"
+      OpenReelTm.class
+    end
   end
 end

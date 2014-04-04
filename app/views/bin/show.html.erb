@@ -9,8 +9,12 @@
 	  <%= link_to("Delete Bin", {:action => 'delete', :id => @bin.id}) %>
 	</div>
 <% end %>
-<div>
+<div class="left">
   <h2>Bin</h2>
     <% @edit_mode = false %>
     <%= render(:partial => "bin") %>
+</div>
+<div class="left">
+	<h2>Boxes</h2>
+	<%= render(partial: 'boxes') %>
 </div>

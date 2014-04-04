@@ -40,8 +40,18 @@
 				<% end %>
  			</td>
 		</tr>
+		<tr>
+			<th>Assigned to batch</th>
+			<td>
+				<% if @edit_mode %>
+					<%= select('batch', 'id', @batches, {:include_blank => 'Not Assigned'}) %>
+				<% elsif ! @bin.batch.nil? %>
+					<%= @bin.batch.identifier %> 
+				<% end %>
+			</td>
+		</tr>
 	</table>
-	<%if @edit_mode or @action == 'destroy' %>
+	<%if @edit_mode %>
 	  <div class="clear" ><%= submit_tag(@submit_text) %></div>
 	<% end %>
 <% end %>
