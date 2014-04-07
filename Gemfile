@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 gem "acts_as_relation"
 
 #simple_enum handles the enumerated values for technical metadata fields (open reel tape size for instance)
-#gem 'simple_enum'
+gem 'simple_enum'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.2'
