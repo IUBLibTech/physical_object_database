@@ -62,10 +62,17 @@ class OpenReelTm < ActiveRecord::Base
   end
 
 	def update_form_params(params)
-		puts(params.to_yaml)
-    params.require(:open_reel_tm).permit(:pack_deformation, :preservation_problem, :reel_size,
-    	:playback_speed, :track_configuration, :tape_thickness, :sound_field, :tape_stock_brand,
-    	:tape_base, :year_of_recording, :directions_recorded)
+		self.pack_deformation = params[:tm][:pack_deformation]
+ 		self.preservation_problem = params[:tm][:preservation_problem]
+ 		self.reel_size = params[:tm][:reel_size]
+ 		self.playback_speed = params[:tm][:playback_speed]
+ 		self.track_configuration = params[:tm][:track_configuration]
+ 		self.tape_thickness = params[:tm][:tape_thickness]
+ 		self.sound_field = params[:tm][:sound_field]
+ 		self.tape_stock_brand = params[:tm][:tape_stock_brand]
+ 		self.tape_base = params[:tm][:tape_base]
+ 		self.year_of_recording = params[:tm][:year_of_recording]
+ 		self.directions_recorded = params[:tm][:directions_recorded]
   end
 
 end

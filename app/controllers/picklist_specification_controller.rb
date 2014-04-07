@@ -1,7 +1,9 @@
 class PicklistSpecificationController < ApplicationController
 
 	def index
-		@picklists = PicklistSpecification.all
+		@picklist_specs = PicklistSpecification.all
+		@picklists = Picklist.all
+		
 	end
 
 	def new
@@ -13,9 +15,9 @@ class PicklistSpecificationController < ApplicationController
 
 	def create
 		@ps = PicklistSpecification.new(picklist_specification_params)
-		@tm = @ps.init_tm
+		@tm = @ps.create_tm
 		@tm.picklist_specification = @ps;
-		@tm.update_attributes(@tm.update_form_params(params[:ps]))
+		@tm.update_attributes(@tm.update_form_params(params))
 		
 		redirect_to(action: 'index')
 	end
@@ -32,7 +34,7 @@ class PicklistSpecificationController < ApplicationController
 		@ps = PicklistSpecification.find(params[:id])
 		if (@ps.update_attributes(picklist_specification_params))
 			@tm = @ps.technical_metadata[0].specialize
-			@tm.update_attributes(@tm.update_form_params(params[:ps]))
+			@tm.update_attributes(@tm.update_form_params(params))
 			flash[:notice] = "#{@ps.name} successfully updated."
 		else
 			flash[:notice] = "Failed to update #{@ps.name}."
@@ -56,9 +58,42 @@ class PicklistSpecificationController < ApplicationController
 		redirect_to(action: 'index')
 	end
 
+	def query
+		@ps = PicklistSpecification.find(params[:id])
+		@picklists = Picklist.find(:all, order: 'name').collect{|p| [p.name, p.id]}
+		if @ps.format == "Open Reel Tape"
+			q = "SELECT physical_objects.* FROM physical_objects, technical_metadata, open_reel_tms " <<
+				"WHERE physical_objects.id=technical_metadata.physical_object_id " << 
+				"AND technical_metadata.as_technical_metadatum_id=open_reel_tms.id " << 
+				"AND physical_objects.picklist_id is null " <<
+				format_tm_where(@ps.technical_metadata[0])
+			@physical_objects = PhysicalObject.find_by_sql(q)
+			flash[:notice] = "Results for #{@ps.name}"
+		end
+		@edit_mode = true
+		@action = 'query_add'
+		@submit_text = "Add Selected Objects to Picklist"
+	end
+
+	def query_add
+		@picklist = Picklist.find(params[:picklist][:id])
+		
+		params[:po_ids].each do |po|
+			PhysicalObject.find(po).update_attributes(picklist_id: @picklist.id)
+		end
+		
+		redirect_to(action: 'query', id: params[:id])
+	end
+
+	#action for listing th physical objects that belong to a picklist
+	def list_pos
+		ps = PicklistSpecification.find(id)
+		@physical_objects = PhysicalObject.where()
+	end
+
 	def get_form
 		@ps = PicklistSpecification.new(format: params[:format])
-		@tm = @ps.init_tm
+		@tm = @ps.create_tm
 		@tm.picklist_specification = @ps
 		@ps.technical_metadata<<@tm.becomes(TechnicalMetadatum)
 		@action = 'create'
@@ -75,6 +110,21 @@ class PicklistSpecificationController < ApplicationController
 
 	def ot_hash
 		{"Pack Deformation" => "", "Preservation Problems" => "" }
+	end
+
+	def format_tm_where(tm)
+		q = ""
+		stm = tm.specialize
+		stm.attributes.each do |name, value|
+			if name == 'id' or name == 'created_at' or name == 'updated_at'
+				next
+			else
+				if !value.nil? and value.length > 0
+					q << " AND open_reel_tms.#{name}='#{value}'"
+				end
+			end
+		end
+		q
 	end
 
 	private

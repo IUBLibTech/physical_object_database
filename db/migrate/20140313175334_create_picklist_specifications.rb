@@ -4,7 +4,6 @@ class CreatePicklistSpecifications < ActiveRecord::Migration
     	t.string :name
     	t.string :format
     	t.text :description
-    	t.text :fields
       t.timestamps
     end
   end

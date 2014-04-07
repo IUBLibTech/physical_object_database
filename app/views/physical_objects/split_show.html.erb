@@ -9,7 +9,7 @@
     <%= form_for(:physical_object, :url => {:action => "split_update", :id => @physical_object.id}) do |f| %>
       <table>
         <tr>
-          <td>Count</td>
+          <td>Number of carrier streams in container?</td>
           <td><%= text_field_tag :count, params[:count] %></td>
           <td><%= submit_tag("Split") %></td>
         </tr>

@@ -23,7 +23,6 @@
 		</table>
 	</div>
 	<div id="technicalMetadatum" class="left">
-	  <h2><%= @ps.format %> Technical Metadata</h2>
 	  <%= f.fields_for @tm do |tm| %>
 	    <%= render(:partial => "technical_metadatum/show_open_reel_tape_tm", :locals => {:f => tm}) %>
 	  <% end %>
