@@ -5,8 +5,21 @@
 <% row_count = 0 %>
 <% @templates = @all_workflow_status_templates[object_type] %>
 <% unless @templates.nil? || @templates.size.zero? %>
-  <% @templates.each do |template| %>
-    <%= render 'workflow_status_row', row: template, count: row_count %>
+  <% @templates.each do |row| %>
+    <% if row_count.odd? %>
+    <tr class='odd'>
+    <%else%>
+    <tr class='even'>
+    <%end%>
+      <td><%= row.name %></td>
+      <td><%= row.description[0, 20] %><% if row.description.length > 20 %><%= '...' %><% end %></td>
+      <td><%= row.sequence_index %></td>
+      <td>
+        <%= link_to("Show", {action: 'show', id: row.id}) %>
+        <%= link_to("Edit", {action: 'edit', id: row.id}) %>
+        <%= link_to("Delete", {action: 'delete', id: row.id}) %>
+      </td>
+    </tr>
     <% row_count += 1 %>
   <% end %>
 <% else %>
