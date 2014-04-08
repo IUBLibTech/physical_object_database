@@ -5,7 +5,9 @@ class WorkflowStatusTemplate < ActiveRecord::Base
 
 	attr_accessor :object_types
 	def object_types
-		{"Physical Object" => "Physical Object"} 
+		{"Physical Object" => "Physical Object",
+		 "Batch" => "Batch",
+		 "Bin" => "Bin"}
 	end
 
 
