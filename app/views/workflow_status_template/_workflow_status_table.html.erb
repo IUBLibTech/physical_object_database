@@ -1,0 +1,15 @@
+<table>
+<tr class="status_object_type">
+        <th colspan="4"><%= object_type %> Workflow Statuses</th>
+</tr>
+<% row_count = 0 %>
+<% @templates = @all_workflow_status_templates[object_type] %>
+<% unless @templates.nil? || @templates.size.zero? %>
+  <% @templates.each do |template| %>
+    <%= render 'workflow_status_row', row: template, count: row_count %>
+    <% row_count += 1 %>
+  <% end %>
+<% else %>
+  <tr><td colspan="4">No entries defined</td></tr>
+<% end %>
+</table>

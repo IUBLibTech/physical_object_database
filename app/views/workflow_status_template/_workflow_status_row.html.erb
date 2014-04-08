@@ -1,0 +1,15 @@
+<% if count.odd? %>
+<tr class='odd'>
+<%else%>
+<tr class='even'>
+<%end%>
+  <td><%= row.name %></td>
+  <td><%= row.description[0, 20] %><% if row.description.length > 20 %><%= '...' %><% end %></td>
+  <td><%= row.sequence_index %></td>
+  <td>
+    <%= link_to("Show", {action: 'show', id: row.id}) %>
+    <%= link_to("Edit", {action: 'edit', id: row.id}) %>
+    <%= link_to("Delete", {action: 'delete', id: row.id}) %>
+  </td>
+</tr>
+<% count += 1 %>
