@@ -47,4 +47,10 @@ class PhysicalObject < ActiveRecord::Base
       OpenReelTm.class
     end
   end
+
+  #return highest-ranking workflow status
+  def workflow_status
+    return nil if self.workflow_statuses.nil? || self.workflow_statuses.size.zero?
+    return self.workflow_statuses.sequenced.last
+  end
 end
