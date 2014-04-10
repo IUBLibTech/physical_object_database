@@ -55,3 +55,25 @@
 	  <div class="clear" ><%= submit_tag(@submit_text) %></div>
 	<% end %>
 <% end %>
+<% if !@edit_mode %>
+	<div id="add_item_div">
+		<h2>Add an item to this Bin</h2>
+		<p>
+			Scan an MDPI barcode to add an item to this bin. 
+			If the barcode does not exist in the POD, it is
+			assumed this is a new <b>Box</b>.
+		</p>
+		<%= form_for(:barcode, url: {action: 'bin_add_item'} ) do |f| %>
+			<%= hidden_field(:bin, :id) %>
+			<table>
+				<tr>
+					<th>MDPI Barcode</th>
+					<td>
+						<%= f.text_field(:mdpi_barcode) %>
+					</td>
+				</tr>
+			</table>
+			<%= f.submit("Add item") %>
+		<% end %>
+	</div>
+<% end %>

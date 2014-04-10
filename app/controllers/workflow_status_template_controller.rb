@@ -1,8 +1,13 @@
 class WorkflowStatusTemplateController < ApplicationController
 
 	def index
+	        @all_workflow_status_templates = {}
+		WorkflowStatusTemplate.new.object_types.keys.each do |object_type|
+			@all_workflow_status_templates[object_type] = WorkflowStatusTemplate.where(object_type: object_type).order('sequence_index ASC')
+		end
 		@po_templates = 
 			WorkflowStatusTemplate.where(object_type: 'Physical Object').order('sequence_index ASC')
+		@po_templates = @all_workflow_status_templates['Physical Object']
 	end
 
 
@@ -117,25 +122,25 @@ class WorkflowStatusTemplateController < ApplicationController
 		end
 
 	private
-		def move_sequence(existing_temple)
-			old_i = existing_temple.sequence_index.to_i
+		def move_sequence(existing_template)
+			old_i = existing_template.sequence_index.to_i
 			new_i = params[:workflow_status_template][:sequence_index].to_i
 			if new_i < old_i
 				temps = WorkflowStatusTemplate.where("sequence_index >= ? AND sequence_index < ? AND object_type = ?", 
-					new_i, old_i, existing_temple.object_type)
+					new_i, old_i, existing_template.object_type)
 				temps.each do |t|
 					t.sequence_index += 1
 					t.save
 				end
 			elsif new_i > old_i
 				temps = WorkflowStatusTemplate.where("sequence_index > ? AND sequence_index <= ? AND object_type = ?",
-					old_i, new_i, existing_temple.object_type)
+					old_i, new_i, existing_template.object_type)
 				temps.each do |t|  
 					t.sequence_index -= 1
 					t.save
 				end
 			end
-			existing_temple.update_attributes(workflow_status_template_params)
+			existing_template.update_attributes(workflow_status_template_params)
 		end
 
 	private

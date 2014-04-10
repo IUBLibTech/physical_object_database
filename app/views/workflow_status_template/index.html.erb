@@ -8,26 +8,6 @@
 <% end %>
 
 <h2>Statuses</h2>
-<table>
-<tr class="status_object_type">
-	<th colspan="4">Physcial Object Workflow Statuses</th>
-</tr>
-<% count = 0 %>
-<% @po_templates.each do |p| %>
-  <% if count.odd? %>
-  <tr class='odd'>
-  <%else%>
-  <tr class='even'>
-  <%end%>
-    <td><%= p.name %></td>
-    <td><%= p.description[0, 20] %><% if p.description.length > 20 %><%= '...' %><% end %></td>
-    <td><%= p.sequence_index %></td>
-    <td>
-      <%= link_to("Show", {action: 'show', id: p.id}) %>
-      <%= link_to("Edit", {action: 'edit', id: p.id}) %>
-      <%= link_to("Delete", {action: 'delete', id: p.id}) %>
-    </td>
-  </tr>
-<% count += 1 %>
+<% WorkflowStatusTemplate.new.object_types.keys.each do |object_type| %>
+  <%= render 'workflow_status_table', object_type: object_type %>
 <% end %>
-</table>

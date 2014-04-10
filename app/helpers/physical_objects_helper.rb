@@ -5,8 +5,8 @@ module PhysicalObjectsHelper
   	count = 0
   	CSV.foreach(file, headers: true) do |r|
   		po = PhysicalObject.new(
-  				memnon_barcode: r["Memnon Barcode"].to_i,
-      		iu_barcode: r["IU Barcode"].to_i,
+  				mdpi_barcode: r["MDPI Barcode"].to_i,
+      		iucat_barcode: r["IU Barcode"].to_i,
       		shelf_number: r["Shelf Number"],
       		call_number: r["Call Number"],
       		title: r["Title"],

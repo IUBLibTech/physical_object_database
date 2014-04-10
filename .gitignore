@@ -14,7 +14,10 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+*.swp
 
+# Ignore database configuration files
 config/database.yml
 database.yml
 nohup.out
+
