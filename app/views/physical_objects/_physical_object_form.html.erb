@@ -26,11 +26,7 @@
       </tr>
       <% end %>
     <% end %>
-    <% if !@edit_mode %>
-      <tr><th>Workflow Status</th><td><%= @physical_object.current_workflow_status.nil? ? "" :  @physical_object.current_workflow_status.name %></td></tr> 
-    <% else %>
-      <tr><th>Workflow Status</th><td><%= f.select :current_workflow_status, @physical_object.workflow_status_options, selected: @physical_object.current_workflow_status.nil? ? "" : @physical_object.current_workflow_status.name, prompt: 'Select a workflow status...' %></td></tr>
-    <% end %>
+    <%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @physical_object %>
   </table>
 </div>
 <%= f.fields_for @tm do |tm_fields| %>
