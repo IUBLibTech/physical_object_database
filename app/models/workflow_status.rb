@@ -10,4 +10,9 @@ class WorkflowStatus < ActiveRecord::Base
 
 	scope :sequenced, -> { joins(:workflow_status_template).order('workflow_status_templates.sequence_index ASC') }
 
+	def name
+	  return "" if self.workflow_status_template.nil?
+	  return self.workflow_status_template.name
+	end
+
 end

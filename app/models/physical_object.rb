@@ -5,9 +5,9 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :picklist
   belongs_to :container
   has_one :technical_metadatum
-  has_many :workflow_statuses
   has_many :digital_files
-  
+  has_many :workflow_statuses
+  include WorkflowStatusModule
 
   attr_accessor :formats 
   def formats
@@ -48,9 +48,4 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
-  #return highest-ranking workflow status
-  def workflow_status
-    return nil if self.workflow_statuses.nil? || self.workflow_statuses.size.zero?
-    return self.workflow_statuses.sequenced.last
-  end
 end
