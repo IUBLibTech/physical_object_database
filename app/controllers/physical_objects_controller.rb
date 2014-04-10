@@ -196,6 +196,6 @@ class PhysicalObjectsController < ApplicationController
       params.require(:physical_object).permit(:memnon_barcode, 
         :iu_barcode, :shelf_number, :call_number, :title, :format, :nit,
         :collection_id, :primary_location, :secondary_location, :composer_performer,
-        :sequence, :open_reel_tm, :bin_id, :unit, :workflow_status )
+        :sequence, :open_reel_tm, :bin_id, :unit, :current_workflow_status )
     end
 end
