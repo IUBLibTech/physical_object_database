@@ -50,6 +50,9 @@
 				<% end %>
 			</td>
 		</tr>
+
+		<%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @bin %>
+
 	</table>
 	<%if @edit_mode %>
 	  <div class="clear" ><%= submit_tag(@submit_text) %></div>

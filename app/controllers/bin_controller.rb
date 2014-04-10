@@ -79,7 +79,7 @@ class BinController < ApplicationController
 
 	private
 	def bin_params
-		params.require(:bin).permit(:barcode, :identifier, :description, :batch, :status)
+		params.require(:bin).permit(:barcode, :identifier, :description, :batch, :status, :current_workflow_status)
 	end
 
 	private

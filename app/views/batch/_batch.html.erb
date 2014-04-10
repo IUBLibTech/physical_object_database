@@ -40,6 +40,10 @@
 				<% end %>
 			</td>
 		</tr>
+
+		<%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @batch %>
+
+
 	</table>
 	<%if @edit_mode or @action == 'destroy' %>
 	  <div class="clear" ><%= submit_tag(@submit_text) %></div>

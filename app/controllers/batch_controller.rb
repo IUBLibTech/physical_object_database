@@ -50,7 +50,7 @@ class BatchController < ApplicationController
 
   private
     def batch_params
-      params.require(:batch).permit(:identifier, :name, :description, :batch_status)
+      params.require(:batch).permit(:identifier, :name, :description, :batch_status, :current_workflow_status)
     end
   
   
