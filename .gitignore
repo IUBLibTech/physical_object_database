@@ -17,6 +17,7 @@
 *.swp
 
 # Ignore database configuration files
+/config/database.yml
 config/database.yml
 database.yml
 nohup.out
