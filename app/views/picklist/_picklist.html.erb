@@ -25,18 +25,18 @@
 <h2>Physical Objects in this picklist</h2>
 <table>
 	<tr>
-		<th>Shelf_number</th>
+		<th>Shelf location</th>
 		<th>Format</th>
 		<th>Actions</th>
 	</tr>
-	<% count = 0 %>
+	<% count = 1 %>
 	<% @picklist.physical_objects.each do |p| %>
 		<% if count.odd? %>
     <tr class='odd'>
     <%else%>
     <tr class='even'>
     <%end%>
-			<td><%= p.shelf_number %></td>
+			<td><%= p.shelf_location %></td>
 			<td><%= p.format %> </td>
 			<td>
 				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, :class => 'action show') %>

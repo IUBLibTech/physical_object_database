@@ -1,0 +1,50 @@
+<div id="box_div" class="left">
+	<h2>Box</h2>
+	<%= form_for(:box, :url => {action: @action, id: @box.id}) do |f| %>
+		<table>
+			<tr>
+				<th>MDPI barcode</th>
+				<td><%= @box.mdpi_barcode %></td>
+			</tr>
+			<tr>
+				<th>Assigned to Bin</th>
+				<td>
+					<% if @edit_mode %>
+						<%= select(:box, :bin_id, @bins.collect{|b| [b.identifier, b.id]}, include_blank: 'Not Assigned') %>
+					<% else %>
+						<%= @box.bin.nil? ? 'Not Assigned' : @box.bin.identifier %>
+					<% end %>
+				</td>
+			</tr>
+		</table>
+		<% if @edit_mode %>
+			<%= f.submit("Update Box") %>
+		<% end %>
+	<% end %>
+
+	<% if !@edit_mode %>
+		<div id="add_item_div">
+			<h2>Add an item to this Box</h2>
+			<p>
+				Scan a Physical Object MDPI barcode to add it  to this Bin.
+			</p>
+			<%= form_for(:barcode, url: {action: 'box_add_item'} ) do |f| %>
+				<%= hidden_field(:box, :id) %>
+				<table>
+					<tr>
+						<th>MDPI Barcode</th>
+						<td>
+							<%= f.text_field(:mdpi_barcode) %>
+						</td>
+					</tr>
+				</table>
+				<%= f.submit("Add item") %>
+			<% end %>
+		</div>
+	<% end %>
+</div>
+
+<div id="physical_objects" class="left">
+	<h2>Physical Objects in this Box</h2>
+	<%= render(partial: 'physical_objects') %>
+</div>

@@ -10,7 +10,10 @@
 // Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
 // about supported directives.
 //= require_self
-//= require picklist_specification
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui-1.10.4.custom.js
+//= require picklist_specification
+//= require picklist
+
 

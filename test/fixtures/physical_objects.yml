@@ -1,15 +1,15 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  memnon_barcode: 1
-  iu_barcode: 1
-  shelf_number: MyString
+  mdpi_barcode: 1
+  iucat_barcode: 1
+  shelf_location: MyString
   call_number: MyString
   status: MyString
 
 two:
-  memnon_barcode: 1
-  iu_barcode: 1
-  shelf_number: MyString
+  mdpi_barcode: 1
+  iucat_barcode: 1
+  shelf_location: MyString
   call_number: MyString
   status: MyString

@@ -11,21 +11,36 @@ class PhysicalObject < ActiveRecord::Base
 
   attr_accessor :formats 
   def formats
-    {"Cassette Tape" => "Cassette Tape", "Compact Disc" => "Compact Disc", "LP" => "LP", "Open Reel Tape" => "Open Reel Tape"}
+    {
+      # "Cassette Tape" => "Cassette Tape", 
+      # "Compact Disc" => "Compact Disc", 
+      # "LP" => "LP", 
+      "Open Reel Tape" => "Open Reel Tape"
+    }
   end
 
   accepts_nested_attributes_for :technical_metadatum
 
   scope :search_by_catalog, lambda {|query| where(["shelf_number = ? OR call_number = ?", query, query])}
   
-  scope :search_by_barcode, lambda {|barcode| where(["memnon_barcode = ? OR iu_barcode = ?", barcode, barcode])}
+  scope :search_by_barcode, lambda {|barcode| where(["mdpi_barcode = ? OR iucat_barcode = ?", barcode, barcode])}
   
   scope :search_id, lambda {|i| 
-    where(['memnon_barcode like ? OR iu_barcode like ? OR shelf_number like ? OR call_number like ?', i, i, i, i])
+    where(['mdpin_barcode like ? OR iucat_barcode like ? OR shelf_number like ? OR call_number like ?', i, i, i, i])
   }
   
   def splitable?(s="")
     s.include? "-" or s.include? ","
+  end
+
+  def container_id
+    if !box.nil?
+      box.id
+    elsif !bin.nil?
+      bin.id
+    else
+      nil
+    end
   end
 
   def create_tm(f)

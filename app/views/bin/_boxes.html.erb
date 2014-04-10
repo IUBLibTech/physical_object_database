@@ -1,16 +1,18 @@
 <table>
-	<tr>
+	<tr class="header">
 		<th>MDPI Barcode</th>
 		<th>Actions</th>
 	</tr>
-	<tr>
-		<% @bin.boxes.each do |b| %>
+	<% count = 1 %>
+	<% @bin.boxes.each do |b| %>
+		<tr class=<%= count.odd? ? 'odd' : 'even'%>>
 			<td><%= b.mdpi_barcode %></td>
 			<td>
 				<%= link_to("Show", action: 'show_box', id: b.id) %>
-				<%= link_to("Remove", action: 'remove_box', id: b.id) %>
+				<%= link_to("Remove", action: 'remove_box', id: b.id, bin_id: @bin.id) %>
 				<%= link_to("Edit", action: 'edit_box', id: b.id) %>
-			</td>	
-		<% end %>
-	</tr>
+			</td>
+		</tr>	
+		<% count += 1 %>
+	<% end %>
 </table>
