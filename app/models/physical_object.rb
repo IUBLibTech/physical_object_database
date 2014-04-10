@@ -5,9 +5,9 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :picklist
   belongs_to :container
   has_one :technical_metadatum
-  has_many :workflow_statuses
   has_many :digital_files
-  
+  has_many :workflow_statuses
+  include WorkflowStatusModule
 
   attr_accessor :formats 
   def formats
@@ -62,4 +62,5 @@ class PhysicalObject < ActiveRecord::Base
       OpenReelTm.class
     end
   end
+
 end

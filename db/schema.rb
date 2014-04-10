@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140403152552) do
+ActiveRecord::Schema.define(version: 20140410140212) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -96,16 +96,6 @@ ActiveRecord::Schema.define(version: 20140403152552) do
     t.datetime "updated_at"
   end
 
-  create_table "physical_object_workflow_statuses", force: true do |t|
-    t.integer  "physical_object_id",          limit: 8
-    t.integer  "workflow_status_template_id", limit: 8
-    t.string   "name"
-    t.text     "notes"
-    t.string   "object_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "physical_objects", force: true do |t|
     t.integer  "bin_id"
     t.integer  "box_id",                limit: 8
@@ -168,12 +158,10 @@ ActiveRecord::Schema.define(version: 20140403152552) do
 
   create_table "workflow_statuses", force: true do |t|
     t.integer  "workflow_status_template_id"
-    t.integer  "condition_status_template_id"
     t.integer  "physical_object_id"
     t.integer  "batch_id"
     t.integer  "bin_id"
     t.text     "notes"
-    t.integer  "order"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

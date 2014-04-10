@@ -197,6 +197,7 @@ class PhysicalObjectsController < ApplicationController
       params.require(:physical_object).permit(:title, :title_control_number, 
         :unit, :home_location, :call_number, :shelf_location, :iucat_barcode, :format, 
         :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
-        :content_duration, :has_media, :open_reel_tm, :bin_id, :unit)
+        :content_duration, :has_media, :open_reel_tm, :bin_id, :unit,
+	:current_workflow_status)
     end
 end
