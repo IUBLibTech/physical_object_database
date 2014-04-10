@@ -30,16 +30,6 @@
 				<% end %>
  			</td>
  		</tr>
- 		<tr>
-			<th>Status</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.text_field(:status) %>
-				<% else %>
-					<%= @bin.status %>
-				<% end %>
- 			</td>
-		</tr>
 		<tr>
 			<th>Assigned to batch</th>
 			<td>

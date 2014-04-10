@@ -11,13 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140410140212) do
+ActiveRecord::Schema.define(version: 20140410185507) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
     t.string   "name"
     t.text     "description"
-    t.string   "batch_status"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -28,7 +27,6 @@ ActiveRecord::Schema.define(version: 20140410140212) do
     t.integer  "picklist_specification_id", limit: 8
     t.string   "identifier",                          null: false
     t.text     "description"
-    t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
