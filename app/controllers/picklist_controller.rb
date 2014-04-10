@@ -67,9 +67,9 @@ class PicklistController < ApplicationController
 		po = PhysicalObject.find(params[:po_id])
 		if po.picklist_id == @picklist.id
 			if po.update_attributes(picklist_id: nil)
-				flash[:notice] = "#{po.shelf_number} was successfully removed from the pocklist"
+				flash[:notice] = "#{po.title} was successfully removed from the pocklist"
 			else
-				flash[:notice] = "Unable to remove #{po.shelf_number} from the pocklist"
+				flash[:notice] = "Unable to remove #{po.title} from the pocklist"
 			end
 		end
 		redirect_to(action: 'show', id: picklist.id) 

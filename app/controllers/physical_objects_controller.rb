@@ -7,9 +7,12 @@ class PhysicalObjectsController < ApplicationController
   def new
     # we instantiate an new object here because rails will pick up any default values assigned
     # by the database and the form will be prepopulated with those values
-    # we can also pass a hash to PhysicalObject.new({iu_barcode => 123436}) to assign defaults programmatically
+    # we can also pass a hash to PhysicalObject.new({iucat_barcode => 123436}) to assign defaults programmatically
     @physical_object = PhysicalObject.new
-    @tm = @physical_object.create_tm(@physical_object.formats["Cassette Tape"])
+    #default format for now
+    format = @physical_object.formats["Open Reel Tape"]
+    @physical_object.format = format
+    @tm = @physical_object.create_tm(format)
     @digital_files = []
     @formats = @physical_object.formats
     @edit_mode = true
@@ -23,13 +26,13 @@ class PhysicalObjectsController < ApplicationController
       tm.physical_object = @physical_object
       tm.update_form_params(params)
       tm.save
-      flash[:notice] = "#{@physical_object.shelf_number} was successfully created"
+      flash[:notice] = "<i>#{@physical_object.title}</i> was successfully created".html_safe
       redirect_to(:action => 'index')
     else
       if @physical_object.format.length == 0
-        flash[:notice] = "You must specify a format"
+        flash[:notice] = "<b class='warning'>You must specify a format</b>"
       else
-        flash[:notice] = "Unable to save physical object"
+        flash[:notice] = "<b class=warning>Unable to save physical object</b>"
       end
       @edit_mode = true
       render('new')
@@ -59,14 +62,13 @@ class PhysicalObjectsController < ApplicationController
     else
       @tm = @physical_object.technical_metadatum.specialize  
     end
-    
   end
 
   def update
     @physical_object = PhysicalObject.find(params[:id])
     old_format = @physical_object.format
     if ! @physical_object.update_attributes(physical_object_params)
-      flash[:notice] = "Unable to save #{@physical_object.shelf_number}"
+      flash[:notice] = "Unable to save #{@physical_object.title}"
       @edit_mode = true
       render("show")
     end
@@ -85,9 +87,7 @@ class PhysicalObjectsController < ApplicationController
       puts(tm.to_yaml)
       tm.save
     end
-
-    
-    flash[:notice] = "#{@physical_object.shelf_number} successfully updated"
+    flash[:notice] = "<i>#{@physical_object.title}</i> successfully updated".html_safe
     redirect_to(action: 'index')
   end
 
@@ -97,7 +97,7 @@ class PhysicalObjectsController < ApplicationController
       po.technical_metadatum.specialize.destroy
     end
     po.destroy
-    flash[:notice] = "#{po.shelf_number} was successfully deleted."
+    flash[:notice] = "<i>#{po.title}</i> was successfully deleted.".html_safe
     redirect_to(:action => 'index')
   end
   
@@ -129,7 +129,7 @@ class PhysicalObjectsController < ApplicationController
         tm.save
         po.save
       end
-      flash[:notice] = "#{template.shelf_number} was successfully split into #{params[:count]} records."
+      flash[:notice] = "<i>#{template.title}</i> was successfully split into #{params[:count]} records.".html_safe
     end
     redirect_to({:action => 'index'})
   end
@@ -174,6 +174,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def render_tm_partial(po)
+    puts("Rendering TM Partial: #{po.format}")
     if po.format == "Open Reel Tape"
       "technical_metadatum/show_open_reel_tape_tm"
     elsif po.format == "Cassette Tape"
@@ -190,12 +191,12 @@ class PhysicalObjectsController < ApplicationController
   private
     def physical_object_params
       # same as using params[:physical_object] except that it
-      # - allows listed attributes to ne mass-assigned
+      # allows listed attributes to be mass-assigned
       # we could also do params.require(:some_field).permit*...
       # if certain fields were required for the object instantiation.
-      params.require(:physical_object).permit(:memnon_barcode, 
-        :iu_barcode, :shelf_number, :call_number, :title, :format, :nit,
-        :collection_id, :primary_location, :secondary_location, :composer_performer,
-        :sequence, :open_reel_tm, :bin_id, :unit, )
+      params.require(:physical_object).permit(:title, :title_control_number, 
+        :unit, :home_location, :call_number, :shelf_location, :iucat_barcode, :format, 
+        :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
+        :content_duration, :has_media, :open_reel_tm, :bin_id, :unit)
     end
 end

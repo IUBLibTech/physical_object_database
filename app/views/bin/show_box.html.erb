@@ -1,0 +1,12 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+	  <%= link_to("Edit", {action: 'edit_box', id: @box.id}) %>
+	</div>
+	<div class="contextMenuItem">
+	  <%= link_to("Delete", {action: 'destroy'}, data: {confirm: 
+	  	"This will permanently delete this box\n"+
+	  	"and remove all Physical Objects from it.\n"+
+	  	"Are you sure you wish to continue?"}) %>
+	</div>
+<% end %>
+<%= render(partial: 'box') %>

@@ -8,13 +8,26 @@
 	<div class="contextMenuItem">
 	  <%= link_to("Delete Bin", {:action => 'delete', :id => @bin.id}) %>
 	</div>
+	<div class="contextMenuItem">
+		<%= link_to("Create Box", "#", onclick: "new_box(#{@bin.id})") %>
+	</div>
 <% end %>
-<div class="left">
+
+
+<%= csrf_meta_tag %>
+<div id="dialog" title="New Box" class="dialog"></div>
+<div id="assign_bin_dialog" title="Assign Bin" class="dialog"></div>
+	
+
+<div id="bin_div" class="left">
   <h2>Bin</h2>
-    <% @edit_mode = false %>
     <%= render(:partial => "bin") %>
 </div>
 <div class="left">
 	<h2>Boxes</h2>
 	<%= render(partial: 'boxes') %>
+</div>
+<div class="left">
+	<h2>Physical Objects</h2>
+	<%= render(partial: 'physical_objects') %>
 </div>

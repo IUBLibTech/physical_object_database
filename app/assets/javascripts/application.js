@@ -13,4 +13,5 @@
 //= require jquery
 //= require jquery_ujs
 //= require picklist_specification
+//= require picklist
 //= require_tree .

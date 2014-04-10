@@ -108,18 +108,23 @@ ActiveRecord::Schema.define(version: 20140403152552) do
 
   create_table "physical_objects", force: true do |t|
     t.integer  "bin_id"
-    t.integer  "memnon_barcode",     limit: 8
-    t.integer  "iu_barcode",         limit: 8
-    t.string   "shelf_number"
-    t.string   "call_number"
+    t.integer  "box_id",                limit: 8
+    t.integer  "picklist_id",           limit: 8
+    t.integer  "container_id",          limit: 8
     t.text     "title"
-    t.string   "format"
+    t.string   "title_control_number"
     t.string   "unit"
-    t.string   "collection_id"
-    t.string   "primary_location"
-    t.string   "secondary_location"
-    t.string   "composer_performer"
-    t.integer  "sequence",                     default: 0
+    t.string   "home_location"
+    t.string   "call_number"
+    t.string   "shelf_location"
+    t.integer  "iucat_barcode",         limit: 8
+    t.string   "format"
+    t.integer  "carrier_stream_index",            default: 0
+    t.string   "collection_identifier"
+    t.integer  "mdpi_barcode",          limit: 8
+    t.string   "format_duration"
+    t.string   "content_duration"
+    t.boolean  "has_media"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -128,7 +133,6 @@ ActiveRecord::Schema.define(version: 20140403152552) do
     t.string   "name"
     t.string   "format"
     t.text     "description"
-    t.text     "fields"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
