@@ -14,7 +14,7 @@
 			<th>Identifier</th>
 			<th>Description</th>
 			<th>Batch</th>
-			<th>Status</th>
+			<th>Workflow Status</th>
 			<th>Actions</th>
 		</tr>
 		<% count = 1 %>
@@ -24,7 +24,7 @@
 				<td><%= b.identifier %></td>
 				<td><%= b.description %></td>
 				<td><%= b.batch.nil? ? "" : b.batch.name %></td>
-				<td><%= b.status %></td>
+				<td><%= b.current_workflow_status.nil? ? "" : b.current_workflow_status.name %></td>
 				<td>
 					<%= link_to("Show", {action: 'show', id: b.id}) %>
 	        <%= link_to("Edit", {action: 'edit', id: b.id}) %>

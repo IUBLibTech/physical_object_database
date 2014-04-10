@@ -30,16 +30,6 @@
 				<% end %>
 			</td>
 		</tr>
-		<tr>
-			<th>Status</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.text_field(:batch_status) %>
-				<% else %>
-					<%= @batch.batch_status %>
-				<% end %>
-			</td>
-		</tr>
 
 		<%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @batch %>
 
