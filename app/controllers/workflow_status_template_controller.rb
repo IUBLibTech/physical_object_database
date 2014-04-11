@@ -1,12 +1,5 @@
 class WorkflowStatusTemplateController < ApplicationController
 
-	def index
-	        @all_workflow_status_templates = {}
-		WorkflowStatusTemplate.new.object_types.keys.each do |object_type|
-			@all_workflow_status_templates[object_type] = WorkflowStatusTemplate.where(object_type: object_type).order('sequence_index ASC')
-		end
-	end
-
 	def workflow
 		@workflow_status_template = WorkflowStatusTemplate.new
 		@workflow_status_template.object_type = @workflow_status_template.object_types["Physical Object"]

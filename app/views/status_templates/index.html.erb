@@ -7,7 +7,13 @@
   </div>
 <% end %>
 
-<h2>Statuses</h2>
+
+<h2>Workflow Statuses</h2>
 <% WorkflowStatusTemplate.new.object_types.keys.each do |object_type| %>
-  <%= render 'workflow_status_table', object_type: object_type %>
+  <%= render 'workflow_status_template/workflow_status_table', object_type: object_type %>
+<% end %>
+
+<h2>Condition Statuses</h2>
+<% ConditionStatusTemplate.new.object_types.keys.each do |object_type| %>
+  <%= render 'condition_status_template/condition_status_table', object_type: object_type %>
 <% end %>

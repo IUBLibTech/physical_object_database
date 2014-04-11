@@ -15,9 +15,9 @@
       <td><%= row.description[0, 20] %><% if row.description.length > 20 %><%= '...' %><% end %></td>
       <td><%= row.sequence_index %></td>
       <td>
-        <%= link_to("Show", {action: 'show', id: row.id}) %>
-        <%= link_to("Edit", {action: 'edit', id: row.id}) %>
-        <%= link_to("Delete", {action: 'delete', id: row.id}) %>
+        <%= link_to("Show", {controller: :workflow_status_template, action: 'show', id: row.id}) %>
+        <%= link_to("Edit", {controller: :workflow_status_template, action: 'edit', id: row.id}) %>
+        <%= link_to("Delete", {controller: :workflow_status_template, action: 'delete', id: row.id}) %>
       </td>
     </tr>
     <% row_count += 1 %>
