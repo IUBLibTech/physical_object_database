@@ -6,7 +6,7 @@
     <%= link_to("Delete", {action: 'delete', id: @workflow_status_template.id}) %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("List Statuses", {action: 'index', id: @workflow_status_template.id}) %>
+    <%= link_to("List Statuses", {controller: :status_templates, action: 'index'} ) %>
   </div>
 <% end %>
 <div>
