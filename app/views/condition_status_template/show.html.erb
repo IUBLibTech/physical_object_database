@@ -1,0 +1,17 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Edit", {action: 'edit', id: @condition_status_template.id}) %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Delete", {action: 'delete', id: @condition_status_template.id}) %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("List Statuses", {action: 'index', id: @condition_status_template.id}) %>
+  </div>
+<% end %>
+<div>
+  	<% @submit_text = "Create Condition Status" %>
+  	<% @edit_mode = false %>
+  	<% @action = '' %>
+   	<%= render(:partial => "condition_status_template_form") %>
+</div>

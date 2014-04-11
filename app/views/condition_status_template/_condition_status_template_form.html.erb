@@ -1,0 +1,41 @@
+<%= form_for(:condition_status_template, :url => {:action => @action, id: @condition_status_template.id}) do |f| %>
+<h2>Condition Status</h2>
+<table>
+  <tr>
+    <th>Name</th>
+    <td>
+      <% if @edit_mode %>
+        <%= f.text_field(:name) %>
+      <% else %>
+        <%= @condition_status_template.name %>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td>
+      <% if @edit_mode %>
+        <%= f.text_field(:description) %>
+      <% else %>
+        <%= @condition_status_template.description %>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th>Object Type</th>
+    <td>
+      <% if @edit_mode %>
+        <%= f.select(:object_type, @condition_status_template.object_types) %>
+      <% else %>
+        <%= @condition_status_template.object_type %>
+      <% end %>
+    </td>
+  </tr>
+</table>
+
+<%# add the submit and close off the form_for %>
+<%if @edit_mode or @action == 'destroy' %>
+  <div class="clear" ><%= submit_tag(@submit_text) %></div>
+<% end %>
+
+<% end %>

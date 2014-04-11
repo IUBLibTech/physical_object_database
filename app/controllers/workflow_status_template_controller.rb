@@ -5,11 +5,7 @@ class WorkflowStatusTemplateController < ApplicationController
 		WorkflowStatusTemplate.new.object_types.keys.each do |object_type|
 			@all_workflow_status_templates[object_type] = WorkflowStatusTemplate.where(object_type: object_type).order('sequence_index ASC')
 		end
-		@po_templates = 
-			WorkflowStatusTemplate.where(object_type: 'Physical Object').order('sequence_index ASC')
-		@po_templates = @all_workflow_status_templates['Physical Object']
 	end
-
 
 	def workflow
 		@workflow_status_template = WorkflowStatusTemplate.new
@@ -76,37 +72,6 @@ class WorkflowStatusTemplateController < ApplicationController
 			render('delete')
 		end
  	end
-
-
-
-
-	def new_condition
-
-	end
-
-	def create_condition
-
-	end
-
-	def edit_condition
-
-	end
-
-	def update_condition
-
-	end
-
-	def show_condition
-
-	end
-
-	def delete_condition
-
-	end
-
-	def destroy_condition
-
-	end
 
 	private
 		def insert_sequence(workflow_status_template)

@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Create New Workflow Status", controller: :workflow_status_template, action: :new) %>
+    <%= link_to("Create New Condition Status", controller: :workflow_status_template, action: :new) %>
   </div>
   <div class="contextMenuItem">
     <%= link_to("Create New Condition Status", controller: :condition_status_template, action: :new) %>
@@ -8,6 +8,6 @@
 <% end %>
 
 <h2>Statuses</h2>
-<% WorkflowStatusTemplate.new.object_types.keys.each do |object_type| %>
-  <%= render 'workflow_status_table', object_type: object_type %>
+<% ConditionStatusTemplate.new.object_types.keys.each do |object_type| %>
+  <%= render 'condition_status_table', object_type: object_type %>
 <% end %>
