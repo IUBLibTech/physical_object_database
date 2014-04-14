@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140414144525) do
+ActiveRecord::Schema.define(version: 20140414204709) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -66,6 +66,8 @@ ActiveRecord::Schema.define(version: 20140414144525) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
 
   create_table "containers", force: true do |t|
     t.datetime "created_at"
