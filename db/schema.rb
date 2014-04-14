@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140410185507) do
+ActiveRecord::Schema.define(version: 20140414142303) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 20140410185507) do
   end
 
   add_index "condition_status_templates", ["name"], name: "index_condition_status_templates_on_name", unique: true, using: :btree
+  add_index "condition_status_templates", ["object_type", "name"], name: "index_cst_on_object_and_name", using: :btree
 
   create_table "containers", force: true do |t|
     t.datetime "created_at"
@@ -153,6 +154,7 @@ ActiveRecord::Schema.define(version: 20140410185507) do
   end
 
   add_index "workflow_status_templates", ["name"], name: "index_workflow_status_templates_on_name", unique: true, using: :btree
+  add_index "workflow_status_templates", ["object_type", "sequence_index"], name: "index_wst_on_object_type_and_sequence_index", using: :btree
 
   create_table "workflow_statuses", force: true do |t|
     t.integer  "workflow_status_template_id"
@@ -163,5 +165,9 @@ ActiveRecord::Schema.define(version: 20140410185507) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "workflow_statuses", ["batch_id", "workflow_status_template_id"], name: "index_ws_on_batch_and_wst", using: :btree
+  add_index "workflow_statuses", ["bin_id", "workflow_status_template_id"], name: "index_ws_on_bin_and_wst", using: :btree
+  add_index "workflow_statuses", ["physical_object_id", "workflow_status_template_id"], name: "index_ws_on_po_and_wst", using: :btree
 
 end
