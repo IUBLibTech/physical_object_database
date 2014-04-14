@@ -1,6 +1,6 @@
 class ConditionStatusTemplate < ActiveRecord::Base
 
-	#FIXME: add has_many :condition_statuses
+	has_many :condition_statuses
 	validates :name, presence: true, uniqueness: true
 	
         attr_accessor :object_types

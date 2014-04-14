@@ -4,8 +4,6 @@ class WorkflowStatus < ActiveRecord::Base
 	belongs_to :physical_object
 	belongs_to :batch
 	belongs_to :bin
-	#notes
-	#FIXME: add indexes?
 
 	scope :sequenced, -> { joins(:workflow_status_template).order('workflow_status_templates.sequence_index ASC') }
 

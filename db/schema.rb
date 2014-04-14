@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140414142303) do
+ActiveRecord::Schema.define(version: 20140414144525) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -58,6 +58,14 @@ ActiveRecord::Schema.define(version: 20140414142303) do
 
   add_index "condition_status_templates", ["name"], name: "index_condition_status_templates_on_name", unique: true, using: :btree
   add_index "condition_status_templates", ["object_type", "name"], name: "index_cst_on_object_and_name", using: :btree
+
+  create_table "condition_statuses", force: true do |t|
+    t.integer  "condition_status_template_id"
+    t.integer  "physical_object_id"
+    t.text     "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "containers", force: true do |t|
     t.datetime "created_at"
