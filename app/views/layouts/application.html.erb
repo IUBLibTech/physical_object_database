@@ -4,6 +4,7 @@
   <title>Pod</title>
   <%= stylesheet_link_tag "application", media: "all" %>
   <%= javascript_include_tag "public" %>
+  <%= javascript_include_tag "application" %>
 </head>
 <body>
   <div id="branding">
@@ -23,7 +24,7 @@
       <%= link_to("Pick Lists", controller: 'picklist_specification', action: 'index') %>
     </div>
     <div class="menuItem">
-      <%= link_to("Statuses", :controller => 'workflow_status_template', :action => 'index') %>
+      <%= link_to("Statuses", :controller => 'status_templates', :action => 'index') %>
     </div>
     <div class="menuItem">
       <%= link_to("Search", :controller => 'search', :action => 'index') %>

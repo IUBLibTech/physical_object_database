@@ -1,0 +1,5 @@
+    <% if @edit_mode %>
+      <tr><th>Condition Status</th><td><%= f.select :current_condition_status, target_object.condition_status_options, selected: target_object.current_condition_status.nil? ? "" : target_object.current_condition_status.name, prompt: 'Select a condition status...' %></td></tr>
+    <% else %>
+      <tr><th>Condition Status</th><td><%= target_object.current_condition_status.nil? ? "" :  target_object.current_condition_status.name %></td></tr> 
+    <% end %>

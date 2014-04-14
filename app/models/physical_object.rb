@@ -8,6 +8,9 @@ class PhysicalObject < ActiveRecord::Base
   has_many :digital_files
   has_many :workflow_statuses
   include WorkflowStatusModule
+  has_many :condition_statuses
+  accepts_nested_attributes_for :condition_statuses, allow_destroy: true
+  include ConditionStatusModule
 
   attr_accessor :formats 
   def formats

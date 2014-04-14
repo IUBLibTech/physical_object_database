@@ -70,25 +70,26 @@ class PhysicalObjectsController < ApplicationController
     if ! @physical_object.update_attributes(physical_object_params)
       flash[:notice] = "Unable to save #{@physical_object.title}"
       @edit_mode = true
-      render("show")
-    end
-    
-    # format change requires deleting the old technical_metadatum and creating a new one
-    if old_format != params[:physical_object][:format]
-      @physical_object.technical_metadatum.specialize.destroy
-      tm = @physical_object.create_tm(@physical_object.format)
-      tm.physical_object = @physical_object
-      tm.update_form_params(params)
-      tm.save
+      #redirect_to(action: :edit, id: @physical_object.id)
+      render action: :edit
     else
-      puts(params.to_yaml)
-      tm = @physical_object.technical_metadatum.specialize
-      tm.update_form_params(params)
-      puts(tm.to_yaml)
-      tm.save
+      # format change requires deleting the old technical_metadatum and creating a new one
+      if old_format != params[:physical_object][:format]
+        @physical_object.technical_metadatum.specialize.destroy
+        tm = @physical_object.create_tm(@physical_object.format)
+        tm.physical_object = @physical_object
+        tm.update_form_params(params)
+        tm.save
+      else
+        puts(params.to_yaml)
+        tm = @physical_object.technical_metadatum.specialize
+        tm.update_form_params(params)
+        puts(tm.to_yaml)
+        tm.save
+      end
+      flash[:notice] = "<i>#{@physical_object.title}</i> successfully updated".html_safe
+      redirect_to(action: 'index')
     end
-    flash[:notice] = "<i>#{@physical_object.title}</i> successfully updated".html_safe
-    redirect_to(action: 'index')
   end
 
   def destroy
@@ -198,6 +199,6 @@ class PhysicalObjectsController < ApplicationController
         :unit, :home_location, :call_number, :shelf_location, :iucat_barcode, :format, 
         :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
         :content_duration, :has_media, :open_reel_tm, :bin_id, :unit,
-	:current_workflow_status)
+	:current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
     end
 end

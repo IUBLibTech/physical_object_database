@@ -1,9 +1,9 @@
 <table>
 <tr class="status_object_type">
-        <th colspan="4"><%= object_type %> Workflow Statuses</th>
+        <th colspan="4"><%= object_type %> Condition Statuses</th>
 </tr>
 <% row_count = 0 %>
-<% @templates = @all_workflow_status_templates[object_type] %>
+<% @templates = @all_condition_status_templates[object_type] %>
 <% unless @templates.nil? || @templates.size.zero? %>
   <% @templates.each do |row| %>
     <% if row_count.odd? %>
@@ -13,11 +13,10 @@
     <%end%>
       <td><%= row.name %></td>
       <td><%= row.description[0, 20] %><% if row.description.length > 20 %><%= '...' %><% end %></td>
-      <td><%= row.sequence_index %></td>
       <td>
-        <%= link_to("Show", {controller: :workflow_status_template, action: 'show', id: row.id}) %>
-        <%= link_to("Edit", {controller: :workflow_status_template, action: 'edit', id: row.id}) %>
-        <%= link_to("Delete", {controller: :workflow_status_template, action: 'delete', id: row.id}) %>
+        <%= link_to("Show", {controller: :condition_status_template, action: 'show', id: row.id}) %>
+        <%= link_to("Edit", {controller: :condition_status_template, action: 'edit', id: row.id}) %>
+        <%= link_to("Delete", {controller: :condition_status_template, action: 'delete', id: row.id}) %>
       </td>
     </tr>
     <% row_count += 1 %>

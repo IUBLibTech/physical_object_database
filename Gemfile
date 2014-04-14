@@ -3,6 +3,9 @@ source 'https://rubygems.org'
 #act_as_relation handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
 gem "acts_as_relation"
 
+#nested_form handles form fields for the has_many objects associated to the main form object
+gem "nested_form"
+
 #simple_enum handles the enumerated values for technical metadata fields (open reel tape size for instance)
 #gem 'simple_enum'
 
