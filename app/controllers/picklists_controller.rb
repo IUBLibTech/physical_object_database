@@ -1,4 +1,4 @@
-class PicklistController < ApplicationController
+class PicklistsController < ApplicationController
 
 	def new
 		@picklist = Picklist.new
@@ -14,7 +14,7 @@ class PicklistController < ApplicationController
 			render('new')
 		elsif @picklist.save
 			flash[:notice] = "Successfully created #{@picklist.name}"
-			redirect_to(controller: 'picklist_specification', action: "index")
+			redirect_to(controller: 'picklist_specifications', action: "index")
 		else
 			flash[:notice] = "Unable to create #{@picklist.name}"
 			render('new')
@@ -44,7 +44,7 @@ class PicklistController < ApplicationController
 			render('edit')
 		elsif @picklist.update_attributes(picklist_params)
 			flash[:notice] = "Successfully updated #{@picklist.name}"
-			redirect_to(controller: 'picklist_specification', action: 'index')	
+			redirect_to(controller: 'picklist_specifications', action: 'index')	
 		else
 			flash[:notice] = "Failed to update #{@picklist.name}"
 			render('edit')
@@ -55,10 +55,10 @@ class PicklistController < ApplicationController
 		@picklist = Picklist.find(params[:id])
 		if @picklist.destroy
 			flash[:notice] = "Successfully deleted #{@picklist.name}"
-			redirect_to(controller: 'picklist_specification', action: 'index')
+			redirect_to(controller: 'picklist_specifications', action: 'index')
 		else
 			flash[:notice] = "Unable to delete #{@picklist.name}"
-			redirect_to(controller: 'picklist_specification', action: 'index')
+			redirect_to(controller: 'picklist_specifications', action: 'index')
 		end		
 	end
 
