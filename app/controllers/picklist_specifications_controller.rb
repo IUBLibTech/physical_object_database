@@ -1,4 +1,4 @@
-class PicklistSpecificationController < ApplicationController
+class PicklistSpecificationsController < ApplicationController
 
 	def index
 		@picklist_specs = PicklistSpecification.all

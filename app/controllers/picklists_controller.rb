@@ -1,4 +1,4 @@
-class PicklistController < ApplicationController
+class PicklistsController < ApplicationController
 
 	def new
 		@picklist = Picklist.new

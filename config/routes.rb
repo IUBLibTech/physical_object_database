@@ -11,6 +11,7 @@ Pod::Application.routes.draw do
   root "physical_objects#index"
 
   resources :physical_objects
+  resources :picklists
   
   match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
 
