@@ -9,8 +9,10 @@ Pod::Application.routes.draw do
   #get "physical_objects/destroy"
  
   root "physical_objects#index"
+
+  resources :physical_objects
   
-  match ':controller(/:action(/:id))', :via => [:get, :post]
+  match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

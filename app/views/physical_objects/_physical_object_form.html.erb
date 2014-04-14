@@ -1,4 +1,5 @@
-<%= form_for(:physical_object, :url => {:action => @action, :id => @physical_object.id}) do |f| %>
+<% @tm ||= @physical_object.technical_metadatum.specialize %>
+<%= nested_form_for(@physical_object) do |f| %>
 <div id="physicalObject" class="left">
   <h2>Physical Object</h2>
   <table summary="Physical Object Fields">
@@ -105,6 +106,7 @@
   <div id="assigned_to_div">
     <table>
       <%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @physical_object %>
+
       <tr>
         <th>Picklist</th>
         <td>
@@ -144,7 +146,13 @@
           <% end %>
         </td>
       </tr>
-    </table>  
+    </table>
+    <%= f.fields_for :condition_statuses do |condition| %>
+      <%= render 'condition_status_template/condition_status_fields', f: condition, target_object: @physical_object %>
+    <% end %>
+    <% if @edit_mode %>
+        <%= f.link_to_add "Add a condition status", :condition_statuses %>
+    <% end %>
   </div>
 </div>
 <%= f.fields_for @tm do |tm_fields| %>
@@ -152,12 +160,16 @@
     <%= render(:partial => render_tm_partial(@physical_object), :locals => {:f => tm_fields}) %>
   </div>
 <% end %>
-
 <div class="left">
 <h2>Digital Files</h2>
-  <% @digital_files.each do |files| %>
-    <%= render(partial: 'media_files/media_file_form', locals: {f: files}) %>
+  <% unless @digital_files.nil? %>
+    <% @digital_files.each do |files| %>
+      <%= render(partial: 'media_files/media_file_form', locals: {f: files}) %>
+    <% end %>
   <% end %>
+</div>
+<div>
+
 </div>
 <%# add the submit and close off the form_for %>
 <%if @edit_mode or @action == 'destroy' %>

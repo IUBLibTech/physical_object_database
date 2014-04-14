@@ -12,6 +12,7 @@
 //= require_self
 //= require jquery
 //= require jquery_ujs
+//= require jquery_nested_form
 //= require picklist_specification
 //= require picklist
 //= require_tree .
