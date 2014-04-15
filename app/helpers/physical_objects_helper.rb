@@ -7,7 +7,7 @@ module PhysicalObjectsHelper
   		po = PhysicalObject.new(
   				mdpi_barcode: r["MDPI Barcode"].to_i,
       		iucat_barcode: r["IU Barcode"].to_i,
-      		shelf_number: r["Shelf Number"],
+      		shelf_location: r["Shelf Location"],
       		call_number: r["Call Number"],
       		title: r["Title"],
       		title_control_number: r["Title Control Number"],

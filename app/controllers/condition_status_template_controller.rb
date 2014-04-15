@@ -20,7 +20,7 @@ class ConditionStatusTemplateController < ApplicationController
   def create
     @condition_status_template = ConditionStatusTemplate.new(condition_status_template_params)
     if @condition_status_template.save
-      redirect_to(action: 'index')
+      redirect_to(controller: 'status_templates', action: 'index')
     else
       render('new')
     end

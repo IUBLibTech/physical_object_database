@@ -1,8 +1,6 @@
 class PhysicalObjectsController < ApplicationController
   
   helper :all
-  
-  helper_method :render_tm_partial
 
   def new
     # we instantiate an new object here because rails will pick up any default values assigned
@@ -17,6 +15,8 @@ class PhysicalObjectsController < ApplicationController
     @formats = @physical_object.formats
     @edit_mode = true
     @action = "create"
+    @submit_text = "Create Physcial Object"
+    @display_assinged = false
   end
 
   def create
@@ -48,7 +48,6 @@ class PhysicalObjectsController < ApplicationController
     @physical_object = PhysicalObject.find(params[:id])
     @digital_files = @physical_object.digital_files
     @tm = @physical_object.technical_metadatum.specialize
-    puts(@tm)
   end
 
   def edit
@@ -56,6 +55,7 @@ class PhysicalObjectsController < ApplicationController
     @edit_mode = true
     @physical_object = PhysicalObject.find(params[:id])
     @digital_files = @physical_object.digital_files
+    @display_assinged = true
     if @physical_object.technical_metadatum.nil?
       flash[:notice] = "A physical object was created without specifying its technical metadatum..."
       redirect_to(action: 'show', id: @physical_object.id)
@@ -109,7 +109,7 @@ class PhysicalObjectsController < ApplicationController
     @tm = @physical_object.technical_metadatum.specialize
     @digital_files = @physical_object.digital_files
     @count = 0;
-    
+    @display_assinged = true
   end
   
   def split_update
@@ -157,10 +157,12 @@ class PhysicalObjectsController < ApplicationController
     @edit_mode = true
     @physical_object = params[:id] == '0' ? PhysicalObject.new : PhysicalObject.find(params[:id])
     if ! @physical_object.technical_metadatum.nil?
-      @tm = @physical_object.technical_metadatum.specialize
+      @tm = @physical_object.technical_metadatum.as_technical_metadatum
     else
+      tm = TechnicalMetadatum.new
       @tm = @physical_object.create_tm(f)
-      @physical_object.technical_metadatum = @tm.becomes(TechnicalMetadatum)
+      @physical_object.technical_metadatum = tm
+      tm.as_technical_metadatum = @tm
     end
     
     if f == "Open Reel Tape"
@@ -171,21 +173,6 @@ class PhysicalObjectsController < ApplicationController
       render(partial: 'technical_metadatum/show_lp_tm')
     elsif f == "Compact Disc"
       render(partial: 'technical_metadatum/show_compact_disc_tm')
-    end
-  end
-
-  def render_tm_partial(po)
-    puts("Rendering TM Partial: #{po.format}")
-    if po.format == "Open Reel Tape"
-      "technical_metadatum/show_open_reel_tape_tm"
-    elsif po.format == "Cassette Tape"
-        "technical_metadatum/show_cassette_tape_tm"
-    elsif po.format == "LP"
-        "technical_metadatum/show_lp_tm"
-    elsif po.format == "Compact Disc"
-      "technical_metadatum/show_compact_disc_tm"
-    else
-      "technical_metadatum/show_unknown_tm"
     end
   end
   

@@ -13,7 +13,7 @@ class WorkflowStatusTemplateController < ApplicationController
 	def create
 		@workflow_status_template = WorkflowStatusTemplate.new(workflow_status_template_params)
 		if insert_sequence(@workflow_status_template)
-			redirect_to(action: 'index')
+			redirect_to(controller: 'status_templates', action: 'index')
 		else
 			render('new')
 		end

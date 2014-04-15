@@ -63,7 +63,14 @@ td.no-border {
 }
 
 .menuItem:first-child {
-  padding: 10px 0 0 154px;
+  padding: 10px 15px 0;
+}
+
+#basic_search_form {
+  padding: 10px 0 0 45px;
+}
+.white {
+  color: white;
 }
 
 a:link {
@@ -118,4 +125,8 @@ tr.even {
 
 b.warning {
   color: red;
+}
+
+#new_picklist_spec_div>input {
+  margin-left: 200px;
 }

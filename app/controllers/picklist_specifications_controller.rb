@@ -92,19 +92,25 @@ class PicklistSpecificationsController < ApplicationController
 	end
 
 	def get_form
-		@ps = PicklistSpecification.new(format: params[:format])
-		@tm = @ps.create_tm
-		@tm.picklist_specification = @ps
-		@ps.technical_metadata<<@tm.becomes(TechnicalMetadatum)
-		@action = 'create'
-		@submit_text = "Create New Picklist Specification"
-		if @ps.format == "Open Reel Tape"
-			@edit_mode = params[:edit_mode] == 'true'
-			render(partial: 'ot', format: @format)
+		if !params[:format].nil? and params[:format].length > 0
+			@ps = PicklistSpecification.new(format: params[:format])
+			tm = TechnicalMetadatum.new
+			@tm = @ps.create_tm
+			@tm.picklist_specification = @ps
+			@ps.technical_metadata << tm
+			tm.as_technical_metadatum = @tm
+			@action = 'create'
+			@submit_text = "Create New Picklist Specification"
+			if @ps.format == "Open Reel Tape"
+				@edit_mode = params[:edit_mode] == 'true'
+				render(partial: 'ot', format: @format)
+			else 
+				@formats = PhysicalObject.new.formats
+				@format = @ps.format
+				render(partial: 'unsupported_format')
+			end
 		else
-			@formats = PhysicalObject.new.formats
-			@format = @ps.format
-			render(partial: 'unsupported_format')
+			render(partial: 'blank')		
 		end
 	end
 
