@@ -1,4 +1,4 @@
-class PicklistController < ApplicationController
+class PicklistsController < ApplicationController
 
 	def new
 		@picklist = Picklist.new
@@ -14,7 +14,7 @@ class PicklistController < ApplicationController
 			render('new')
 		elsif @picklist.save
 			flash[:notice] = "Successfully created #{@picklist.name}"
-			redirect_to(controller: 'picklist_specification', action: "index")
+			redirect_to(controller: 'picklist_specifications', action: "index")
 		else
 			flash[:notice] = "Unable to create #{@picklist.name}"
 			render('new')
@@ -22,9 +22,18 @@ class PicklistController < ApplicationController
 	end
 
 	def show
+		if request.format.csv? || request.format.xls?
+			params[:id] = params[:id].sub(/picklist_/, '')
+		end
 		@picklist = Picklist.find(params[:id])
 		@physical_objects = PhysicalObject.where(picklist_id: @picklist.id)
 		@edit_mode = false
+
+		respond_to do |format|
+			format.html
+			format.csv { send_data PhysicalObject.to_csv(@physical_objects) }
+			format.xls
+		end
 	end
 
 	def edit
@@ -44,7 +53,7 @@ class PicklistController < ApplicationController
 			render('edit')
 		elsif @picklist.update_attributes(picklist_params)
 			flash[:notice] = "Successfully updated #{@picklist.name}"
-			redirect_to(controller: 'picklist_specification', action: 'index')	
+			redirect_to(controller: 'picklist_specifications', action: 'index')	
 		else
 			flash[:notice] = "Failed to update #{@picklist.name}"
 			render('edit')
@@ -55,10 +64,10 @@ class PicklistController < ApplicationController
 		@picklist = Picklist.find(params[:id])
 		if @picklist.destroy
 			flash[:notice] = "Successfully deleted #{@picklist.name}"
-			redirect_to(controller: 'picklist_specification', action: 'index')
+			redirect_to(controller: 'picklist_specifications', action: 'index')
 		else
 			flash[:notice] = "Unable to delete #{@picklist.name}"
-			redirect_to(controller: 'picklist_specification', action: 'index')
+			redirect_to(controller: 'picklist_specifications', action: 'index')
 		end		
 	end
 
@@ -74,6 +83,13 @@ class PicklistController < ApplicationController
 		end
 		redirect_to(action: 'show', id: picklist.id) 
 	end
+
+        def csv
+          @picklist = Picklist.find(params[:id])
+          @physical_objects = PhysicalObject.where(picklist_id: @picklist.id)
+          send_data PhysicalObject.to_csv(@physical_objects)
+        end
+
 
 	private
 		def picklist_params

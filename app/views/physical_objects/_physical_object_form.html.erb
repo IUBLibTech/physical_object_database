@@ -111,7 +111,7 @@
         <th>Picklist</th>
         <td>
           <% if !@physical_object.picklist.nil? %>
-            <%= link_to(@physical_object.picklist.name, controller: 'picklist', action: 'show', id: @physical_object.picklist.id ) %>
+            <%= link_to(@physical_object.picklist.name, controller: 'picklists', action: 'show', id: @physical_object.picklist.id ) %>
           <% else %>
             Not Assigned
           <% end %>

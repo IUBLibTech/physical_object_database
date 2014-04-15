@@ -3,7 +3,7 @@
     <%= link_to("Create Picklist Specification", {action: 'new'}) %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Create Picklist", {controller: 'picklist', action: 'new'}) %>
+    <%= link_to("Create Picklist", {controller: 'picklists', action: 'new'}) %>
   </div>
 <% end %>
 <div class="left">
@@ -49,9 +49,9 @@
 				<td><%= pl.name %></td>
 				<td><%= pl.description[0,20] %><%= pl.description.length > 20 ? "..." : "" %></td>
 				<td>
-					<%= link_to("Show", {controller: 'picklist', action: 'show', id: pl.id}) %>
-		      <%= link_to("Edit", {controller: 'picklist', action: 'edit', id: pl.id}) %>
-		      <%= link_to("Delete", {controller: 'picklist', action: 'destroy', id: pl.id}, {:confirm=>'Are you sure you want to delete this Picklist?'}) %>
+					<%= link_to("Show", {controller: 'picklists', action: 'show', id: pl.id}) %>
+		      <%= link_to("Edit", {controller: 'picklists', action: 'edit', id: pl.id}) %>
+		      <%= link_to("Delete", {controller: 'picklists', action: 'destroy', id: pl.id}, {:confirm=>'Are you sure you want to delete this Picklist?'}) %>
 				</td> 
 			</tr>
 		<% end %>

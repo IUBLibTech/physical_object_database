@@ -66,4 +66,16 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
+  def self.to_csv(physical_objects)
+    CSV.generate do |csv|
+      if physical_objects.any?
+        md_columns = physical_objects.first.technical_metadatum.as_technical_metadatum.class.column_names
+	csv << column_names + md_columns
+        physical_objects.each do |physical_object|
+          csv << physical_object.attributes.values_at(*column_names) + physical_object.technical_metadatum.as_technical_metadatum.attributes.values_at(*md_columns)
+        end
+      end
+    end
+  end
+
 end
