@@ -15,7 +15,7 @@ class PhysicalObjectsController < ApplicationController
     @formats = @physical_object.formats
     @edit_mode = true
     @action = "create"
-    @submit_text = "Create Physcial Object"
+    @submit_text = "Create Physical Object"
     @display_assinged = false
   end
 

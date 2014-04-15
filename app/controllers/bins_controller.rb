@@ -185,7 +185,7 @@ class BinsController < ApplicationController
 			if po.box.nil? and po.bin.nil?
 				po.box = @box
 				po.save
-				flash[:notice] = "Physcial Object <i>#{po.title}</i> was successully added to Box <i>#{@box.mdpi_barcode}</i>".html_safe
+				flash[:notice] = "Physical Object <i>#{po.title}</i> was successully added to Box <i>#{@box.mdpi_barcode}</i>".html_safe
 			else
 				if !po.box.nil?
 					flash[:notice] = "<b class='warning'>#{po.title} already belongs to <a href=''>Box[#{po.box.identifier}]</a></b>".html_safe

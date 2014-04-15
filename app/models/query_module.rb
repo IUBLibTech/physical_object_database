@@ -4,7 +4,7 @@ module Sql
 		 "SELECT physical_object.* FROM physical_objects, technical_metadata, #{tm_table_name(physical_object.format)}" << 
 			"WHERE physical_objects.id=technical_metadata.physical_object_id " << 
 			"AND technical_metadata.as_technical_metadatum_id=tm_table_name(physical_object.format).id AND" <<
-			physcial_object_where_clause(physical_object) 
+			physical_object_where_clause(physical_object) 
 	end
 
 	private
@@ -17,7 +17,7 @@ module Sql
 	end
 
 	private
-	def Sql.physcial_object_where_clause(po)
+	def Sql.physical_object_where_clause(po)
 		sql = ""
 		po.attributes.each do |name, value|
 			if name == 'id' or name == 'created_at' or name == 'updated_at'
