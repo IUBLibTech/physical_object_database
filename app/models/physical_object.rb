@@ -66,4 +66,13 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
+  def self.to_csv(physical_objects)
+    CSV.generate do |csv|
+      csv << column_names
+      physical_objects.each do |physical_object|
+        csv << physical_object.attributes.values_at(*column_names)
+      end
+    end
+  end
+
 end

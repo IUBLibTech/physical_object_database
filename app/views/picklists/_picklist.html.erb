@@ -24,7 +24,7 @@
 <% end %>
 <h2>Physical Objects in this picklist</h2>
 <% if !@picklist.id.nil? && @picklist.physical_objects.any? %>
-Download list as: <%= link_to 'CSV', picklist_path(@picklist.id) %> | Excel<br/>
+Download list as: <%= link_to 'CSV', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :csv) %> | Excel<br/>
 <% end %>
 <table>
 	<tr>

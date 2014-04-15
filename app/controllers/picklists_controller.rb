@@ -22,9 +22,17 @@ class PicklistsController < ApplicationController
 	end
 
 	def show
+		if request.format.csv? || request.format.xls?
+			params[:id] = params[:id].sub(/picklist_/, '')
+		end
 		@picklist = Picklist.find(params[:id])
 		@physical_objects = PhysicalObject.where(picklist_id: @picklist.id)
 		@edit_mode = false
+
+		respond_to do |format|
+			format.html
+			format.csv { send_data PhysicalObject.to_csv(@physical_objects) }
+		end
 	end
 
 	def edit
@@ -74,6 +82,13 @@ class PicklistsController < ApplicationController
 		end
 		redirect_to(action: 'show', id: picklist.id) 
 	end
+
+        def csv
+          @picklist = Picklist.find(params[:id])
+          @physical_objects = PhysicalObject.where(picklist_id: @picklist.id)
+          send_data PhysicalObject.to_csv(@physical_objects)
+        end
+
 
 	private
 		def picklist_params
