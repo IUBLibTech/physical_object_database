@@ -1,4 +1,4 @@
-class BinController < ApplicationController
+class BinsController < ApplicationController
 
 	def index
 		@bins = Bin.all
@@ -38,13 +38,15 @@ class BinController < ApplicationController
 
 	def update
 		@bin = Bin.find(params[:id])
+		@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
 		assign_batch(params, @bin)
 		if @bin.update_attributes(bin_params)
 			flash[:notice] = "Successfully updated <i>#{@bin.identifier}</i>.".html_safe
 			redirect_to(:action => 'show', :id => @bin.id)
 		else
 			flash[:warning] = "<b class='warning'>Warning! Unable to create <i>#{@bin.identifier}</i>.</b>".html_safe
-			render('show')
+			@edit_mode = true
+			render action: :edit
 		end
 	end
 
@@ -210,7 +212,8 @@ class BinController < ApplicationController
 
 	private
 	def bin_params
-		params.require(:bin).permit(:barcode, :identifier, :description, :batch, :current_workflow_status)
+		params.require(:bin).permit(:barcode, :identifier, :description, :batch, :current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
+
 	end
 
 	private

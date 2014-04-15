@@ -1,4 +1,4 @@
-<%= form_for(:bin, :url => {:action => @action, :id => @bin.id}) do |f| %>
+<%= nested_form_for(@bin) do |f| %>
 	<table>
 		<tr>
 			<th>Barcode</th>
@@ -44,6 +44,12 @@
 		<%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @bin %>
 
 	</table>
+        <%= f.fields_for :condition_statuses do |condition| %>
+          <%= render 'condition_status_template/condition_status_fields', f: condition, target_object: @bin %>
+        <% end %>
+        <% if @edit_mode %>
+            <%= f.link_to_add "Add a condition status", :condition_statuses %>
+        <% end %>
 	<%if @edit_mode %>
 	  <div class="clear" ><%= submit_tag(@submit_text) %></div>
 	<% end %>
