@@ -17,4 +17,5 @@
     <%end%>
   </div>
   <% @submit_text = "" %>
-  <%= render(:partial => "physical_object_form") %>
+  <% @display_assigned = true %>
+  <%= render(partial: "physical_object_form") %>

@@ -4,7 +4,8 @@
     </div>
   <% end %>
 <div>
-  <h2>Create Physical Object</h2>
+  <h2>Update  Physical Object</h2>
     <% @submit_text = "Update Physcial Object" %>
-    <%= render(:partial => "physical_object_form") %>
+    <% @display_assigned = true %>
+    <%= render(partial: "physical_object_form") %>
 </div>

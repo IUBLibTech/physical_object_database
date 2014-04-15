@@ -3,8 +3,6 @@
     <%= link_to("Cancel", :action => 'index') %>
   </div>
 <% end %>
-<div>
-  <h2>Create Physical Object</h2>
-  	<% @submit_text = "Create Physcial Object" %>
-   	<%= render(:partial => "physical_object_form") %>
-</div>
+
+<% @display_assigned = false %>
+<%= render(partial: "physical_object_form") %>

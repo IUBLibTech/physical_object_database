@@ -27,7 +27,7 @@
           <tr class='even'>
         <%end%>
         <% po.attributes.each do |name, value|%>
-          <th><%= value.to_s[0, 20] %><% if value.to_s.length > 15 %>...<% end %></th>
+          <td><%= value.to_s[0, 20] %><% if value.to_s.length > 15 %>...<% end %></td>
         <% end %>
         <td>
           <%= check_box_tag 'po_ids[]', po.id %>

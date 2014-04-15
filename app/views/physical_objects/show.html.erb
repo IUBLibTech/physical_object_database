@@ -1,20 +1,21 @@
-  <% content_for :context_menu do %>
-    <div class="contextMenuItem">
-      <%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => @physical_object.id}, :class => 'action edit') %>
-    </div>
-    <div class="contextMenuItem">
-      <%= link_to("Delete", {:controller => 'physical_objects', :action => 'destroy', :id => @physical_object.id}, {:confirm=>'Are you sure you want to delete this Physical Object?'})%>
-    </div>
-    <div class="contextMenuItem">
-      <%= link_to("Split Record", {:controller => 'physical_objects', :action => 'split_show', :id => @physical_object.id}, :class => 'action split')%>
-    </div>
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => @physical_object.id}, :class => 'action edit') %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Delete", {:controller => 'physical_objects', :action => 'destroy', :id => @physical_object.id}, {:confirm=>'Are you sure you want to delete this Physical Object?'})%>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Split Record", {:controller => 'physical_objects', :action => 'split_show', :id => @physical_object.id}, :class => 'action split')%>
+  </div>
 
-    <div class="contextMenuItem">
-      <%= link_to("Create New Physcial Object", :action => 'new') %>
-    </div>
-    <div class="contextMenuItem">
-      <%= link_to("Upload Spreadsheet", :action => 'upload_show') %>
-    </div>
+  <div class="contextMenuItem">
+    <%= link_to("Create New Physcial Object", :action => 'new') %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Upload Spreadsheet", :action => 'upload_show') %>
+  </div>
+<% end %>
 
-  <% end %>
-<%= render :partial => "physical_object_form" %>
+<% @display_assigned = true %>
+<%= render(partial: "physical_object_form") %>
