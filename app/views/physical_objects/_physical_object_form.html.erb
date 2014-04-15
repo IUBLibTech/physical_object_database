@@ -51,7 +51,8 @@
         <td>
           <%= f.select(
                 :format, @physical_object.formats, 
-                {}, 
+                {},
+		disabled: !@edit_mode,
                 :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})"
                 )  %>    
         </td>
