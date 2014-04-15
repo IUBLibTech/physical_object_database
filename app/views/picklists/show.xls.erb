@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">ID</Data></Cell>
+        <Cell><Data ss:Type="String">Bin ID</Data></Cell>
+        <Cell><Data ss:Type="String">Box ID</Data></Cell>
+        <Cell><Data ss:Type="String">Picklist ID</Data></Cell>
+      </Row>
+    <% @physical_objects.each do |po| %>
+      <Row>
+        <Cell><Data ss:Type="Number"><%= po.id %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.bin_id %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.box_id %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= po.picklist_id %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>
