@@ -7,28 +7,26 @@
   <Worksheet ss:Name="Sheet1">
     <Table>
       <Row>
-        <Cell><Data ss:Type="String">ID</Data></Cell>
-        <Cell><Data ss:Type="String">Bin ID</Data></Cell>
-        <Cell><Data ss:Type="String">Box ID</Data></Cell>
-        <Cell><Data ss:Type="String">Picklist ID</Data></Cell>
-      </Row>
-    <% @column_names = PhysicalObject.column_names %>
-      <Row>
-    <% @column_names.each do |column_name| %>
+      <% @column_names = PhysicalObject.column_names %>
+      <% @column_names.each do |column_name| %>
         <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
-    <% end %>
+      <% end %>
+      <% if @physical_objects.any? %>
+        <% @md_columns = @physical_objects.first.technical_metadatum.as_technical_metadatum.class.column_names %>
+        <% @md_columns.each do |md_column| %>
+          <Cell><Data ss:Type="String"><%= md_column %></Data></Cell>
+        <% end %>
+      <% end %>
       </Row>
     <% @physical_objects.each do |po| %>
-      <Row>
-        <Cell><Data ss:Type="Number"><%= po.id %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= po.bin_id %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= po.box_id %></Data></Cell>
-        <Cell><Data ss:Type="Number"><%= po.picklist_id %></Data></Cell>
-      </Row>
       <Row>
         <% @column_values = po.attributes.values_at(*@column_names) %>
         <% @column_values.each do |column_value| %>
           <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
+        <% end %>
+        <% @md_values = po.technical_metadatum.as_technical_metadatum.attributes.values_at(*@md_columns) %>
+        <% @md_values.each do |md_value| %>
+          <Cell><Data ss:Type="String"><%= md_value %></Data></Cell>
         <% end %>
       </Row>
     <% end %>
