@@ -2,6 +2,7 @@ class ConditionStatus < ActiveRecord::Base
 
   belongs_to :condition_status_template
   belongs_to :physical_object
+  belongs_to :bin
   
   validates :condition_status_template_id, presence: true, uniqueness: { scope: :physical_object_id }
 

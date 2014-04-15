@@ -5,7 +5,8 @@ class ConditionStatusTemplate < ActiveRecord::Base
 	
         attr_accessor :object_types
         def object_types
-                {"Physical Object" => "Physical Object"}
+                {"Physical Object" => "Physical Object",
+		 "Bin" => "Bin"}
         end
 
         def self.select_options(object_type)
