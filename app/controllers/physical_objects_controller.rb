@@ -92,7 +92,7 @@ class PhysicalObjectsController < ApplicationController
     end
   end
 
-  def destroy
+  def delete
     po = PhysicalObject.find(params[:id])
     if ! po.technical_metadatum.nil?
       po.technical_metadatum.specialize.destroy

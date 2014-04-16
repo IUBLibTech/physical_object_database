@@ -1,6 +1,6 @@
 function set_format_div(format, edit_mode) {  
   jQuery.ajax({
-    url: "/picklist_specification/get_form",
+    url: "/picklist_specifications/get_form",
     type: "GET",
     data: {"format" : format, "edit_mode" : edit_mode},
     dataType: "html",
