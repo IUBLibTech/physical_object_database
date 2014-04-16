@@ -56,14 +56,11 @@ class BinsController < ApplicationController
 		@edit_mode = false
 	end
 
-	def delete
-		@bin = Bin.find(params[:id])
-	end
-
 	def destroy
-		@bin = Bin.find(params[:id]).destroy
+		@bin = Bin.find(params[:id])
+		@bin.destroy
 		flash[:notice] = "<i>#{@bin.identifier}</i> was successfully destroyed.".html_safe
-		redirect_to(:action => 'index')
+		redirect_to bins_path
 	end
 
 	def new_box
