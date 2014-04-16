@@ -4,7 +4,7 @@ class SearchController < ApplicationController
     @physical_object = PhysicalObject.new
     @physical_object.format = @physical_object.formats["Open Reel Tape"]
     @tm = @physical_object.create_tm(@physical_object.format)
-    @display_assinged = true
+    @display_assigned = true
     @edit_mode = true
     @submit_text = "Search"
     @controller = 'search'

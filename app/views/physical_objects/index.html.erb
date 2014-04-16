@@ -36,7 +36,7 @@
         <%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => po.id}, :class => 'action show') %>
         <%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => po.id}, :class => 'action edit') %>
         <%= link_to("Split", {:controller => 'physical_objects', :action => 'split_show', :id => po.id}, :class => 'action split')%>
-        <%= link_to("Delete", {:controller => 'physical_objects', :action => 'delete', :id => po.id}, {:confirm=>'Are you sure you want to delete this Physical Object?'})%>
+        <%= link_to("Delete", physical_object_path(po.id), method: :delete, data: {:confirm=>'Are you sure you want to delete this Physical Object?'})%>
       </td>
     </tr>
     <% count += 1 %>

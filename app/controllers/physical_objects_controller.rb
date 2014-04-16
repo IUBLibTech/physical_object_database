@@ -16,7 +16,7 @@ class PhysicalObjectsController < ApplicationController
     @edit_mode = true
     @action = "create"
     @submit_text = "Create Physical Object"
-    @display_assinged = false
+    @display_assigned = false
   end
 
   def create
@@ -55,7 +55,7 @@ class PhysicalObjectsController < ApplicationController
     @edit_mode = true
     @physical_object = PhysicalObject.find(params[:id])
     @digital_files = @physical_object.digital_files
-    @display_assinged = true
+    @display_assigned = true
     if @physical_object.technical_metadatum.nil?
       flash[:notice] = "A physical object was created without specifying its technical metadatum..."
       redirect_to(action: 'show', id: @physical_object.id)
@@ -92,24 +92,22 @@ class PhysicalObjectsController < ApplicationController
     end
   end
 
-  def delete
+  def destroy
     po = PhysicalObject.find(params[:id])
     if ! po.technical_metadatum.nil?
       po.technical_metadatum.specialize.destroy
     end
     po.destroy
     flash[:notice] = "<i>#{po.title}</i> was successfully deleted.".html_safe
-    redirect_to(:action => 'index')
+    redirect_to physical_objects_path
   end
-  
-  
   
   def split_show
     @physical_object = PhysicalObject.find(params[:id]);
     @tm = @physical_object.technical_metadatum.specialize
     @digital_files = @physical_object.digital_files
     @count = 0;
-    @display_assinged = true
+    @display_assigned = true
   end
   
   def split_update
