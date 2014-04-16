@@ -185,9 +185,9 @@ class BinsController < ApplicationController
 				flash[:notice] = "Physical Object <i>#{po.title}</i> was successully added to Box <i>#{@box.mdpi_barcode}</i>".html_safe
 			else
 				if !po.box.nil?
-					flash[:notice] = "<b class='warning'>#{po.title} already belongs to <a href=''>Box[#{po.box.identifier}]</a></b>".html_safe
+					flash[:notice] = "<b class='warning'>#{po.title} already belongs to <a href='../show_box/#{po.box.id}'>Box[#{po.box.mdpi_barcode}]</a></b>".html_safe
 				else
-					flash[:notice] = "<b class='warning'>#{po.title} already belongs to <a href=''>Bin[#{po.box.identifier}]</a></b>".html_safe
+					flash[:notice] = "<b class='warning'>#{po.title} already belongs to <a href='../show/#{po.bin.id}'>Bin[#{po.bin.identifier}]</a></b>".html_safe
 				end
 			end
 		else

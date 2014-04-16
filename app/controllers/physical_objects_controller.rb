@@ -45,6 +45,7 @@ class PhysicalObjectsController < ApplicationController
 
   def show
     @edit_mode = false;
+    @display_assigned = true
     @physical_object = PhysicalObject.find(params[:id])
     @digital_files = @physical_object.digital_files
     @tm = @physical_object.technical_metadatum.specialize

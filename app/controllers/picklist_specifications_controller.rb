@@ -78,8 +78,10 @@ class PicklistSpecificationsController < ApplicationController
 	def query_add
 		@picklist = Picklist.find(params[:picklist][:id])
 		
-		params[:po_ids].each do |po|
-			PhysicalObject.find(po).update_attributes(picklist_id: @picklist.id)
+		unless params[:po_ids].nil?
+				params[:po_ids].each do |po|
+				PhysicalObject.find(po).update_attributes(picklist_id: @picklist.id)
+			end
 		end
 		
 		redirect_to(action: 'query', id: params[:id])

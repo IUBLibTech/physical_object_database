@@ -110,7 +110,7 @@
         </td>
       </tr>
       <%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @physical_object %>
-    </table>    
+    </table> 
     <% if @display_assigned %>
       <div id="assigned_to_div">
         <table>
@@ -141,13 +141,16 @@
             <td>
               <% p = @physical_object %>
               <% name = nil %>
+              <% bid = nil %>
               <% if !p.bin.nil? and !p.bin.batch.nil? %>
-                name = p.bin.batch.identifier %>
+                <% name = p.bin.batch.identifier %>
+                <% bid = p.bin.batch.id %>
               <% elsif !p.box.nil? and !p.box.bin.nil? and !p.box.bin.batch.nil?%>
-                name = p.box.bin.batch.identifier
+                <% name = p.box.bin.batch.identifier %>
+                <% bid = p.box.bin.batch.id %>
               <% end %>
               <% if !name.nil? %>
-                <%= link_to(p.box.bin.batch.identifier, url: {controller: 'batch', action: 'show', id: p.bin.batch.id}) %>
+                <%= link_to(name, url: {controller: 'batch', action: 'show', id: bid}) %>
               <% else %>
                 Not Assigned
               <% end %>
