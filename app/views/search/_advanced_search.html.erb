@@ -1,0 +1,126 @@
+<% @controller ||= 'physical_objects' %>
+<% @tm ||= @physical_object.technical_metadatum.as_technical_metadatum %>
+<%= form_for(:physical_object, url: {action: @action}) do |f| %>
+<div id="physicalObject" class="left">
+    <h2>Physical Object</h2>
+    <table summary="Physical Object Fields">
+      <tr>
+        <th>Title</th>
+        <td>
+          <%= f.text_field(:title, readonly: !@edit_mode) %>
+        </td> 
+      </tr>
+      <tr>
+        <th>Title Control Number</th>
+        <td>
+          <%= f.text_field(:title_control_number, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Call Number</th>
+        <td>
+          <%= f.text_field(:call_number, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Unit</th>
+        <td>
+          <%= f.text_field(:unit, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Home Location</th>
+        <td>
+          <%= f.text_field(:home_location, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Shelf Location</th>
+        <td>
+          <%= f.text_field(:shelf_location, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>IUCAT Barcode</th>
+        <td>
+          <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Format</th>
+        <td>
+          <%= f.select(
+                :format, @physical_object.formats, 
+                {},
+		disabled: !@edit_mode,
+                :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})"
+                )  %>    
+        </td>
+      </tr>
+      <tr>
+        <th>Carrier Stream Index</th>
+        <td>
+          <%= f.text_field(:carrier_stream_index, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Collection Identifier</th>
+        <td>
+          <%= f.text_field(:collection_identifier, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>MDPI Barcode</th>
+        <td>
+          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Format Duration</th>
+        <td>
+          <%= f.text_field(:format_duration, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Content Duration</th>
+        <td>
+          <%= f.text_field(:content_duration, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Has Ephemera</th>
+        <td>
+          <% if @edit_mode %>
+            <%= f.check_box(:has_media) %>
+          <% else %>
+            <input type="text" name="has_media" value=<%= @physical_object.has_media ? "true" : "false" %> readonly />
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th>Created At</th>
+        <td>
+          <%= f.text_field(:created_at, readonly: true) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Updated At</th>
+        <td>
+          <%= f.text_field(:updated_at, readonly: true) %>
+        </td>
+      </tr>
+      <%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @physical_object %>
+    </table> 
+  </div>
+
+  <%= f.fields_for @tm do |tm_fields| %>
+    <div id="technicalMetadatum" class="left">
+      <%= render(:partial => tm_partial_path(@tm), :locals => {:f => tm_fields}) %>
+    </div>
+  <% end %>
+
+  <%# add the submit and close off the form_for %>
+  <%if @edit_mode or @action == 'destroy' %>
+    <div class="clear" ><%= submit_tag(@submit_text) %></div>
+  <% end %>
+<% end %>

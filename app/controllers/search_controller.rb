@@ -1,4 +1,14 @@
 class SearchController < ApplicationController
+  def search_results
+    term = params[:identifier]
+    @physical_object = PhysicalObject.search_by_barcode(term).first
+    flash[:notice] = @physical_object.nil? ? "No results for barcode #{term}" : "Search Results for barcode #{term}"
+    if @physical_object.nil?
+      redirect_to(action: 'index')
+    else
+      redirect_to(controller: 'physical_objects', action: 'show', id: @physical_object.id)
+    end
+  end
 
   def index
     @physical_object = PhysicalObject.new
@@ -10,17 +20,6 @@ class SearchController < ApplicationController
     @controller = 'search'
     @action = "advanced_search"
   end  
-  
-  def search_results
-    term = params[:identifier]
-    @physical_object = PhysicalObject.search_by_barcode(term).first
-    flash[:notice] = @physical_object.nil? ? "No results for barcode #{term}" : "Search Results for barcode #{term}"
-    if @physical_object.nil?
-      redirect_to(action: 'index')
-    else
-      redirect_to(controller: 'physical_objects', action: 'show', id: @physical_object.id)
-    end
-  end
 
   def advanced_search
     pop = params[:physical_object]
