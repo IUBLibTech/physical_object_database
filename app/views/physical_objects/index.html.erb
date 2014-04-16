@@ -3,7 +3,8 @@
       <%= link_to("Create New Physical Object", :action => 'new') %>
     </div>
     <div class="contextMenuItem">
-      <%= link_to("Upload Spreadsheet", :action => 'upload_show') %>
+      <%# TODO: fix routing file to make the id: 'new' unnecessary %>
+      <%= link_to("Upload Spreadsheet", :action => 'upload_show', id: 'new') %>
     </div>
   <% end %>
 

@@ -13,14 +13,10 @@ module PhysicalObjectsHelper
       		title_control_number: r["Title Control Number"],
       		format: r["Format"],
       		unit: r["Unit"],
-		      collection_id: r["Collection Primary ID"],
-		      collection_name: r["Collection Name"],
-		      primary_location: r["Primary Location"],
-		      secondary_location: r["Secondary Location"],
-		      composer_performer: r["Author"],
-		      generation: r["Generation"],
-		      duration: r["Duration"],
-		      duration_type: r["Duration Type"]
+		      collection_identifier: r["Collection Primary ID"],
+		      home_location: r["Primary Location"],
+		      shelf_location: r["Secondary Location"],
+		      format_duration: r["Duration"],
   			)
   		tm = po.create_tm(po.format)
   		tm.pack_deformation = "Severe"

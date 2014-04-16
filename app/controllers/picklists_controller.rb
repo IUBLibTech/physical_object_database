@@ -84,11 +84,11 @@ class PicklistsController < ApplicationController
 		redirect_to(action: 'show', id: picklist.id) 
 	end
 
-        def csv
-          @picklist = Picklist.find(params[:id])
-          @physical_objects = PhysicalObject.where(picklist_id: @picklist.id)
-          send_data PhysicalObject.to_csv(@physical_objects)
-        end
+  def csv
+    @picklist = Picklist.find(params[:id])
+    @physical_objects = PhysicalObject.where(picklist_id: @picklist.id)
+    send_data PhysicalObject.to_csv(@physical_objects)
+  end
 
 
 	private
