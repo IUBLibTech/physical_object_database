@@ -49,12 +49,7 @@
       <tr>
         <th>Format</th>
         <td>
-          <%= f.select(
-                :format, @physical_object.formats, 
-                {},
-		disabled: !@edit_mode,
-                :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})"
-                )  %>    
+          <%= f.select(:format, @physical_object.formats, {},	disabled: !@edit_mode, :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})")  %>    
         </td>
       </tr>
       <tr>
@@ -118,7 +113,7 @@
             <th>Picklist</th>
             <td>
               <% if !@physical_object.picklist.nil? %>
-                <%= link_to(@physical_object.picklist.name, controller: 'picklist', action: 'show', id: @physical_object.picklist.id ) %>
+                <%= link_to(@physical_object.picklist.name, controller: 'picklists', action: 'show', id: @physical_object.picklist.id ) %>
               <% else %>
                 Not Assigned
               <% end %>
@@ -128,9 +123,9 @@
             <th>Bin/Box</th>
             <td>
               <% if !@physical_object.bin.nil? %>
-                <%= link_to("Bin: #{@physical_object.bin.identifier}", controller: 'bin', action: 'show', id: @physical_object.bin.id) %>
+                <%= link_to("Bin: #{@physical_object.bin.identifier}", controller: 'bins', action: 'show', id: @physical_object.bin.id) %>
               <% elsif !@physical_object.box.nil? %>
-                <%= link_to("Box: #{@physical_object.box.mdpi_barcode}", controller: 'bin', action: 'show_box', id: @physical_object.box.id) %>
+                <%= link_to("Box: #{@physical_object.box.mdpi_barcode}", controller: 'bins', action: 'show_box', id: @physical_object.box.id) %>
               <% else %>
                 Not Assigned
               <% end %>
@@ -150,7 +145,7 @@
                 <% bid = p.box.bin.batch.id %>
               <% end %>
               <% if !name.nil? %>
-                <%= link_to(name, url: {controller: 'batch', action: 'show', id: bid}) %>
+                <%= link_to(name, controller: 'batch', action: 'show', id: bid) %>
               <% else %>
                 Not Assigned
               <% end %>
