@@ -3,7 +3,7 @@
     <%= link_to("Edit", :action => 'edit', id: @picklist.id) %>
   </div>
   <div class="contextMenuItem">
-		<%= link_to("Delete", {action: 'destroy', id: @picklist.id}, {:confirm => "Are you sure you want to delete this Picklist?"}) %>
+		<%= link_to("Delete", picklist_path(@picklist.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Picklist?'}) %>
   </div>
 <% end %>
 <%= render(:partial => "picklist") %>

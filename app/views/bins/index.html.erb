@@ -27,8 +27,9 @@
 				<td><%= b.current_workflow_status.nil? ? "" : b.current_workflow_status.name %></td>
 				<td>
 					<%= link_to("Show", {action: 'show', id: b.id}) %>
+
 	        <%= link_to("Edit", {action: 'edit', id: b.id}) %>
-	        <%= link_to("Delete", {action: 'delete', id: b.id})%>
+	        <%= link_to("Delete", bin_path(b.id), method: :delete, data: {:confirm=>'Are you sure you want to delete this Bin?'})%>
 				</td>
 			</tr>
 		<% end %>

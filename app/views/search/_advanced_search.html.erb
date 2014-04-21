@@ -1,7 +1,7 @@
 <% @controller ||= 'physical_objects' %>
 <% @tm ||= @physical_object.technical_metadatum.as_technical_metadatum %>
-<%= nested_form_for(@physical_object) do |f| %>
-  <div id="physicalObject" class="left">
+<%= form_for(:physical_object, url: {action: @action}) do |f| %>
+<div id="physicalObject" class="left">
     <h2>Physical Object</h2>
     <table summary="Physical Object Fields">
       <tr>
@@ -49,7 +49,12 @@
       <tr>
         <th>Format</th>
         <td>
-          <%= f.select(:format, @physical_object.formats, {},	disabled: !@edit_mode, :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})")  %>    
+          <%= f.select(
+                :format, @physical_object.formats, 
+                {},
+		disabled: !@edit_mode,
+                :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})"
+                )  %>    
         </td>
       </tr>
       <tr>
@@ -106,60 +111,6 @@
       </tr>
       <%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @physical_object %>
     </table> 
-    <% if @display_assigned %>
-      <div id="assigned_to_div">
-        <table>
-          <tr>
-            <th>Picklist</th>
-            <td>
-              <% if !@physical_object.picklist.nil? %>
-                <%= link_to(@physical_object.picklist.name, controller: 'picklists', action: 'show', id: @physical_object.picklist.id ) %>
-              <% else %>
-                Not Assigned
-              <% end %>
-            </td>
-          </tr>
-          <tr>
-            <th>Bin/Box</th>
-            <td>
-              <% if !@physical_object.bin.nil? %>
-                <%= link_to("Bin: #{@physical_object.bin.identifier}", controller: 'bins', action: 'show', id: @physical_object.bin.id) %>
-              <% elsif !@physical_object.box.nil? %>
-                <%= link_to("Box: #{@physical_object.box.mdpi_barcode}", controller: 'bins', action: 'show_box', id: @physical_object.box.id) %>
-              <% else %>
-                Not Assigned
-              <% end %>
-            </td>
-          </tr>
-          <tr>
-            <th>Batch</th>
-            <td>
-              <% p = @physical_object %>
-              <% name = nil %>
-              <% bid = nil %>
-              <% if !p.bin.nil? and !p.bin.batch.nil? %>
-                <% name = p.bin.batch.identifier %>
-                <% bid = p.bin.batch.id %>
-              <% elsif !p.box.nil? and !p.box.bin.nil? and !p.box.bin.batch.nil?%>
-                <% name = p.box.bin.batch.identifier %>
-                <% bid = p.box.bin.batch.id %>
-              <% end %>
-              <% if !name.nil? %>
-                <%= link_to(name, controller: 'batch', action: 'show', id: bid) %>
-              <% else %>
-                Not Assigned
-              <% end %>
-            </td>
-          </tr>
-        </table>
-      </div>
-    <% end %>
-    <%= f.fields_for :condition_statuses do |condition| %>
-      <%= render 'condition_status_template/condition_status_fields', f: condition, target_object: @physical_object %>
-    <% end %>
-    <% if @edit_mode %>
-      <%= f.link_to_add "Add a condition status", :condition_statuses %>
-    <% end %>
   </div>
 
   <%= f.fields_for @tm do |tm_fields| %>
@@ -168,14 +119,6 @@
     </div>
   <% end %>
 
-  <div class="left">
-    <h2>Digital Files</h2>
-    <% unless @digital_files.nil? %>
-      <% @digital_files.each do |files| %>
-        <%= render(partial: 'media_files/media_file_form', locals: {f: files}) %>
-      <% end %>
-    <% end %>
-  </div>
   <%# add the submit and close off the form_for %>
   <%if @edit_mode or @action == 'destroy' %>
     <div class="clear" ><%= submit_tag(@submit_text) %></div>
