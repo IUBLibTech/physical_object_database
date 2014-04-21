@@ -1,0 +1,13 @@
+<% if object && object.errors.size > 0 %>
+	<div id="error_div">
+		<h2><%= pluralize(object.errors.size, "errors") %> prohibited saving this object </h2>
+		<p>
+			There were problems with the following <%= pluralize(object.errors.size, "field") %>:
+		</p>
+		<ul>
+			<% object.errors.full_messages.each do |msg| %>
+				<li><%= msg %></li>
+			<% end %>
+		</ul>
+	</div>
+<% end %>
