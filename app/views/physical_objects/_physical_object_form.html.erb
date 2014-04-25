@@ -1,5 +1,6 @@
 <% @controller ||= 'physical_objects' %>
 <% @tm ||= @physical_object.technical_metadatum.as_technical_metadatum %>
+<%= error_messages_for(@physical_object) %>
 <%= nested_form_for(@physical_object) do |f| %>
   <div id="physicalObject" class="left">
     <h2>Physical Object</h2>
@@ -67,7 +68,7 @@
       <tr>
         <th>MDPI Barcode</th>
         <td>
-          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode) %>
+          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, onchange: "validateBarcode(this.value)", onkeyup: "validateBarcode(this.value)") %>
         </td>
       </tr>
       <tr>

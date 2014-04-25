@@ -1,5 +1,9 @@
 class PhysicalObject < ActiveRecord::Base
-
+  
+  include WorkflowStatusModule
+  include ConditionStatusModule
+  include ActiveModel::Validations
+ 
   belongs_to :box
   belongs_to :bin
   belongs_to :picklist
@@ -7,10 +11,13 @@ class PhysicalObject < ActiveRecord::Base
   has_one :technical_metadatum
   has_many :digital_files
   has_many :workflow_statuses
-  include WorkflowStatusModule
   has_many :condition_statuses
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
-  include ConditionStatusModule
+
+  validates_presence_of :unit
+  validates_presence_of :format
+  validates_with PhysicalObjectValidator
+    
 
   attr_accessor :formats 
   def formats
