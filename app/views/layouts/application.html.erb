@@ -38,11 +38,6 @@
         <input type="submit" value="Search" style="position: absolute; left: -999px; height: 0px; width: 0px; border: none; padding: 0px;" hidefocus="true" tabindex="-1"/>
       <%end%>
     </div>
-    <%# FIXME: determine css for this %>
-    <div>
-      Signed in as: <%= current_user %> | 
-      <%= link_to "Sign out", signout_path, method: "delete" %>
-    </div>
   </div>
   <div id="contextMenu">
     <%= yield :context_menu %>

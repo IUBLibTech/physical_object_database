@@ -1,8 +1,9 @@
-#FIXME: remove puts calls
-#remove FIXME lines
-#FIXME: add security to other controllers besides bin
-
-class SessionsController < ApplicationController
+# Does not inherit from ApplicationController to avoid requiring sign-in here
+class SessionsController < ActionController::Base
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :exception
+  include SessionsHelper
 
   def new
     redirect_to("https://cas.iu.edu/cas/login?cassvc=ANY&casurl=#{root_url}sessions/validate_login")
@@ -20,17 +21,9 @@ class SessionsController < ApplicationController
       @resp_true = @resp.slice(0,3)
       @nlength=@resp.length - 7
       @resp_user=@resp.slice(5,@nlength)
-      if check_name(@resp_user)
-        puts "@resp_user: -#{@resp_user}-"
-        puts "current_user: -#{current_user}-"
-        if User.authenticate(@resp_user)
-          sign_in(@resp_user) 
-          puts "@resp_user: -#{@resp_user}-"
-          puts "current_user: -#{current_user}-"
-          redirect_back_or_to physical_objects_path
-        else
-          redirect_to "#{root_url}denied.html"
-        end
+      if User.authenticate(@resp_user)
+        sign_in(@resp_user) 
+        redirect_back_or_to root_url
       else
         redirect_to "#{root_url}denied.html"
       end
@@ -43,16 +36,7 @@ class SessionsController < ApplicationController
   def destroy
     sign_out
     redirect_to root_url
-    #FIXME: add logout url
+    #NOTE: add logout url if needed
   end
-
-  def check_name(name)
-    if name.nil? || name.blank?
-      return false
-    else
-      return true
-    end
-  end
-
 
 end

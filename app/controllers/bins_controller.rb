@@ -1,6 +1,4 @@
 class BinsController < ApplicationController
-  #FIXME: test case; move into ApplicationController and redirect to public error page for invalid login attempts
-  before_action :signed_in_user
 
 	def index
 		@bins = Bin.all

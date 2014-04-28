@@ -1,10 +1,9 @@
 class User
 
-  #rewrite to look up allowed users
+  #NOTE: currently accepts any CAS user; later rewrite to look up allowed users
   def User.authenticate(username)
-    #FIXME: testing line below
-    return username == "aploshay"
-    #return true
+    return false if username.nil? || username.blank?
+    return true
   end
 
 end
