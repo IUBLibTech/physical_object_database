@@ -13,6 +13,10 @@ Pod::Application.routes.draw do
   resources :bins
   resources :physical_objects
   resources :picklists
+  resources :sessions, only:  [:new, :destroy]
+
+  match '/signin',      to: 'sessions#new',             via: 'get'
+  match '/signout',     to: 'sessions#destroy',         via: 'delete'
   
   match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
 

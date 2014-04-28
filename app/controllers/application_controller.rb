@@ -2,6 +2,9 @@ class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
+  include SessionsHelper
+  # Note that sessions_controller does not inherit from ApplicationController to avoid the following line and the catch-22 result
+  before_action :signed_in_user
 
   helper_method :tm_partial_path
 
