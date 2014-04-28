@@ -1,3 +1,7 @@
+#FIXME: remove puts calls
+#remove FIXME lines
+#FIXME: add security to other controllers besides bin
+
 class SessionsController < ApplicationController
 
   def new
@@ -17,37 +21,29 @@ class SessionsController < ApplicationController
       @nlength=@resp.length - 7
       @resp_user=@resp.slice(5,@nlength)
       if check_name(@resp_user)
-        puts "current_user: -#{current_user}-"
-        sign_in(@resp_user)
         puts "@resp_user: -#{@resp_user}-"
         puts "current_user: -#{current_user}-"
-        #redirect_to root_url
-        redirect_back_or_to root_url
-        #redirect_to "http://www.google.com"
+        if User.authenticate(@resp_user)
+          sign_in(@resp_user) 
+          puts "@resp_user: -#{@resp_user}-"
+          puts "current_user: -#{current_user}-"
+          redirect_back_or_to physical_objects_path
+        else
+          redirect_to "#{root_url}denied.html"
+        end
       else
-        redirect_to(:action => 'logout', :id=>@resp_user)
+        redirect_to "#{root_url}denied.html"
       end
     else
       @resp_true = @resp.slice(0,2)
-      redirect_to(:action => 'logout', id: @resp)
-    end
-  end
-
-  def create
-    if User.authenticate(params[:username])
-      sign_in user
-      redirect_back_or_to physical_objects_path
-    else
-      flash.now[:error] = 'Invalid email/password combination' #FIXME: change
-      #render 'new'
-      #FIXME
-      redirect_to "http://www.google.com"
+      redirect_to "#{root_url}denied.html"
     end
   end
 
   def destroy
     sign_out
     redirect_to root_url
+    #FIXME: add logout url
   end
 
   def check_name(name)
