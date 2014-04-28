@@ -17,13 +17,10 @@ module SessionsHelper
   end
 
   def signed_in_user
-    puts "current user: #{current_user}--"
-    #self.current_user = "aploshay"
-    #sign_in("aploshay")
-    puts "current user: #{current_user}--"
+    puts "signed_in_user: current user: #{current_user}"
     unless signed_in?
       store_location
-      redirect_to signin_url, notice: "Please sign in"
+      redirect_to signin_url
     end
   end
 
