@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+      <% @column_names = Batch.column_names %>
+      <%# FIXME: remove columns for sub-elements %>
+      <% @column_names += Box.column_names %>
+      <% @column_names += PhysicalObject.column_names %>
+      <% @column_names.each do |column_name| %>
+        <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
+      <% end %>
+
+      <% if @bins.any? %>
+      <% end %>
+      <% if @physical_objects.any? %>
+        <% @md_columns = @physical_objects.first.technical_metadatum.as_technical_metadatum.class.column_names %>
+        <% @md_columns.each do |md_column| %>
+          <Cell><Data ss:Type="String"><%= md_column %></Data></Cell>
+        <% end %>
+      <% end %>
+      </Row>
+
+    <% @physical_objects.each do |po| %>
+      <Row>
+        <% @column_values = po.attributes.values_at(*@column_names) %>
+        <% @column_values.each do |column_value| %>
+          <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
+        <% end %>
+        <% @md_values = po.technical_metadatum.as_technical_metadatum.attributes.values_at(*@md_columns) %>
+        <% @md_values.each do |md_value| %>
+          <Cell><Data ss:Type="String"><%= md_value %></Data></Cell>
+        <% end %>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>
