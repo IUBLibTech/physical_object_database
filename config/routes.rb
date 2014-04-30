@@ -10,6 +10,8 @@ Pod::Application.routes.draw do
  
   root "physical_objects#index"
 
+  match '/batches/search',	to: 'batches#search',	via: [:get, :post]
+  resources :batches
   resources :bins
   resources :physical_objects
   resources :picklists

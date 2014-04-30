@@ -1,4 +1,4 @@
-class BatchController < ApplicationController
+class BatchesController < ApplicationController
 
   def index
     @batches = Batch.all

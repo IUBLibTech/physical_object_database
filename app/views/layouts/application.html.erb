@@ -17,7 +17,7 @@
       <%= link_to("Physical Objects", :controller => 'physical_objects', :action => 'index') %>
     </div>
     <div class="menuItem">
-      <%= link_to("Batches", :controller => 'batch', :action => 'index') %>
+      <%= link_to("Batches", controller: :batches, action: :index) %>
     </div>
     <div class="menuItem">
       <%= link_to 'Bins', bins_path %>
