@@ -7,12 +7,12 @@
   </div>
 <% end %>
 
-<%= form_for(:ps, :url => {:action => @action, :id => @ps.id}) do |f| %>
+<%= form_for(@ps, :url => {:action => @action, :id => @ps.id}) do |f| %>
   <h2>Physical Objects Matching Spec <%= @ps.name %></h2> 
   <% if @physical_objects.nil? or @physical_objects.size == 0 %>
     <div>No matching Physical Objects</div>
   <% else %>
-    <table class="po list" summary="Physical Object List">
+    <table class="po list">
       <tr class="header">
         <% @physical_objects[0].attributes.each do |name, value|%>
           <th><%= name.gsub("_", ' ').capitalize %></th>

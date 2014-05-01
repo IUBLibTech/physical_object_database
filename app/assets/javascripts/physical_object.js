@@ -1,6 +1,9 @@
-function validateBarcode(barcode) {
-	valid = true;
-	if (/^\d+$/.test(barcode)) {
+function validateBarcode(barcodeEl) {
+	valid = false;
+	barcode = barcodeEl.value
+	if (barcode == "0") {
+		valid = true;
+	} else if (barcode.length == 14 && barcode.charAt(0) == 4 && (/^\d+$/.test(barcode))) {
 		check = barcode.slice(-1);
 		sum = 0;
 		var pairs = barcode.split("").reverse().join('').match(/.{1,2}/g);
@@ -10,12 +13,10 @@ function validateBarcode(barcode) {
 		  sum += parseInt(pairs[i][0]);
 		}
 		sum -= check;
-		valid = (sum * 9) % 10;
-	} else {
-		valid = false
+		valid = (sum * 9) % 10 == check;
 	}
 
-	el = $("#physical_object_mdpi_barcode")
+	el = $(barcodeEl)
 	if (valid) {
 		el.removeClass("bad_barcode");
 	} else {

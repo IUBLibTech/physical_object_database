@@ -13,14 +13,10 @@ class PhysicalObject < ActiveRecord::Base
   has_many :workflow_statuses
   has_many :condition_statuses
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
-
+  
   validates_presence_of :unit
-  validates_presence_of :format
-  validates_with PhysicalObjectValidator
-    
-
-  attr_accessor :formats 
-  def formats
+  # needs to be declared before the validation that uses it
+  def self.formats
     {
       # "Cassette Tape" => "Cassette Tape", 
       # "Compact Disc" => "Compact Disc", 
@@ -29,24 +25,24 @@ class PhysicalObject < ActiveRecord::Base
       "Open Reel Tape" => "Open Reel Tape"
     }
   end
+  validates_presence_of :format, inclusion: formats.keys
+  validates :mdpi_barcode, mdpi_barcode: true
+
+  after_initialize :init
 
   accepts_nested_attributes_for :technical_metadatum
-
   scope :search_by_catalog, lambda {|query| where(["shelf_location = ? OR call_number = ?", query, query])}
-  
   scope :search_by_barcode, lambda {|barcode| where(["mdpi_barcode = ? OR iucat_barcode = ?", barcode, barcode])}
-  
   scope :search_id, lambda {|i| 
     where(['mdpi_barcode like ? OR iucat_barcode like ? OR shelf_location like ? OR call_number like ?', i, i, i, i])
   }
-  
   scope :advanced_search, lambda {|po| 
     po.physical_object_query
     #PhysicalObject.find_by_sql(po.physical_object_query)
   }
 
-  def splitable?(s="")
-    s.include? "-" or s.include? ","
+  def init
+    self.mdpi_barcode ||= 0
   end
 
   def container_id

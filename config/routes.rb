@@ -11,6 +11,7 @@ Pod::Application.routes.draw do
   root "physical_objects#index"
 
   resources :bins
+  resources :boxes, only: [:destroy]
   resources :physical_objects
   resources :picklists
   

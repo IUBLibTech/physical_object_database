@@ -6,28 +6,20 @@ class BinsController < ApplicationController
 	end
 
 	def new
-		@bin = Bin.new
+		@bin = Bin.new(mdpi_barcode: 0)
 		@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
 	end
 
 	def create
 		@bin = Bin.new(bin_params)
+		@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
 		assign_batch(params, @bin)
-		if @bin.identifier.nil? or @bin.identifier.length == 0
-			flash[:notice] = "<b class='warning'>Cannot create a Bin without a (unique) identifier.</b>".html_safe
-		elsif Bin.find_by(:identifier => @bin.identifier).nil?
-			if @bin.save
-				flash[:notice] = "<b>#{@bin.identifier}</b> was successfully created.".html_safe
-				redirect_to(:action => 'index')
-				return
-			else
-				flash[:notice] = "<b class='warning'>Warning! Unable to create <i>#{@bin.identifier}</i></b>".html_safe
-			end
-		else 
-			flash[:notice] = 
-			"<b class='warning'>Bin <i>#{@bin.identifier}</i> already exists. Identifiers must be unique.</b>".html_safe
+		if @bin.save
+			flash[:notice] = "<b>#{@bin.identifier}</b> was successfully created.".html_safe
+			redirect_to(:action => 'index')
+		else
+			render('new')
 		end
-		redirect_to(:action => 'new')
 	end
 
 	def edit
@@ -44,7 +36,6 @@ class BinsController < ApplicationController
 			flash[:notice] = "Successfully updated <i>#{@bin.identifier}</i>.".html_safe
 			redirect_to(:action => 'show', :id => @bin.id)
 		else
-			flash[:warning] = "<b class='warning'>Warning! Unable to create <i>#{@bin.identifier}</i>.</b>".html_safe
 			@edit_mode = true
 			render action: :edit
 		end
@@ -58,31 +49,37 @@ class BinsController < ApplicationController
 
 	def destroy
 		@bin = Bin.find(params[:id])
-		@bin.destroy
-		flash[:notice] = "<i>#{@bin.identifier}</i> was successfully destroyed.".html_safe
-		redirect_to bins_path
+		if @bin.destroy
+			flash[:notice] = "<i>#{@bin.identifier}</i> was successfully destroyed.".html_safe
+			redirect_to bins_path
+		else
+			flash[:notice] = "<b>Failed to delete this Bin</b>".html_safe
+			render('show')
+		end
 	end
 
 	def new_box
 		@bin = Bin.find(params[:id])
-		render(partial: 'new_box', box: Box.new)
+		render(partial: 'new_box', box: Box.new(mdpi_barcode: 0))
 	end
 
 	def create_box
-		if Box.exists?(mdpi_barcode: params[:box][:mdpi_barcode])
-			flash[:notice] = "<b class='warning'>A box with MDPI barcode <i>#{params[:box][:mdpi_barcode]}</i> already exists.</b>".html_safe
+		bin = Bin.find(params[:id])
+		box = Box.new
+		box.mdpi_barcode = params[:box][:mdpi_barcode]
+		box.bin = bin
+		
+		# one additional rule about boxes that does not apply to other record types: a box cannot be 
+		# created without a valid mdpi_barcode. 0 is not allowed for this value
+		if box.mdpi_barcode == 0
+			box.errors.add(:mdpi_barcode, "must be assigned. Cannot be blank or 0.")
+			render('create')
+		elsif box.save
+			flash[:notice] = "Successfully created box with MDPI Barcode: #{box.mdpi_barcode}."
+			redirect_to(action: 'show', id: box.id)	
 		else
-			if params[:box][:mdpi_barcode].length > 0
-				bin = Bin.find(params[:id])
-				box = Box.new
-				box.mdpi_barcode = params[:box][:mdpi_barcode]
-				box.bin = bin
-				box.save
-			else
-				flash[:notice] = "<b class='warning'>You must specify a barcode to create a new box</b>".html_safe
-			end
+			render('new_box')
 		end
-		redirect_to(action: 'show', id: params[:id])
 	end
 
 	def show_box
@@ -99,6 +96,7 @@ class BinsController < ApplicationController
 		@action = 'update_box'
 		@bins = Bin.all.order('identifier')
 		@box = Box.find(params[:id])
+		@physical_objects = @box.physical_objects
 		# this is a little hackish but need to set the selected index in the drop down to reflect
 		# the currently assigned bin (if it has been set)
 		# also need to add one to the index because the form has a "Not Assigned" value at the top and 
@@ -108,13 +106,13 @@ class BinsController < ApplicationController
 	end
 
 	def update_box
-		bin_id = params[:box][:bin]
+		bin_id = params[:box][:bin_id]
 		puts("Adding to bin: #{bin_id}")
 		bin = (!bin_id.nil? and bin_id.length > 0) ? Bin.find(bin_id) : nil
 		box = Box.find(params[:id])
 		box.bin = bin
 		if box.save
-			flash[:notice] = "Successfully updated Box <i>#{box.mdpi_barcode}</i>".html_safe
+			flash[:notice] = "Successfully added Box <i>#{box.mdpi_barcode}</i> to Bin <i>#{bin.identifier}</i>".html_safe
 		else
 			flash[:notice] = "<b class='warning'>Unable to update Box <i>#{box.mdpi_barcode}</i></b>".html_safe
 		end
@@ -130,25 +128,35 @@ class BinsController < ApplicationController
 
 	def bin_add_item
 		bc = params[:barcode][:mdpi_barcode]
-		bin = Bin.find(params[:bin][:id])
-		if Box.exists?(mdpi_barcode: bc)
+		@bin = Bin.find(params[:bin][:id])
+		@physical_objects = @bin.physical_objects
+		if Box.where(mdpi_barcode: bc).where("mdpi_barcode != ?", 0).limit(1).size == 1
 			box = Box.where(mdpi_barcode: bc).first
-			box.bin = bin
+			box.bin = @bin
 			box.save
 			flash[:notice] = "Successfully added Box <i>#{box.mdpi_barcode}</i> to the Bin.".html_safe
-		elsif PhysicalObject.exists?(mdpi_barcode: bc)
+		elsif PhysicalObject.where(mdpi_barcode: bc).where("mdpi_barcode != ?", 0).limit(1).size == 1
 			po = PhysicalObject.where(mdpi_barcode: bc).first
-			po.bin = bin
+			po.bin = @bin
 			po.save
-			flash[:notice] = "Successfully added Physical Objecj <i>#{po.mdpi_barcode}</i> to Bin #{bin.identifier}.".html_safe
+			flash[:notice] = "Successfully added Physical Object <i>#{po.mdpi_barcode}</i> to Bin #{@bin.identifier}.".html_safe
 		else
-			box = Box.new
-			box.mdpi_barcode = bc
-			box.bin = bin
-			box.save
-			flash[:notice] = "Successfully created new Box <i>#{bc}</i> and added it to Bin <i>#{bin.identifier}</i>".html_safe
+			@box = Box.new
+			@box.mdpi_barcode = bc
+			@box.bin = @bin
+			#TODO: for now, boxes cannot be assigned a barcode of 0 even though it is technically valid. This will change
+			#at some point but is yet to be decided the workflow behavior
+			
+			if bc != '0' and @box.save
+				flash[:notice] = "Successfully created new Box <i>#{bc}</i> and added it to Bin <i>#{@bin.identifier}</i>".html_safe
+			else 
+				#don't redirect because view needs @box to display error messages
+				@bin.errors.add(:boxes, "tried to add/create a  Box with invalid MDPI barcode: #{bc}")
+				render('show')
+				return
+			end
 		end
-		redirect_to(action: 'show', id: bin.id)
+		redirect_to(action: 'show', id: @bin.id)
 	end
 
 	def remove_physical_object
@@ -165,35 +173,11 @@ class BinsController < ApplicationController
 			id = po.bin.id
 			po.bin = nil
 			flash[:notice] = "<i>#{po.title}</i> successully removed from the Bin".html_safe
-		#this case shouldn't happen unless someone tries to assemble a URL manually instead of following a link
 		else
 			flash[:notice] ="<b class='red'>Warning! #{po.title} was not associated with a Bin or a Box... no changes made to the POD</b>"
 		end
 		po.save
 		redirect_to(action: (c == 'bin' ? 'show' : 'show_box'), id: id)
-	end
-
-	def box_add_item
-		@box = Box.find(params[:box][:id])
-		bc = params[:barcode][:mdpi_barcode]
-		if PhysicalObject.exists?(mdpi_barcode: bc)
-			po = PhysicalObject.where(mdpi_barcode: bc).first
-			#TODO: what if a barcoded item has already been assigned to something else?
-			if po.box.nil? and po.bin.nil?
-				po.box = @box
-				po.save
-				flash[:notice] = "Physical Object <i>#{po.title}</i> was successully added to Box <i>#{@box.mdpi_barcode}</i>".html_safe
-			else
-				if !po.box.nil?
-					flash[:notice] = "<b class='warning'>#{po.title} already belongs to <a href='../show_box/#{po.box.id}'>Box[#{po.box.mdpi_barcode}]</a></b>".html_safe
-				else
-					flash[:notice] = "<b class='warning'>#{po.title} already belongs to <a href='../show/#{po.bin.id}'>Bin[#{po.bin.identifier}]</a></b>".html_safe
-				end
-			end
-		else
-			flash[:notice] = "<b class='warning'>There is no Physical Object with MDPI barcode: #{bc}</a></b>".html_safe
-		end
-		redirect_to(action: 'show_box', id: @box.id )
 	end
 
 	private
@@ -209,7 +193,7 @@ class BinsController < ApplicationController
 
 	private
 	def bin_params
-		params.require(:bin).permit(:barcode, :identifier, :description, :batch, :current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
+		params.require(:bin).permit(:mdpi_barcode, :identifier, :description, :batch, :current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
 
 	end
 

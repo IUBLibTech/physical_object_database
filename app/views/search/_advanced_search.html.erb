@@ -1,6 +1,6 @@
 <% @controller ||= 'physical_objects' %>
 <% @tm ||= @physical_object.technical_metadatum.as_technical_metadatum %>
-<%= form_for(:physical_object, url: {action: @action}) do |f| %>
+<%= form_for(@physical_object, url: {action: @action}) do |f| %>
 <div id="physicalObject" class="left">
     <h2>Physical Object</h2>
     <table summary="Physical Object Fields">
@@ -50,7 +50,7 @@
         <th>Format</th>
         <td>
           <%= f.select(
-                :format, @physical_object.formats, 
+                :format, PhysicalObject.formats, 
                 {},
 		disabled: !@edit_mode,
                 :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})"

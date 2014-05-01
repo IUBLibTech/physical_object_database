@@ -4,7 +4,7 @@
 <%= nested_form_for(@physical_object) do |f| %>
   <div id="physicalObject" class="left">
     <h2>Physical Object</h2>
-    <table summary="Physical Object Fields">
+    <table>
       <tr>
         <th>Title</th>
         <td>
@@ -50,7 +50,7 @@
       <tr>
         <th>Format</th>
         <td>
-          <%= f.select(:format, @physical_object.formats, {},	disabled: !@edit_mode, :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})")  %>    
+          <%= f.select(:format, PhysicalObject.formats, {},	disabled: !@edit_mode, :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})")  %>    
         </td>
       </tr>
       <tr>
@@ -68,7 +68,7 @@
       <tr>
         <th>MDPI Barcode</th>
         <td>
-          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, onchange: "validateBarcode(this.value)", onkeyup: "validateBarcode(this.value)") %>
+          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, onchange: 'validateBarcode(this)', onkeyup: "validateBarcode(this)") %>
         </td>
       </tr>
       <tr>

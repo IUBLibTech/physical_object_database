@@ -1,4 +1,5 @@
-<%= form_for(:batch, :url => {:action => @action, :id => @batch.id}) do |f| %>
+<%= error_messages_for(@batch) %>
+<%= form_for(@batch, :url => {:action => @action, :id => @batch.id}) do |f| %>
 	<table>
 		<tr>
 			<th>Identifier</th>

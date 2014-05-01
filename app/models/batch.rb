@@ -3,4 +3,5 @@ class Batch < ActiveRecord::Base
 	has_many :workflow_statuses
 	include WorkflowStatusModule
 
+	validates :identifier, presence: true, uniqueness: true
 end

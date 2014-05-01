@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140415181819) do
+ActiveRecord::Schema.define(version: 20140425141613) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 20140415181819) do
 
   create_table "bins", force: true do |t|
     t.integer  "batch_id"
-    t.integer  "barcode",                   limit: 8
+    t.integer  "mdpi_barcode",              limit: 8
     t.integer  "picklist_specification_id", limit: 8
     t.string   "identifier",                          null: false
     t.text     "description"
