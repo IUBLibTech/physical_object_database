@@ -7,7 +7,7 @@ class PicklistSpecificationsController < ApplicationController
 	end
 
 	def new
-		@formats = PhysicalObject.new.formats
+		@formats = PhysicalObject.formats
 		@ps = PicklistSpecification.new(format: params[:format])
 		@action = 'create'
 		@submit_text = "Create New Picklist Specification"

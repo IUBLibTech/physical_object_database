@@ -14,7 +14,6 @@ class BatchesController < ApplicationController
       flash[:notice] = "<i>#{@batch.name}</i> was successfully created".html_safe
       redirect_to(:action => 'index')
     else 
-      flash[:notice] = "<b class='warning'>Warning, {@batch.name} could not be created.</b>".html_safe
       render('new')
     end
   end
@@ -29,7 +28,6 @@ class BatchesController < ApplicationController
       flash[:notice] = "<i>#{@batch.name}</i> was successfully updated.".html_safe
       redirect_to(:action => 'show', :id => @batch.id)
     else
-      flash[:warning] = "Warning, #{@batch.name} could not be updated.".html_safe
       render('show')
     end
   end
@@ -51,9 +49,14 @@ class BatchesController < ApplicationController
   end
 
   def destroy
-    @batch = Batch.find(params[:id]).destroy
-    flash[:notice] = "<i>#{@batch.name}</i> successfully destroyed".html_safe
-    redirect_to(:action => 'index')
+    @batch = Batch.find(params[:id])
+    if @batch.destroy
+      flash[:notice] = "<i>#{@batch.name}</i> successfully destroyed".html_safe
+      redirect_to(:action => 'index')
+    else
+      flash[:notice] = '<b class="warning">Unable to delete this Batch</b>'.html_safe
+      render('show', id: @batch.id)
+    end
   end
 
   private

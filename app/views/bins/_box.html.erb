@@ -1,6 +1,6 @@
 <div id="box_div" class="left">
 	<h2>Box</h2>
-	<%= form_for(:box, :url => {action: @action, id: @box.id}) do |f| %>
+	<%= form_for(@box, :url => {action: @action, id: @box.id}) do |f| %>
 		<table>
 			<tr>
 				<th>MDPI barcode</th>
@@ -12,7 +12,7 @@
 					<% if @edit_mode %>
 						<%= select(:box, :bin_id, @bins.collect{|b| [b.identifier, b.id]}, include_blank: 'Not Assigned') %>
 					<% else %>
-						<%= @box.bin.nil? ? 'Not Assigned' : @box.bin.identifier %>
+						<%= @box.bin.nil? ? 'Not Assigned' : link_to(@box.bin.identifier, action: 'show', id: @box.bin.id) %>
 					<% end %>
 				</td>
 			</tr>
@@ -28,13 +28,14 @@
 			<p>
 				Scan a Physical Object MDPI barcode to add it  to this Bin.
 			</p>
+			<%# this is a special case where the ":" must be here instead of "@" %>
 			<%= form_for(:barcode, url: {action: 'box_add_item'} ) do |f| %>
 				<%= hidden_field(:box, :id) %>
 				<table>
 					<tr>
 						<th>MDPI Barcode</th>
 						<td>
-							<%= f.text_field(:mdpi_barcode) %>
+							<%= f.text_field(:mdpi_barcode, onchange: "validateBarcode(this)", onkeyup: "validateBarcode(this)") %>
 						</td>
 					</tr>
 				</table>

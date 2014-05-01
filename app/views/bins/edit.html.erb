@@ -3,6 +3,7 @@
 	  <%= link_to("Cancel", {:action => 'show', :id => @bin.id}) %>
 	</div>
 <% end %>
+<%= error_messages_for(@bin) %>
 <div>
   <h2>Edit Bin</h2>
     <% @edit_mode = true %>

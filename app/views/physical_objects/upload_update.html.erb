@@ -1,0 +1,23 @@
+<div class="left">
+	<% unless @failed.nil? %>
+		<p>The following Physical Objects failed import into the POD</p>
+		<table>
+			<tr>
+				<th>Row</th>
+				<th>Problem(s)</th>
+			</tr>
+			<% @failed.each do |pair| %>
+				<tr>
+					<td><%= pair[0] %></td>
+					<td>
+						<ul class='bad_upload'>
+							<% pair[1].errors.full_messages.each do |msg| %>
+								<li><%= msg %></li>
+							<% end %>
+						</ul>
+					</td>
+				</tr>
+			<% end %>	
+		</table>
+	<% end %>
+</div>

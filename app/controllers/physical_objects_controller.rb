@@ -8,11 +8,11 @@ class PhysicalObjectsController < ApplicationController
     # we can also pass a hash to PhysicalObject.new({iucat_barcode => 123436}) to assign defaults programmatically
     @physical_object = PhysicalObject.new
     #default format for now
-    format = @physical_object.formats["Open Reel Tape"]
+    format = PhysicalObject.formats["Open Reel Tape"]
     @physical_object.format = format
     @tm = @physical_object.create_tm(format)
     @digital_files = []
-    @formats = @physical_object.formats
+    @formats = PhysicalObject.formats
     @edit_mode = true
     @action = "create"
     @submit_text = "Create Physical Object"
@@ -21,11 +21,11 @@ class PhysicalObjectsController < ApplicationController
 
   def create
     @physical_object = PhysicalObject.new(physical_object_params)
+    @tm = @physical_object.create_tm(@physical_object.format)
     if @physical_object.format.length > 0 && @physical_object.save
-      tm = @physical_object.create_tm(@physical_object.format)
-      tm.physical_object = @physical_object
-      tm.update_form_params(params)
-      tm.save
+      @tm.physical_object = @physical_object
+      @tm.update_form_params(params)
+      @tm.save
       flash[:notice] = "<i>#{@physical_object.title}</i> was successfully created".html_safe
       redirect_to(:action => 'index')
     else
@@ -140,13 +140,15 @@ class PhysicalObjectsController < ApplicationController
   
   def upload_update
     if params[:physical_object].nil?
-      redirect_to(action: 'upload_show')
       flash[:notice] = "Please specify a file to upload"
+      redirect_to(action: 'upload_show')
     else
       path = params[:physical_object][:csv_file].path
       added = PhysicalObjectsHelper.parse_csv(path)
-      flash[:notice] = "#{added} records were imported."
-      redirect_to({:action => 'index'})
+      flash[:notice] = "#{added['succeeded'].size} records were successfully imported.".html_safe
+      if added['failed'].size > 0
+        @failed = added['failed']
+      end
     end
   end
 

@@ -1,6 +1,6 @@
 <% if object && object.errors.size > 0 %>
 	<div id="error_div">
-		<h2><%= pluralize(object.errors.size, "errors") %> prohibited saving this object </h2>
+		<h2><%= pluralize(object.errors.size, "errors") %> prohibited saving this <%= object.class.name.underscore.titleize %></h2>
 		<p>
 			There were problems with the following <%= pluralize(object.errors.size, "field") %>:
 		</p>

@@ -4,7 +4,28 @@
   </div>
 <% end %>
 <h1>Upload Spread Sheet (CSV)</h1>
+<p>
+	Upload a comma seperated value file with the first row containing comma delimited header 
+	names (<i>Link to page describing this once the spec is final</i>). The file must be saved in 
+	UTF8 encoding.
+	<ol>
+		<li><b>For Excel running on Windows</b></li>
+		<li>On the save dialog, choose CSV</li>
+		<li>Under <i>Tools</i>, select <i>Web Options</i></li>
+		<li>On the Encoding tab, select UTF8</li>
+	</ol>
+	<ol>
+		<li>
+			<b>For Excel running on OSX</b>
+		</li>
+		<li>Excel for Mac does not support saving to UTF8... save the file as a CSV</li>
+		<li>Open the CSV file in TextEdit</li>
+		<li>Under <i>Preferences</i>, in the <i>Plain Text File Encoding</i> section, select Unicode UTF-8</li>
+		<li>Resave the file from TextEdit</li>
+	</ol>
 
+</p>
+<%# special case where the action does not have a physical object so must be :physical_object not @physical_object %>
 <%= form_for(:physical_object, :url => {:action => 'upload_update'}) do |f| %>
   <%= f.file_field :csv_file %>
   <br/>

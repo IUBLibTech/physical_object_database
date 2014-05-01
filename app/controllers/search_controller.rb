@@ -12,7 +12,7 @@ class SearchController < ApplicationController
 
   def index
     @physical_object = PhysicalObject.new
-    @physical_object.format = @physical_object.formats["Open Reel Tape"]
+    @physical_object.format = PhysicalObject.formats["Open Reel Tape"]
     @tm = @physical_object.create_tm(@physical_object.format)
     @display_assigned = true
     @edit_mode = true

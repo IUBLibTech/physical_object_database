@@ -20,7 +20,7 @@
 		<% count = 1 %>
 		<% @bins.each do |b|%>
 			<tr>
-				<td><%= b.barcode %></td>
+				<td><%= b.mdpi_barcode %></td>
 				<td><%= b.identifier %></td>
 				<td><%= b.description %></td>
 				<td><%= b.batch.nil? ? "" : b.batch.name %></td>

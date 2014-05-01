@@ -10,5 +10,8 @@ class Bin < ActiveRecord::Base
 	accepts_nested_attributes_for :condition_statuses, allow_destroy: true
 	include ConditionStatusModule
 
+	validates :identifier, presence: true, uniqueness: true
+	validates :mdpi_barcode, mdpi_barcode: true
+
 
 end
