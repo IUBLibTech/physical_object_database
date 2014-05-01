@@ -22,4 +22,5 @@
 config/database.yml
 database.yml
 nohup.out
+Gemfile.lock
 
