@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <%# BATCH INFORMATION %>
+      <% @column_names = ["identifier", "name", "description", "updated_at"]%>
+      <% @column_names.each do |column_name| %>
+        <Row>
+          <Cell><Data ss:Type="String"><%= "Batch " + column_name.titlecase %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= @batch.attributes[column_name] %></Data></Cell>
+        </Row>
+      <% end %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= "Batch Workflow Status" %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= @batch.current_workflow_status.nil? ? "" : @batch.current_workflow_status.workflow_status_template.name %></Data></Cell>
+      </Row>
+      <% if @bins.any? %>
+        <Row>
+        <% @bin_columns = ["identifier", "name", "description", "barcode"] %>
+        <% @bin_columns.each do |column_name| %>
+          <Cell><Data ss:Type="String"><%= "Bin " + column_name.titlecase %></Data></Cell>
+        <% end %>
+        <% @box_columns = ["mdpi_barcode"] %>
+        <% @box_columns.each do |column_name| %>
+          <Cell><Data ss:Type="String"><%= "Box Barcode (if applicable)" %></Data></Cell>
+        <% end %>
+        <% @po_columns = ["mdpi_barcode", "title"] %>
+        <% @po_columns.each do |column_name| %>
+          <Cell><Data ss:Type="String"><%= "Object " + column_name.titlecase %></Data></Cell>
+        <% end %>
+        </Row>
+        <% @bins.each do |bin| %>
+          <%# LOOP THROUGH BOXES FIRST %>
+          <% bin.boxes.each do |box| %>
+            <% box.physical_objects.each do |po| %>
+              <Row>
+              <% bin.attributes.values_at(*@bin_columns).each do |column_value| %>
+                <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
+              <% end %>
+              <% box.attributes.values_at(*@box_columns).each do |column_value| %>
+                <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
+              <% end %>
+              <% po.attributes.values_at(*@po_columns).each do |column_value| %>
+                <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
+              <% end %>
+              </Row>
+            <% end %>
+          <% end %>
+          <%# LIST UNBOXED ITEMS LAST %>
+          <% bin.physical_objects.each do |po| %>
+            <Row>
+            <% bin.attributes.values_at(*@bin_columns).each do |column_value| %>
+              <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
+            <% end %>
+            <% @box_columns.each do |column_value| %>
+              <Cell><Data ss:Type="String"><%= "(not in box)" %></Data></Cell>
+            <% end %>
+            <% po.attributes.values_at(*@po_columns).each do |column_value| %>
+              <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
+            <% end %>
+            </Row>
+          <% end %>
+        <% end %>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

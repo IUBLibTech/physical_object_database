@@ -1,4 +1,4 @@
-class BatchController < ApplicationController
+class BatchesController < ApplicationController
 
   def index
     @batches = Batch.all
@@ -35,7 +35,15 @@ class BatchController < ApplicationController
   end
 
   def show
+    if request.format.csv? || request.format.xls?
+      params[:id] = params[:id].sub(/batch_/, '')
+    end
     @batch = Batch.find(params[:id])
+    @bins = @batch.bins
+    respond_to do |format|
+      format.html
+      format.xls
+    end
   end
 
   def delete
