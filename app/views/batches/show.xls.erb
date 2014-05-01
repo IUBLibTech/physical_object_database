@@ -20,7 +20,7 @@
       </Row>
       <% if @bins.any? %>
         <Row>
-        <% @bin_columns = ["identifier", "name", "description", "barcode"] %>
+        <% @bin_columns = ["identifier", "name", "description", "mdpi_barcode"] %>
         <% @bin_columns.each do |column_name| %>
           <Cell><Data ss:Type="String"><%= "Bin " + column_name.titlecase %></Data></Cell>
         <% end %>
