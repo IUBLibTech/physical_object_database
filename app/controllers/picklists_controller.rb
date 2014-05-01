@@ -9,14 +9,13 @@ class PicklistsController < ApplicationController
 
 	def create
 		@picklist = Picklist.new(picklist_params)
-		if Picklist.exists?(name: @picklist.name)
-			flash[:notice] = "A picklist with name: #{@picklist.name} already exists."
-			render('new')
-		elsif @picklist.save
+		@edit_mode = true
+		@submit_text = "Create Picklist"
+		@action = 'create'
+		if @picklist.save
 			flash[:notice] = "Successfully created #{@picklist.name}"
 			redirect_to(controller: 'picklist_specifications', action: "index")
 		else
-			flash[:notice] = "Unable to create #{@picklist.name}"
 			render('new')
 		end
 	end
@@ -55,7 +54,6 @@ class PicklistsController < ApplicationController
 			flash[:notice] = "Successfully updated #{@picklist.name}"
 			redirect_to(controller: 'picklist_specifications', action: 'index')	
 		else
-			flash[:notice] = "Failed to update #{@picklist.name}"
 			render('edit')
 		end
 	end
