@@ -1,0 +1,17 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+	  <%= link_to("Create Batch", {:action => 'new'}) %>
+	</div>
+	<div class="contextMenuItem">
+	  <%= link_to("Edit Batch", {:action => 'edit', :id => @batch.id}) %>
+	</div>
+	<div class="contextMenuItem">
+	  <%= link_to("Delete Batch", {:action => 'delete', :id => @batch.id}) %>
+	</div>
+<% end %>
+<div>
+  <h2>Batch</h2>
+    Shipping Manifest: <%= link_to 'Excel File', batch_path(id: 'batch_' + @batch.id.to_s, format: :xls) %>
+    <% @edit_mode = false %>
+    <%= render(:partial => "batch") %>
+</div>

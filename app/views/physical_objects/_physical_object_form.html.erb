@@ -146,7 +146,7 @@
                 <% bid = p.box.bin.batch.id %>
               <% end %>
               <% if !name.nil? %>
-                <%= link_to(name, controller: 'batch', action: 'show', id: bid) %>
+                <%= link_to(name, controller: :batches, action: :show, id: bid) %>
               <% else %>
                 Not Assigned
               <% end %>
