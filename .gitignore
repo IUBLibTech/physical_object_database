@@ -22,6 +22,7 @@
 config/database.yml
 database.yml
 nohup.out
+Gemfile.lock
 
 # Ignore Gemfile.lock changes as noise
 Gemfile.lock

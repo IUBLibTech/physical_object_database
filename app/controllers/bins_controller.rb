@@ -107,12 +107,14 @@ class BinsController < ApplicationController
 
 	def update_box
 		bin_id = params[:box][:bin_id]
-		puts("Adding to bin: #{bin_id}")
 		bin = (!bin_id.nil? and bin_id.length > 0) ? Bin.find(bin_id) : nil
 		box = Box.find(params[:id])
 		box.bin = bin
 		if box.save
-			flash[:notice] = "Successfully added Box <i>#{box.mdpi_barcode}</i> to Bin <i>#{bin.identifier}</i>".html_safe
+			flash[:notice] = 
+				box.bin.nil? ?
+					"Successfully unassigned Box <i>#{box.mdpi_barcode}</i>".html_safe :
+					"Successfully added Box <i>#{box.mdpi_barcode}</i> to Bin <i>#{bin.identifier}</i>".html_safe
 		else
 			flash[:notice] = "<b class='warning'>Unable to update Box <i>#{box.mdpi_barcode}</i></b>".html_safe
 		end

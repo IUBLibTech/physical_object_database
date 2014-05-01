@@ -1,10 +1,10 @@
   <% content_for :context_menu do %>
     <div class="contextMenuItem">
-      <%= link_to("Create New Physical Object", :action => 'new') %>
+      <%= link_to("Create New Physical Object", controller: 'physical_objects', action: 'new') %>
     </div>
     <div class="contextMenuItem">
       <%# TODO: fix routing file to make the id: 'new' unnecessary %>
-      <%= link_to("Upload Spreadsheet", :action => 'upload_show', id: 'new') %>
+      <%= link_to("Upload Spreadsheet", controller: 'physical_objects', action: 'upload_show', id: 'new') %>
     </div>
   <% end %>
 

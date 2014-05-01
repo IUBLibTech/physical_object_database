@@ -9,12 +9,13 @@ Pod::Application.routes.draw do
   #get "physical_objects/destroy"
  
   root "physical_objects#index"
-
   match '/batches/search',	to: 'batches#search',	via: [:get, :post]
   resources :batches
   resources :bins
+  resources :boxes
   resources :physical_objects
   resources :picklists
+
   resources :sessions, only:  [:new, :destroy]
 
   match '/signin',      to: 'sessions#new',             via: 'get'

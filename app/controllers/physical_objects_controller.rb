@@ -26,14 +26,9 @@ class PhysicalObjectsController < ApplicationController
       @tm.physical_object = @physical_object
       @tm.update_form_params(params)
       @tm.save
-      flash[:notice] = "<i>#{@physical_object.title}</i> was successfully created".html_safe
+      flash[:notice] = "Physical Object was successfully created.".html_safe
       redirect_to(:action => 'index')
     else
-      if @physical_object.format.length == 0
-        flash[:notice] = "<b class='warning'>You must specify a format</b>"
-      else
-        flash[:notice] = "<b class=warning>Unable to save physical object</b>"
-      end
       @edit_mode = true
       render('new')
     end
@@ -69,9 +64,7 @@ class PhysicalObjectsController < ApplicationController
     @physical_object = PhysicalObject.find(params[:id])
     old_format = @physical_object.format
     if ! @physical_object.update_attributes(physical_object_params)
-      flash[:notice] = "Unable to save #{@physical_object.title}"
       @edit_mode = true
-      #redirect_to(action: :edit, id: @physical_object.id)
       render action: :edit
     else
       # format change requires deleting the old technical_metadatum and creating a new one
@@ -88,7 +81,7 @@ class PhysicalObjectsController < ApplicationController
         puts(tm.to_yaml)
         tm.save
       end
-      flash[:notice] = "<i>#{@physical_object.title}</i> successfully updated".html_safe
+      flash[:notice] = "Physical Object successfully updated".html_safe
       redirect_to(action: 'index')
     end
   end
@@ -99,7 +92,7 @@ class PhysicalObjectsController < ApplicationController
       po.technical_metadatum.specialize.destroy
     end
     po.destroy
-    flash[:notice] = "<i>#{po.title}</i> was successfully deleted.".html_safe
+    flash[:notice] = "Physical Object was successfully deleted.".html_safe
     redirect_to physical_objects_path
   end
   
