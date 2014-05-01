@@ -40,7 +40,6 @@ class BatchesController < ApplicationController
     end
     @batch = Batch.find(params[:id])
     @bins = @batch.bins
-    @physical_objects = PhysicalObject.where(id: -1)
     respond_to do |format|
       format.html
       format.xls
