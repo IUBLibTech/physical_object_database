@@ -1,4 +1,4 @@
-class ConditionStatusTemplateController < ApplicationController
+class ConditionStatusTemplatesController < ApplicationController
 
   def index
     @all_condition_status_templates = {}

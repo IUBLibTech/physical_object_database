@@ -1,4 +1,4 @@
-class WorkflowStatusTemplateController < ApplicationController
+class WorkflowStatusTemplatesController < ApplicationController
 
 	def workflow
 		@workflow_status_template = WorkflowStatusTemplate.new

@@ -1,27 +1,72 @@
+#FIXME: fix "delete" calls
+#FIXME: test all functions
 Pod::Application.routes.draw do
-  #get "physical_objects/new"
-  #get "physical_objects/create"
-  #get "physical_objects/index"
-  #get "physical_objects/show"
-  #get "physical_objects/edit"
-  #get "physical_objects/update"
-  #get "physical_objects/delete"
-  #get "physical_objects/destroy"
- 
   root "physical_objects#index"
-  match '/batches/search',	to: 'batches#search',	via: [:get, :post]
-  resources :batches
-  resources :bins
+
+  resources :batches do
+    get :delete, on: :member
+    get :search, on: :collection
+  end
+  	#bins
+  resources :bins do
+    get :delete, on: :member
+    get :search, on: :collection
+    get :bin_add_item, on: :member
+
+    get :remove_physical_object, on: :member
+
+    get :show_box, on: :member
+    get :edit_box, on: :member
+    get :remove_box, on: :member
+    get :box_add_item, on: :member
+    post :box_add_item, on: :member
+  end
+  	#box
+	#physical_object
+	#other commands
   resources :boxes
-  resources :physical_objects
+  	#needs native commands
+  resources :condition_status_templates do
+    get :delete, on: :member
+  end
+  	#command condition
+  #resources :condition_statuses
+  #resources :digital_files
+  resources :physical_objects do
+    get :upload_show, on: :member
+    get :split_show, on: :member
+  end
+  	#various commands
+  resources :picklist_specifications do
+    get :query, on: :member
+  end
+  	#various commands
   resources :picklists
+  	#remove
+	#csv
+  resources :search, controller: :search do
+    match :advanced_search, on: :collection, via: [:get, :post]
+  end
+  #match 'search', to: 'search#index', via: [:get, :post]
+#status templates controller
+  resources :status_templates
+#test controller -- empty?
+#workflow status controller -- empty?
+  match '/signin', to: 'sessions#new', via: :get
+  match '/signout', to: 'sessions#destroy', via: :delete
+  resources :sessions, only:  [:new, :destroy] do
+    get :validate_login, on: :collection
+    #get :signin, to: :new, on: :collection
+    #delete :signout, to: :destroy, on: :collection
+  end
+  resources :workflow_status_templates do
+    get :delete, on: :member
+  end
+  resources :workflow_statuses
 
-  resources :sessions, only:  [:new, :destroy]
-
-  match '/signin',      to: 'sessions#new',             via: 'get'
-  match '/signout',     to: 'sessions#destroy',         via: 'delete'
+  #technical metadata
   
-  match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
+  #match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

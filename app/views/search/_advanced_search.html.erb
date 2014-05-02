@@ -109,7 +109,7 @@
           <%= f.text_field(:updated_at, readonly: true) %>
         </td>
       </tr>
-      <%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @physical_object %>
+      <%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @physical_object %>
     </table> 
   </div>
 
