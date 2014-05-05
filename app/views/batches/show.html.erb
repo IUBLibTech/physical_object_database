@@ -6,7 +6,7 @@
 	  <%= link_to("Edit Batch", {:action => 'edit', :id => @batch.id}) %>
 	</div>
 	<div class="contextMenuItem">
-	  <%= link_to("Delete Batch", {:action => 'delete', :id => @batch.id}) %>
+	  <%= link_to("Delete Batch", batch_path(@batch.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Batch?'}) %>
 	</div>
 <% end %>
 <div>
