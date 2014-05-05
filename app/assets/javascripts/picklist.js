@@ -2,7 +2,7 @@
 // All this logic will automatically be available in application.js.
 function new_box(pl_id) {  
   jQuery.ajax({
-    url: "/bins/new_box/"+pl_id,
+    url: "/bins/"+pl_id+"/new_box",
     type: "POST",
     data: {},
     dataType: "html",
@@ -22,7 +22,7 @@ function new_box(pl_id) {
 
 function assign_box(box_id) {  
   jQuery.ajax({
-    url: "/bin/assign_box/"+box_id,
+    url: "/bin/"+box_id+"/assign_box",
     type: "POST",
     data: {},
     dataType: "html",

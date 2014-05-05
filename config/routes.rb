@@ -10,20 +10,38 @@ Pod::Application.routes.draw do
   resources :bins do
     get :search, on: :collection
     get :bin_add_item, on: :member
+    post :bin_add_item, on: :member
+    get :box_add_item, on: :member
+    post :box_add_item, on: :member
 
     get :remove_physical_object, on: :member
 
     get :show_box, on: :member
     get :edit_box, on: :member
+    post :new_box, on: :member
+    post :assign_box, on: :member
     get :remove_box, on: :member
+    post :remove_box, on: :member
+
+    resources :boxes do
+      get :remove_box, on: :member
+      post :remove_box, on: :member
+      get :remove_physical_object, on: :member
+      post :remove_physical_object, on: :member
+      get :box_add_item, on: :member
+      post :box_add_item, on: :member
+    end
+  end
+	#physical_object
+	#other commands
+  resources :boxes do
+    get :remove_box, on: :member
+    post :remove_box, on: :member
+    get :remove_physical_object, on: :member
+    post :remove_physical_object, on: :member
     get :box_add_item, on: :member
     post :box_add_item, on: :member
   end
-  	#box
-	#physical_object
-	#other commands
-  resources :boxes
-  	#needs native commands
   resources :condition_status_templates
   resources :condition_statuses
   	#command condition
