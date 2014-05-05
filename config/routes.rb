@@ -4,12 +4,10 @@ Pod::Application.routes.draw do
   root "physical_objects#index"
 
   resources :batches do
-    get :delete, on: :member
     get :search, on: :collection
   end
   	#bins
   resources :bins do
-    get :delete, on: :member
     get :search, on: :collection
     get :bin_add_item, on: :member
 
@@ -26,9 +24,8 @@ Pod::Application.routes.draw do
 	#other commands
   resources :boxes
   	#needs native commands
-  resources :condition_status_templates do
-    get :delete, on: :member
-  end
+  resources :condition_status_templates
+  resources :condition_statuses
   	#command condition
   #resources :condition_statuses
   #resources :digital_files
@@ -59,9 +56,7 @@ Pod::Application.routes.draw do
     #get :signin, to: :new, on: :collection
     #delete :signout, to: :destroy, on: :collection
   end
-  resources :workflow_status_templates do
-    get :delete, on: :member
-  end
+  resources :workflow_status_templates
   resources :workflow_statuses
 
   #technical metadata

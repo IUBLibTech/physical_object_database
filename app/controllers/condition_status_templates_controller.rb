@@ -45,10 +45,6 @@ class ConditionStatusTemplatesController < ApplicationController
     @condition_status_template = ConditionStatusTemplate.find(params[:id])
   end
   
-  def delete
-    @condition_status_template = ConditionStatusTemplate.find(params[:id])
-  end
-
   def destroy
     @condition_status_template = ConditionStatusTemplate.find(params[:id])
     if @condition_status_template.destroy
