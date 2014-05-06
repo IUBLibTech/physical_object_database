@@ -9,9 +9,13 @@
 	  <%= link_to("Delete Batch", batch_path(@batch.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Batch?'}) %>
 	</div>
 <% end %>
-<div>
+<div id="batch_div" class="left">
   <h2>Batch</h2>
     Shipping Manifest: <%= link_to 'Excel File', batch_path(id: 'batch_' + @batch.id.to_s, format: :xls) %>
     <% @edit_mode = false %>
     <%= render(:partial => "batch") %>
+</div>
+<div id="bins_div" class="left">
+   <h2>Bins in this Batch</h2>
+   <%= render 'bins/bins_table' %>
 </div>

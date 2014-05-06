@@ -1,6 +1,6 @@
 class BoxesController < ApplicationController
   before_action :set_bin
-  before_action :set_box, only: [:show, :edit, :update, :destroy, :remove_box, :remove_physical_object]
+  before_action :set_box, only: [:show, :edit, :update, :destroy, :unbin]
 
   def index
     if @bin.nil?
@@ -15,7 +15,8 @@ class BoxesController < ApplicationController
 
   def new
     if @bin
-      @box = @bin.boxes.new
+      @box = @bin.boxes.new(mdpi_barcode: 0)
+      render(partial: 'minimal_new', box: @box)
     else
       @box = Box.new
     end
@@ -64,30 +65,28 @@ class BoxesController < ApplicationController
     end
   end
 
-  def remove_box
+  def unbin
     @box.bin = nil
     if @box.save
-      flash[:notice] = "<em>Successfully removed Box.</em>"
-      render 'show'
+      flash[:notice] = "<em>Successfully removed Box from Bin.</em>".html_safe
     else
-      flash[:notice] = "<strong>Failed to remove this Box.</strong>"
-      render 'show'
+      flash[:notice] = "<strong>Failed to remove this Box from Bin.</strong>".html_safe
+    end
+    unless @bin.nil?
+      redirect_to @bin
+    else
+      redirect_to @box
     end
   end
 
-  def remove_physical_object
-    flash[:notice] = "FIXME"
-    redirect_to @box
-  end
-
-  def box_add_item
+  def add_barcode_item
     bc = params[:barcode][:mdpi_barcode]
     @box = Box.find(params[:box][:id])
     @physical_objects = @box.physical_objects
     if bc.nil? || bc.blank? || bc.to_i.zero?
-      flash[:notice] = "<strong>Invalid barcode provided.</strong>"
+      flash[:notice] = "<strong>Invalid barcode provided.</strong>".html_safe
     elsif Box.where(mdpi_barcode: bc).where("mdpi_barcode != ?", 0).limit(1).size == 1
-      flash[:notice] = "<strong>You cannot add a box to a box.</strong>"
+      flash[:notice] = "<strong>You cannot add a box to a box.</strong>".html_safe
     elsif PhysicalObject.where(mdpi_barcode: bc).where("mdpi_barcode != ?", 0).limit(1).size == 1
       po = PhysicalObject.where(mdpi_barcode: bc).first
       po.box = @box

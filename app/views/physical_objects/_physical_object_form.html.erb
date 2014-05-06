@@ -124,9 +124,9 @@
             <th>Bin/Box</th>
             <td>
               <% if !@physical_object.bin.nil? %>
-                <%= link_to("Bin: #{@physical_object.bin.identifier}", controller: 'bins', action: 'show', id: @physical_object.bin.id) %>
+                <%= link_to("Bin: #{@physical_object.bin.identifier}", @physical_object.bin) %>
               <% elsif !@physical_object.box.nil? %>
-                <%= link_to("Box: #{@physical_object.box.mdpi_barcode}", controller: 'bins', action: 'show_box', id: @physical_object.box.id) %>
+                <%= link_to("Box: #{@physical_object.box.mdpi_barcode}", @physical_object.box) %>
               <% else %>
                 Not Assigned
               <% end %>

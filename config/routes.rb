@@ -1,46 +1,24 @@
-#FIXME: fix "delete" calls
-#FIXME: test all functions
 Pod::Application.routes.draw do
   root "physical_objects#index"
 
   resources :batches do
     get :search, on: :collection
   end
-  	#bins
+
   resources :bins do
     get :search, on: :collection
-    get :bin_add_item, on: :member
-    post :bin_add_item, on: :member
-    get :box_add_item, on: :member
-    post :box_add_item, on: :member
-
-    get :remove_physical_object, on: :member
-
-    get :show_box, on: :member
-    get :edit_box, on: :member
-    post :new_box, on: :member
+    post :add_barcode_item, on: :member
     post :assign_box, on: :member
-    get :remove_box, on: :member
-    post :remove_box, on: :member
+    get :edit_box, on: :member
+    post :unbatch, on: :member
 
-    resources :boxes do
-      get :remove_box, on: :member
-      post :remove_box, on: :member
-      get :remove_physical_object, on: :member
-      post :remove_physical_object, on: :member
-      get :box_add_item, on: :member
-      post :box_add_item, on: :member
-    end
+    resources :boxes, only: [:new, :create]
   end
 	#physical_object
 	#other commands
-  resources :boxes do
-    get :remove_box, on: :member
-    post :remove_box, on: :member
-    get :remove_physical_object, on: :member
-    post :remove_physical_object, on: :member
-    get :box_add_item, on: :member
-    post :box_add_item, on: :member
+  resources :boxes, except: [:edit] do
+    post :unbin, on: :member
+    post :add_barcode_item, on: :member
   end
   resources :condition_status_templates
   resources :condition_statuses
@@ -48,10 +26,14 @@ Pod::Application.routes.draw do
   #resources :condition_statuses
   #resources :digital_files
   resources :physical_objects do
-    get :upload_show, on: :member
     get :split_show, on: :member
+    post :split_update, on: :member
+    get :upload_show, on: :member
+    post :upload_update, on: :member
+    get :get_tm_form, on: :member
+    post :unbin, on: :member
+    post :unbox, on: :member
   end
-  	#various commands
   resources :picklist_specifications do
     get :query, on: :member
   end

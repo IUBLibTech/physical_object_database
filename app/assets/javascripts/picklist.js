@@ -2,8 +2,8 @@
 // All this logic will automatically be available in application.js.
 function new_box(pl_id) {  
   jQuery.ajax({
-    url: "/bins/"+pl_id+"/new_box",
-    type: "POST",
+    url: "/bins/"+pl_id+"/boxes/new",
+    type: "GET",
     data: {},
     dataType: "html",
     beforeSend: function(xhr) {
@@ -20,6 +20,7 @@ function new_box(pl_id) {
   });
 }
 
+//FIXME: this is not called anywhere?
 function assign_box(box_id) {  
   jQuery.ajax({
     url: "/bin/"+box_id+"/assign_box",

@@ -12,7 +12,7 @@
 		<%= link_to("Create Box", "#", onclick: "new_box(#{@bin.id})") %>
 	</div>
 	<div class="contextMenuItem">
-		<%= link_to("Create Box", new_box_bin_path(@bin), method: :post) %>
+		<%= link_to("Create Box", new_bin_box_path(@bin)) %>
 	</div>
 <% end %>
 
@@ -24,13 +24,13 @@
 
 <div id="bin_div" class="left">
   <h2>Bin</h2>
-    <%= render(:partial => "bin") %>
+    <%= render 'bin' %>
 </div>
 <div class="left">
 	<h2>Boxes</h2>
-	<%= render(partial: 'boxes') %>
+	<%= render 'boxes/boxes_table' %>
 </div>
 <div class="left">
-	<h2>Physical Objects</h2>
-	<%= render(partial: 'physical_objects') %>
+	<h2>Physical Objects in this Bin</h2>
+	<%= render 'physical_objects/physical_objects_table' %>
 </div>
