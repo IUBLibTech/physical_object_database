@@ -49,8 +49,8 @@ class PhysicalObjectsController < ApplicationController
     @display_assigned = true
     if @tm.nil?
       flash[:notice] = "A physical object was created without specifying its technical metadatum..."
+      redirect_to(action: 'show', id: @physical_object.id)
     end
-    redirect_to(action: 'show', id: @physical_object.id)
   end
 
   def update
