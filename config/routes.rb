@@ -2,10 +2,12 @@ Pod::Application.routes.draw do
   root "physical_objects#index"
 
   resources :batches do
+    #keep?
     get :search, on: :collection
   end
 
   resources :bins do
+    #keep?
     get :search, on: :collection
     post :add_barcode_item, on: :member
     post :unbatch, on: :member
