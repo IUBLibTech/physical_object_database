@@ -23,9 +23,9 @@
         <%= link_to("Show", bin_path(bin)) %>
         <% if @batch.nil? %>
           <%= link_to("Edit", edit_bin_path(bin)) %>
-          <%= link_to("Delete", bin_path(bin), method: :delete, data: {:confirm=>'Are you sure you want to delete this Bin?'})%>
+          <%= link_to("Delete", bin_path(bin), method: :delete, data: {confirm: 'Are you sure you want to delete this Bin?'})%>
         <% else %>
-          <%= link_to "Remove", unbatch_bin_path(bin), method: :post %>
+          <%= link_to "Remove", unbatch_bin_path(bin), method: :post, data: {confirm: 'Are you sure you want to remove this Bin from the Batch?'} %>
         <% end %>
       </td>
     </tr>
