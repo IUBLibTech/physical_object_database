@@ -31,6 +31,7 @@ Pod::Application.routes.draw do
     post :unbin, on: :member
     post :unbox, on: :member
   end
+
   resources :picklist_specifications do
     get :query, on: :member
     patch :query_add, on: :member
@@ -40,23 +41,20 @@ Pod::Application.routes.draw do
     #FIXME: refactor into physical_object?
     get :remove, on: :member
   end
-  	#remove
-	#csv
+
   resources :search, controller: :search do
     match :advanced_search, on: :collection, via: [:get, :post]
   end
   #match 'search', to: 'search#index', via: [:get, :post]
 #status templates controller
-  resources :status_templates
+  resources :status_templates, only: [:index]
 #test controller -- empty?
-#workflow status controller -- empty?
   match '/signin', to: 'sessions#new', via: :get
   match '/signout', to: 'sessions#destroy', via: :delete
-  resources :sessions, only:  [:new, :destroy] do
+  resources :sessions, only: [:new, :destroy] do
     get :validate_login, on: :collection
-    #get :signin, to: :new, on: :collection
-    #delete :signout, to: :destroy, on: :collection
   end
+  #empty?
   resources :workflow_status_templates
   resources :workflow_statuses
 

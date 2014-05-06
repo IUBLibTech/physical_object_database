@@ -7,5 +7,6 @@
     </div>
   <% end %>
   <h2>Physical Objects</h2>
-  <%= render 'physical_objects_table' %>
+  <%# special case: need to specify full path because of inclusion in search result %>
+  <%= render 'physical_objects/physical_objects_table' %>
 
