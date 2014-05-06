@@ -135,13 +135,12 @@ class PicklistSpecificationsController < ApplicationController
 		q
 	end
 
-	private
+  private
     def picklist_specification_params
       params.require(:ps).permit(:format, :name, :description)
     end
 
-  private
-  	def tm(format)
+ 	def tm(format)
   		printf("Got format %s\n", format.nil? ? "No format" : format )
   		if format == 'Open Reel Tape'
   			OpenReelTm.new

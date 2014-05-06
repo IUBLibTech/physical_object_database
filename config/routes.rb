@@ -19,10 +19,10 @@ Pod::Application.routes.draw do
   end
 
   resources :condition_status_templates
-  resources :condition_statuses
 
   resources :physical_objects do
-    get :get_tm_form, on: :member
+    #Keep?  in javascript
+    #get :get_tm_form, on: :member
     get :split_show, on: :member
     get :upload_show, on: :collection
 
@@ -35,34 +35,36 @@ Pod::Application.routes.draw do
   end
 
   resources :picklist_specifications do
+    #list_pos
+    #keep?  in javascript
+    #get_form
+    #ot_hash: delete from controller?
+    #format_where
     get :query, on: :member
     patch :query_add, on: :member
   end
-  	#various commands
+
   resources :picklists do
     #FIXME: refactor into physical_object?
     get :remove, on: :member
   end
 
   resources :search, controller: :search, only: [:index] do
-    match :advanced_search, on: :collection, via: [:get, :post]
-    match :search_results, on: :collection, via: [:get, :post]
+    post :advanced_search, on: :collection
+    post :search_results, on: :collection
   end
-  #match 'search', to: 'search#index', via: [:get, :post]
-#status templates controller
+
   resources :status_templates, only: [:index]
-#test controller -- empty?
+
   match '/signin', to: 'sessions#new', via: :get
   match '/signout', to: 'sessions#destroy', via: :delete
   resources :sessions, only: [:new, :destroy] do
     get :validate_login, on: :collection
   end
-  #empty?
-  resources :workflow_status_templates
-  resources :workflow_statuses
 
-  #technical metadata
-  
+  resources :workflow_status_templates
+
+  #old routing scheme was:
   #match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
 
   # The priority is based upon order of creation: first created -> highest priority.
