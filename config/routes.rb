@@ -20,7 +20,7 @@ Pod::Application.routes.draw do
 
   resources :condition_status_templates
   resources :condition_statuses
-  #resources :digital_files
+
   resources :physical_objects do
     get :get_tm_form, on: :member
     get :split_show, on: :member
@@ -30,6 +30,8 @@ Pod::Application.routes.draw do
     post :upload_update, on: :collection
     post :unbin, on: :member
     post :unbox, on: :member
+
+    #resource digital_files
   end
 
   resources :picklist_specifications do
@@ -42,8 +44,9 @@ Pod::Application.routes.draw do
     get :remove, on: :member
   end
 
-  resources :search, controller: :search do
+  resources :search, controller: :search, only: [:index] do
     match :advanced_search, on: :collection, via: [:get, :post]
+    match :search_results, on: :collection, via: [:get, :post]
   end
   #match 'search', to: 'search#index', via: [:get, :post]
 #status templates controller
