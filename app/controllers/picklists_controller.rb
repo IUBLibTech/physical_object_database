@@ -79,7 +79,7 @@ class PicklistsController < ApplicationController
 				flash[:notice] = "Unable to remove #{po.title} from the pocklist"
 			end
 		end
-		redirect_to(action: 'show', id: picklist.id) 
+		redirect_to @picklist
 	end
 
   def csv

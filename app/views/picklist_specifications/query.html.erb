@@ -6,7 +6,7 @@
     <%= link_to("View Picklists", :action => 'index') %>
   </div>
 <% end %>
-
+<%= error_messages_for(@ps) %>
 <%= form_for(@ps, :url => {:action => @action, :id => @ps.id}) do |f| %>
   <h2>Physical Objects Matching Spec <%= @ps.name %></h2> 
   <% if @physical_objects.nil? or @physical_objects.size == 0 %>

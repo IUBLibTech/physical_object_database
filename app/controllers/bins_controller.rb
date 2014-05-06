@@ -56,41 +56,6 @@ class BinsController < ApplicationController
 		end
 	end
 
-	#Minimal form
-	def new_box
-		render(partial: 'new_box', box: Box.new(mdpi_barcode: 0))
-	end
-
-	def edit_box
-		@edit_mode = true
-		@action = 'update_box'
-		@bins = Bin.all.order('identifier')
-		@box = Box.find(params[:id])
-		@physical_objects = @box.physical_objects
-		# this is a little hackish but need to set the selected index in the drop down to reflect
-		# the currently assigned bin (if it has been set)
-		# also need to add one to the index because the form has a "Not Assigned" value at the top and 
-		# selected_index is the position not value
-		@selected_index = @box.bin.nil? ? 0 : bin_index(@bins, @box.bin_id) + 1
-		puts("Selected index = #{@selected_index}")
-	end
-
-	def update_box
-		bin_id = params[:box][:bin_id]
-		bin = (!bin_id.nil? and bin_id.length > 0) ? Bin.find(bin_id) : nil
-		box = Box.find(params[:id])
-		box.bin = bin
-		if box.save
-			flash[:notice] = 
-				box.bin.nil? ?
-					"Successfully unassigned Box <i>#{box.mdpi_barcode}</i>".html_safe :
-					"Successfully added Box <i>#{box.mdpi_barcode}</i> to Bin <i>#{bin.identifier}</i>".html_safe
-		else
-			flash[:notice] = "<b class='warning'>Unable to update Box <i>#{box.mdpi_barcode}</i></b>".html_safe
-		end
-		redirect_to box
-	end
-
 	def add_barcode_item
 		bc = params[:barcode][:mdpi_barcode]
 		@bin = Bin.find(params[:bin][:id])

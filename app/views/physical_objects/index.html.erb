@@ -3,8 +3,7 @@
       <%= link_to("Create New Physical Object", controller: 'physical_objects', action: 'new') %>
     </div>
     <div class="contextMenuItem">
-      <%# TODO: fix routing file to make the id: 'new' unnecessary %>
-      <%= link_to("Upload Spreadsheet", controller: 'physical_objects', action: 'upload_show', id: 'new') %>
+      <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) %>
     </div>
   <% end %>
   <h2>Physical Objects</h2>

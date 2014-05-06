@@ -8,37 +8,38 @@ Pod::Application.routes.draw do
   resources :bins do
     get :search, on: :collection
     post :add_barcode_item, on: :member
-    post :assign_box, on: :member
-    get :edit_box, on: :member
     post :unbatch, on: :member
 
     resources :boxes, only: [:new, :create]
   end
-	#physical_object
-	#other commands
+
   resources :boxes, except: [:edit] do
-    post :unbin, on: :member
     post :add_barcode_item, on: :member
+    post :unbin, on: :member
   end
+
   resources :condition_status_templates
   resources :condition_statuses
-  	#command condition
-  #resources :condition_statuses
   #resources :digital_files
   resources :physical_objects do
-    get :split_show, on: :member
-    post :split_update, on: :member
-    get :upload_show, on: :member
-    post :upload_update, on: :member
     get :get_tm_form, on: :member
+    get :split_show, on: :member
+    get :upload_show, on: :collection
+
+    post :split_update, on: :member
+    post :upload_update, on: :collection
     post :unbin, on: :member
     post :unbox, on: :member
   end
   resources :picklist_specifications do
     get :query, on: :member
+    patch :query_add, on: :member
   end
   	#various commands
-  resources :picklists
+  resources :picklists do
+    #FIXME: refactor into physical_object?
+    get :remove, on: :member
+  end
   	#remove
 	#csv
   resources :search, controller: :search do
