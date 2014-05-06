@@ -32,6 +32,7 @@ Pod::Application.routes.draw do
     post :upload_update, on: :collection
     post :unbin, on: :member
     post :unbox, on: :member
+    post :unpick, on: :member
 
     #resource digital_files
   end
@@ -46,10 +47,7 @@ Pod::Application.routes.draw do
     patch :query_add, on: :member
   end
 
-  resources :picklists do
-    #FIXME: refactor into physical_object?
-    get :remove, on: :member
-  end
+  resources :picklists
 
   resources :search, controller: :search, only: [:index] do
     post :advanced_search, on: :collection

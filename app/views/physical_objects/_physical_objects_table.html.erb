@@ -23,7 +23,7 @@
     <td><%= po.format %></td>
     <td>
       <%= link_to("Show", po, class: 'action show') %>
-      <% if @bin.nil? && @box.nil? %>
+      <% if @bin.nil? && @box.nil? && @picklist.nil? %>
         <%= link_to("Edit", edit_physical_object_path(po), :class => 'action edit') %>
         <%= link_to("Split", split_show_physical_object_path(po), :class => 'action split')%>
         <%= link_to("Delete", physical_object_path(po.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Physical Object?'})%>
@@ -31,6 +31,8 @@
         <%= link_to("Remove", unbin_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Bin?'}) %>
       <% elsif !@box.nil? %>
         <%= link_to("Remove", unbox_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Box?'}) %>
+      <% elsif !@picklist.nil? %>
+        <%= link_to("Remove", unpick_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Picklist?'})%>
       <% end %>
       </td>
     </tr>

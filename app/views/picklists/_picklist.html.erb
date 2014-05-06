@@ -26,27 +26,6 @@
 <h2>Physical Objects in this picklist</h2>
 <% if !@picklist.id.nil? && @picklist.physical_objects.any? %>
 Download list as: <%= link_to 'CSV File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :csv) %> | <%= link_to 'Excel File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :xls) %><br/>
+  <%= render 'physical_objects/physical_objects_table' %>
 <% end %>
-<table>
-	<tr>
-		<th>Shelf location</th>
-		<th>Format</th>
-		<th>Actions</th>
-	</tr>
-	<% count = 1 %>
-	<% @picklist.physical_objects.each do |p| %>
-		<% if count.odd? %>
-    <tr class='odd'>
-    <%else%>
-    <tr class='even'>
-    <%end%>
-			<td><%= p.shelf_location %></td>
-			<td><%= p.format %> </td>
-			<td>
-				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, :class => 'action show') %>
-        <%= link_to("Remove", {:action => 'remove', :id => @picklist.id, po_id: p.id}, data: {confirm: 'Are you sure you want to remove this Physical Object from the Picklist?'})%>
-			</td>
-		</tr>
-		<% count += 1 %>
-	<% end %>
-</table>
+

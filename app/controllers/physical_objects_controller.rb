@@ -1,5 +1,5 @@
 class PhysicalObjectsController < ApplicationController
-  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :unbin, :unbox]  
+  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :unbin, :unbox, :unpick]  
   helper :all
 
   def new
@@ -160,8 +160,11 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def unbin
+    @bin = @physical_object.bin
     @physical_object.bin = nil
-    if @physical_object.save
+    if @bin.nil?
+       flash[:notice] = "<strong>Physical Object was not associated to a Bin.</strong>".html_safe
+    elsif @physical_object.save
       flash[:notice] = "<em>Physical Object was successfully removed from bin.</em>".html_safe
     else
       flash[:notice] = "<strong>Physical Object was NOT removed from bin.</strong>".html_safe
@@ -174,14 +177,34 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def unbox
+    @box = @physical_object.box
     @physical_object.box = nil
-    if @physical_object.save
+    if @box.nil?
+       flash[:notice] = "<strong>Physical Object was not associated to a Box.</strong>".html_safe
+    elsif @physical_object.save
       flash[:notice] = "<em>Physical Object was successfully removed from box.</em>".html_safe
     else
       flash[:notice] = "<strong>Physical Object was NOT removed from box.</strong>".html_safe
     end
     unless @box.nil?
       redirect_to @box
+    else
+      redirect_to @physical_object
+    end
+  end
+
+  def unpick
+    @picklist = @physical_object.picklist
+    @physical_object.picklist = nil
+    if @picklist.nil?
+      flash[:notice] = "<strong>Physical Object was not associated to a Picklist.</strong>".html_safe
+    elsif @physical_object.save
+      flash[:notice] = "<em>Physical Object was successfully removed from Picklist.</em>".html_safe
+    else
+      flash[:notice] = "<strong>Failure; Physical Object was NOT removed from Picklist.</strong>".html_safe
+    end
+    unless @picklist.nil?
+      redirect_to @picklist
     else
       redirect_to @physical_object
     end
@@ -196,11 +219,7 @@ class PhysicalObjectsController < ApplicationController
       @bin = @physical_object.bin
       @box = @physical_object.box
     end
-    #FIXME
-    def set_bin
-    end
-    def set_box
-    end
+
     def physical_object_params
       # same as using params[:physical_object] except that it
       # allows listed attributes to be mass-assigned
