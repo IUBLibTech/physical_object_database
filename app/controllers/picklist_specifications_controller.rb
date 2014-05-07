@@ -87,12 +87,6 @@ class PicklistSpecificationsController < ApplicationController
 		redirect_to(action: 'query', id: params[:id])
 	end
 
-	#action for listing th physical objects that belong to a picklist
-	def list_pos
-		ps = PicklistSpecification.find(id)
-		@physical_objects = PhysicalObject.where()
-	end
-
 	def get_form
 		if !params[:format].nil? and params[:format].length > 0
 			@ps = PicklistSpecification.new(format: params[:format])
@@ -116,25 +110,6 @@ class PicklistSpecificationsController < ApplicationController
 		end
 	end
 
-	def ot_hash
-		{"Pack Deformation" => "", "Preservation Problems" => "" }
-	end
-
-	def format_tm_where(tm)
-		q = ""
-		stm = tm.specialize
-		stm.attributes.each do |name, value|
-			if name == 'id' or name == 'created_at' or name == 'updated_at'
-				next
-			else
-				if !value.nil? and value.length > 0
-					q << " AND open_reel_tms.#{name}='#{value}'"
-				end
-			end
-		end
-		q
-	end
-
   private
     def picklist_specification_params
       params.require(:ps).permit(:format, :name, :description)
@@ -146,4 +121,20 @@ class PicklistSpecificationsController < ApplicationController
   			OpenReelTm.new
   		end
   	end
+
+        def format_tm_where(tm)
+                q = ""
+                stm = tm.specialize
+                stm.attributes.each do |name, value|
+                        if name == 'id' or name == 'created_at' or name == 'updated_at'
+                                next
+                        else
+                                if !value.nil? and value.length > 0
+                                        q << " AND open_reel_tms.#{name}='#{value}'"
+                                end
+                        end
+                end
+                q
+        end
+	
 end

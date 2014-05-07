@@ -22,9 +22,6 @@ class BoxesController < ApplicationController
     end
   end
 
-  def edit
-  end
-
   def create
     if @bin
       @box = @bin.boxes.new(box_params)

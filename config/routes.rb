@@ -1,14 +1,9 @@
 Pod::Application.routes.draw do
   root "physical_objects#index"
 
-  resources :batches do
-    #keep?
-    get :search, on: :collection
-  end
+  resources :batches
 
   resources :bins do
-    #keep?
-    get :search, on: :collection
     post :add_barcode_item, on: :member
     post :unbatch, on: :member
 
@@ -23,8 +18,7 @@ Pod::Application.routes.draw do
   resources :condition_status_templates
 
   resources :physical_objects do
-    #Keep?  in javascript
-    #get :get_tm_form, on: :member
+    get :get_tm_form, on: :collection
     get :split_show, on: :member
     get :upload_show, on: :collection
 
@@ -34,15 +28,11 @@ Pod::Application.routes.draw do
     post :unbox, on: :member
     post :unpick, on: :member
 
-    #resource digital_files
+    #resources :digital_files
   end
 
   resources :picklist_specifications do
-    #list_pos
-    #keep?  in javascript
-    #get_form
-    #ot_hash: delete from controller?
-    #format_where
+    get :get_form, on: :collection
     get :query, on: :member
     patch :query_add, on: :member
   end
