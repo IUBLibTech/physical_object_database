@@ -1,0 +1,23 @@
+<table>
+  <tr class="header">
+    <th>MDPI Barcode</th>
+    <th>Format</th>
+    <th>Actions</th>
+  </tr>
+  <% count = 1 %>
+  <% @boxes.each do |box| %>
+    <tr class=<%= count.odd? ? 'odd' : 'even'%>>
+      <td><%= box.mdpi_barcode %></td>
+      <td><%= box.physical_objects.size.zero? ? "" : box.physical_objects.first.format %>
+      <td>
+        <%= link_to("Show", box_path(box)) %>
+	<% if @bin.nil? %>
+	<%= link_to("Delete", box_path(box), method: :delete, data: {confirm: 'Are you sure you want to delete this Box?'})%>
+	<% else %>
+        <%= link_to("Remove", unbin_box_path(box), method: :post, data: {confirm: 'Are you sure you want to remove this Box from the Bin?'}) %>
+	<% end %>
+      </td>
+    </tr>  
+    <% count += 1 %>
+  <% end %>
+</table>

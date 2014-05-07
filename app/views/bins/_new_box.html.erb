@@ -1,6 +1,8 @@
 <h2>New Box</h2>
 <%# special case where this needs to be :box not @box %>
-<%= form_for(:box, :url => {:action => 'create_box', :id => @bin.id}) do |f| %>
+<% @box = Box.new %>
+<% @box.bin_id = @bin.id %>
+<%= form_for([@bin, @box]) do |f| %>
 	<table>
 		<tr>
 			<th>MDPI barcode</th>

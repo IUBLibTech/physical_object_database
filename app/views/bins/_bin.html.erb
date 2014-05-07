@@ -41,11 +41,11 @@
 			</td>
 		</tr>
 
-		<%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @bin %>
+		<%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @bin %>
 
 	</table>
         <%= f.fields_for :condition_statuses do |condition| %>
-          <%= render 'condition_status_template/condition_status_fields', f: condition, target_object: @bin %>
+          <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @bin %>
         <% end %>
         <% if @edit_mode %>
             <%= f.link_to_add "Add a condition status", :condition_statuses %>
@@ -64,7 +64,7 @@
 		</p>
 
 		<%# this is a special case where the ":" must be here instead of "@" %>
-		<%= form_for(:barcode, url: {action: 'bin_add_item'} ) do |f| %>
+		<%= form_for(:barcode, url: {action: 'add_barcode_item'} ) do |f| %>
 			<%= hidden_field(:bin, :id) %>
 			<table>
 				<tr>

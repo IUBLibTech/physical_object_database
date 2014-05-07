@@ -1,4 +1,4 @@
-class WorkflowStatusTemplateController < ApplicationController
+class WorkflowStatusTemplatesController < ApplicationController
 
 	def workflow
 		@workflow_status_template = WorkflowStatusTemplate.new
@@ -44,10 +44,6 @@ class WorkflowStatusTemplateController < ApplicationController
 		@workflow_status_template = WorkflowStatusTemplate.find(params[:id])
 	end
 	
-	def delete
-		@workflow_status_template = WorkflowStatusTemplate.find(params[:id])
-	end
-
 	def destroy
 		@workflow_status_template = WorkflowStatusTemplate.find(params[:id])
 		#decrement each following template
@@ -59,10 +55,11 @@ class WorkflowStatusTemplateController < ApplicationController
 		end
 		if @workflow_status_template.destroy
 			flash[:notice] = "#{@workflow_status_template.name} successfully destroyed."
-			redirect_to(action: 'index')
+
+			redirect_to status_templates_path
 		else 
 			flash[:warning] = "Unable to delete #{@workflow_status_template.name}."
-			render('delete')
+			render :show
 		end
  	end
 

@@ -2,58 +2,12 @@
   <div class="contextMenuItem">
 	  <%= link_to("Create Bin", {:action => 'new'}) %>
 	</div>
-	<div class="contextMenuItem">
-	  <%= link_to("Search Bins", {:action => 'search'}) %>
-	</div>
 <% end %>
 <div class="left">
 	<h2>Bins</h2>
-	<table>
-		<tr class="header">
-			<th>Barcode</th>
-			<th>Identifier</th>
-			<th>Description</th>
-			<th>Batch</th>
-			<th>Workflow Status</th>
-			<th>Actions</th>
-		</tr>
-		<% count = 1 %>
-		<% @bins.each do |b|%>
-			<tr>
-				<td><%= b.mdpi_barcode %></td>
-				<td><%= b.identifier %></td>
-				<td><%= b.description %></td>
-				<td><%= b.batch.nil? ? "" : b.batch.name %></td>
-				<td><%= b.current_workflow_status.nil? ? "" : b.current_workflow_status.name %></td>
-				<td>
-					<%= link_to("Show", {action: 'show', id: b.id}) %>
-
-	        <%= link_to("Edit", {action: 'edit', id: b.id}) %>
-	        <%= link_to("Delete", bin_path(b.id), method: :delete, data: {:confirm=>'Are you sure you want to delete this Bin?'})%>
-				</td>
-			</tr>
-		<% end %>
-	</table>
+	<%= render 'bins_table' %>
 </div>
 <div class="left">
 	<h2>Unassigned Boxes</h2>
-	<table>
-		<tr>
-			<th>Barcode</th>
-			<th>Formats</th>
-			<th>Actions</th>
-		</tr>
-		<% count = 1 %>
-		<% @unassigned.each do |u| %>
-			<tr class=<%= count.odd? ? 'odd' : 'even' %>>
-				<td><%= u.mdpi_barcode %></td>
-				<td><%= u.physical_objects.size > 0 ? u.physical_objects.first.format : ""%></td>
-				<td>
-					<%= link_to("Show", {action: 'show_box', id: u.id}) %>
-					<%= link_to("Edit", {action: 'edit_box', id: u.id}) %>
-				</td>
-			</tr>
-			<% count += 1 %>
-		<% end %>
-	</table>
+	<%= render 'boxes/boxes_table' %>
 </div>

@@ -4,6 +4,7 @@
   </div>
 <% end %>
 
+<%= error_messages_for(@picklist_specification) %>
 <% if @ps.format == "Open Reel Tape" %>
 	<%= render(partial: 'ot') %>
 <% else %>

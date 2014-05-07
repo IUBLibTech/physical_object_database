@@ -1,5 +1,5 @@
 class PhysicalObjectsController < ApplicationController
-  
+  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :unbin, :unbox, :unpick]  
   helper :all
 
   def new
@@ -41,27 +41,19 @@ class PhysicalObjectsController < ApplicationController
   def show
     @edit_mode = false;
     @display_assigned = true
-    @physical_object = PhysicalObject.find(params[:id])
-    @digital_files = @physical_object.digital_files
-    @tm = @physical_object.technical_metadatum.specialize
   end
 
   def edit
     @action = 'update'
     @edit_mode = true
-    @physical_object = PhysicalObject.find(params[:id])
-    @digital_files = @physical_object.digital_files
     @display_assigned = true
-    if @physical_object.technical_metadatum.nil?
+    if @tm.nil?
       flash[:notice] = "A physical object was created without specifying its technical metadatum..."
       redirect_to(action: 'show', id: @physical_object.id)
-    else
-      @tm = @physical_object.technical_metadatum.specialize  
     end
   end
 
   def update
-    @physical_object = PhysicalObject.find(params[:id])
     old_format = @physical_object.format
     if ! @physical_object.update_attributes(physical_object_params)
       @edit_mode = true
@@ -69,17 +61,17 @@ class PhysicalObjectsController < ApplicationController
     else
       # format change requires deleting the old technical_metadatum and creating a new one
       if old_format != params[:physical_object][:format]
-        @physical_object.technical_metadatum.specialize.destroy
-        tm = @physical_object.create_tm(@physical_object.format)
-        tm.physical_object = @physical_object
-        tm.update_form_params(params)
-        tm.save
+        @tm.destroy
+        @tm = @physical_object.create_tm(@physical_object.format)
+	#FIXME: refactor creation
+        @tm.physical_object = @physical_object
+        @tm.update_form_params(params)
+        @tm.save
       else
         puts(params.to_yaml)
-        tm = @physical_object.technical_metadatum.specialize
-        tm.update_form_params(params)
-        puts(tm.to_yaml)
-        tm.save
+        @tm.update_form_params(params)
+        puts(@tm.to_yaml)
+        @tm.save
       end
       flash[:notice] = "Physical Object successfully updated".html_safe
       redirect_to(action: 'index')
@@ -87,11 +79,8 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def destroy
-    po = PhysicalObject.find(params[:id])
-    if ! po.technical_metadatum.nil?
-      po.technical_metadatum.specialize.destroy
-    end
-    po.destroy
+    @tm.destroy unless @tm.nil?
+    @physical_object.destroy
     flash[:notice] = "Physical Object was successfully deleted.".html_safe
     redirect_to physical_objects_path
   end
@@ -169,8 +158,68 @@ class PhysicalObjectsController < ApplicationController
       render(partial: 'technical_metadatum/show_compact_disc_tm')
     end
   end
+
+  def unbin
+    @bin = @physical_object.bin
+    @physical_object.bin = nil
+    if @bin.nil?
+       flash[:notice] = "<strong>Physical Object was not associated to a Bin.</strong>".html_safe
+    elsif @physical_object.save
+      flash[:notice] = "<em>Physical Object was successfully removed from bin.</em>".html_safe
+    else
+      flash[:notice] = "<strong>Physical Object was NOT removed from bin.</strong>".html_safe
+    end
+    unless @bin.nil?
+      redirect_to @bin
+    else
+      redirect_to @physical_object
+    end
+  end
+
+  def unbox
+    @box = @physical_object.box
+    @physical_object.box = nil
+    if @box.nil?
+       flash[:notice] = "<strong>Physical Object was not associated to a Box.</strong>".html_safe
+    elsif @physical_object.save
+      flash[:notice] = "<em>Physical Object was successfully removed from box.</em>".html_safe
+    else
+      flash[:notice] = "<strong>Physical Object was NOT removed from box.</strong>".html_safe
+    end
+    unless @box.nil?
+      redirect_to @box
+    else
+      redirect_to @physical_object
+    end
+  end
+
+  def unpick
+    @picklist = @physical_object.picklist
+    @physical_object.picklist = nil
+    if @picklist.nil?
+      flash[:notice] = "<strong>Physical Object was not associated to a Picklist.</strong>".html_safe
+    elsif @physical_object.save
+      flash[:notice] = "<em>Physical Object was successfully removed from Picklist.</em>".html_safe
+    else
+      flash[:notice] = "<strong>Failure; Physical Object was NOT removed from Picklist.</strong>".html_safe
+    end
+    unless @picklist.nil?
+      redirect_to @picklist
+    else
+      redirect_to @physical_object
+    end
+  end
   
   private
+    def set_physical_object
+      @physical_object = PhysicalObject.find(params[:id])
+      @digital_files = @physical_object.digital_files
+      @tm = @physical_object.technical_metadatum
+      @tm = @physical_object.technical_metadatum.specialize unless @tm.nil?
+      @bin = @physical_object.bin
+      @box = @physical_object.box
+    end
+
     def physical_object_params
       # same as using params[:physical_object] except that it
       # allows listed attributes to be mass-assigned

@@ -1,4 +1,4 @@
-class ConditionStatusTemplateController < ApplicationController
+class ConditionStatusTemplatesController < ApplicationController
 
   def index
     @all_condition_status_templates = {}
@@ -45,10 +45,6 @@ class ConditionStatusTemplateController < ApplicationController
     @condition_status_template = ConditionStatusTemplate.find(params[:id])
   end
   
-  def delete
-    @condition_status_template = ConditionStatusTemplate.find(params[:id])
-  end
-
   def destroy
     @condition_status_template = ConditionStatusTemplate.find(params[:id])
     if @condition_status_template.destroy

@@ -3,7 +3,7 @@
     <%= link_to("Edit", {action: 'edit', id: @condition_status_template.id}) %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Delete", {action: 'delete', id: @condition_status_template.id}) %>
+    <%= link_to("Delete", @condition_status_template, method: :delete, data: { confirm: 'Are you sure you want to delete this Condition Status Template?' }) %>
   </div>
   <div class="contextMenuItem">
     <%= link_to("List Statuses", {controller: :status_templates, action: :index}) %>

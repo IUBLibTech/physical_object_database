@@ -1,27 +1,61 @@
 Pod::Application.routes.draw do
-  #get "physical_objects/new"
-  #get "physical_objects/create"
-  #get "physical_objects/index"
-  #get "physical_objects/show"
-  #get "physical_objects/edit"
-  #get "physical_objects/update"
-  #get "physical_objects/delete"
-  #get "physical_objects/destroy"
- 
   root "physical_objects#index"
-  match '/batches/search',	to: 'batches#search',	via: [:get, :post]
+
   resources :batches
-  resources :bins
-  resources :boxes
-  resources :physical_objects
+
+  resources :bins do
+    post :add_barcode_item, on: :member
+    post :unbatch, on: :member
+
+    resources :boxes, only: [:new, :create]
+  end
+
+  resources :boxes, except: [:edit] do
+    post :add_barcode_item, on: :member
+    post :unbin, on: :member
+  end
+
+  resources :condition_status_templates
+
+  resources :physical_objects do
+    get :get_tm_form, on: :collection
+    get :split_show, on: :member
+    get :upload_show, on: :collection
+
+    post :split_update, on: :member
+    post :upload_update, on: :collection
+    post :unbin, on: :member
+    post :unbox, on: :member
+    post :unpick, on: :member
+
+    #resources :digital_files
+  end
+
+  resources :picklist_specifications do
+    get :get_form, on: :collection
+    get :query, on: :member
+    patch :query_add, on: :member
+  end
+
   resources :picklists
 
-  resources :sessions, only:  [:new, :destroy]
+  resources :search, controller: :search, only: [:index] do
+    post :advanced_search, on: :collection
+    post :search_results, on: :collection
+  end
 
-  match '/signin',      to: 'sessions#new',             via: 'get'
-  match '/signout',     to: 'sessions#destroy',         via: 'delete'
-  
-  match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
+  resources :status_templates, only: [:index]
+
+  match '/signin', to: 'sessions#new', via: :get
+  match '/signout', to: 'sessions#destroy', via: :delete
+  resources :sessions, only: [:new, :destroy] do
+    get :validate_login, on: :collection
+  end
+
+  resources :workflow_status_templates
+
+  #old routing scheme was:
+  #match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

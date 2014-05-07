@@ -44,10 +44,6 @@ class BatchesController < ApplicationController
     end
   end
 
-  def delete
-    @batch = Batch.find(params[:id])
-  end
-
   def destroy
     @batch = Batch.find(params[:id])
     if @batch.destroy

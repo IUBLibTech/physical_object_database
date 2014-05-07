@@ -6,7 +6,7 @@
 	  <%= link_to("Edit Bin", {:action => 'edit', :id => @bin.id}) %>
 	</div>
 	<div class="contextMenuItem">
-	  <%= link_to("Delete", bin_path(@bin.id), method: :delete, data: {:confirm=>'Are you sure you want to delete this Bin?'})%>
+	  <%= link_to("Delete", @bin, method: :delete, data: {:confirm=>'Are you sure you want to delete this Bin?'})%>
 	</div>
 	<div class="contextMenuItem">
 		<%= link_to("Create Box", "#", onclick: "new_box(#{@bin.id})") %>
@@ -21,13 +21,13 @@
 
 <div id="bin_div" class="left">
   <h2>Bin</h2>
-    <%= render(:partial => "bin") %>
+    <%= render 'bin' %>
 </div>
 <div class="left">
 	<h2>Boxes</h2>
-	<%= render(partial: 'boxes') %>
+	<%= render 'boxes/boxes_table' %>
 </div>
 <div class="left">
-	<h2>Physical Objects</h2>
-	<%= render(partial: 'physical_objects') %>
+	<h2>Physical Objects in this Bin</h2>
+	<%= render 'physical_objects/physical_objects_table' %>
 </div>

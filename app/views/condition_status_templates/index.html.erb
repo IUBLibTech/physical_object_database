@@ -1,9 +1,9 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Create New Condition Status", controller: :workflow_status_template, action: :new) %>
+    <%= link_to "Create New Condition Status", new_workflow_status_template_path %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Create New Condition Status", controller: :condition_status_template, action: :new) %>
+    <%= link_to "Create New Condition Status", new_condition_status_template_path %>
   </div>
 <% end %>
 

@@ -1,0 +1,13 @@
+<%= error_messages_for(@box) %>
+<h2>New Box</h2>
+<%= form_for([@bin, @box]) do |f| %>
+  <table>
+    <tr>
+      <th>MDPI barcode</th>
+      <td>
+        <%= f.text_field(:mdpi_barcode) %>
+      </td>
+    </tr>
+  </table>
+  <%= f.submit('Create New Box') %>
+<% end %>

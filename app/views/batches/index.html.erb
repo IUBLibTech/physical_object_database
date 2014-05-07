@@ -2,9 +2,6 @@
   <div class="contextMenuItem">
 	  <%= link_to("Create Batch", {:action => 'new'}) %>
 	</div>
-	<div class="contextMenuItem">
-	  <%= link_to("Search Batches", {:action => 'search'}) %>
-	</div>
 <% end %>
 <h2>Batches</h2>
 	
@@ -28,7 +25,8 @@
 	<td>
 		<%= link_to("Show", {:action => 'show', :id => b.id}, :class => 'action show') %>
     <%= link_to("Edit", {:action => 'edit', :id => b.id}, :class => 'action edit') %>
-    <%= link_to("Delete", {:action => 'delete', :id => b.id}, :class => 'action delete')%>
+    <%= link_to("Delete", batch_path(b.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Batch?'}) %>
+
 	</td>
 </tr>
 	<% end %>

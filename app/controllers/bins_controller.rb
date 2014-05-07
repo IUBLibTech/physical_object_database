@@ -1,8 +1,9 @@
 class BinsController < ApplicationController
+  before_action :set_bin, only: [:show, :edit, :update, :destroy, :new_box, :unbatch]
 
 	def index
 		@bins = Bin.all
-		@unassigned = Box.where(bin_id: nil)
+		@boxes = Box.where(bin_id: [nil, 0])
 	end
 
 	def new
@@ -23,13 +24,11 @@ class BinsController < ApplicationController
 	end
 
 	def edit
-		@bin = Bin.find(params[:id])
 		@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
 		@batch = @bin.batch
 	end
 
 	def update
-		@bin = Bin.find(params[:id])
 		@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
 		assign_batch(params, @bin)
 		if @bin.update_attributes(bin_params)
@@ -42,13 +41,12 @@ class BinsController < ApplicationController
 	end
 
 	def show
-		@bin = Bin.find(params[:id])
 		@physical_objects = @bin.physical_objects
+		@boxes = @bin.boxes
 		@edit_mode = false
 	end
 
 	def destroy
-		@bin = Bin.find(params[:id])
 		if @bin.destroy
 			flash[:notice] = "<i>#{@bin.identifier}</i> was successfully destroyed.".html_safe
 			redirect_to bins_path
@@ -58,77 +56,7 @@ class BinsController < ApplicationController
 		end
 	end
 
-	def new_box
-		@bin = Bin.find(params[:id])
-		render(partial: 'new_box', box: Box.new(mdpi_barcode: 0))
-	end
-
-	def create_box
-		bin = Bin.find(params[:id])
-		box = Box.new
-		box.mdpi_barcode = params[:box][:mdpi_barcode]
-		box.bin = bin
-		
-		# one additional rule about boxes that does not apply to other record types: a box cannot be 
-		# created without a valid mdpi_barcode. 0 is not allowed for this value
-		if box.mdpi_barcode == 0
-			box.errors.add(:mdpi_barcode, "must be assigned. Cannot be blank or 0.")
-			render('create')
-		elsif box.save
-			flash[:notice] = "Successfully created box with MDPI Barcode: #{box.mdpi_barcode}."
-			redirect_to(action: 'show', id: box.id)	
-		else
-			render('new_box')
-		end
-	end
-
-	def show_box
-		@edit_mode = false
-		@box = Box.find(params[:id])
-		@physical_objects = @box.physical_objects
-		puts(@box.to_yaml)
-		@bin = @box.bin
-		puts("Found bin: #{@bin.to_s}")
-	end
-
-	def edit_box
-		@edit_mode = true
-		@action = 'update_box'
-		@bins = Bin.all.order('identifier')
-		@box = Box.find(params[:id])
-		@physical_objects = @box.physical_objects
-		# this is a little hackish but need to set the selected index in the drop down to reflect
-		# the currently assigned bin (if it has been set)
-		# also need to add one to the index because the form has a "Not Assigned" value at the top and 
-		# selected_index is the position not value
-		@selected_index = @box.bin.nil? ? 0 : bin_index(@bins, @box.bin_id) + 1
-		puts("Selected index = #{@selected_index}")
-	end
-
-	def update_box
-		bin_id = params[:box][:bin_id]
-		bin = (!bin_id.nil? and bin_id.length > 0) ? Bin.find(bin_id) : nil
-		box = Box.find(params[:id])
-		box.bin = bin
-		if box.save
-			flash[:notice] = 
-				box.bin.nil? ?
-					"Successfully unassigned Box <i>#{box.mdpi_barcode}</i>".html_safe :
-					"Successfully added Box <i>#{box.mdpi_barcode}</i> to Bin <i>#{bin.identifier}</i>".html_safe
-		else
-			flash[:notice] = "<b class='warning'>Unable to update Box <i>#{box.mdpi_barcode}</i></b>".html_safe
-		end
-		redirect_to(action: 'show_box', id: box.id)
-	end
-
-	def remove_box
-		box = Box.find(params[:id])
-		box.bin = nil
-		box.save
-		redirect_to(action: 'show', id: params[:bin_id])
-	end
-
-	def bin_add_item
+	def add_barcode_item
 		bc = params[:barcode][:mdpi_barcode]
 		@bin = Bin.find(params[:bin][:id])
 		@physical_objects = @bin.physical_objects
@@ -161,28 +89,25 @@ class BinsController < ApplicationController
 		redirect_to(action: 'show', id: @bin.id)
 	end
 
-	def remove_physical_object
-		c = nil
-		id = nil
-		po = PhysicalObject.find(params[:id])
-		if !po.box.nil?
-			c = 'box'
-			id = po.box.id
-			po.box = nil
-			flash[:notice] = "<i>#{po.title}</i> successully remove from the Box".html_safe
-		elsif !po.bin.nil?
-			c = 'bin'
-			id = po.bin.id
-			po.bin = nil
-			flash[:notice] = "<i>#{po.title}</i> successully removed from the Bin".html_safe
-		else
-			flash[:notice] ="<b class='red'>Warning! #{po.title} was not associated with a Bin or a Box... no changes made to the POD</b>"
-		end
-		po.save
-		redirect_to(action: (c == 'bin' ? 'show' : 'show_box'), id: id)
+	def unbatch
+	   @bin.batch = nil
+	   if @bin.save
+	     flash[:notice] = "<em>Successfully removed Bin from Batch.</em>".html_safe
+	   else
+	     flash[:notice] = "<strong>Failed to remove this Bin from Batch.</strong>".html_safe
+	   end
+	   unless @batch.nil?
+	     redirect_to @batch
+	   else
+	     redirect_to @bin
+	   end
 	end
 
 	private
+	def set_bin
+		@bin = Bin.find(params[:id])
+	end
+
 	def bin_index(bins, bin_id)
 		bins.each_with_index { |bin, i|
 			puts(bin)
@@ -193,13 +118,11 @@ class BinsController < ApplicationController
 		0
 	end
 
-	private
 	def bin_params
 		params.require(:bin).permit(:mdpi_barcode, :identifier, :description, :batch, :current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
 
 	end
 
-	private
 	def assign_batch(params, bin)
 		if params[:batch] and params[:batch][:id].length > 0
 			puts("\n\n\nFinding a batch...")
