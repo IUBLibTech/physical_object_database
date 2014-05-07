@@ -3,13 +3,11 @@
 one:
   mdpi_barcode: 1
   iucat_barcode: 1
-  shelf_location: MyString
   call_number: MyString
   status: MyString
 
 two:
   mdpi_barcode: 1
   iucat_barcode: 1
-  shelf_location: MyString
   call_number: MyString
   status: MyString

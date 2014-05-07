@@ -24,7 +24,7 @@ class PicklistSpecificationsController < ApplicationController
 
 	def edit
 		@ps = PicklistSpecification.find(params[:id])
-		@tm = @ps.technical_metadata[0].specialize
+		@tm = @ps.technical_metadata[0].as_technical_metadatum
 		@edit_mode = true
 		@action = 'update'
 		@submit_text = "Update Picklist Specification"
@@ -33,7 +33,7 @@ class PicklistSpecificationsController < ApplicationController
 	def update
 		@ps = PicklistSpecification.find(params[:id])
 		if (@ps.update_attributes(picklist_specification_params))
-			@tm = @ps.technical_metadata[0].specialize
+			@tm = @ps.technical_metadata[0].as_technical_metadatum
 			@tm.update_attributes(@tm.update_form_params(params))
 			flash[:notice] = "#{@ps.name} successfully updated."
 		else
@@ -44,7 +44,7 @@ class PicklistSpecificationsController < ApplicationController
 
 	def show
 		@ps = PicklistSpecification.find(params[:id])
-		@tm = @ps.technical_metadata[0].specialize
+		@tm = @ps.technical_metadata[0].as_technical_metadatum
 		@edit_mode = false
 	end
 
@@ -122,7 +122,7 @@ class PicklistSpecificationsController < ApplicationController
 
 	def format_tm_where(tm)
 		q = ""
-		stm = tm.specialize
+		stm = tm.as_technical_metadatum
 		stm.attributes.each do |name, value|
 			if name == 'id' or name == 'created_at' or name == 'updated_at'
 				next

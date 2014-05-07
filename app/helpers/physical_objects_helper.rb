@@ -7,23 +7,29 @@ module PhysicalObjectsHelper
     index = 0
   	CSV.foreach(file, headers: true) do |r|
   		po = PhysicalObject.new(
-  				mdpi_barcode: r["MDPI Barcode"] ? r["MDPI Barcode"] : 0,
-      		iucat_barcode: r["IU Barcode"] ? r["IU Barcode"].to_i : 0,
-      		shelf_location: r["Shelf Location"],
+          author: r["Author"],
       		call_number: r["Call Number"],
-      		title: r["Title"],
-      		title_control_number: r["Title Control Number"],
-      		format: r["Format"],
-      		unit: r["Unit"],
+          catalog_key: r["Catalog Key"],
 		      collection_identifier: r["Collection Primary ID"],
+          collection_name: r["Collection Name"],
+          format: r["Format"],
+          generation: r["Generation"],
 		      home_location: r["Primary Location"],
-		      shelf_location: r["Secondary Location"],
-		      format_duration: r["Duration"],
+          iucat_barcode: r["IU Barcode"] ? r["IU Barcode"].to_i : 0,
+          mdpi_barcode: r["MDPI Barcode"] ? r["MDPI Barcode"] : 0,
+          oclc_number: r["OCLC Number"],
+          other_copies: (!r["Other Copies"].nil? and r["Other Copies"].downcase == "true") ? true : false,
+          has_media: (!r["Has Ephemira"].nil? and r["Has Ephemira"].downcase =="true") ? true : false,
+          title: r["Title"],
+          title_control_number: r["Title Control Number"],
+          unit: r["Unit"],
+          year: r["Year"]
   			)
       index += 1;
   		if po.save
         tm = po.create_tm(po.format)	
     		tm.physical_object = po
+        parse_tm(tm, r)
     		tm.save
     		succeeded << po.id
         #create duplicated records if there was a "Quantity" column specified
@@ -46,5 +52,21 @@ module PhysicalObjectsHelper
   	end
   	{"succeeded" => succeeded, "failed" => failed}
 	end
+
+  def PhysicalObjectsHelper.parse_tm(tm, row)
+    if tm.is_a?(OpenReelTm)
+      open_reel_parse(tm, row)
+    else 
+
+    end
+  end
+
+  def PhysicalObjectsHelper.open_reel_parse(tm, row)
+    # TODO: handle multi value  
+    
+    tm.pack_deformation = row["Pack Deformation"]
+    tm.reel_size = row["Reel Size"]
+
+  end
 
 end

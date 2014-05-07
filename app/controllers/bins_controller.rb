@@ -86,7 +86,6 @@ class BinsController < ApplicationController
 		@edit_mode = false
 		@box = Box.find(params[:id])
 		@physical_objects = @box.physical_objects
-		puts(@box.to_yaml)
 		@bin = @box.bin
 		puts("Found bin: #{@bin.to_s}")
 	end

@@ -20,12 +20,11 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def create
+    puts(params.to_yaml)
     @physical_object = PhysicalObject.new(physical_object_params)
     @tm = @physical_object.create_tm(@physical_object.format)
-    if @physical_object.format.length > 0 && @physical_object.save
-      @tm.physical_object = @physical_object
-      @tm.update_form_params(params)
-      @tm.save
+    @tm.physical_object = @physical_object
+    if @physical_object.save and @tm.update_attributes(tm_params)
       flash[:notice] = "Physical Object was successfully created.".html_safe
       redirect_to(:action => 'index')
     else
@@ -43,24 +42,26 @@ class PhysicalObjectsController < ApplicationController
     @display_assigned = true
     @physical_object = PhysicalObject.find(params[:id])
     @digital_files = @physical_object.digital_files
-    @tm = @physical_object.technical_metadatum.specialize
+    @technical_metadatum = @physical_object.technical_metadatum.as_technical_metadatum
   end
 
   def edit
     @action = 'update'
     @edit_mode = true
     @physical_object = PhysicalObject.find(params[:id])
+    @tm = @physical_object.technical_metadatum.as_technical_metadatum
     @digital_files = @physical_object.digital_files
     @display_assigned = true
     if @physical_object.technical_metadatum.nil?
       flash[:notice] = "A physical object was created without specifying its technical metadatum..."
       redirect_to(action: 'show', id: @physical_object.id)
     else
-      @tm = @physical_object.technical_metadatum.specialize  
+      @technical_metadatum = @physical_object.technical_metadatum.as_technical_metadatum  
     end
   end
 
   def update
+    puts(params.to_yaml)    
     @physical_object = PhysicalObject.find(params[:id])
     old_format = @physical_object.format
     if ! @physical_object.update_attributes(physical_object_params)
@@ -69,16 +70,14 @@ class PhysicalObjectsController < ApplicationController
     else
       # format change requires deleting the old technical_metadatum and creating a new one
       if old_format != params[:physical_object][:format]
-        @physical_object.technical_metadatum.specialize.destroy
+        @physical_object.technical_metadatum.destroy
         tm = @physical_object.create_tm(@physical_object.format)
         tm.physical_object = @physical_object
-        tm.update_form_params(params)
+        tm.update_attributes(tm_params)
         tm.save
       else
-        puts(params.to_yaml)
-        tm = @physical_object.technical_metadatum.specialize
-        tm.update_form_params(params)
-        puts(tm.to_yaml)
+        tm = @physical_object.technical_metadatum.as_technical_metadatum
+        tm.update_attributes(tm_params)
         tm.save
       end
       flash[:notice] = "Physical Object successfully updated".html_safe
@@ -89,7 +88,7 @@ class PhysicalObjectsController < ApplicationController
   def destroy
     po = PhysicalObject.find(params[:id])
     if ! po.technical_metadatum.nil?
-      po.technical_metadatum.specialize.destroy
+      po.technical_metadatum.destroy
     end
     po.destroy
     flash[:notice] = "Physical Object was successfully deleted.".html_safe
@@ -98,7 +97,7 @@ class PhysicalObjectsController < ApplicationController
   
   def split_show
     @physical_object = PhysicalObject.find(params[:id]);
-    @tm = @physical_object.technical_metadatum.specialize
+    @technical_metadatum = @physical_object.technical_metadatum.as_technical_metadatum
     @digital_files = @physical_object.digital_files
     @count = 0;
     @display_assigned = true
@@ -117,7 +116,7 @@ class PhysicalObjectsController < ApplicationController
         po = template.dup
         po.carrier_stream_index = i + 2
         po.container_id = container.id
-        tm = template.technical_metadatum.specialize.dup
+        tm = template.technical_metadatum.as_technical_metadatum.dup
         tm.physical_object = po
         tm.save
         po.save
@@ -151,7 +150,7 @@ class PhysicalObjectsController < ApplicationController
     @edit_mode = true
     @physical_object = params[:id] == '0' ? PhysicalObject.new : PhysicalObject.find(params[:id])
     if ! @physical_object.technical_metadatum.nil?
-      @tm = @physical_object.technical_metadatum.as_technical_metadatum
+      @technical_metadatum = @physical_object.technical_metadatum.as_technical_metadatum
     else
       tm = TechnicalMetadatum.new
       @tm = @physical_object.create_tm(f)
@@ -177,9 +176,16 @@ class PhysicalObjectsController < ApplicationController
       # we could also do params.require(:some_field).permit*...
       # if certain fields were required for the object instantiation.
       params.require(:physical_object).permit(:title, :title_control_number, 
-        :unit, :home_location, :call_number, :shelf_location, :iucat_barcode, :format, 
+        :unit, :home_location, :call_number, :iucat_barcode, :format, 
         :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
-        :content_duration, :has_media, :open_reel_tm, :bin_id, :unit,
-	:current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
+        :has_media, :author, :catalog_key, :collection_name, :generation, :oclc_number,
+        :other_copies, :year, :bin_id, :unit, :current_workflow_status, 
+        condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
+    end
+
+    def tm_params
+      params.require(:physical_object).require(:tm).permit(:pack_deformation, :reel_size, :track_configuration, 
+        :tape_thickness, :sound_field, :tape_stock_brand, :tape_base, :directions_recorded, :vinegar_syndrome, :fungus,
+        :soft_binder_syndrome, :other_contaminants)
     end
 end

@@ -3,7 +3,7 @@ class OpenReelTm < ActiveRecord::Base
 
 	attr_accessor :reel_sizes
 	def reel_sizes
-		{"" => "", "5\"" => "5\"", "7\"" => "7\"", "10.5\"" => "10.5\""} 
+		{"" => "", "5 in." => "5 in.", "7 in." => "7 in.", "10.5 in." => "10.5 in."} 
 	end
 
 	attr_accessor :playback_speeds
@@ -14,12 +14,6 @@ class OpenReelTm < ActiveRecord::Base
 	attr_accessor :pack_deformations
 	def pack_deformations
 		{"" => "", "Minor" => "Minor", "Moderate" => "Moderate", "Severe" => "Severe"}
-	end
-
-	attr_accessor :preservation_problems
-	def preservation_problems
-		{"" => "", "Sticky Shed Syndrome" => "Sticky Shed Syndrome", 
-			"Fungus" => "Fungus", "Vinegar Syndrome" => "Vinegar Syndrome"}
 	end
 
 	attr_accessor :track_configurations
@@ -61,18 +55,29 @@ class OpenReelTm < ActiveRecord::Base
     TechnicalMetadatum.find_by(as_technical_metadatum_id: self.id)
   end
 
+  def humanize_preservation_problems
+  	str = (!fungus.nil? and fungus) ? "Fungus" : ""
+  	str << ((!soft_binder_syndrome.nil? and soft_binder_syndrome) ? (str.length > 0 ? ", Soft Binder Syndrome" : "Soft Binder Syndrome") : "")
+  	str << ((!vinegar_syndrome.nil? and vinegar_syndrome) ? (str.length > 0 ? ", Vinegar Syndrome" : "Vinegar Syndrome") : "")
+  	str << ((!other_contaminants.nil? and other_contaminants) ? (str.length > 0 ? ", Other Contaminants" : "Other Contaminants") : "")
+  	str
+  end
+
 	def update_form_params(params)
-		self.pack_deformation = params[:tm][:pack_deformation]
- 		self.preservation_problem = params[:tm][:preservation_problem]
- 		self.reel_size = params[:tm][:reel_size]
- 		self.playback_speed = params[:tm][:playback_speed]
- 		self.track_configuration = params[:tm][:track_configuration]
- 		self.tape_thickness = params[:tm][:tape_thickness]
- 		self.sound_field = params[:tm][:sound_field]
- 		self.tape_stock_brand = params[:tm][:tape_stock_brand]
- 		self.tape_base = params[:tm][:tape_base]
- 		self.year_of_recording = params[:tm][:year_of_recording]
- 		self.directions_recorded = params[:tm][:directions_recorded]
+		self.pack_deformation = params[:technical_metadata][:pack_deformation]
+ 		self.reel_size = params[:technical_metadata][:reel_size]
+ 		if self.preservation_problems.nil?
+ 			self.preservation_problems = PreservationProblems.new
+ 		end
+ 		self.preservation_problems.update_params(params[:preservation_problems])
+
+ 		self.playback_speed = params[:technical_metadata][:playback_speed]
+ 		self.track_configuration = params[:technical_metadata][:track_configuration]
+ 		self.tape_thickness = params[:technical_metadata][:tape_thickness]
+ 		self.sound_field = params[:technical_metadata][:sound_field]
+ 		self.tape_stock_brand = params[:technical_metadata][:tape_stock_brand]
+ 		self.tape_base = params[:technical_metadata][:tape_base]
+ 		self.directions_recorded = params[:technical_metadata][:directions_recorded]
   end
 
 end

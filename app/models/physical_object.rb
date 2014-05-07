@@ -27,14 +27,15 @@ class PhysicalObject < ActiveRecord::Base
   end
   validates_presence_of :format, inclusion: formats.keys
   validates :mdpi_barcode, mdpi_barcode: true
+  validates_with PhysicalObjectValidator
 
   after_initialize :init
 
   accepts_nested_attributes_for :technical_metadatum
-  scope :search_by_catalog, lambda {|query| where(["shelf_location = ? OR call_number = ?", query, query])}
+  scope :search_by_catalog, lambda {|query| where(["call_number = ?", query, query])}
   scope :search_by_barcode, lambda {|barcode| where(["mdpi_barcode = ? OR iucat_barcode = ?", barcode, barcode])}
   scope :search_id, lambda {|i| 
-    where(['mdpi_barcode like ? OR iucat_barcode like ? OR shelf_location like ? OR call_number like ?', i, i, i, i])
+    where(['mdpi_barcode = ? OR iucat_barcode = ? OR call_number like ?', i, i, i, i])
   }
   scope :advanced_search, lambda {|po| 
     po.physical_object_query
@@ -121,7 +122,6 @@ class PhysicalObject < ActiveRecord::Base
 
   private
   def technical_metadata_where_claus(technical_metadatum)
-    puts(technical_metadatum.to_yaml)
     if technical_metadatum.as_technical_metadatum_type == 'OpenReelTm'
       open_reel_tm_where(technical_metadatum.becomes(OpenReelTm))
     else

@@ -17,12 +17,6 @@
         </td>
       </tr>
       <tr>
-        <th>Call Number</th>
-        <td>
-          <%= f.text_field(:call_number, readonly: !@edit_mode) %>
-        </td>
-      </tr>
-      <tr>
         <th>Unit</th>
         <td>
           <%= f.text_field(:unit, readonly: !@edit_mode) %>
@@ -35,9 +29,9 @@
         </td>
       </tr>
       <tr>
-        <th>Shelf Location</th>
+        <th>Call Number</th>
         <td>
-          <%= f.text_field(:shelf_location, readonly: !@edit_mode) %>
+          <%= f.text_field(:call_number, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
@@ -55,12 +49,6 @@
 		disabled: !@edit_mode,
                 :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})"
                 )  %>    
-        </td>
-      </tr>
-      <tr>
-        <th>Carrier Stream Index</th>
-        <td>
-          <%= f.text_field(:carrier_stream_index, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
@@ -82,12 +70,6 @@
         </td>
       </tr>
       <tr>
-        <th>Content Duration</th>
-        <td>
-          <%= f.text_field(:content_duration, readonly: !@edit_mode) %>
-        </td>
-      </tr>
-      <tr>
         <th>Has Ephemera</th>
         <td>
           <% if @edit_mode %>
@@ -97,18 +79,54 @@
           <% end %>
         </td>
       </tr>
+    
       <tr>
-        <th>Created At</th>
+        <th>Author</th>
         <td>
-          <%= f.text_field(:created_at, readonly: true) %>
+          <%= f.text_field(:author, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
-        <th>Updated At</th>
+        <th>Catalog Key</th>
         <td>
-          <%= f.text_field(:updated_at, readonly: true) %>
+          <%= f.text_field(:catalog_key, readonly: !@edit_mode) %>
         </td>
       </tr>
+      <tr>
+        <th>Collection Name</th>
+        <td>
+          <%= f.text_field(:collection_name, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Generation</th>
+        <td>
+          <%= f.text_field(:generation, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>OCLC Number</th>
+        <td>
+          <%= f.text_field(:oclc_number, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Other Copies</th>
+        <td>
+          <% if @edit_mode %>
+            <%= f.check_box(:other_copies) %>
+          <% else %>
+            <input type="text" name="other_copies" value=<%= @physical_object.other_copies ? "true" : "false" %> readonly />
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th>Year</th>
+        <td>
+          <%= f.text_field(:year, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+
       <%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @physical_object %>
     </table> 
   </div>

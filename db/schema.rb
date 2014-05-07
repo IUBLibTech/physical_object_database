@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140425141613) do
+ActiveRecord::Schema.define(version: 20140507144449) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -93,18 +93,25 @@ ActiveRecord::Schema.define(version: 20140425141613) do
 
   create_table "open_reel_tms", force: true do |t|
     t.string   "pack_deformation"
-    t.string   "preservation_problem"
     t.string   "reel_size"
-    t.string   "playback_speed"
     t.string   "track_configuration"
     t.string   "tape_thickness"
     t.string   "sound_field"
     t.string   "tape_stock_brand"
     t.string   "tape_base"
-    t.date     "year_of_recording"
     t.string   "directions_recorded"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "vinegar_syndrome"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.boolean  "zero_point9375_ips"
+    t.boolean  "one_point875_ips"
+    t.boolean  "three_point75_ips"
+    t.boolean  "seven_point5_ips"
+    t.boolean  "fifteen_ips"
+    t.boolean  "thirty_ips"
   end
 
   create_table "physical_objects", force: true do |t|
@@ -117,17 +124,22 @@ ActiveRecord::Schema.define(version: 20140425141613) do
     t.string   "unit"
     t.string   "home_location"
     t.string   "call_number"
-    t.string   "shelf_location"
     t.integer  "iucat_barcode",         limit: 8
     t.string   "format"
     t.integer  "carrier_stream_index",            default: 0
     t.string   "collection_identifier"
     t.integer  "mdpi_barcode",          limit: 8
     t.string   "format_duration"
-    t.string   "content_duration"
     t.boolean  "has_media"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "author"
+    t.string   "catalog_key"
+    t.string   "collection_name"
+    t.string   "generation"
+    t.string   "oclc_number"
+    t.boolean  "other_copies"
+    t.string   "year"
   end
 
   create_table "picklist_specifications", force: true do |t|
@@ -146,6 +158,16 @@ ActiveRecord::Schema.define(version: 20140425141613) do
   end
 
   add_index "picklists", ["name"], name: "index_picklists_on_name", unique: true, using: :btree
+
+  create_table "preservation_problems", force: true do |t|
+    t.integer  "open_reel_tm_id"
+    t.boolean  "vinegar_odor"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "technical_metadata", force: true do |t|
     t.integer  "as_technical_metadatum_id"

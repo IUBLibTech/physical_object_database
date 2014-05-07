@@ -12,6 +12,12 @@
         </td> 
       </tr>
       <tr>
+        <th>Author</th>
+        <td>
+          <%= f.text_field(:author, readonly: !@edit_mode) %>
+        </td> 
+      </tr>
+      <tr>
         <th>Title Control Number</th>
         <td>
           <%= f.text_field(:title_control_number, readonly: !@edit_mode) %>
@@ -21,6 +27,12 @@
         <th>Call Number</th>
         <td>
           <%= f.text_field(:call_number, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Catalog Key</th>
+        <td>
+          <%= f.text_field(:catalog_key, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
@@ -36,15 +48,15 @@
         </td>
       </tr>
       <tr>
-        <th>Shelf Location</th>
-        <td>
-          <%= f.text_field(:shelf_location, readonly: !@edit_mode) %>
-        </td>
-      </tr>
-      <tr>
         <th>IUCAT Barcode</th>
         <td>
           <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>OCLC Number</th>
+        <td>
+          <%= f.text_field(:oclc_number, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
@@ -53,6 +65,14 @@
           <%= f.select(:format, PhysicalObject.formats, {},	disabled: !@edit_mode, :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})")  %>    
         </td>
       </tr>
+      <th>Other Copies</th>
+        <td>
+          <% if @edit_mode %>
+            <%= f.check_box(:other_copies) %>
+          <% else %>
+            <input type="text" name="other_copies" value=<%= @physical_object.other_copies ? "true" : "false" %> readonly />
+          <% end %>
+        </td>
       <tr>
         <th>Carrier Stream Index</th>
         <td>
@@ -66,21 +86,28 @@
         </td>
       </tr>
       <tr>
+        <th>Collection Name</th>
+        <td>
+          <%= f.text_field(:collection_name, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Year</th>
+        <td>
+          <%= f.text_field(:year, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      
+      <tr>
         <th>MDPI Barcode</th>
         <td>
           <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, onchange: 'validateBarcode(this)', onkeyup: "validateBarcode(this)") %>
         </td>
       </tr>
       <tr>
-        <th>Format Duration</th>
+        <th>Generation</th>
         <td>
-          <%= f.text_field(:format_duration, readonly: !@edit_mode) %>
-        </td>
-      </tr>
-      <tr>
-        <th>Content Duration</th>
-        <td>
-          <%= f.text_field(:content_duration, readonly: !@edit_mode) %>
+          <%= f.text_field(:generation, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
@@ -163,7 +190,7 @@
     <% end %>
   </div>
 
-  <%= f.fields_for @tm do |tm_fields| %>
+  <%= f.fields_for :tm do |tm_fields| %>
     <div id="technicalMetadatum" class="left">
       <%= render(:partial => tm_partial_path(@tm), :locals => {:f => tm_fields}) %>
     </div>

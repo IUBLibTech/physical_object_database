@@ -1,5 +1,5 @@
+
 <h2>Open Reel Tape Technical Metadata</h2>
-<%= fields_for :tm do |f| %>
 	<table>
 		<tr>
 			<th>Pack Deformation</th>
@@ -15,11 +15,20 @@
 			<th>Preservation Problems</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:preservation_problem, @tm.preservation_problems) %>
+					<table>
+							<tr>
+								<td>Vinegar Odor <%= f.check_box(:vinegar_syndrome) %></td>
+								<td>Soft Binder Syndrome <%= f.check_box(:soft_binder_syndrome) %></td>
+							</tr>
+							<tr>	
+								<td>Fungus <%= f.check_box(:fungus) %></td>
+								<td>Other Contaminants <%= f.check_box(:other_contaminants) %></td>
+							</tr>
+					</table>
 				<% else %>
-					<%= f.text_field(:preservation_problem, readonly: true) %>
+					<%= @tm.humanize_preservation_problems %>
 				<% end %>
-			</td>
+			</td>					
 		</tr>
 		<tr>
 			<th>Reel Size</th>
@@ -31,16 +40,6 @@
 				<% end %>
 			</td>
 		</tr>
-		<tr>
-			<th>Playback Speed</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.select(:playback_speed, @tm.playback_speeds) %>
-				<% else %>
-					<%= f.text_field(:playback_speed, readonly: true) %>
-				<% end %>
-			</td>
-		</tr>  
 		<tr>
 			<th>Track Configuration</th>
 			<td>
@@ -92,16 +91,6 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Year of Recording</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.text_field(:year_of_recording) %>
-				<% else %>
-					<%= f.text_field(:year_of_recording, readonly: true) %>
-				<% end %>
-			</td>
-		</tr>
-		<tr>
 			<th>Directions Recorded</th>
 			<td>
 			<% if @edit_mode %>
@@ -112,4 +101,3 @@
 			</td>
 		</tr>
 	</table>
-<% end %>

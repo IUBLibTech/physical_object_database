@@ -29,8 +29,10 @@ Download list as: <%= link_to 'CSV File', picklist_path(id: 'picklist_' + @pickl
 <% end %>
 <table>
 	<tr>
-		<th>Shelf location</th>
+		<th>Title</th>
 		<th>Format</th>
+		<th>Unit</th>
+		<th>Call Number</th>
 		<th>Actions</th>
 	</tr>
 	<% count = 1 %>
@@ -40,8 +42,10 @@ Download list as: <%= link_to 'CSV File', picklist_path(id: 'picklist_' + @pickl
     <%else%>
     <tr class='even'>
     <%end%>
-			<td><%= p.shelf_location %></td>
+			<td><%= p.title %></td>
 			<td><%= p.format %> </td>
+			<td><%= p.unit %></td>
+			<td><%= p.call_number %></td>
 			<td>
 				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, :class => 'action show') %>
         <%= link_to("Remove", {:action => 'remove', :id => @picklist.id, po_id: p.id}, {:confirm=>'Are you sure you want to remove this Physical Object from the Picklist?'})%>
