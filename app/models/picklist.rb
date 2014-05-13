@@ -5,4 +5,8 @@ class Picklist < ActiveRecord::Base
 
 	validates :name, presence: true
 
+	def spreadsheet_descriptor
+		name
+	end
+
 end

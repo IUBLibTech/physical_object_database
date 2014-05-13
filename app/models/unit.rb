@@ -4,8 +4,7 @@ class Unit < ActiveRecord::Base
 
   has_many :physical_objects
 
-  def display_name
-    self.abbreviation + ": " + self.name
+  def spreadsheet_descriptor
+    abbreviation
   end
-
 end

@@ -13,5 +13,7 @@ class Bin < ActiveRecord::Base
 	validates :identifier, presence: true, uniqueness: true
 	validates :mdpi_barcode, mdpi_barcode: true
 
-
+	def spreadsheet_descriptor
+	  identifier
+	end
 end
