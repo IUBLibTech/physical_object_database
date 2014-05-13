@@ -36,7 +36,7 @@ module Sql
 	private
 	def Sql.technical_metadata_where_claus(technical_metadatum)
 		stm = technical_metadatum.@as_technical_metadatum
-		if stm.class == OpenReelTm.class
+		if stm.class == OpenReelTm
 			Sql.open_reel_tm_where(technical_metadatum)
 		else
 			raise "Unsupported technical metadata class: #{technical_metadatum.class}"

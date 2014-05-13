@@ -1,7 +1,8 @@
 <% @controller ||= 'physical_objects' %>
 <% @tm ||= @physical_object.technical_metadatum.as_technical_metadatum %>
+
 <%= form_for(@physical_object, url: {action: @action}) do |f| %>
-<div id="physicalObject" class="left">
+  <div id="physicalObject" class="left">
     <h2>Physical Object</h2>
     <table summary="Physical Object Fields">
       <tr>
@@ -131,9 +132,9 @@
     </table> 
   </div>
 
-  <%= f.fields_for @tm do |tm_fields| %>
+  <%= fields_for :tm do |tm_fields| %>
     <div id="technicalMetadatum" class="left">
-      <%= render(:partial => tm_partial_path(@tm), :locals => {:f => tm_fields}) %>
+      <%= render(:partial => tm_partial_path(@tm), :locals => { :f => tm_fields}) %>
     </div>
   <% end %>
 

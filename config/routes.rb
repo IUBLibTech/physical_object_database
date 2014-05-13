@@ -13,7 +13,9 @@ Pod::Application.routes.draw do
   resources :batches
   resources :bins
   resources :boxes
-  resources :physical_objects
+  resources :physical_objects do
+    get :get_tm_form, on: :collection
+  end
   resources :picklists
 
   resources :sessions, only:  [:new, :destroy]

@@ -160,32 +160,10 @@ class PhysicalObjectsController < ApplicationController
     
     if f == "Open Reel Tape"
       render(partial: 'technical_metadatum/show_open_reel_tape_tm')
-    elsif f == "Cassette Tape"
-      render(partial: 'technical_metadatum/show_cassette_tape_tm')
-    elsif f == "LP"
-      render(partial: 'technical_metadatum/show_lp_tm')
-    elsif f == "Compact Disc"
-      render(partial: 'technical_metadatum/show_compact_disc_tm')
+    elsif f == "CD-R"
+      render(partial: 'technical_metadatum/show_cdr_tm')
+    elsif f == "DAT"
+      render(partial: 'technical_metadatum/show_dat_tm')
     end
   end
-  
-  private
-    def physical_object_params
-      # same as using params[:physical_object] except that it
-      # allows listed attributes to be mass-assigned
-      # we could also do params.require(:some_field).permit*...
-      # if certain fields were required for the object instantiation.
-      params.require(:physical_object).permit(:title, :title_control_number, 
-        :unit, :home_location, :call_number, :iucat_barcode, :format, 
-        :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
-        :has_media, :author, :catalog_key, :collection_name, :generation, :oclc_number,
-        :other_copies, :year, :bin_id, :unit, :current_workflow_status, 
-        condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
-    end
-
-    def tm_params
-      params.require(:physical_object).require(:tm).permit(:pack_deformation, :reel_size, :track_configuration, 
-        :tape_thickness, :sound_field, :tape_stock_brand, :tape_base, :directions_recorded, :vinegar_syndrome, :fungus,
-        :soft_binder_syndrome, :other_contaminants)
-    end
 end

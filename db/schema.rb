@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140507144449) do
+ActiveRecord::Schema.define(version: 20140509150725) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -39,6 +39,16 @@ ActiveRecord::Schema.define(version: 20140507144449) do
   end
 
   create_table "cassette_tape_tms", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "cdr_tms", force: true do |t|
+    t.string   "damage"
+    t.boolean  "fungus"
+    t.boolean  "other_contaminants"
+    t.boolean  "breakdown_of_materials"
+    t.string   "format_duration"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -76,6 +86,20 @@ ActiveRecord::Schema.define(version: 20140507144449) do
     t.datetime "updated_at"
   end
 
+  create_table "dat_tms", force: true do |t|
+    t.boolean  "sample_rate_32k"
+    t.boolean  "sample_rate_44_1_k"
+    t.boolean  "sample_rate_48k"
+    t.boolean  "sample_rate_96k"
+    t.string   "format_duration"
+    t.string   "stock_brand"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "digital_files", force: true do |t|
     t.integer  "physical_object_id", limit: 8
     t.string   "filename"
@@ -94,12 +118,7 @@ ActiveRecord::Schema.define(version: 20140507144449) do
   create_table "open_reel_tms", force: true do |t|
     t.string   "pack_deformation"
     t.string   "reel_size"
-    t.string   "track_configuration"
-    t.string   "tape_thickness"
-    t.string   "sound_field"
     t.string   "tape_stock_brand"
-    t.string   "tape_base"
-    t.string   "directions_recorded"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "vinegar_syndrome"
@@ -112,6 +131,24 @@ ActiveRecord::Schema.define(version: 20140507144449) do
     t.boolean  "seven_point5_ips"
     t.boolean  "fifteen_ips"
     t.boolean  "thirty_ips"
+    t.boolean  "full_track"
+    t.boolean  "half_track"
+    t.boolean  "quarter_track"
+    t.boolean  "unknown_track"
+    t.boolean  "zero_point5_mils"
+    t.boolean  "one_mils"
+    t.boolean  "one_point5_mils"
+    t.boolean  "mono"
+    t.boolean  "stereo"
+    t.boolean  "unknown_sound_field"
+    t.boolean  "acetate_base"
+    t.boolean  "polyester_base"
+    t.boolean  "pvc_base"
+    t.boolean  "paper_base"
+    t.boolean  "unknown_playback_speed"
+    t.boolean  "one_direction"
+    t.boolean  "two_directions"
+    t.boolean  "unknown_direction"
   end
 
   create_table "physical_objects", force: true do |t|

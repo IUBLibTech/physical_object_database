@@ -24,7 +24,7 @@
 		</table>
 	</div>
 	<div id="technicalMetadatum" class="left">
-	  <%= f.fields_for @tm do |tm| %>
+	  <%= fields_for :tm do |tm| %>
 	    <%= render(:partial => "technical_metadatum/show_open_reel_tape_tm", :locals => {:f => tm}) %>
 	  <% end %>
 	</div>

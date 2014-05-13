@@ -22,6 +22,7 @@ class SearchController < ApplicationController
   end  
 
   def advanced_search
+    puts(params.to_yaml)
     pop = params[:physical_object]
     tmp = params[:tm]
 
@@ -37,7 +38,6 @@ class SearchController < ApplicationController
 
     stm = po.create_tm(po.format)
     tm.as_technical_metadatum = stm
-
     tmp.each do |name, value|
       if !value.nil? and value.length > 0
         stm[name] = value
@@ -46,12 +46,6 @@ class SearchController < ApplicationController
     @physical_objects = PhysicalObject.advanced_search(po)
     flash[:notice] = "Your search returns these results"
     render('physical_objects/index')
-  end
-  
-
-  private
-  def physical_object_sql(params)
-    
   end
 
 end

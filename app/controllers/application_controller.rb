@@ -21,4 +21,27 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def physical_object_params
+    # same as using params[:physical_object] except that it
+    # allows listed attributes to be mass-assigned
+    # we could also do params.require(:some_field).permit*...
+    # if certain fields were required for the object instantiation.
+    params.require(:physical_object).permit(:title, :title_control_number, 
+      :unit, :home_location, :call_number, :iucat_barcode, :format, 
+      :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
+      :has_media, :author, :catalog_key, :collection_name, :generation, :oclc_number,
+      :other_copies, :year, :bin_id, :unit, :current_workflow_status, 
+      condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
+  end
+
+  def tm_params
+    params.require(:tm).permit(:pack_deformation, :reel_size, :track_configuration, 
+      :tape_thickness, :sound_field, :tape_stock_brand, :tape_base, :directions_recorded,
+      :vinegar_syndrome, :fungus, :soft_binder_syndrome, :other_contaminants, :zero_point9375_ips, 
+      :seven_point5_ips, :one_point875_ips, :fifteen_ips, :three_point75_ips, :thirty_ips, :full_track, 
+      :half_track, :quarter_track, :unknown_track, :one_mils, :one_point5_mils, :zero_point5_mils, 
+      :mono, :stereo, :unknown_sound_field, :acetate_base, :polyester_base, :pvc_base, :paper_base, 
+      :unknown_playback_speed, :one_direction, :two_directions, :unknown_direction)
+  end
+
 end

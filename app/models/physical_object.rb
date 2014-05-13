@@ -18,10 +18,8 @@ class PhysicalObject < ActiveRecord::Base
   # needs to be declared before the validation that uses it
   def self.formats
     {
-      # "Cassette Tape" => "Cassette Tape", 
-      # "Compact Disc" => "Compact Disc", 
-      # "LP" => "LP",
-      "" => "", 
+      "CD-R" => "CD-R",
+      "DAT" => "DAT",
       "Open Reel Tape" => "Open Reel Tape"
     }
   end
@@ -88,7 +86,7 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
-  def physical_object_query()
+  def physical_object_query
     sql = "SELECT physical_objects.* FROM physical_objects" << 
     (!format.nil? and format.length > 0 ? ", technical_metadata, #{tm_table_name(self.format)} " : " ") << 
     "WHERE " <<
@@ -97,23 +95,29 @@ class PhysicalObject < ActiveRecord::Base
       "AND technical_metadata.as_technical_metadatum_id=#{tm_table_name(self.format)}.id " 
       : 
       "" ) <<
-    physical_object_where_clause(self) <<
-    (!format.nil? and format.length > 0 ? technical_metadata_where_claus(technical_metadatum.as_technical_metadatum) : "") 
+    physical_object_where_clause <<
+    (!format.nil? and format.length > 0 ? technical_metadata_where_claus : "") 
 
     PhysicalObject.find_by_sql(sql)
   end
 
   private
-  def physical_object_where_clause(po)
+  def physical_object_where_clause
     sql = " "
-    po.attributes.each do |name, value|
-      if name == 'id' or name == 'created_at' or name == 'updated_at' or name == 'has_media'
+    self.attributes.each do |name, value|
+      if name == 'id' or name == 'created_at' or name == 'updated_at' or name == 'has_media' or name == "technical_metadatum"
         next
+      elsif name =='mdpi_barcode' or name == 'iucat_barcode'
+        unless value == 0 or value.nil?
+          sql << " AND physical_objects.#{name}='#{value}'"
+        end
       else
-        if !value.nil? and value.to_s.length > 0 and value.to_s != '0'
+        if !value.nil? and (value.class == String and value.length > 0)
           operand = value.to_s.include?('*') ? ' like ' : '='
           v = value.to_s.include?('*') ? value.to_s.gsub(/[*]/, '%') : value
           sql << " AND physical_objects.#{name}#{operand}'#{v}'"
+        elsif !value.nil? and value.class == TrueClass
+          sql << " AND physical_objects.#{name}=1"
         end
       end
     end
@@ -121,9 +125,9 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   private
-  def technical_metadata_where_claus(technical_metadatum)
+  def technical_metadata_where_claus
     if technical_metadatum.as_technical_metadatum_type == 'OpenReelTm'
-      open_reel_tm_where(technical_metadatum.becomes(OpenReelTm))
+      open_reel_tm_where(technical_metadatum.as_technical_metadatum)
     else
       raise "Unsupported technical metadata class: #{technical_metadatum.as_technical_metdataum_type}"
     end
@@ -145,10 +149,11 @@ class PhysicalObject < ActiveRecord::Base
       #ignore these fields in the Sql WHERE clause
       if name == 'id' or name == 'created_at' or name == 'updated_at' or name == "as_technical_metadatum_type"
         next
-      else
-        if !value.nil? and value.length > 0
-          q << " AND open_reel_tms.#{name}='#{value}'"
-        end
+      # a value of false in a query means we don't care whether the returned value is true OR false
+      elsif !value.nil? and (value.class == String and value.length > 0)
+        q << " AND open_reel_tms.#{name}='#{value}'"
+      elsif !value.nil? and value.class == TrueClass
+        q << " AND open_reel_tms.#{name}=1"
       end
     end
     q

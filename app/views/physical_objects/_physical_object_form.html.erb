@@ -190,7 +190,7 @@
     <% end %>
   </div>
 
-  <%= f.fields_for :tm do |tm_fields| %>
+  <%= fields_for :tm do |tm_fields| %>
     <div id="technicalMetadatum" class="left">
       <%= render(:partial => tm_partial_path(@tm), :locals => {:f => tm_fields}) %>
     </div>
