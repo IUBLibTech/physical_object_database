@@ -226,9 +226,9 @@ class PhysicalObjectsController < ApplicationController
       # we could also do params.require(:some_field).permit*...
       # if certain fields were required for the object instantiation.
       params.require(:physical_object).permit(:title, :title_control_number, 
-        :unit, :home_location, :call_number, :shelf_location, :iucat_barcode, :format, 
+        :unit_id, :home_location, :call_number, :shelf_location, :iucat_barcode, :format, 
         :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
-        :content_duration, :has_media, :open_reel_tm, :bin_id, :unit,
+        :content_duration, :has_media, :open_reel_tm, :bin_id,
 	:current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
     end
 end

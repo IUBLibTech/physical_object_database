@@ -8,6 +8,7 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :bin
   belongs_to :picklist
   belongs_to :container
+  belongs_to :unit
   has_one :technical_metadatum
   has_many :digital_files
   has_many :workflow_statuses

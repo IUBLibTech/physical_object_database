@@ -26,7 +26,7 @@
       <tr>
         <th>Unit</th>
         <td>
-          <%= f.text_field(:unit, readonly: !@edit_mode) %>
+          <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :display_name, {prompt: "Please specify a unit"}, disabled: !@edit_mode %>
         </td>
       </tr>
       <tr>

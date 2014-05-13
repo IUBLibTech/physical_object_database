@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140513150154) do
+ActiveRecord::Schema.define(version: 20140513150746) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -114,7 +114,6 @@ ActiveRecord::Schema.define(version: 20140513150154) do
     t.integer  "container_id",          limit: 8
     t.text     "title"
     t.string   "title_control_number"
-    t.string   "unit"
     t.string   "home_location"
     t.string   "call_number"
     t.string   "shelf_location"
@@ -128,7 +127,10 @@ ActiveRecord::Schema.define(version: 20140513150154) do
     t.boolean  "has_media"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "unit_id"
   end
+
+  add_index "physical_objects", ["unit_id"], name: "index_physical_objects_on_unit_id", using: :btree
 
   create_table "picklist_specifications", force: true do |t|
     t.string   "name"
