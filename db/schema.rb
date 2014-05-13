@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140425141613) do
+ActiveRecord::Schema.define(version: 20140513150154) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -152,6 +152,13 @@ ActiveRecord::Schema.define(version: 20140425141613) do
     t.string   "as_technical_metadatum_type"
     t.integer  "physical_object_id",          limit: 8
     t.integer  "picklist_specification_id",   limit: 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "units", force: true do |t|
+    t.string   "abbreviation"
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
