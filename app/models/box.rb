@@ -5,4 +5,8 @@ class Box < ActiveRecord::Base
 
 	validates :mdpi_barcode, mdpi_barcode: true
 
+	def spreadsheet_descriptor
+		mdpi_barcode
+	end
+
 end

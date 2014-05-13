@@ -6,6 +6,9 @@ module PhysicalObjectsHelper
     failed = []
     index = 0
   	CSV.foreach(file, headers: true) do |r|
+		unit_id = 0
+		unit = Unit.find_by(abbreviation: r["Unit"])
+		unit_id = unit.id unless unit.nil?
   		po = PhysicalObject.new(
   				mdpi_barcode: r["MDPI Barcode"] ? r["MDPI Barcode"] : 0,
       		iucat_barcode: r["IU Barcode"] ? r["IU Barcode"].to_i : 0,
@@ -14,7 +17,7 @@ module PhysicalObjectsHelper
       		title: r["Title"],
       		title_control_number: r["Title Control Number"],
       		format: r["Format"],
-      		unit: r["Unit"],
+      		unit_id: unit_id,
 		      collection_identifier: r["Collection Primary ID"],
 		      home_location: r["Primary Location"],
 		      shelf_location: r["Secondary Location"],

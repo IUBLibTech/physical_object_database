@@ -7,4 +7,8 @@ class Container < ActiveRecord::Base
 
 	has_many :physical_objects
 
+	def spreadsheet_descriptor
+		id
+	end
+
 end

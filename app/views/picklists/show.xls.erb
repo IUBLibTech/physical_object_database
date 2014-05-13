@@ -9,21 +9,30 @@
       <Row>
       <% @column_names = PhysicalObject.column_names %>
       <% @column_names.each do |column_name| %>
-        <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= column_name.titleize %></Data></Cell>
       <% end %>
       <% if @physical_objects.any? %>
         <% @md_columns = @physical_objects.first.technical_metadatum.as_technical_metadatum.class.column_names %>
         <% @md_columns.each do |md_column| %>
-          <Cell><Data ss:Type="String"><%= md_column %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= md_column.titleize %></Data></Cell>
         <% end %>
       <% end %>
       </Row>
     <% @physical_objects.each do |po| %>
       <Row>
-        <% @column_values = po.attributes.values_at(*@column_names) %>
-        <% @column_values.each do |column_value| %>
+        <% @attributes = po.attributes %>
+        <% @column_names.each do |column_name| %>
+	  <% column_value = @attributes[column_name] %>
+	  <%# look up descriptive values for associated objects %>
+	  <% if column_name =~ /_id$/ %>
+	    <% if column_value.nil? || column_value.blank? || column_value.to_i.zero? %>
+	      <% column_value = "" %>
+	    <% else %>
+	      <% column_value = Kernel.const_get(column_name.titleize).find(column_value).spreadsheet_descriptor %>
+	    <% end %>
+	  <% end %>
           <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-        <% end %>
+	<% end %>
         <% @md_values = po.technical_metadatum.as_technical_metadatum.attributes.values_at(*@md_columns) %>
         <% @md_values.each do |md_value| %>
           <Cell><Data ss:Type="String"><%= md_value %></Data></Cell>
