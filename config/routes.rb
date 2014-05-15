@@ -15,6 +15,7 @@ Pod::Application.routes.draw do
   resources :boxes
   resources :physical_objects do
     get :get_tm_form, on: :collection
+    get :download_spreadsheet_example, on: :collection
   end
   resources :picklists
 

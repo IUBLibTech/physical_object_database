@@ -2,6 +2,10 @@ class PhysicalObjectsController < ApplicationController
   
   helper :all
 
+  def download_spreadsheet_example
+    send_file("#{Rails.root}/public/CSV Import.xlsx", filename: "CSV Import.xlsx")
+  end
+
   def new
     # we instantiate an new object here because rails will pick up any default values assigned
     # by the database and the form will be prepopulated with those values
