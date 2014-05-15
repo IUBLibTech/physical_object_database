@@ -3,10 +3,4 @@
     <%= link_to("Cancel", {action: 'index'}) %>
   </div>
 <% end %>
-<div id='new_picklist_spec_div' class='left'>
-	<h2>Select Format</h2>
-	Format: 
-	<%= select_tag :format, options_for_select(@formats), :onchange => "set_format_div(this.value, true)" %>
-</div>
-<div id="formatDiv">
-</div>
+<%= render(partial: 'show_picklist_specification') %>

@@ -8,6 +8,11 @@ class DatTm < ActiveRecord::Base
     	:sample_rate_48k => "48k",
     	:sample_rate_96k => "96k"
 	}
+
+  # overridden to provide for more human readable attribute names for things like :sample_rate_32k
+  def self.human_attribute_name(attribute)
+    HUMANIZED_COLUMNS[attribute.to_sym] || super
+  end
 	
 	def humanize_boolean_fields(*field_names)
   	str = ""

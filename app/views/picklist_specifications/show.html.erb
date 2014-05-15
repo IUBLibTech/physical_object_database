@@ -9,9 +9,4 @@
     <%= link_to("Query", {action: 'query', id: @ps.id}) %>
   </div>
 <% end %>
-
-<% if @ps.format == "Open Reel Tape" %>
-	<%= render(partial: 'ot') %>
-<% else %>
-
-<% end %>
+<%= render(partial: 'show_picklist_specification') %>

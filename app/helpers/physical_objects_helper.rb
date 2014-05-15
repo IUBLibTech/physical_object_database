@@ -7,23 +7,23 @@ module PhysicalObjectsHelper
     index = 0
   	CSV.foreach(file, headers: true) do |r|
   		po = PhysicalObject.new(
-          author: r["Author"],
-      		call_number: r["Call Number"],
-          catalog_key: r["Catalog Key"],
-		      collection_identifier: r["Collection Identifier"],
-          collection_name: r["Collection Name"],
-          format: r["Format"],
-          generation: r["Generation"],
-		      home_location: r["Primary Location"],
-          iucat_barcode: r["IU Barcode"] ? r["IU Barcode"].to_i : 0,
-          mdpi_barcode: r["MDPI Barcode"] ? r["MDPI Barcode"] : 0,
-          oclc_number: r["OCLC Number"],
-          other_copies: !r["Other Copies"].nil?,
-          has_media: !r["Has Ephemira"].nil?,
-          title: r["Title"],
-          title_control_number: r["Title Control Number"],
-          unit: r["Unit"],
-          year: r["Year"]
+          author: r[PhysicalObject.human_attribute_name("author")],
+      		call_number: r[PhysicalObject.human_attribute_name("call_number")],
+          catalog_key: r[PhysicalObject.human_attribute_name("catalog_key")],
+		      collection_identifier: r[PhysicalObject.human_attribute_name("collection_identifier")],
+          collection_name: r[PhysicalObject.human_attribute_name("collection_name")],
+          format: r[PhysicalObject.human_attribute_name("format")],
+          generation: r[PhysicalObject.human_attribute_name("generation")],
+		      home_location: r[PhysicalObject.human_attribute_name("home_location")],
+          iucat_barcode: r[PhysicalObject.human_attribute_name("iucat_barcode")] ? r[PhysicalObject.human_attribute_name("iucat_barcode")].to_i : 0,
+          mdpi_barcode: r[PhysicalObject.human_attribute_name("mdpi_barcode")] ? r[PhysicalObject.human_attribute_name("mdpi_barcode")] : 0,
+          oclc_number: r[PhysicalObject.human_attribute_name("oclc_number")],
+          other_copies: !r[PhysicalObject.human_attribute_name("other_copies")].nil?,
+          has_ephemira: !r[PhysicalObject.human_attribute_name("has_ephemira")].nil?,
+          title: r[PhysicalObject.human_attribute_name("title")],
+          title_control_number: r[PhysicalObject.human_attribute_name("title_control_number")],
+          unit: r[PhysicalObject.human_attribute_name("unit")],
+          year: r[PhysicalObject.human_attribute_name("year")]
   			)
       index += 1;
   		if po.save
@@ -56,26 +56,63 @@ module PhysicalObjectsHelper
   def PhysicalObjectsHelper.parse_tm(tm, row)
     if tm.is_a?(OpenReelTm)
       open_reel_parse(tm, row)
+    elsif tm.is_a?(CdrTm)
+      cdr_parse(tm, row)
+    elsif tm.is_a?(DatTm)
+      dat_parse(tm, row)
     else 
 
     end
   end
 
-  def PhysicalObjectsHelper.open_reel_parse(tm, row)
-    tm.pack_deformation = row["Pack Deformation"]
-    tm.reel_size = row["Reel Size"]
-    tm.tape_stock_brand = row["Tape Stock Brand"]
+  def PhysicalObjectsHelper.cdr_parse(tm, row)
+    tm.damage = row[CdrTm.human_attribute_name("damage")]
+    tm.format_duration = row[CdrTm.human_attribute_name("format_duration")]
+
     #preservation problems
-    unless row["Preservation Problems"].nil?
-      probs = row["Preservation Problems"]
+    unless row["Preservation problems"].nil?
+      probs = row["Preservation problems"]
+      tm.breakdown_of_materials = probs.include?(CdrTm.human_attribute_name("breakdown_of_materials"))
+      tm.fungus = probs.include?(CdrTm.human_attribute_name("fungus"))
+      tm.other_contaminants = probs.include?(CdrTm.human_attribute_name("other_contaminants"))
+    end
+  end
+
+  def PhysicalObjectsHelper.dat_parse(tm, row)
+    tm.format_duration = row[DatTm.human_attribute_name("format_duration")]
+    tm.tape_stock_brand = row[DatTm.human_attribute_name("tape_stock_brand")]
+    #sample rates
+    unless row["Sample rate"].nil?
+      probs = row["Sample rate"]
+      tm.sample_rate_32k = probs.include?(DatTm.human_attribute_name("sample_rate_32k"))
+      tm.sample_rate_44_1_k = probs.include?(DatTm.human_attribute_name("sample_rate_44_1_k"))
+      tm.sample_rate_48k = probs.include?(DatTm.human_attribute_name("sample_rate_48k"))
+      tm.sample_rate_96k = probs.include?(DatTm.human_attribute_name("sample_rate_96k"))
+    end
+    #preservation problems
+    unless row["Preservation problems"].nil?
+      probs = row["Preservation problems"]
+      tm.fungus = probs.include?(DatTm.human_attribute_name("fungus"))
+      tm.soft_binder_syndrome = probs.include?(DatTm.human_attribute_name("soft_binder_syndrome"))
+      tm.other_contaminants = probs.include?(DatTm.human_attribute_name("other_contaminants"))
+    end
+  end
+
+  def PhysicalObjectsHelper.open_reel_parse(tm, row)
+    tm.pack_deformation = row[OpenReelTm.human_attribute_name("pack_deformation")]
+    tm.reel_size = row[OpenReelTm.human_attribute_name("reel_size")]
+    tm.tape_stock_brand = row[OpenReelTm.human_attribute_name("tape_stock_brand")]
+    #preservation problems
+    unless row["Preservation problems"].nil?
+      probs = row["Preservation problems"]
       tm.fungus = probs.include?(OpenReelTm.human_attribute_name("fungus"))
       tm.soft_binder_syndrome = probs.include?(OpenReelTm.human_attribute_name("soft_binder_syndrom"))
       tm.vinegar_syndrome = probs.include?(OpenReelTm.human_attribute_name("vinegar_syndrome"))
       tm.other_contaminants = probs.include?(OpenReelTm.human_attribute_name("other_contaminants"))
     end
 
-    unless row["Playback Speed"].nil?
-      pbs = row["Playback Speed"]
+    unless row["Playback speed"].nil?
+      pbs = row["Playback speed"]
       tm.zero_point9375_ips = pbs.include?(OpenReelTm.human_attribute_name("zero_point9375_ips"))
       tm.one_point875_ips = pbs.include?(OpenReelTm.human_attribute_name("one_point875_ips"))
       tm.three_point75_ips = pbs.include?(OpenReelTm.human_attribute_name("three_point75_ips"))
@@ -84,31 +121,31 @@ module PhysicalObjectsHelper
       tm.thirty_ips = pbs.include?(OpenReelTm.human_attribute_name("thirty_ips"))
     end
 
-    unless row["Track Configuration"].nil?
-      tc = row["Track Configuration"]
+    unless row["Track configuration"].nil?
+      tc = row["Track configuration"]
       tm.full_track = tc.include?(OpenReelTm.human_attribute_name("full_track"))
       tm.half_track = tc.include?(OpenReelTm.human_attribute_name("half_track"))
       tm.quarter_track = tc.include?(OpenReelTm.human_attribute_name("quarter_track"))
       tm.unknown_track = tc.include?(OpenReelTm.human_attribute_name("unknown_track"))
     end
 
-    unless row["Tape Thickness"].nil?
-      tt = row["Tape Thickness"]
+    unless row["Tape thickness"].nil?
+      tt = row["Tape thickness"]
       tm.zero_point5_mils = tt.include?(OpenReelTm.human_attribute_name("zero_point5_mils"))
       tm.one_mils = tt.include?(OpenReelTm.human_attribute_name("one_mils"))
       tm.one_point5_mils = tt.include?(OpenReelTm.human_attribute_name("one_point5_mils"))
     end
 
-    unless row["Sound Field"].nil?
-      sf = row["Sound Field"]
+    unless row["Sound field"].nil?
+      sf = row["Sound field"]
       tm.mono = sf.include?(OpenReelTm.human_attribute_name("mono"))
       tm.stereo = sf.include?(OpenReelTm.human_attribute_name("stereo"))
       tm.unknown_sound_field = sf.include?(OpenReelTm.human_attribute_name("unknown_sound_field"))
     end
 
     # tape base
-    unless row["Tape Base"].nil?
-      tb = row["Tape Base"]
+    unless row["Tape base"].nil?
+      tb = row["Tape base"]
       tm.acetate_base = tb.include?(OpenReelTm.human_attribute_name("acetate_base"))
       tm.polyester_base = tb.include?(OpenReelTm.human_attribute_name("polyester_base"))
       tm.pvc_base = tb.include?(OpenReelTm.human_attribute_name("pvc_base"))
@@ -116,8 +153,8 @@ module PhysicalObjectsHelper
     end
 
     # directions recorded
-    unless row["Directions Recorded"].nil?
-      dr = row["Directions Recorded"]
+    unless row["Directions recorded"].nil?
+      dr = row["Directions recorded"]
       tm.one_direction = dr.include?(OpenReelTm.human_attribute_name("one_direction"))
       tm.two_directions = dr.include?(OpenReelTm.human_attribute_name("two_directions"))
       tm.unknown_direction = dr.include?(OpenReelTm.human_attribute_name("unknown_sound_field"))

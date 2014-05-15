@@ -1,0 +1,40 @@
+<%# special case where :ps is needed instead of @ps %>
+<%= form_for(:ps, url: {action: @action, id: @ps.id}) do |f| %>
+	<div id="picklistSpec" class="left">
+		<h2>Picklist Attributes</h2>
+		<table>
+			<tr>
+				<th>Name</th>
+				<td>
+					<%= f.text_field(:name, :readonly => !@edit_mode) %>
+				</td>
+			</tr>
+			<tr>
+				<th>Description</th>
+				<td>
+					<%= f.text_area(:description, :readonly => !@edit_mode) %>
+				</td>
+			</tr>
+			<tr>
+				<th>Format</th>
+				<td>
+					<% if @edit_mode %>
+						<%= f.select(:format, PhysicalObject.formats, {}, onchange:  "tm_div(this.value, 'PicklistSpecification', #{@ps.id}, #{@edit_mode})") %>
+					<% else %>
+						<%= @ps.format %>
+					<% end %>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div id="technicalMetadatum" class="left">
+		<script type="text/javascript">
+			tm_div(<%= "'#{@ps.format}'".html_safe %>, "PicklistSpecification", <%= @ps.id %>, <%= @edit_mode %>)
+		</script>
+	</div>
+	<div class="clear" >
+	<% if @edit_mode %>
+		<%= submit_tag(@submit_text) %>
+	<% end %>
+	</div>
+<% end %>

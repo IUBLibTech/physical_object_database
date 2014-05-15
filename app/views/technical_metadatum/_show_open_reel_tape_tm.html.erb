@@ -1,8 +1,8 @@
-
+<%= fields_for :tm do |f| %>
 <h2>Open Reel Tape Technical Metadata</h2>
 	<table>
 		<tr>
-			<th>Pack Deformation</th>
+			<th>Pack deformation</th>
 			<td>
 				<% if @edit_mode %>
 					<%= f.select(:pack_deformation, @tm.pack_deformations) %>
@@ -12,17 +12,17 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Preservation Problems</th>
+			<th>Preservation problems</th>
 			<td>
 				<% if @edit_mode %>
 					<table>
 							<tr>
-								<td>Vinegar Odor <%= f.check_box(:vinegar_syndrome) %></td>
-								<td>Soft Binder Syndrome <%= f.check_box(:soft_binder_syndrome) %></td>
+								<td>Vinegar syndrome <%= f.check_box(:vinegar_syndrome) %></td>
+								<td>Soft binder syndrome <%= f.check_box(:soft_binder_syndrome) %></td>
 							</tr>
 							<tr>	
 								<td>Fungus <%= f.check_box(:fungus) %></td>
-								<td>Other Contaminants <%= f.check_box(:other_contaminants) %></td>
+								<td>Other contaminants <%= f.check_box(:other_contaminants) %></td>
 							</tr>
 					</table>
 				<% else %>
@@ -31,7 +31,7 @@
 			</td>					
 		</tr>
 		<tr>
-			<th>Reel Size</th>
+			<th>Reel size</th>
 			<td>
 				<% if @edit_mode %>
 					<%= f.select(:reel_size, @tm.reel_sizes) %>
@@ -41,7 +41,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Playback Speed</th>
+			<th>Playback speed</th>
 			<td>
 				<% if @edit_mode %>
 					<table>
@@ -69,7 +69,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Track Configuration</th>
+			<th>Track configuration</th>
 			<td>
 				<% if @edit_mode %>
 					<table>
@@ -96,7 +96,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Tape Thickness</th>
+			<th>Tape thickness</th>
 			<td>
 				<% if @edit_mode %>
 					<table>
@@ -120,7 +120,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Sound Field</th>
+			<th>Sound field</th>
 			<td>
 				<% if @edit_mode %>
 					<table>
@@ -142,13 +142,13 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Tape Stock Brand</th>
+			<th>Tape stock brand</th>
 			<td>
 				<%= f.text_field(:tape_stock_brand, readonly: !@edit_mode) %>
 			</td>
 		</tr>
 		<tr>
-			<th>Tape Base</th>
+			<th>Tape base</th>
 			<td>
 				<% if @edit_mode %>
 					<table>
@@ -167,7 +167,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Directions Recorded</th>
+			<th>Directions recorded</th>
 			<td>
 			<% if @edit_mode %>
 				<table>
@@ -183,3 +183,4 @@
 			</td>
 		</tr>
 	</table>
+<% end %>

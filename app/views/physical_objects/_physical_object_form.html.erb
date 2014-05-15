@@ -18,19 +18,19 @@
         </td> 
       </tr>
       <tr>
-        <th>Title Control Number</th>
+        <th>Title control number</th>
         <td>
           <%= f.text_field(:title_control_number, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
-        <th>Call Number</th>
+        <th>Call number</th>
         <td>
           <%= f.text_field(:call_number, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
-        <th>Catalog Key</th>
+        <th>Catalog key</th>
         <td>
           <%= f.text_field(:catalog_key, readonly: !@edit_mode) %>
         </td>
@@ -42,19 +42,19 @@
         </td>
       </tr>
       <tr>
-        <th>Home Location</th>
+        <th>Home location</th>
         <td>
           <%= f.text_field(:home_location, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
-        <th>IUCAT Barcode</th>
+        <th>IUCAT barcode</th>
         <td>
           <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
-        <th>OCLC Number</th>
+        <th>OCLC number</th>
         <td>
           <%= f.text_field(:oclc_number, readonly: !@edit_mode) %>
         </td>
@@ -62,10 +62,10 @@
       <tr>
         <th>Format</th>
         <td>
-          <%= f.select(:format, PhysicalObject.formats, {},	disabled: !@edit_mode, :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})")  %>    
+          <%= f.select(:format, PhysicalObject.formats, {},	disabled: !@edit_mode, :onChange => "tm_div(this.value, 'PhysicalObject', #{@physical_object.id.nil? ? 0 : @physical_object.id}, #{@edit_mode})")  %>    
         </td>
       </tr>
-      <th>Other Copies</th>
+      <th>Other copies</th>
         <td>
           <% if @edit_mode %>
             <%= f.check_box(:other_copies) %>
@@ -74,19 +74,19 @@
           <% end %>
         </td>
       <tr>
-        <th>Carrier Stream Index</th>
+        <th>Carrier stream index</th>
         <td>
           <%= f.text_field(:carrier_stream_index, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
-        <th>Collection Identifier</th>
+        <th>Collection identifier</th>
         <td>
           <%= f.text_field(:collection_identifier, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
-        <th>Collection Name</th>
+        <th>Collection name</th>
         <td>
           <%= f.text_field(:collection_name, readonly: !@edit_mode) %>
         </td>
@@ -99,7 +99,7 @@
       </tr>
       
       <tr>
-        <th>MDPI Barcode</th>
+        <th>MDPI barcode</th>
         <td>
           <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, onchange: 'validateBarcode(this)', onkeyup: "validateBarcode(this)") %>
         </td>
@@ -111,23 +111,23 @@
         </td>
       </tr>
       <tr>
-        <th>Has Ephemera</th>
+        <th>Has ephemera</th>
         <td>
           <% if @edit_mode %>
-            <%= f.check_box(:has_media) %>
+            <%= f.check_box(:has_ephemira) %>
           <% else %>
-            <input type="text" name="has_media" value=<%= @physical_object.has_media ? "true" : "false" %> readonly />
+            <input type="text" name="has_ephemira" value=<%= @physical_object.has_ephemira ? "true" : "false" %> readonly />
           <% end %>
         </td>
       </tr>
       <tr>
-        <th>Created At</th>
+        <th>Created</th>
         <td>
           <%= f.text_field(:created_at, readonly: true) %>
         </td>
       </tr>
       <tr>
-        <th>Updated At</th>
+        <th>Updated</th>
         <td>
           <%= f.text_field(:updated_at, readonly: true) %>
         </td>
@@ -190,11 +190,10 @@
     <% end %>
   </div>
 
-  <%= fields_for :tm do |tm_fields| %>
-    <div id="technicalMetadatum" class="left">
-      <%= render(:partial => tm_partial_path(@tm), :locals => {:f => tm_fields}) %>
-    </div>
-  <% end %>
+  
+  <div id="technicalMetadatum" class="left">
+    <%= render(:partial => tm_partial_path(@tm)) %>
+  </div>
 
   <div class="left">
     <h2>Digital Files</h2>

@@ -6,12 +6,12 @@ class CdrTm < ActiveRecord::Base
 
 	attr_accessor :damage_values
 	def damage_values
-		{"None" => "None", "Minor" => "Minor", "Moderate" => "Moderate", "Severe" => "Severe"}
+		{"" => "", "Minor" => "Minor", "Moderate" => "Moderate", "Severe" => "Severe"}
 	end
 
 	attr_accessor :format_duration_values
 	def format_duration_values
-		{"74 min" => "74 min", "80 min" => "80 min", "90 min" => "90 min", "99 min" => "99 min", "Unknown" => "Unknown"}
+		{"" => "", "74 min" => "74 min", "80 min" => "80 min", "90 min" => "90 min", "99 min" => "99 min", "Unknown" => "Unknown"}
 	end
 
 	def humanize_boolean_fields(*field_names)

@@ -48,7 +48,7 @@
                 :format, PhysicalObject.formats, 
                 {},
 		disabled: !@edit_mode,
-                :onChange => "tm_div(this.value, #{@physical_object.id.nil? ? 0 : @physical_object.id})"
+                :onChange => "tm_div(this.value, 'PhysicalObject', #{@physical_object.id.nil? ? 0 : @physical_object.id}, #{@edit_mode})"
                 )  %>    
         </td>
       </tr>
@@ -74,9 +74,9 @@
         <th>Has Ephemera</th>
         <td>
           <% if @edit_mode %>
-            <%= f.check_box(:has_media) %>
+            <%= f.check_box(:has_ephemira) %>
           <% else %>
-            <input type="text" name="has_media" value=<%= @physical_object.has_media ? "true" : "false" %> readonly />
+            <input type="text" name="has_ephemira" value=<%= @physical_object.has_ephemira ? "true" : "false" %> readonly />
           <% end %>
         </td>
       </tr>

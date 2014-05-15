@@ -144,26 +144,26 @@ class PhysicalObjectsController < ApplicationController
     end
   end
 
-  def get_tm_form
-    f = params[:format]
-    id = params[:id]
-    @edit_mode = true
-    @physical_object = params[:id] == '0' ? PhysicalObject.new : PhysicalObject.find(params[:id])
-    if ! @physical_object.technical_metadatum.nil?
-      @technical_metadatum = @physical_object.technical_metadatum.as_technical_metadatum
-    else
-      tm = TechnicalMetadatum.new
-      @tm = @physical_object.create_tm(f)
-      @physical_object.technical_metadatum = tm
-      tm.as_technical_metadatum = @tm
-    end
+  # def get_tm_form
+  #   f = params[:format]
+  #   id = params[:id]
+  #   @edit_mode = true
+  #   @physical_object = params[:id] == '0' ? PhysicalObject.new : PhysicalObject.find(params[:id])
+  #   if ! @physical_object.technical_metadatum.nil?
+  #     @technical_metadatum = @physical_object.technical_metadatum.as_technical_metadatum
+  #   else
+  #     tm = TechnicalMetadatum.new
+  #     @tm = @physical_object.create_tm(f)
+  #     @physical_object.technical_metadatum = tm
+  #     tm.as_technical_metadatum = @tm
+  #   end
     
-    if f == "Open Reel Tape"
-      render(partial: 'technical_metadatum/show_open_reel_tape_tm')
-    elsif f == "CD-R"
-      render(partial: 'technical_metadatum/show_cdr_tm')
-    elsif f == "DAT"
-      render(partial: 'technical_metadatum/show_dat_tm')
-    end
-  end
+  #   if f == "Open Reel Tape"
+  #     render(partial: 'technical_metadatum/show_open_reel_tape_tm')
+  #   elsif f == "CD-R"
+  #     render(partial: 'technical_metadatum/show_cdr_tm')
+  #   elsif f == "DAT"
+  #     render(partial: 'technical_metadatum/show_dat_tm')
+  #   end
+  # end
 end

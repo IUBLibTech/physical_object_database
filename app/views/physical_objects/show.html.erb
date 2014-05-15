@@ -13,7 +13,7 @@
     <%= link_to("Create New Physical Object", :action => 'new') %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Upload Spreadsheet", :action => 'upload_show') %>
+    <%= link_to("Upload Spreadsheet", controller: 'physical_objects', action: 'upload_show', id: 'new') %>
   </div>
 <% end %>
 

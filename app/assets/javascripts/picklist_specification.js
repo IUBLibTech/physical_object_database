@@ -1,20 +1,8 @@
-function set_format_div(format, edit_mode) {  
+function tm_div(format, type, object_id, edit_mode) {  
   jQuery.ajax({
-    url: "/picklist_specifications/get_form",
+    url: "/physical_objects/tm_form/"+object_id,
     type: "GET",
-    data: {"format" : format, "edit_mode" : edit_mode},
-    dataType: "html",
-    success: function(data) {
-      jQuery("#formatDiv").html(data);
-    }
-  });
-}
-
-function tm_div(format, po_id) {  
-  jQuery.ajax({
-    url: "/physical_objects/get_tm_form",
-    type: "GET",
-    data: {"format" : format, "edit_mode" : true, "id" : po_id},
+    data: {"format" : format, "edit_mode" : true, "type" : type, 'edit_mode' : edit_mode},
     dataType: "html",
     success: function(data) {
       jQuery("#technicalMetadatum").html(data);

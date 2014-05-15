@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140509150725) do
+ActiveRecord::Schema.define(version: 20140515153721) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(version: 20140509150725) do
     t.boolean  "sample_rate_48k"
     t.boolean  "sample_rate_96k"
     t.string   "format_duration"
-    t.string   "stock_brand"
+    t.string   "tape_stock_brand"
     t.boolean  "fungus"
     t.boolean  "soft_binder_syndrome"
     t.boolean  "other_contaminants"
@@ -167,7 +167,7 @@ ActiveRecord::Schema.define(version: 20140509150725) do
     t.string   "collection_identifier"
     t.integer  "mdpi_barcode",          limit: 8
     t.string   "format_duration"
-    t.boolean  "has_media"
+    t.boolean  "has_ephemira"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "author"

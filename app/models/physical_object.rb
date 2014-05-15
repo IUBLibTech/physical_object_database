@@ -40,6 +40,18 @@ class PhysicalObject < ActiveRecord::Base
     #PhysicalObject.find_by_sql(po.physical_object_query)
   }
 
+  # this hash holds the human reable attribute name for this class
+  HUMANIZED_COLUMNS = {
+      :mdpi_barcode => "MDPI barcode",
+      :iucat_barcode => "IUCAT barcode",
+      :oclc_number => "OCLC number"
+  }
+
+  # overridden to provide for more human readable attribute names for things like :mdpi_barcode (so that mdpi is MDPI)
+  def self.human_attribute_name(*attribute)
+    HUMANIZED_COLUMNS[attribute[0].to_sym] || super
+  end
+
   def init
     self.mdpi_barcode ||= 0
   end
@@ -55,14 +67,12 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def create_tm(f)
-    if f == "Cassette Tape"
-      CassetteTapeTm.new
-    elsif f == "Compact Disc"
-      CompactDiscTm.new
-    elsif f == "LP"
-      LpTm.new
-    elsif f == "Open Reel Tape"
+    if f == "Open Reel Tape"
       OpenReelTm.new
+    elsif f == 'CD-R'
+      CdrTm.new
+    elsif f == 'DAT'
+      DatTm.new
     else
       raise 'Unknown format type' + format
     end 
@@ -105,7 +115,7 @@ class PhysicalObject < ActiveRecord::Base
   def physical_object_where_clause
     sql = " "
     self.attributes.each do |name, value|
-      if name == 'id' or name == 'created_at' or name == 'updated_at' or name == 'has_media' or name == "technical_metadatum"
+      if name == 'id' or name == 'created_at' or name == 'updated_at' or name == 'has_ephemira' or name == "technical_metadatum"
         next
       elsif name =='mdpi_barcode' or name == 'iucat_barcode'
         unless value == 0 or value.nil?
@@ -126,34 +136,51 @@ class PhysicalObject < ActiveRecord::Base
 
   private
   def technical_metadata_where_claus
-    if technical_metadatum.as_technical_metadatum_type == 'OpenReelTm'
-      open_reel_tm_where(technical_metadatum.as_technical_metadatum)
-    else
-      raise "Unsupported technical metadata class: #{technical_metadatum.as_technical_metdataum_type}"
-    end
+    tm_where(tm_table_name(format), technical_metadatum.as_technical_metadatum)
   end
 
   private
   def tm_table_name(format)
     if format == "Open Reel Tape"
       "open_reel_tms"
+    elsif format == "CD-R"
+      "cdr_tms"
+    elsif format == "DAT"
+      "dat_tms"
     else
       raise "Unsupported format: #{format}"
     end
   end
 
   private 
-  def open_reel_tm_where(stm)
+  # def open_reel_tm_where(stm)
+  #   q = ""
+  #   stm.attributes.each do |name, value|
+  #     #ignore these fields in the Sql WHERE clause
+  #     if name == 'id' or name == 'created_at' or name == 'updated_at' or name == "as_technical_metadatum_type"
+  #       next
+  #     # a value of false in a query means we don't care whether the returned value is true OR false
+  #     elsif !value.nil? and (value.class == String and value.length > 0)
+  #       q << " AND open_reel_tms.#{name}='#{value}'"
+  #     elsif !value.nil? and value.class == TrueClass
+  #       q << " AND open_reel_tms.#{name}=1"
+  #     end
+  #   end
+  #   q
+  # end
+
+  def tm_where(table_name, tm)
     q = ""
-    stm.attributes.each do |name, value|
+    tm.attributes.each do |name, value|
       #ignore these fields in the Sql WHERE clause
-      if name == 'id' or name == 'created_at' or name == 'updated_at' or name == "as_technical_metadatum_type"
+      if name == 'id' or name == 'created_at' or name == 'updated_at' or 
+      name == "as_technical_metadatum_type" or name == 'unknown' or name == 'none'
         next
       # a value of false in a query means we don't care whether the returned value is true OR false
       elsif !value.nil? and (value.class == String and value.length > 0)
-        q << " AND open_reel_tms.#{name}='#{value}'"
+        q << " AND #{table_name}.#{name}='#{value}'"
       elsif !value.nil? and value.class == TrueClass
-        q << " AND open_reel_tms.#{name}=1"
+        q << " AND #{table_name}.#{name}=1"
       end
     end
     q
