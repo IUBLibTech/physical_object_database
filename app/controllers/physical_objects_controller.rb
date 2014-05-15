@@ -63,7 +63,7 @@ class PhysicalObjectsController < ApplicationController
         @tm = @physical_object.create_tm(@physical_object.format)
         @tm.physical_object = @physical_object
       end
-      @tm.update_form_params(params)
+      @tm.update_attributes(tm_params)
       @tm.save
       flash[:notice] = "Physical Object successfully updated".html_safe
       redirect_to(action: 'index')
@@ -93,6 +93,7 @@ class PhysicalObjectsController < ApplicationController
 
       (params[:count].to_i - 1).times do |i|
         po = template.dup
+        po.mdpi_barcode = 0
         po.carrier_stream_index = i + 2
         po.container_id = container.id
         tm = template.technical_metadatum.as_technical_metadatum.dup

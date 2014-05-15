@@ -20,7 +20,7 @@
       <tr>
         <th>Unit</th>
 	<td>
-	  <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :display_name, {include_blank: true}, disabled: !@edit_mode %>
+	  <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :abbreviation, {include_blank: true}, disabled: !@edit_mode %>
         </td>
       </tr>
       <tr>
@@ -74,12 +74,6 @@
         <th>Format Duration</th>
         <td>
           <%= f.text_field(:format_duration, readonly: !@edit_mode) %>
-        </td>
-      </tr>
-      <tr>
-        <th>Content Duration</th>
-        <td>
-          <%= f.text_field(:content_duration, readonly: !@edit_mode) %>
         </td>
       </tr>
       <tr>
@@ -140,7 +134,7 @@
         </td>
       </tr>
 
-      <%= render 'workflow_status_template/current_workflow_status', f: f, target_object: @physical_object %>
+      <%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @physical_object %>
     </table> 
   </div>
 

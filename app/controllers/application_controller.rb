@@ -25,7 +25,6 @@ class ApplicationController < ActionController::Base
   end
 
   def tm_form
-    puts params.to_yaml
     f = params[:format]
     @edit_mode = params[:edit_mode] == 'true'
     if params[:type] == 'PhysicalObject'
@@ -82,7 +81,6 @@ class ApplicationController < ActionController::Base
   end
 
   def tm_params
-    puts params.to_yaml
     params.require(:tm).permit(
       #fields that are specific to open reel tapes
       :pack_deformation, :reel_size, :track_configuration, 

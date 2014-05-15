@@ -5,9 +5,5 @@ class CassetteTapeTm < ActiveRecord::Base
     TechnicalMetadatum.find_by(as_technical_metadatum_id: self.id)
   end
 
-  def update_form_params(params)
-		
-  end
-
 
 end

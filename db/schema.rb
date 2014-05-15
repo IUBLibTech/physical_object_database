@@ -169,7 +169,6 @@ ActiveRecord::Schema.define(version: 20140515153721) do
     t.boolean  "has_ephemira"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "unit_id"
     t.string   "author"
     t.string   "catalog_key"
     t.string   "collection_name"
@@ -177,6 +176,7 @@ ActiveRecord::Schema.define(version: 20140515153721) do
     t.string   "oclc_number"
     t.boolean  "other_copies"
     t.string   "year"
+    t.integer  "unit_id"
   end
 
   add_index "physical_objects", ["unit_id"], name: "index_physical_objects_on_unit_id", using: :btree

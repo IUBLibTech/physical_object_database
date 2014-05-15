@@ -19,11 +19,11 @@ Pod::Application.routes.draw do
 
   resources :physical_objects do
     get :download_spreadsheet_example, on: :collection
-    get :get_tm_form, on: :collection
+    get :tm_form, on: :collection
     get :split_show, on: :member
     get :upload_show, on: :collection
 
-    post :split_update, on: :member
+    patch :split_update, on: :member
     post :upload_update, on: :collection
     post :unbin, on: :member
     post :unbox, on: :member
@@ -33,7 +33,7 @@ Pod::Application.routes.draw do
   end
 
   resources :picklist_specifications do
-    get :get_form, on: :collection
+    get :tm_form, on: :collection
     get :query, on: :member
     patch :query_add, on: :member
   end
