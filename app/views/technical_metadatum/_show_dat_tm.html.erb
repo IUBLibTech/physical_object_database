@@ -1,0 +1,54 @@
+<%= fields_for :tm do |f| %>
+	<h2>DAT Technical Metadata</h2>
+	<table>
+		<tr>
+			<th>Sample rate</th>
+			<td>
+				<% if @edit_mode %>
+					<table>
+						<tr>
+							<td>32k <%= f.check_box(:sample_rate_32k) %></td>
+							<td>44.1k <%= f.check_box(:sample_rate_44_1_k) %></td>
+						</tr>
+						<tr>
+							<td>48k <%= f.check_box(:sample_rate_48k) %></td>
+							<td>96k <%= f.check_box(:sample_rate_96k) %></td>
+						</tr>
+					</table>
+				<% else %>
+					<%= @tm.humanize_boolean_fields("sample_rate_32k", "sample_rate_44_1_k", "sample_rate_48k", "sample_rate_96k") %>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<th>Format duration</th>
+			<td>
+				<%= f.text_field(:format_duration, readonly: !@edit_mode) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Tape stock brand</th>
+			<td>
+				<%= f.text_field(:tape_stock_brand, readonly: !@edit_mode) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Preservation problems</th>
+			<td>
+				<% if @edit_mode %>
+					<table>
+						<tr>
+							<td>Fungus <%= f.check_box(:fungus) %></td>
+							<td>Soft binder syndrome <%= f.check_box(:soft_binder_syndrome) %></td>
+						</tr>
+						<tr>
+							<td>Other contaminants <%= f.check_box(:other_contaminants) %></td>
+						</tr>
+					</table>
+				<% else %>
+					<%= @tm.humanize_boolean_fields("fungus", "soft_binder_syndrome", "other_contaminants") %>
+				<% end %>
+			</td>
+		</tr>
+	</table>
+<% end %>

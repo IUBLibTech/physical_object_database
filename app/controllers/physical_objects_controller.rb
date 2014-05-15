@@ -1,6 +1,10 @@
 class PhysicalObjectsController < ApplicationController
-  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :unbin, :unbox, :unpick]  
+  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :split_show, :unbin, :unbox, :unpick]  
   helper :all
+
+  def download_spreadsheet_example
+    send_file("#{Rails.root}/public/CSV Import.xlsx", filename: "CSV Import.xlsx")
+  end
 
   def new
     # we instantiate an new object here because rails will pick up any default values assigned
@@ -22,10 +26,8 @@ class PhysicalObjectsController < ApplicationController
   def create
     @physical_object = PhysicalObject.new(physical_object_params)
     @tm = @physical_object.create_tm(@physical_object.format)
-    if @physical_object.format.length > 0 && @physical_object.save
-      @tm.physical_object = @physical_object
-      @tm.update_form_params(params)
-      @tm.save
+    @tm.physical_object = @physical_object
+    if @physical_object.save and @tm.update_attributes(tm_params)
       flash[:notice] = "Physical Object was successfully created.".html_safe
       redirect_to(:action => 'index')
     else
@@ -47,10 +49,6 @@ class PhysicalObjectsController < ApplicationController
     @action = 'update'
     @edit_mode = true
     @display_assigned = true
-    if @tm.nil?
-      flash[:notice] = "A physical object was created without specifying its technical metadatum..."
-      redirect_to(action: 'show', id: @physical_object.id)
-    end
   end
 
   def update
@@ -63,16 +61,10 @@ class PhysicalObjectsController < ApplicationController
       if old_format != params[:physical_object][:format]
         @tm.destroy
         @tm = @physical_object.create_tm(@physical_object.format)
-	#FIXME: refactor creation
         @tm.physical_object = @physical_object
-        @tm.update_form_params(params)
-        @tm.save
-      else
-        puts(params.to_yaml)
-        @tm.update_form_params(params)
-        puts(@tm.to_yaml)
-        @tm.save
       end
+      @tm.update_form_params(params)
+      @tm.save
       flash[:notice] = "Physical Object successfully updated".html_safe
       redirect_to(action: 'index')
     end
@@ -86,9 +78,6 @@ class PhysicalObjectsController < ApplicationController
   end
   
   def split_show
-    @physical_object = PhysicalObject.find(params[:id]);
-    @tm = @physical_object.technical_metadatum.specialize
-    @digital_files = @physical_object.digital_files
     @count = 0;
     @display_assigned = true
   end
@@ -106,7 +95,7 @@ class PhysicalObjectsController < ApplicationController
         po = template.dup
         po.carrier_stream_index = i + 2
         po.container_id = container.id
-        tm = template.technical_metadatum.specialize.dup
+        tm = template.technical_metadatum.as_technical_metadatum.dup
         tm.physical_object = po
         tm.save
         po.save
@@ -133,32 +122,7 @@ class PhysicalObjectsController < ApplicationController
       end
     end
   end
-
-  def get_tm_form
-    f = params[:format]
-    id = params[:id]
-    @edit_mode = true
-    @physical_object = params[:id] == '0' ? PhysicalObject.new : PhysicalObject.find(params[:id])
-    if ! @physical_object.technical_metadatum.nil?
-      @tm = @physical_object.technical_metadatum.as_technical_metadatum
-    else
-      tm = TechnicalMetadatum.new
-      @tm = @physical_object.create_tm(f)
-      @physical_object.technical_metadatum = tm
-      tm.as_technical_metadatum = @tm
-    end
     
-    if f == "Open Reel Tape"
-      render(partial: 'technical_metadatum/show_open_reel_tape_tm')
-    elsif f == "Cassette Tape"
-      render(partial: 'technical_metadatum/show_cassette_tape_tm')
-    elsif f == "LP"
-      render(partial: 'technical_metadatum/show_lp_tm')
-    elsif f == "Compact Disc"
-      render(partial: 'technical_metadatum/show_compact_disc_tm')
-    end
-  end
-
   def unbin
     @bin = @physical_object.bin
     @physical_object.bin = nil

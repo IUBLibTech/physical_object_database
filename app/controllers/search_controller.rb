@@ -12,7 +12,7 @@ class SearchController < ApplicationController
 
   def index
     @physical_object = PhysicalObject.new
-    @physical_object.format = PhysicalObject.formats["Open Reel Tape"]
+    @physical_object.format = PhysicalObject.formats["CD-R"]
     @tm = @physical_object.create_tm(@physical_object.format)
     @display_assigned = true
     @edit_mode = true
@@ -37,7 +37,6 @@ class SearchController < ApplicationController
 
     stm = po.create_tm(po.format)
     tm.as_technical_metadatum = stm
-
     tmp.each do |name, value|
       if !value.nil? and value.length > 0
         stm[name] = value
@@ -46,12 +45,6 @@ class SearchController < ApplicationController
     @physical_objects = PhysicalObject.advanced_search(po)
     flash[:notice] = "Your search returns these results"
     render('physical_objects/index')
-  end
-  
-
-  private
-  def physical_object_sql(params)
-    
   end
 
 end

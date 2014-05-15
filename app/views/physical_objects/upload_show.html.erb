@@ -4,10 +4,19 @@
   </div>
 <% end %>
 <h1>Upload Spread Sheet (CSV)</h1>
+<%# special case where the action does not have a physical object so must be :physical_object not @physical_object %>
+<%= form_for(:physical_object, :url => {:action => 'upload_update'}) do |f| %>
+  <%= f.file_field :csv_file %>
+  <br/>
+
+  <%= submit_tag("Upload")%>
+<% end %>
 <p>
-	Upload a comma seperated value file with the first row containing comma delimited header 
-	names (<i>Link to page describing this once the spec is final</i>). The file must be saved in 
-	UTF8 encoding.
+	Upload a CSV file with the first row containing header names and subsequent rows containing
+	Physical Object metadata. The file must be saved in UTF8 encoding (see below for your version of Excel).
+	See 
+	<%= link_to("this excel spreadsheet", download_spreadsheet_example_physical_objects_path)%> 
+	for more details on file format.
 	<ol>
 		<li><b>For Excel running on Windows</b></li>
 		<li>On the save dialog, choose CSV</li>
@@ -25,9 +34,3 @@
 	</ol>
 
 </p>
-<%# special case where the action does not have a physical object so must be :physical_object not @physical_object %>
-<%= form_for(:physical_object, :url => {:action => 'upload_update'}) do |f| %>
-  <%= f.file_field :csv_file %>
-  <br/>
-  <%= submit_tag("Upload")%>
-<% end %>

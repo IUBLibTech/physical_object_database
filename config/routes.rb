@@ -18,6 +18,7 @@ Pod::Application.routes.draw do
   resources :condition_status_templates
 
   resources :physical_objects do
+    get :download_spreadsheet_example, on: :collection
     get :get_tm_form, on: :collection
     get :split_show, on: :member
     get :upload_show, on: :collection

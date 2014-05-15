@@ -21,7 +21,7 @@ class CreatePhysicalObjects < ActiveRecord::Migration
       t.string :content_duration
       # whether or not the original recording container has additional media 
       # associated with it (programs, notes, etc)
-      t.boolean :has_media
+      t.boolean :has_ephemira
       t.timestamps
     end
   end

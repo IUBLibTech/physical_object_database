@@ -1,8 +1,8 @@
-<h2>Open Reel Tape Technical Metadata</h2>
 <%= fields_for :tm do |f| %>
+<h2>Open Reel Tape Technical Metadata</h2>
 	<table>
 		<tr>
-			<th>Pack Deformation</th>
+			<th>Pack deformation</th>
 			<td>
 				<% if @edit_mode %>
 					<%= f.select(:pack_deformation, @tm.pack_deformations) %>
@@ -12,17 +12,26 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Preservation Problems</th>
+			<th>Preservation problems</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:preservation_problem, @tm.preservation_problems) %>
+					<table>
+							<tr>
+								<td>Vinegar syndrome <%= f.check_box(:vinegar_syndrome) %></td>
+								<td>Soft binder syndrome <%= f.check_box(:soft_binder_syndrome) %></td>
+							</tr>
+							<tr>	
+								<td>Fungus <%= f.check_box(:fungus) %></td>
+								<td>Other contaminants <%= f.check_box(:other_contaminants) %></td>
+							</tr>
+					</table>
 				<% else %>
-					<%= f.text_field(:preservation_problem, readonly: true) %>
+					<%= @tm.humanize_boolean_fields("fungus", "soft_binder_syndrome", "vinegar_syndrome", "other_contaminants") %>
 				<% end %>
-			</td>
+			</td>					
 		</tr>
 		<tr>
-			<th>Reel Size</th>
+			<th>Reel size</th>
 			<td>
 				<% if @edit_mode %>
 					<%= f.select(:reel_size, @tm.reel_sizes) %>
@@ -32,82 +41,144 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Playback Speed</th>
+			<th>Playback speed</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:playback_speed, @tm.playback_speeds) %>
+					<table>
+						<tr>
+							<td>0.9375 ips <%= f.check_box(:zero_point9375_ips) %></td>
+							<td>7.5 ips <%= f.check_box(:seven_point5_ips) %></td>
+						</tr>
+						<tr>
+							<td>1.875 ips <%= f.check_box(:one_point875_ips) %></td>
+							<td>15 ips <%= f.check_box(:fifteen_ips) %></td>
+						</tr>
+						<tr>
+							<td>3.75 ips <%= f.check_box(:three_point75_ips) %></td>
+							<td>30 ips <%= f.check_box(:thirty_ips) %></td>
+						</tr>
+						<tr>
+							<td>
+								Unknown <%= f.check_box(:unknown_playback_speed) %>
+							</td>
+						</tr>
+					</table>
 				<% else %>
-					<%= f.text_field(:playback_speed, readonly: true) %>
-				<% end %>
-			</td>
-		</tr>  
-		<tr>
-			<th>Track Configuration</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.select(:track_configuration, @tm.track_configurations) %>
-				<% else %>
-					<%= f.text_field(:track_configuration, readonly: true) %>
-				<% end %>
-			</td>
-		</tr>
-		<tr>
-			<th>Tape Thickness</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.select(:tape_thickness, @tm.tape_thicknesses) %>
-				<% else %>
-					<%= f.text_field(:tape_thickness, readonly: true) %>
-				<% end %>
-			</td>
-		</tr>
-		<tr>
-			<th>Sound Field</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.select(:sound_field, @tm.sound_fields) %>
-				<% else %>
-					<%= f.text_field(:sound_field, readonly: true) %>
+					<%= @tm.humanize_boolean_fields("zero_point9375_ips", "one_point875_ips", "three_point75_ips", "seven_point5_ips", "fifteen_ips", "thirty_ips") %>
 				<% end %>
 			</td>
 		</tr>
 		<tr>
-			<th>Tape Stock Brand</th>
+			<th>Track configuration</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:tape_stock_brand, @tm.tape_stock_brands) %>
+					<table>
+						<tr>
+							<td>
+								Full track <%= f.check_box(:full_track) %>
+							</td>
+							<td>
+								Half track <%= f.check_box(:half_track) %>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Quarter track <%= f.check_box(:quarter_track) %>
+							</td>
+							<td>
+								Unknown <%= f.check_box(:unknown_track) %>
+							</td>
+						</tr>
+					</table>
 				<% else %>
-					<%= f.text_field(:tape_stock_brand, readonly: true) %>
+					<%= @tm.humanize_boolean_fields("full_track", "half_track", "quarter_track", "unknown_track") %>
 				<% end %>
 			</td>
 		</tr>
 		<tr>
-			<th>Tape Base</th>
+			<th>Tape thickness</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:tape_base, @tm.tape_bases) %>
+					<table>
+						<tr>
+							<td>
+								1.5 mil <%= f.check_box(:one_point5_mils) %>
+							</td>
+							<td>
+								1.0 mil <%= f.check_box(:one_mils) %>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								0.5 mil <%= f.check_box(:zero_point5_mils) %>
+							</td>
+						</tr>
+					</table>
 				<% else %>
-					<%= f.text_field(:tape_base, readonly: true) %>
+					<%= @tm.humanize_boolean_fields("one_point5_mils", "one_mils", "zero_point5_mils") %>
 				<% end %>
 			</td>
 		</tr>
 		<tr>
-			<th>Year of Recording</th>
+			<th>Sound field</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.text_field(:year_of_recording) %>
+					<table>
+						<tr>
+							<td>
+								Mono <%= f.check_box(:mono) %>
+							</td>
+							<td>
+								Stereo <%= f.check_box(:stereo) %>
+							</td>
+							<td>
+								Unknown <%= f.check_box(:unknown_sound_field) %>
+							</td>
+						</tr>
+					</table>
 				<% else %>
-					<%= f.text_field(:year_of_recording, readonly: true) %>
+					<%=  @tm.humanize_boolean_fields("mono", "stereo", "unknown_sound_field") %>
 				<% end %>
 			</td>
 		</tr>
 		<tr>
-			<th>Directions Recorded</th>
+			<th>Tape stock brand</th>
+			<td>
+				<%= f.text_field(:tape_stock_brand, readonly: !@edit_mode) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Tape base</th>
+			<td>
+				<% if @edit_mode %>
+					<table>
+						<tr>
+							<td>Acetate <%= f.check_box(:acetate_base) %></td>
+							<td>Polyester <%= f.check_box(:polyester_base) %></td>
+						</tr>
+						<tr>
+							<td>PVC <%= f.check_box(:pvc_base) %></td>
+							<td>Paper <%= f.check_box(:paper_base) %></td>
+						</tr>
+					</table>
+				<% else %>
+					<%= @tm.humanize_boolean_fields("acetate_base", "polyester_base", "pvc_base", "paper_base") %>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<th>Directions recorded</th>
 			<td>
 			<% if @edit_mode %>
-				<%= f.select(:directions_recorded, @tm.directions_recorded_vals) %>
+				<table>
+					<tr>
+						<td>1 <%= f.check_box(:one_direction) %></td>
+						<td>2 <%= f.check_box(:two_directions) %></td>
+						<td>Unknown <%= f.check_box(:unknown_direction) %></td>
+					</tr>
+				</table>
 			<% else %>
-				<%= f.text_field(:directions_recorded, readonly: true) %>	
+				<%= @tm.humanize_boolean_fields("one_direction", "two_directions", "unknown_direction") %>	
 			<% end %>
 			</td>
 		</tr>

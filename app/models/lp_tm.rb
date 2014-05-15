@@ -6,7 +6,6 @@ class LpTm < ActiveRecord::Base
   end
 
   def update_form_params(params)
-		puts(params.to_yaml)
     params.require(:lp_tm).permit()
   end
 

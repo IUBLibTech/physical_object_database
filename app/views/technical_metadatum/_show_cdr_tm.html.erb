@@ -1,0 +1,44 @@
+<%= fields_for :tm do |f| %>
+<h2>CD-R Technical Metadata</h2>
+<table>
+	<tr>
+		<th>Damage</th>
+		<td>
+			<% if @edit_mode %>
+				<%= f.select(:damage, @tm.damage_values) %>
+			<% else %>
+				<%= @tm.damage %>
+			<% end %>
+		</td>
+	</tr>
+	<tr>
+		<th>Preservation problems</th>
+		<td>
+			<% if @edit_mode %>
+				<table>
+					<tr>
+						<td>Breakdown of materials <%= f.check_box(:breakdown_of_materials) %></td>
+						<td>Fungus <%= f.check_box(:fungus) %></td>
+					</tr>
+					<tr>
+						<td>Other contaminants <%= f.check_box(:other_contaminants) %></td>
+						<td></td>
+					</tr>
+				</table>
+			<% else %>
+				<%= @tm.humanize_boolean_fields("breakdown_of_materials", "fungus", "other_contaminants") %>
+			<% end %>
+		</td>
+	</tr>
+	<tr>
+		<th>Format duration</th>
+		<td>
+			<% if @edit_mode %>
+				<%= f.select(:format_duration, @tm.format_duration_values) %>			
+			<% else %>
+				<%= @tm.format_duration %>
+			<% end %>
+		</td>
+	</tr>
+</table>
+<% end %>

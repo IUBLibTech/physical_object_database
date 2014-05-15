@@ -34,7 +34,6 @@ module ApplicationHelper
 	# has been assigned the specified barcode. returning the object if it does exist, otherwise
 	# false
 	def ApplicationHelper.barcode_assigned?(barcode)
-		puts "Barcode is #{barcode}::#{barcode.class.name}"
 		unless barcode == 0
 			b = false
 			if (po = PhysicalObject.where(mdpi_barcode: barcode).limit(1)).size == 1

@@ -34,5 +34,8 @@ Pod::Application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
+  # this is a browser cache buster of css and js assets
+  config.assets.digest = true
+
   #config.action_controller.relative_url_root = '/pod'
 end
