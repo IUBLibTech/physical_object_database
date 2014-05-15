@@ -13,7 +13,7 @@ class WorkflowStatusTemplatesController < ApplicationController
 	def create
 		@workflow_status_template = WorkflowStatusTemplate.new(workflow_status_template_params)
 		if insert_sequence(@workflow_status_template)
-			redirect_to(controller: 'status_templates', action: 'index')
+			redirect_to status_templates_path
 		else
 			render('new')
 		end
@@ -25,18 +25,16 @@ class WorkflowStatusTemplatesController < ApplicationController
 
 	def update
 		@workflow_status_template = WorkflowStatusTemplate.find(params[:id])
+                old_i = @workflow_status_template.sequence_index.to_i
+                new_i = params[:workflow_status_template][:sequence_index].to_i
 		#if the sequence index has change we need to adjust any related templates
-		if @workflow_status_template.sequence_index != params[:workflow_status_template][:sequence_index]
-			move_sequence(@workflow_status_template)
-			redirect_to(action: 'show', id: @workflow_status_template.id)
+		move_sequence(@workflow_status_template, old_i, new_i) if old_i != new_i
+		if @workflow_status_template.update_attributes(workflow_status_template_params)
+			flash[:notice] = "#{@workflow_status_template.name} was successfully updated." + (old_i == new_i ? "" : "  Other templates may have updated sequence index values to avoid collisions.")
+			redirect_to status_templates_path
 		else
-			if @workflow_status_template.update_attributes(workflow_status_template_params)
-				flash[:notice] = "#{@workflow_status_template.name} was successfully updated."
-				redirect_to(action: 'index', id: @workflow_status_template.id)
-			else
-				flash[:warning] = "Unable to update #{@workflow_status_template.name}."
-				render('edit')
-			end
+			flash[:warning] = "Unable to update #{@workflow_status_template.name}." + (old_i == new_i ? "" : "  Other templates may still have updated sequence index values to avoid collisions.")
+			render('edit')
 		end
 	end
 	
@@ -77,9 +75,7 @@ class WorkflowStatusTemplatesController < ApplicationController
 		end
 
 	private
-		def move_sequence(existing_template)
-			old_i = existing_template.sequence_index.to_i
-			new_i = params[:workflow_status_template][:sequence_index].to_i
+		def move_sequence(existing_template, old_i, new_i)
 			if new_i < old_i
 				temps = WorkflowStatusTemplate.where("sequence_index >= ? AND sequence_index < ? AND object_type = ?", 
 					new_i, old_i, existing_template.object_type)
@@ -95,7 +91,6 @@ class WorkflowStatusTemplatesController < ApplicationController
 					t.save
 				end
 			end
-			existing_template.update_attributes(workflow_status_template_params)
 		end
 
 	private

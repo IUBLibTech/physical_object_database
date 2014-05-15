@@ -20,7 +20,7 @@ class ConditionStatusTemplatesController < ApplicationController
   def create
     @condition_status_template = ConditionStatusTemplate.new(condition_status_template_params)
     if @condition_status_template.save
-      redirect_to(controller: 'status_templates', action: 'index')
+      redirect_to status_templates_path
     else
       render('new')
     end
@@ -34,7 +34,7 @@ class ConditionStatusTemplatesController < ApplicationController
     @condition_status_template = ConditionStatusTemplate.find(params[:id])
     if @condition_status_template.update_attributes(condition_status_template_params)
       flash[:notice] = "#{@condition_status_template.name} was successfully updated."
-      redirect_to(action: 'index', id: @condition_status_template.id)
+      redirect_to status_templates_path
     else
       flash[:warning] = "Unable to update #{@condition_status_template.name}."
       render('edit')
@@ -49,7 +49,7 @@ class ConditionStatusTemplatesController < ApplicationController
     @condition_status_template = ConditionStatusTemplate.find(params[:id])
     if @condition_status_template.destroy
       flash[:notice] = "#{@condition_status_template.name} successfully destroyed."
-      redirect_to(action: 'index')
+      redirect_to status_templates_path
     else 
       flash[:warning] = "Unable to delete #{@condition_status_template.name}."
       render('delete')
