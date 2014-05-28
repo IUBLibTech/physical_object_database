@@ -45,11 +45,6 @@
 						<%= p.title[0..20] %>
 					</div>
 					<script type="text/javascript">
-						pl = $('#title<%= p.id %>').mouseover(
-							function() {
-								
-							}
-						);
 						pl.mouseover(function() { $pl_tooltip.show(); } );
 						pl.mousemove(function(e) { 
 							$pl_tooltip.css( {left: e.pageX + offset.x, top: e.pageY + offset.y});
