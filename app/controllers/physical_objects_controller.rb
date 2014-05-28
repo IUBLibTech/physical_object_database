@@ -115,8 +115,13 @@ class PhysicalObjectsController < ApplicationController
       flash[:notice] = "Please specify a file to upload"
       redirect_to(action: 'upload_show')
     else
+      @pl = nil
+      unless params[:pl][:name].length == 0
+        @pl = Picklist.new(name: params[:pl][:name], description: params[:pl][:description])
+        @pl.save
+      end
       path = params[:physical_object][:csv_file].path
-      added = PhysicalObjectsHelper.parse_csv(path)
+      added = PhysicalObjectsHelper.parse_csv(path, @pl)
       flash[:notice] = "#{added['succeeded'].size} records were successfully imported.".html_safe
       if added['failed'].size > 0
         @failed = added['failed']
@@ -190,8 +195,8 @@ class PhysicalObjectsController < ApplicationController
       # allows listed attributes to be mass-assigned
       # we could also do params.require(:some_field).permit*...
       # if certain fields were required for the object instantiation.
-      params.require(:physical_object).permit(:title, :title_control_number, 
-        :unit_id, :home_location, :call_number, :iucat_barcode, :format, 
+      params.require(:physical_object).permit(:title, :title_control_number,
+        :unit_id, :home_location, :call_number, :iucat_barcode, :format, :author,
         :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
         :content_duration, :has_media, :open_reel_tm, :bin_id,
 	:current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])

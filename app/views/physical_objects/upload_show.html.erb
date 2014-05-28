@@ -3,34 +3,67 @@
     <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'index', :id => @physical_object.id}, :class => 'action split')%>
   </div>
 <% end %>
-<h1>Upload Spread Sheet (CSV)</h1>
 <%# special case where the action does not have a physical object so must be :physical_object not @physical_object %>
-<%= form_for(:physical_object, :url => {:action => 'upload_update'}) do |f| %>
-  <%= f.file_field :csv_file %>
-  <br/>
-
-  <%= submit_tag("Upload")%>
-<% end %>
-<p>
-	Upload a CSV file with the first row containing header names and subsequent rows containing
-	Physical Object metadata. The file must be saved in UTF8 encoding (see below for your version of Excel).
-	See 
-	<%= link_to("this excel spreadsheet", download_spreadsheet_example_physical_objects_path)%> 
-	for more details on file format.
-	<ol>
-		<li><b>For Excel running on Windows</b></li>
-		<li>On the save dialog, choose CSV</li>
-		<li>Under <i>Tools</i>, select <i>Web Options</i></li>
-		<li>On the Encoding tab, select UTF8</li>
-	</ol>
-	<ol>
-		<li>
-			<b>For Excel running on OSX</b>
-		</li>
-		<li>Excel for Mac does not support saving to UTF8... save the file as a CSV</li>
-		<li>Open the CSV file in TextEdit</li>
-		<li>Under <i>Preferences</i>, in the <i>Plain Text File Encoding</i> section, select Unicode UTF-8</li>
-		<li>Resave the file from TextEdit</li>
-	</ol>
-
-</p>
+<div>
+<h2>Upload Spread Sheet (CSV)</h2>
+	<p>
+		Upload a CSV file with the first row containing header names and subsequent rows containing
+		Physical Object metadata. The file must be saved in UTF-8 encoding (see below for your version of Excel).
+		See 
+		<%= link_to("this excel spreadsheet", download_spreadsheet_example_physical_objects_path)%> 
+		for more details on file format.
+	</p>
+</div>
+<div>
+	<%= form_for(:physical_object, :url => {:action => 'upload_update'}) do |f| %>
+		<div class="left top5" style="width: 300px">
+			<h2>Picklist</h2>
+			<p>Create a new picklist to associate imported physical objects. Otherwise leave these fields blank.</p>
+			<%= fields_for(:pl) do |pl| %>
+				<table>
+					<tr>
+						<th>Name</th>
+						<td>
+							<%= pl.text_field(:name) %>
+						</td>
+					</tr>
+					<tr>
+						<th>Description</th>
+						<td>
+							<%= pl.text_area(:description) %>
+						</td>
+					</tr>
+				</table>
+			<% end %>
+		</div>
+		<div class="left top5">
+			<h2>Upload File</h2>
+		  <br/>
+		  <%= f.file_field :csv_file %>
+		  <br/>
+		  <%= submit_tag("Upload")%>
+		</div>
+	<% end %>
+</div>
+<div class="clear top15">
+	<h2>Saving Excel to UTF-8</h2>
+		<div class="left">
+			<ol>
+				<li><b>For Excel running on Windows</b></li>
+				<li>On the save dialog, choose CSV</li>
+				<li>Under <i>Tools</i>, select <i>Web Options</i></li>
+				<li>On the Encoding tab, select UTF8</li>
+			</ol>
+		</div>
+		<div class="left">
+			<ol>
+				<li>
+					<b>For Excel running on OSX</b>
+				</li>
+				<li>Excel for Mac does not support saving to UTF8... save the file as a CSV</li>
+				<li>Open the CSV file in TextEdit</li>
+				<li>Under <i>Preferences</i>, in the <i>Plain Text File Encoding</i> section, select Unicode UTF-8</li>
+				<li>Resave the file from TextEdit</li>
+			</ol>
+		</div>
+</div>

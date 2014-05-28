@@ -7,7 +7,6 @@ Pod::Application.routes.draw do
     post :add_barcode_item, on: :member
     post :unbatch, on: :member
 
-    resources :boxes, only: [:new, :create]
   end
 
   resources :boxes, except: [:edit] do
@@ -35,10 +34,17 @@ Pod::Application.routes.draw do
   resources :picklist_specifications do
     get :tm_form, on: :collection
     get :query, on: :member
+    get :picklist_list, on: :collection
+    get :new_picklist, on: :collection
     patch :query_add, on: :member
+
+    # FIXME: this shouldn't be necessary but updating picklist specifications doesn't work without it
+    post :update, on: :member
   end
 
-  resources :picklists
+  resources :picklists do
+    patch :process_box, on: :member
+  end
 
   resources :search, controller: :search, only: [:index] do
     post :advanced_search, on: :collection

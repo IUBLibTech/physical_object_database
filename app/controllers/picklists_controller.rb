@@ -54,12 +54,23 @@ class PicklistsController < ApplicationController
 
 	def destroy
 		if @picklist.destroy
+			PhysicalObject.update_all("picklist_id = NULL", "picklist_id = #{@picklist.id}")
 			flash[:notice] = "Successfully deleted #{@picklist.name}"
 			redirect_to(controller: 'picklist_specifications', action: 'index')
 		else
 			flash[:notice] = "Unable to delete #{@picklist.name}"
 			redirect_to(controller: 'picklist_specifications', action: 'index')
 		end		
+	end
+
+	def process_box
+		@box = Box.find(params[:id])
+		@picklist = Picklist.find(params[:picklist][:id])
+		@tm = @picklist.physical_objects.size > 0 ? @picklist.physical_objects[0].technical_metadatum.as_technical_metadatum : nil
+	end
+
+	def process_bin
+		
 	end
 
 	private

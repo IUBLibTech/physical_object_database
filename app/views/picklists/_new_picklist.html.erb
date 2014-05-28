@@ -1,0 +1,19 @@
+<%= fields_for :picklist do |f| %>
+	<div class="left">
+		<h2>New Picklist</h2>
+		<table>
+			<tr>
+				<th>Name</th>
+				<td>
+					<%= f.text_field(:name) %>
+				</td>
+			</tr>
+			<tr>
+				<th>Description</th>
+				<td>
+					<%= f.text_area(:description) %>
+				</td>
+			</tr>
+		</table>
+	</div>
+<% end %>

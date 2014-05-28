@@ -48,11 +48,27 @@ class BinsController < ApplicationController
 
 	def destroy
 		if @bin.destroy
+			# we need to manually disassociate the physical objects/boxes form this bin since
+			# rails will leave this column value in those tables
+			PhysicalObject.update_all("bin_id = NULL", "bin_id = #{@bin.id}")
+			Box.update_all("bin_id = NULL", "bin_id = #{@bin_id}")
 			flash[:notice] = "<i>#{@bin.identifier}</i> was successfully destroyed.".html_safe
 			redirect_to bins_path
 		else
 			flash[:notice] = "<b>Failed to delete this Bin</b>".html_safe
 			render('show')
+		end
+	end
+
+	def new_box	
+	end
+
+	def create_box
+		bc = params[:barcode][:mdpi_barcode]
+		if barcode_assigned(bc)
+			flash[:notice] = '<b class="warning">#{bc} has already been assigned to another object</b>'
+		else
+
 		end
 	end
 

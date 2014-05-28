@@ -30,7 +30,7 @@
           <td><%= value.to_s[0, 20] %><% if value.to_s.length > 15 %>...<% end %></td>
         <% end %>
         <td>
-          <%= check_box_tag 'po_ids[]', po.id %>
+          <%= check_box_tag 'po_ids[]', po.id, true %>
         </td>
       </tr>
       <% count += 1 %>
@@ -39,7 +39,27 @@
     
   <% end %>
   <%if @edit_mode %>
-    <%= select('picklist', 'id', @picklists) %>
-    <div class="clear" ><%= submit_tag(@submit_text) %></div>
+    <div class="left">
+      <table>
+        <tr>
+          <td>Add selected to existing pick list</td>
+          <td>
+            <%= radio_button_tag(:type, "existing", false, {onclick: "add_to_picklist(this)", id: 'existing_radio', class: 'exclusive'}) %>
+          </td>
+        </tr>
+        <tr>
+          <td>Add selected to new pick list</td>
+          <td>
+            <%= radio_button_tag(:type, "new", false, {onclick: "add_to_picklist(this)", id: 'new_radio', class: 'exclusive'}) %>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="picklist_add_div" class="left">
+      
+    </div>
+    <div class="clear" >
+      <%= submit_tag(@submit_text) %>
+    </div>
   <% end %>
 <% end %>

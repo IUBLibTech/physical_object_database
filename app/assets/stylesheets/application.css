@@ -163,3 +163,15 @@ div.notice {
     font-weight: bolder;
     margin: 20px 0;
 }
+
+p {
+  margin: 0;
+}
+
+.top5 {
+  margin-top: 5px;
+}
+
+.top15 {
+  padding-top: 15px;
+}

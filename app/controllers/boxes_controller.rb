@@ -11,6 +11,7 @@ class BoxesController < ApplicationController
   end
 
   def show
+    @picklists = Picklist.find(:all, order: 'name').collect{|p| [p.name, p.id]}
   end
 
   def new
@@ -54,6 +55,7 @@ class BoxesController < ApplicationController
 
   def destroy
     if @box.destroy
+      PhysicalObject.update_all("box_id = NULL", "box_id = #{@box.id}")
       flash[:notice] = "Successfully deleted Box: #{@box.mdpi_barcode}"
       redirect_to bins_path
     else

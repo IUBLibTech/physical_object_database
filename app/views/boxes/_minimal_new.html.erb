@@ -5,7 +5,7 @@
     <tr>
       <th>MDPI barcode</th>
       <td>
-        <%= f.text_field(:mdpi_barcode) %>
+        <%= f.text_field(:mdpi_barcode, readonly: true, onchange: 'validateBarcode(this)', onkeyup: "validateBarcode(this)") %>
       </td>
     </tr>
   </table>

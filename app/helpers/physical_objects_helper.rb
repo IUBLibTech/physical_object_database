@@ -1,7 +1,7 @@
 module PhysicalObjectsHelper
 	require 'csv'
 	
-	def PhysicalObjectsHelper.parse_csv(file)
+	def PhysicalObjectsHelper.parse_csv(file, picklist)
   	succeeded = []
     failed = []
     index = 0
@@ -10,6 +10,7 @@ module PhysicalObjectsHelper
 		unit_id = 0
 		unit = Unit.find_by(abbreviation: r["Unit"])
 		unit_id = unit.id unless unit.nil?
+
   		po = PhysicalObject.new(
           author: r[PhysicalObject.human_attribute_name("author")],
       		call_number: r[PhysicalObject.human_attribute_name("call_number")],
@@ -30,6 +31,9 @@ module PhysicalObjectsHelper
           year: r[PhysicalObject.human_attribute_name("year")]
   			)
       index += 1;
+      unless picklist.nil?
+        po.picklist = picklist
+      end
   		if po.save
         tm = po.create_tm(po.format)	
     		tm.physical_object = po

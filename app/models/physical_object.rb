@@ -9,10 +9,12 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :picklist
   belongs_to :container
   belongs_to :unit
-  has_one :technical_metadatum
-  has_many :digital_files
-  has_many :workflow_statuses
-  has_many :condition_statuses
+  
+  has_one :technical_metadatum, :dependent => :destroy
+  has_many :digital_files, :dependent => :destroy
+  has_many :workflow_statuses, :dependent => :destroy
+  has_many :condition_statuses, :dependent => :destroy
+
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
   
   validates_presence_of :unit
@@ -37,8 +39,7 @@ class PhysicalObject < ActiveRecord::Base
     where(['mdpi_barcode = ? OR iucat_barcode = ? OR call_number like ?', i, i, i, i])
   }
   scope :advanced_search, lambda {|po| 
-    po.physical_object_query
-    #PhysicalObject.find_by_sql(po.physical_object_query)
+    po.physical_object_query(false)
   }
 
   # this hash holds the human reable attribute name for this class
@@ -97,17 +98,20 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
-  def physical_object_query
+  # omit_picklisted is a boolean specifying whether physical objects that have been added to
+  # a picklist should be omitted from the search results
+  def physical_object_query(omit_picklisted)
     sql = "SELECT physical_objects.* FROM physical_objects" << 
     (!format.nil? and format.length > 0 ? ", technical_metadata, #{tm_table_name(self.format)} " : " ") << 
     "WHERE " <<
     (!format.nil? and format.length > 0 ? 
-      "physical_objects.id=technical_metadata.physical_object_id " << 
+      "physical_objects.format='#{format}' AND physical_objects.id=technical_metadata.physical_object_id " << 
       "AND technical_metadata.as_technical_metadatum_id=#{tm_table_name(self.format)}.id " 
       : 
-      "" ) <<
+      "" ) << (omit_picklisted ? "AND (picklist_id is null OR picklist_id = 0) " : "")
     physical_object_where_clause <<
     (!format.nil? and format.length > 0 ? technical_metadata_where_claus : "") 
+
 
     PhysicalObject.find_by_sql(sql)
   end
