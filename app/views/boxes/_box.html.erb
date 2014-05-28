@@ -21,28 +21,6 @@
 			<%= f.submit("Update Box") %>
 		<% end %>
 	<% end %>
-
-	<% if !@edit_mode %>
-		<div id="add_item_div">
-			<h2>Add an item to this Box</h2>
-			<p>
-				Scan a Physical Object MDPI barcode to add it  to this Bin.
-			</p>
-			<%# this is a special case where the ":" must be here instead of "@" %>
-			<%= form_for(:barcode, url: {action: 'add_barcode_item'} ) do |f| %>
-				<%= hidden_field(:box, :id) %>
-				<table>
-					<tr>
-						<th>MDPI Barcode</th>
-						<td>
-							<%= f.text_field(:mdpi_barcode, onchange: "validateBarcode(this)", onkeyup: "validateBarcode(this)") %>
-						</td>
-					</tr>
-				</table>
-				<%= f.submit("Add item") %>
-			<% end %>
-		</div>
-	<% end %>
 </div>
 
 <div id="physical_objects" class="left">

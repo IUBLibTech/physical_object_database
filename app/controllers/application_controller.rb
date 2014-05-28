@@ -67,6 +67,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def barcode_assigned(barcode)
+    PhysicalObject.where(mdpi_barcode: barcode).size > 0 or 
+    Bin.where(mdpi_barcode: barcode).size > 0 or
+    Box.where(mdpi_barcode: barcode).size > 0
+  end
+
   def physical_object_params
     # same as using params[:physical_object] except that it
     # allows listed attributes to be mass-assigned

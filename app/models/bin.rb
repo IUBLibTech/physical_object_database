@@ -4,9 +4,9 @@ class Bin < ActiveRecord::Base
 	belongs_to :picklist_specification
 	has_many :physical_objects
 	has_many :boxes
-	has_many :workflow_statuses
+	has_many :workflow_statuses, :dependent => :destroy
 	include WorkflowStatusModule
-	has_many :condition_statuses
+	has_many :condition_statuses, :dependent => :destroy
 	accepts_nested_attributes_for :condition_statuses, allow_destroy: true
 	include ConditionStatusModule
 

@@ -1,15 +1,9 @@
 <% content_for :context_menu do %>
-  <div class="contextMenuItem">
-	  <%= link_to("Create Bin", {:action => 'new'}) %>
-	</div>
 	<div class="contextMenuItem">
 	  <%= link_to("Edit Bin", {:action => 'edit', :id => @bin.id}) %>
 	</div>
 	<div class="contextMenuItem">
 	  <%= link_to("Delete", @bin, method: :delete, data: {:confirm=>'Are you sure you want to delete this Bin?'})%>
-	</div>
-	<div class="contextMenuItem">
-		<%= link_to("Create Box", "#", onclick: "new_box(#{@bin.id})") %>
 	</div>
 <% end %>
 

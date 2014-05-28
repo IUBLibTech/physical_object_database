@@ -12,7 +12,7 @@ class OpenReelTm < ActiveRecord::Base
 
 	attr_accessor :reel_sizes
 	def reel_sizes
-		{"" => "", "5 in." => "5 in.", "7 in." => "7 in.", "10.5 in." => "10.5 in."} 
+		{"" => "","3 in." => "3 in.", "4 in." => "4 in.", "5 in." => "5 in.", "6 in." => "6 in.", "7 in." => "7 in.", "10 in." => "10 in.", "10.5 in." => "10.5 in."} 
 	end
 
 	attr_accessor :pack_deformations
