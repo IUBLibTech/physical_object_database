@@ -28,7 +28,7 @@
 	    <% if column_value.nil? || column_value.blank? || column_value.to_i.zero? %>
 	      <% column_value = "" %>
 	    <% else %>
-	      <% column_value = Kernel.const_get(column_name.titleize).find(column_value).spreadsheet_descriptor %>
+	      <% column_value = Kernel.const_get(column_name.titleize.gsub(' ', '')).find(column_value).spreadsheet_descriptor %>
 	    <% end %>
 	  <% end %>
           <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
