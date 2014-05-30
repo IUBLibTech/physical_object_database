@@ -15,7 +15,7 @@
     <table class="po list">
       <tr class="header">
         <% @physical_objects[0].attributes.each do |name, value|%>
-          <th><%= name.gsub("_", ' ').capitalize %></th>
+          <th><%= name.titleize %></th>
         <% end %>
         <th>Add To Picklist</th>
       </tr>
@@ -27,6 +27,13 @@
           <tr class='even'>
         <%end%>
         <% po.attributes.each do |name, value|%>
+	  <% if name =~ /unit_id$/ %>
+	    <% if value.nil? || value.blank? || value.to_i.zero? %>
+	      <% value = "" %>
+	    <% else %>
+	      <% value = Kernel.const_get(name.titleize).find(value).spreadsheet_descriptor %>
+	    <% end %>
+	  <% end %>
           <td><%= value.to_s[0, 20] %><% if value.to_s.length > 15 %>...<% end %></td>
         <% end %>
         <td>
