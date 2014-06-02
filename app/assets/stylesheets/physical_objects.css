@@ -1,0 +1,13 @@
+// Place all the styles related to the PhysicalObjects controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+#actionsDiv {
+	clear: both;
+	margin-top: 25px;
+}
+
+td {
+	padding: 0;
+	border: 0;
+}

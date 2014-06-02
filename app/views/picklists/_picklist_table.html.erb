@@ -10,7 +10,7 @@
 			<th>Ephemira</th>
 			<% unless @tm.nil? %>
 				<% @tm.attributes.each do |name, value| %>
-					<% unless name == "created_at" or name == "updated_at" %>
+					<% unless name == "created_at" or name == "updated_at" or name == "id" %>
 						<th>
 							<%= @tm.class.human_attribute_name(name.to_s) %>
 						</th>
@@ -23,52 +23,56 @@
 	<tbody>
 		<% index = 1 %>
 		<% @picklist.physical_objects.each do |p| %>
-			<%= form_for(p) do |f| %>
-			<tr class=<%= index.odd? ? "odd" : "even" %>>
-				<td>
-					<%= p.bin ? p.bin.mdpi_barcode : "" %> 
-				</td>
-				<td>
-					<%= p.box ? p.box.mdpi_barcode : "" %>
-				</td>
-				<td>
-					<%= p.iucat_barcode %>
-				</td>
-				<td>
-					<%= f.text_field(:mdpi_barcode) %>
-				</td>
-				<td>
-					<%= p.call_number %>
-				</td>
-				<td>
-					<div id="title<%= p.id%>">
-						<%= p.title[0..20] %>
-					</div>
-					<script type="text/javascript">
-						pl.mouseover(function() { $pl_tooltip.show(); } );
-						pl.mousemove(function(e) { 
-							$pl_tooltip.css( {left: e.pageX + offset.x, top: e.pageY + offset.y});
-	    				$pl_tooltip.html('<%= p.title %>');
-	    			});
-	    			pl.mouseout(function() { $pl_tooltip.hide();});
-					</script>
-				</td>
-				<td>
-					<%= p.has_ephemira %>
-				</td>
-				<% p.technical_metadatum.as_technical_metadatum.attributes.each do |name, value| %>
-					<% unless name == "created_at" or name == "updated_at" %>
-						<td>
-							<%= value %>
-						</td>
-					<% end %>
+			<%= form_for(p, url: {controller: 'picklists', action: @action, id: @picklist.id}) do |f| %>
+				<%= hidden_field(:physical_object, :id, value: p.id) %>
+				<% if @bin %>
+					<%= hidden_field(:bin, :id, value: @bin.id) %>
+				<% elsif @box %>
+					<%= hidden_field(:box, :id, value: @box.id) %>
 				<% end %>
-				<td>
-					<%= f.submit("Packed") %>
-				</td>
-			</tr>
-			<% index += 1 %>
+				<% css_class = index.odd? ? "odd" : "even" %>
+				<% css_class += (p.bin or p.box) ? " packed" : "" %>
+				<tr class='<%= css_class %>'>
+					<td>
+						<%= text_field_tag(:bin_barcode, p.bin ? p.bin.mdpi_barcode : "", maxlength: "14", size: "14", class: "mdpi") %> 
+					</td>
+					<td>
+						<%= text_field_tag(:box_barcode, p.box ? p.box.mdpi_barcode : "", maxlength: "14", size: "14", class: "mdpi") %>
+					</td>
+					<td>
+						<%= f.text_field(:iucat_barcode, maxlength: "14", size: "14", class: "iucat") %>
+					</td>
+					<td>
+						<%= f.text_field(:mdpi_barcode, maxlength: "14", size: "14", class: "mdpi") %>
+					</td>
+					<td>
+						<%= p.call_number %>
+					</td>
+					<td>
+						<div id="title<%= p.id%>" title="<%= p.title %>">
+							<%= p.title[0..20] %><%= p.title.length > 20 ? "..." : "" %>
+						</div>
+					</td>
+					<td>
+						<%= p.has_ephemira %>
+					</td>
+					<% p.technical_metadatum.as_technical_metadatum.attributes.each do |name, value| %>
+						<% unless name == "created_at" or name == "updated_at" or name == "id" %>
+							<td>
+								<%= value.class == TrueClass ? "X" : value.class == FalseClass ? "" : value %>
+							</td>
+						<% end %>
+					<% end %>
+					<td>
+						<%= f.submit("Packed") %>
+					</td>
+				</tr>
+				<% index += 1 %>
 			<% end %>
 		<% end %>
 	</tbody>
 </table>
+<%# hook all of the title div's into qTip2 %>
+<script type="text/javascript">
+	$('[title!=""]').qtip()
+</script>

@@ -50,7 +50,7 @@
       <tr>
         <th>IUCAT barcode</th>
         <td>
-          <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
+          <%= f.text_field(:iucat_barcode, readonly: !@edit_mode, class: "iucat") %>
         </td>
       </tr>
       <tr>
@@ -101,7 +101,7 @@
       <tr>
         <th>MDPI barcode</th>
         <td>
-          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, onchange: 'validateBarcode(this)', onkeyup: "validateBarcode(this)") %>
+          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, class: "mdpi") %>
         </td>
       </tr>
       <tr>

@@ -10,6 +10,7 @@
  *
  *= require_self
  *= require physical_objects
+ *= require jquery.qtip.min.css
  *= require_tree ./custom-theme
  */
 

@@ -43,7 +43,8 @@ Pod::Application.routes.draw do
   end
 
   resources :picklists do
-    patch :process_box, on: :member
+    patch :process_list, on: :member
+    patch :assign_to_container, on: :member
   end
 
   resources :search, controller: :search, only: [:index] do

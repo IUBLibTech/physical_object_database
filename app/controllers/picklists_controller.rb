@@ -63,15 +63,35 @@ class PicklistsController < ApplicationController
 		end		
 	end
 
-	def process_box
-		@box = Box.find(params[:id])
+	def process_list
 		@picklist = Picklist.find(params[:picklist][:id])
+		@action = "assign_to_container"
+		if params[:box_id]
+			@box = Box.find(params[:box_id])
+		end
+		if params[:bin_id]
+			@bin = Bin.find(params[:bin_id])
+		end
 		@tm = @picklist.physical_objects.size > 0 ? @picklist.physical_objects[0].technical_metadatum.as_technical_metadatum : nil
 	end
 
-	def process_bin
-		
+	def assign_to_container
+		PhysicalObject.transaction do
+			physical_object = PhysicalObject.find(params[:physical_object][:id])
+			if (params[:box] and params[:box][:id])
+				box = Box.find(params[:box][:id])
+				physical_object.box = box;
+				template = WorkflowStatusTemplate.where(name: "Boxed")[0]
+				status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
+				physical_object.workflow_statuses << status
+				physical_object.box_id = box.id
+				physical_object.save
+			end
+		end
+		redirect_to(action: 'process_list', picklist: {id: params[:id]}, box: {id: params[:box][:id]})
 	end
+
+	
 
 	private
 		def set_picklist

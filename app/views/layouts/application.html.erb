@@ -52,4 +52,17 @@
   <%= yield %>
 
 </body>
+<%# hook in all the mdpi barcode fields with their validators %>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $(".mdpi").bind("change keyup", function() {
+      validateMdpiBarcode($(this));
+    });
+  });
+  $(document).ready(function() {
+    $(".iucat").bind("change keyup", function() {
+      validateIucatBarcode($(this));
+    });
+  });
+</script>
 </html>
