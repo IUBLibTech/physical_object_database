@@ -6,7 +6,7 @@ class CdrTm < ActiveRecord::Base
 
 	attr_accessor :damage_values
 	def damage_values
-		{"" => "", "Minor" => "Minor", "Moderate" => "Moderate", "Severe" => "Severe"}
+		{"None" => "None", "Minor" => "Minor", "Moderate" => "Moderate", "Severe" => "Severe"}
 	end
 
 	attr_accessor :format_duration_values
