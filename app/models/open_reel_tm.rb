@@ -17,7 +17,7 @@ class OpenReelTm < ActiveRecord::Base
 
 	attr_accessor :pack_deformations
 	def pack_deformations
-		{"" => "", "Minor" => "Minor", "Moderate" => "Moderate", "Severe" => "Severe"}
+		{"None" => "None", "Minor" => "Minor", "Moderate" => "Moderate", "Severe" => "Severe"}
 	end
 
 	attr_accessor :directions_recorded_vals
