@@ -9,7 +9,7 @@ module Sql
 
 	private
 	def Sql.tm_table_name(format)
-		if format == "Open Reel Tape"
+		if format == "Open Reel Audio Tape"
 			"open_reel_tms"
 		else
 			raise "Unsupported format: #{format}"

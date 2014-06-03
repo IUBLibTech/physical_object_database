@@ -23,7 +23,7 @@ class PhysicalObject < ActiveRecord::Base
     {
       "CD-R" => "CD-R",
       "DAT" => "DAT",
-      "Open Reel Tape" => "Open Reel Tape"
+      "Open Reel Audio Tape" => "Open Reel Audio Tape"
     }
   end
   validates_presence_of :format, inclusion: formats.keys
@@ -69,7 +69,7 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def create_tm(f)
-    if f == "Open Reel Tape"
+    if f == "Open Reel Audio Tape"
       OpenReelTm.new
     elsif f == 'CD-R'
       CdrTm.new
@@ -146,7 +146,7 @@ class PhysicalObject < ActiveRecord::Base
 
   private
   def tm_table_name(format)
-    if format == "Open Reel Tape"
+    if format == "Open Reel Audio Tape"
       "open_reel_tms"
     elsif format == "CD-R"
       "cdr_tms"

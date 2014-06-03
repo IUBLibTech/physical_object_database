@@ -5,7 +5,7 @@ class PicklistSpecification < ActiveRecord::Base
 
 	def create_tm
 		if !format.nil?
-			if format == "Open Reel Tape"
+			if format == "Open Reel Audio Tape"
 				OpenReelTm.new(picklist_specification: self)
 			elsif format == "CD-R"
 				CdrTm.new(picklist_specification: self)

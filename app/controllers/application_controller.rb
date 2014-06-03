@@ -58,7 +58,7 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    if f == "Open Reel Tape"
+    if f == "Open Reel Audio Tape"
       render(partial: 'technical_metadatum/show_open_reel_tape_tm')
     elsif f == "CD-R"
       render(partial: 'technical_metadatum/show_cdr_tm')
@@ -88,7 +88,7 @@ class ApplicationController < ActionController::Base
 
   def tm_params
     params.require(:tm).permit(
-      #fields that are specific to open reel tapes
+      #fields that are specific to open reel audio tapes
       :pack_deformation, :reel_size, :track_configuration, 
       :tape_thickness, :sound_field, :tape_stock_brand, :tape_base, :directions_recorded,
       :vinegar_syndrome, :fungus, :soft_binder_syndrome, :other_contaminants, :zero_point9375_ips, 
@@ -96,7 +96,7 @@ class ApplicationController < ActionController::Base
       :half_track, :quarter_track, :unknown_track, :one_mils, :one_point5_mils, :zero_point5_mils, 
       :mono, :stereo, :unknown_sound_field, :acetate_base, :polyester_base, :pvc_base, :paper_base, 
       :unknown_playback_speed, :one_direction, :two_directions, :unknown_direction,
-      #fields for cd-r's not covered by open reel tape fields
+      #fields for cd-r's not covered by open reel audio tape fields
       :damage, :breakdown_of_materials, :format_duration,
       #fields for dat not covered so far
       :sample_rate_32k, :sample_rate_44_1_k, :sample_rate_48k, :sample_rate_96k
