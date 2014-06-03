@@ -12,7 +12,7 @@ class PhysicalObjectsController < ApplicationController
     # we can also pass a hash to PhysicalObject.new({iucat_barcode => 123436}) to assign defaults programmatically
     @physical_object = PhysicalObject.new
     #default format for now
-    format = PhysicalObject.formats["Open Reel Tape"]
+    format = PhysicalObject.formats["Open Reel Audio Tape"]
     @physical_object.format = format
     @tm = @physical_object.create_tm(format)
     @digital_files = []
