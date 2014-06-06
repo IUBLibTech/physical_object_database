@@ -46,7 +46,7 @@
 			</td>
 			<td colspan="2">
 				<div id="title<%= p.id%>" title="<%= p.title %>">
-					<span class="mdpi_red">Title:</span> <i><%= p.title[0..45] %><%= p.title.length > 45 ? "..." : "" %></i>
+					<span class="mdpi_red">Title:</span> <i><%= p.title ? p.title[0..45] : "" %><%= (p.title and p.title.length > 45) ? "..." : "" %></i>
 				</div>
 			</td>
 		</tr>
