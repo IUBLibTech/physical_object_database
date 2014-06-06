@@ -44,6 +44,7 @@ Pod::Application.routes.draw do
 
   resources :picklists do
     patch :process_list, on: :member
+    get :process_list, on: :member
     patch :assign_to_container, on: :member
   end
 

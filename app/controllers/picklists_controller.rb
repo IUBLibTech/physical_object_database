@@ -64,31 +64,74 @@ class PicklistsController < ApplicationController
 	end
 
 	def process_list
+		puts params.to_yaml
 		@picklist = Picklist.find(params[:picklist][:id])
 		@action = "assign_to_container"
-		if params[:box_id]
+		if params[:box_id] and params[:box_id].length > 0
 			@box = Box.find(params[:box_id])
-		end
-		if params[:bin_id]
+		elsif params[:bin_id] and params[:bin_id].length > 0
 			@bin = Bin.find(params[:bin_id])
+		else
+
 		end
-		@tm = @picklist.physical_objects.size > 0 ? @picklist.physical_objects[0].technical_metadatum.as_technical_metadatum : nil
 	end
 
 	def assign_to_container
 		PhysicalObject.transaction do
-			physical_object = PhysicalObject.find(params[:physical_object][:id])
-			if (params[:box] and params[:box][:id])
-				box = Box.find(params[:box][:id])
-				physical_object.box = box;
-				template = WorkflowStatusTemplate.where(name: "Boxed")[0]
-				status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
-				physical_object.workflow_statuses << status
-				physical_object.box_id = box.id
-				physical_object.save
+			physical_object = PhysicalObject.find(params[:po_id])
+			po_barcode = params[:physical_object][:mdpi_barcode]
+			
+			# if the form was being processed from within the context of a box, a hidden attribute with that
+			# box id will be passed along
+			@box = (!params[:box_id].nil? and params[:box_id].length > 0) ? Box.find(params[:box_id]) : nil
+			
+			# if the form was being processed from within the contect of a bin, a hidden attribute with that
+			# bin id will be passed along
+			@bin = (!params[:bin_id].nil? and params[:bin_id].length > 0) ? Bin.find(params[:bin_id]) : nil
+
+			# first check: see if we have a valid barcode for the physical object
+			if ApplicationHelper.valid_barcode?(po_barcode) and po_barcode != "0"
+				assigned = ApplicationHelper.barcode_assigned?(po_barcode)
+
+				# second check: see if the barcode has been assigned to something else
+				if assigned == false or assigned == physical_object
+
+					# update the physical object barcode
+					if params[:physical_object] and params[:physical_object][:mdpi_barcode]
+						physical_object.mdpi_barcode = params[:physical_object][:mdpi_barcode]
+					end
+					
+					# branch logic: if bin or box are not nil then we are processing within the context of some container
+					if @box.nil? and @bin.nil?
+						# box barcode must be present and valid
+
+					elsif @box
+						debugger
+						# if the box barcode was provided and it's NOT the same as box.mdpi_barcode - error message
+						if params[:box_barcode].length > 0 and params[:box_barcode].to_i != 0 and params[:box_barcode].to_i != @box.mdpi_barcode
+							flash[:notice] = "<b class='warning'>Attempt to assign a different box barcode from the packing box. Physical Object has not being assigned to a box.</b>".html_safe
+						else
+							physical_object.box = @box;
+							template = WorkflowStatusTemplate.where(name: "Boxed")[0]
+							status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
+							physical_object.workflow_statuses << status
+							physical_object.save
+						end
+					elsif @bin
+						
+					end
+				else
+					flash[:notice] = "<b class='warning'>Barcode: #{po_barcode} has already been assigned to another #{assigned.class.name.underscore.humanize}</b>".html_safe
+				end
+			else
+				flash[:notice] = "<b class='warning'>Invalid MDPI Barcode: #{po_barcode}</b>".html_safe
 			end
 		end
-		redirect_to(action: 'process_list', picklist: {id: params[:id]}, box: {id: params[:box][:id]})
+
+		#FIXME: need to generalize this to deal with params hash containing a bin id, box id, or no id
+		box_id = @box.nil? ? "" : @box.id
+		bin_id = @bin.nil? ? "" : @bin.id
+		redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
 	end
 
 	

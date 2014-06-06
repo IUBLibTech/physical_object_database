@@ -1,0 +1,68 @@
+<%= form_for(p, url: {controller: 'picklists', action: @action, id: @picklist.id}) do |f| %>
+	<%= hidden_field_tag "po_id", p.id %>
+	<% unless @box.nil? %>
+		<%= hidden_field_tag "box_id", @box.id %>
+	<% end %>
+	<% unless @bin.nil? %>
+		<%= hidden_field_tag "bin_id", @bin.id %>
+	<% end %>
+	<table class="picklistTable">
+		<tr class="<%= index.odd? ? 'odd' : 'even' %>">
+			<td rowspan="5">
+				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, {target: 'blank'}) %><br/>
+				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: 'blank'}) %><br/>
+				<% if (p.box.nil? and p.bin.nil?) %>
+					<%= f.submit("Packed") %>
+				<% else %>
+					<%= f.submit("Packed", disabled: true) %>
+				<% end %>
+			</td>
+			<td class="column">
+				<img alt="mdpi barcode" src="/mdpi_barcode.png" />
+				<%= f.text_field(:mdpi_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi") %>
+			</td>
+			<td class="column">
+				<img alt="iucat barcode" src="/iucat_barcode.png" />
+				<%= f.text_field(:iucat_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "iucat") %>
+			</td>
+			<td class="column">
+				<img alt="box barcode" src="/box_barcode.png" /> 
+				<%= text_field_tag(:box_barcode, p.box ? p.box.mdpi_barcode : (@box.nil? ? "" : @box.mdpi_barcode), readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi") %>
+			</td>
+			<td class="column">
+				<img alt="bin barcode" src="/bin_barcode.png" />
+				<%= text_field_tag(:bin_barcode, p.bin ? p.bin.mdpi_barcode : "", readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi") %> 
+			</td>
+		</tr>
+
+		<tr class="<%= index.odd? ? 'odd' : 'even' %>">
+			<td>
+				<span class="mdpi_red">Ephemira</span>
+				<%= p.has_ephemira ? "Yes" : "None" %>
+			</td>
+			<td class="column">
+				<span class="mdpi_red">Call #</span>
+				<%= p.call_number %>
+			</td>
+			<td colspan="2">
+				<div id="title<%= p.id%>" title="<%= p.title %>">
+					<span class="mdpi_red">Title:</span> <i><%= p.title[0..45] %><%= p.title.length > 45 ? "..." : "" %></i>
+				</div>
+			</td>
+		</tr>
+
+		<%# technical metadata %>
+		<% tm = p.technical_metadatum.as_technical_metadatum %>
+		<% tm.attributes.each_with_index do |pair, i| %>
+			<% if i % 4 == 0 %>
+				<tr class="<%= index.odd? ? 'odd' : 'even' %>">
+			<% end %>
+				<td>
+					<span class="mdpi_red"><%= tm.class.human_attribute_name(pair[0]) %>:</span> <%= pair[1] %>
+				</td>
+			<% if i % 4 == 3 %>
+				</tr>
+			<% end %>
+		<% end %>
+	</table>
+<% end %>

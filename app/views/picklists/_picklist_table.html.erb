@@ -1,78 +1,8 @@
-<table>
-	<thead>
-		<tr>
-			<th>Bin Barcode</th>
-			<th>Box Barcode</th>	
-			<th>IUCAT Barcode</th>
-			<th>MDPI Barcode</th>
-			<th>Call Number</th>
-			<th>Title</th>
-			<th>Ephemira</th>
-			<% unless @tm.nil? %>
-				<% @tm.attributes.each do |name, value| %>
-					<% unless name == "created_at" or name == "updated_at" or name == "id" %>
-						<th>
-							<%= @tm.class.human_attribute_name(name.to_s) %>
-						</th>
-					<% end %>
-				<% end %>
-			<% end %>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		<% index = 1 %>
-		<% @picklist.physical_objects.each do |p| %>
-			<%= form_for(p, url: {controller: 'picklists', action: @action, id: @picklist.id}) do |f| %>
-				<%= hidden_field(:physical_object, :id, value: p.id) %>
-				<% if @bin %>
-					<%= hidden_field(:bin, :id, value: @bin.id) %>
-				<% elsif @box %>
-					<%= hidden_field(:box, :id, value: @box.id) %>
-				<% end %>
-				<% css_class = index.odd? ? "odd" : "even" %>
-				<% css_class += (p.bin or p.box) ? " packed" : "" %>
-				<tr class='<%= css_class %>'>
-					<td>
-						<%= text_field_tag(:bin_barcode, p.bin ? p.bin.mdpi_barcode : "", maxlength: "14", size: "14", class: "mdpi") %> 
-					</td>
-					<td>
-						<%= text_field_tag(:box_barcode, p.box ? p.box.mdpi_barcode : "", maxlength: "14", size: "14", class: "mdpi") %>
-					</td>
-					<td>
-						<%= f.text_field(:iucat_barcode, maxlength: "14", size: "14", class: "iucat") %>
-					</td>
-					<td>
-						<%= f.text_field(:mdpi_barcode, maxlength: "14", size: "14", class: "mdpi") %>
-					</td>
-					<td>
-						<%= p.call_number %>
-					</td>
-					<td>
-						<div id="title<%= p.id%>" title="<%= p.title %>">
-							<%= p.title[0..20] %><%= p.title.length > 20 ? "..." : "" %>
-						</div>
-					</td>
-					<td>
-						<%= p.has_ephemira %>
-					</td>
-					<% p.technical_metadatum.as_technical_metadatum.attributes.each do |name, value| %>
-						<% unless name == "created_at" or name == "updated_at" or name == "id" %>
-							<td>
-								<%= value.class == TrueClass ? "X" : value.class == FalseClass ? "" : value %>
-							</td>
-						<% end %>
-					<% end %>
-					<td>
-						<%= f.submit("Packed") %>
-					</td>
-				</tr>
-				<% index += 1 %>
-			<% end %>
+<div class="headerDiv">
+
+</div>
+	<div class="scrollingDiv">
+		<% @picklist.physical_objects.each_with_index do |p, index| %>
+			<%= render 'picklist_physical_object_form', p: p, index: index %>
 		<% end %>
-	</tbody>
-</table>
-<%# hook all of the title div's into qTip2 %>
-<script type="text/javascript">
-	$('[title!=""]').qtip()
-</script>
+	</div>

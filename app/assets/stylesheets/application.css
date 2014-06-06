@@ -26,8 +26,13 @@ h2 {
   color: #7D110C;
 }
 
-tr, th, td {
+table {
+  border-collapse:collapse;
+}
+
+th, td {
   font-size: 95%;
+  border: 1px solid #9D7674;
 }
 
 td.no-border {
@@ -101,8 +106,9 @@ a:hover {
 }
 
 th {
-  background: rgba(125, 18, 12, 0.45)
+  background: rgba(125, 18, 12, 0.45);
 }
+
 tr.even {
   background: rgba(125, 18, 12, 0.15);
 }
@@ -175,4 +181,22 @@ p {
 
 .top15 {
   padding-top: 15px;
+}
+
+img {
+  float: left;
+  margin: 0;
+}
+
+.column {
+  width: 24%;
+}
+
+.mdpi_red {
+  color: #7D110C;
+}
+
+.scrollingDiv {
+  height: 400px;
+  overflow-y: scroll;
 }
