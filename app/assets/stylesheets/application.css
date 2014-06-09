@@ -200,3 +200,14 @@ img {
   height: 400px;
   overflow-y: scroll;
 }
+
+tr.packed {
+  background: rgb(220,220,220);
+}
+.packed > td > a, .packed > td > input {
+  color: rgb(150,150,150);
+}
+
+.pl_button {
+  width: 65px;
+}

@@ -52,6 +52,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def update
+    puts params.to_yaml
     PhysicalObject.transaction do
       old_format = @physical_object.format
       if ! @physical_object.update_attributes(physical_object_params)
@@ -192,15 +193,5 @@ class PhysicalObjectsController < ApplicationController
       @box = @physical_object.box
     end
 
-    def physical_object_params
-      # same as using params[:physical_object] except that it
-      # allows listed attributes to be mass-assigned
-      # we could also do params.require(:some_field).permit*...
-      # if certain fields were required for the object instantiation.
-      params.require(:physical_object).permit(:title, :title_control_number,
-        :unit_id, :home_location, :call_number, :iucat_barcode, :format, :author,
-        :carrier_stream_index, :collection_identifier, :mdpi_barcode, :has_media, 
-        :open_reel_tm, :bin_id, :current_workflow_status, 
-        condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
-    end
+    
 end

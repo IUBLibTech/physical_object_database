@@ -1,0 +1,21 @@
+<tr class='<%= index.odd? ? "odd" : "even" %>'>
+	<td>
+		<span class="mdpi_red">Sample rate: </span>
+		<%= tm.humanize_boolean_fields("sample_rate_32k", "sample_rate_44_1_k", "sample_rate_48k", "sample_rate_96k") %>
+	</td>
+	<td>
+		<span class="mdpi_red">Format duration: </span>
+		<%= tm.format_duration %>
+	</td>
+	<td>
+		<span class="mdpi_red">Tape stock brand: </span>
+		<%= tm.tape_stock_brand %>
+	</td>
+	<td>
+		<span class="mdpi_red">Preservation problems: </span>
+		<% pp = tm.humanize_boolean_fields("fungus", "soft_binder_syndrome", "other_contaminants") %>
+		<div title='<%= pp %>' >
+			<%= pp.length > 15 ? pp[0..25]+"..." : pp %>
+		</div>
+	</td>
+</tr>

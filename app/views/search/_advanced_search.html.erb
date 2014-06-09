@@ -80,9 +80,9 @@
         <th>Has Ephemera</th>
         <td>
           <% if @edit_mode %>
-            <%= f.check_box(:has_ephemira) %>
+            <%= f.check_box(:has_ephemera) %>
           <% else %>
-            <input type="text" name="has_ephemira" value=<%= @physical_object.has_ephemira ? "true" : "false" %> readonly />
+            <input type="text" name="has_ephemera" value=<%= @physical_object.has_ephemera ? "true" : "false" %> readonly />
           <% end %>
         </td>
       </tr>

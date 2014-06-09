@@ -1,6 +1,16 @@
 class PicklistsController < ApplicationController
   before_action :set_picklist, only: [:show, :edit, :update, :destroy]
 
+  def self.tm_to_partial(tm)
+  	if tm.class == DatTm
+  		"/picklists/dat_tm"
+  	elsif tm.class == CdrTm 
+  		"/picklists/cdr_tm"
+  	elsif tm.class == OpenReelTm
+  		"/picklists/open_reel_tm"
+  	end
+  end
+
 	def new
 		@picklist = Picklist.new
 		@edit_mode = true
@@ -66,11 +76,13 @@ class PicklistsController < ApplicationController
 	def process_list
 		puts params.to_yaml
 		@picklist = Picklist.find(params[:picklist][:id])
-		@action = "assign_to_container"
+		# box_id or bin_id will be present if the form is "auto" populating - in which case the view will create a
+		# hidden field for the box/bin and its id attribute
 		if params[:box_id] and params[:box_id].length > 0
 			@box = Box.find(params[:box_id])
 		elsif params[:bin_id] and params[:bin_id].length > 0
 			@bin = Bin.find(params[:bin_id])
+		# otherwise the user is manually scanning a box and/or bin barcode for the physical object
 		else
 
 		end
@@ -99,6 +111,7 @@ class PicklistsController < ApplicationController
 					# update the physical object barcode
 					if params[:physical_object] and params[:physical_object][:mdpi_barcode]
 						physical_object.mdpi_barcode = params[:physical_object][:mdpi_barcode]
+						physical_object.has_ephemera = params[:physical_object][:has_ephemera]
 					end
 					
 					# branch logic: if bin or box are not nil then we are processing within the context of some container
@@ -106,10 +119,9 @@ class PicklistsController < ApplicationController
 						# box barcode must be present and valid
 
 					elsif @box
-						debugger
 						# if the box barcode was provided and it's NOT the same as box.mdpi_barcode - error message
 						if params[:box_barcode].length > 0 and params[:box_barcode].to_i != 0 and params[:box_barcode].to_i != @box.mdpi_barcode
-							flash[:notice] = "<b class='warning'>Attempt to assign a different box barcode from the packing box. Physical Object has not being assigned to a box.</b>".html_safe
+							flash[:notice] = "<b class='warning'>Attempt to assign a different box barcode from the packing box. Physical Object has not been packed!</b>".html_safe
 						else
 							physical_object.box = @box;
 							template = WorkflowStatusTemplate.where(name: "Boxed")[0]
@@ -118,7 +130,16 @@ class PicklistsController < ApplicationController
 							physical_object.save
 						end
 					elsif @bin
-						
+						# if the bin barcode was provided and it's not the same as bin.mdpi_barcode - error
+						if params[:bin_barcode].length > 0 and params[:bin_barcode].to_i != 0 and params[:bin_barcode].to_i != @bin.mdpi_barcode
+							flash[:notice] = "<b class='warning'>Attmempt to assign a different bin barcode from the packing bin. Physical Object has not been packed!</b>".html_safe
+						else
+							physical_object.bin = @bin
+							template = WorkflowStatusTemplate.where(name: "Binned")[0]
+							status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
+							physical_object.workflow_statuses << status
+							physical_object.save
+						end		
 					end
 				else
 					flash[:notice] = "<b class='warning'>Barcode: #{po_barcode} has already been assigned to another #{assigned.class.name.underscore.humanize}</b>".html_safe
@@ -128,11 +149,31 @@ class PicklistsController < ApplicationController
 			end
 		end
 
-		#FIXME: need to generalize this to deal with params hash containing a bin id, box id, or no id
 		box_id = @box.nil? ? "" : @box.id
 		bin_id = @bin.nil? ? "" : @bin.id
 		redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
 	end
+
+	def remove_from_container
+		puts params.to_yaml
+		physical_object = PhysicalObject.find(params[:po_id])
+		box_id = physical_object.box ? physical_object.box.id : ""
+		bin_id = physical_object.bin ? physical_object.bin.id : ""
+		# remove the physical object from ALL containers it has been associated with
+		if physical_object.box
+			physical_object.box = nil
+		end
+		if physical_object.bin
+			physical_object.bin = nil
+		end		
+		physical_object.save
+		redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
+	end
+
+	def container_full
+		redirect_to(bins_path)
+	end
+
 
 	
 

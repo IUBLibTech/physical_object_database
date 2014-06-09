@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140515153721) do
+ActiveRecord::Schema.define(version: 20140606172617) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -166,7 +166,7 @@ ActiveRecord::Schema.define(version: 20140515153721) do
     t.string   "collection_identifier"
     t.integer  "mdpi_barcode",          limit: 8
     t.string   "format_duration"
-    t.boolean  "has_ephemira"
+    t.boolean  "has_ephemera"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "author"

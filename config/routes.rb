@@ -46,6 +46,8 @@ Pod::Application.routes.draw do
     patch :process_list, on: :member
     get :process_list, on: :member
     patch :assign_to_container, on: :member
+    patch :remove_from_container, on: :member
+    post :container_full, on: :collection
   end
 
   resources :search, controller: :search, only: [:index] do

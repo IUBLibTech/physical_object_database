@@ -24,7 +24,7 @@ module PhysicalObjectsHelper
           mdpi_barcode: r[PhysicalObject.human_attribute_name("mdpi_barcode")] ? r[PhysicalObject.human_attribute_name("mdpi_barcode")] : 0,
           oclc_number: r[PhysicalObject.human_attribute_name("oclc_number")],
           other_copies: !r[PhysicalObject.human_attribute_name("other_copies")].nil?,
-          has_ephemira: !r[PhysicalObject.human_attribute_name("has_ephemira")].nil?,
+          has_ephemera: !r[PhysicalObject.human_attribute_name("has_ephemera")].nil?,
           title: r[PhysicalObject.human_attribute_name("title")],
           title_control_number: r[PhysicalObject.human_attribute_name("title_control_number")],
           unit_id: unit_id,

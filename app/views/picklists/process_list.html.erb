@@ -1,7 +1,17 @@
-<% if @box %>
-	<h2>Packing Box <i><%= @box.mdpi_barcode %></i> With Items From Pick List <i><%= @picklist.name %></i></h2>
-<% elsif @bin %>
-	<h2>Packing Bin <i><%= @bin.indentifier %></i> With Items From Pick List <i><%= @picklist.name %></i></h2>
+<h2>Picklist <i><%= @picklist.name %></i> </h2>
+<% if (@box or @bin) %>
+	<h2>Packing <%= @box ? "Box" : "Bin" %> <i><%= @box ? @box.mdpi_barcode : @bin.identifier %></i></h2>
+	<div>
+		<%= form_for(:picklist, url: {action: 'container_full'}) do |f| %>
+			<% if @box %>
+				<%= hidden_field_tag "box_id", @box.id %>
+			<% elsif @bin %>
+				<%= hidden_field_tag "bin_id", @bin.id %>
+			<% end %>
+			Mark <%= @box ? "<i>Box #{@box.mdpi_barcode}</i>".html_safe : "<i>Bin #{@bin.identifier}</i>".html_safe %> packed
+			<%= f.submit("Packed") %>
+		<% end %>
+	</div>
 <% else %>
 	<h2>Manually Associating Items From Pick List <i><%= @picklist.name %></i></h2>
 <% end %>
