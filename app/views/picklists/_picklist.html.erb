@@ -1,7 +1,7 @@
 <%= error_messages_for(@picklist) %>
-<%= form_for(@picklist, url: {action: @action, id: @picklist.id}) do |f| %>
 <div class="left">
-	<h2>Picklist</h2>
+	<%= form_for(@picklist, url: {action: @action, id: @picklist.id}) do |f| %>
+		<h2>Picklist</h2>
 		<table>
 			<tr>
 				<th>Name</th>
@@ -16,16 +16,21 @@
 				</td>
 			</tr>
 		</table>
+	<% end %>
+	<%= form_for(@picklist, url: {action: 'process_list'}) do |f| %>
+		<%= hidden_field_tag "picklist[id]", @picklist.id %>
+		<%= f.submit("Pack Items") %>
+	<% end %>
+</div>
+<div class="left">
+	<h2>Physical Objects in this picklist</h2>
+	<% if !@picklist.id.nil? && @picklist.physical_objects.any? %>
+	Download list as: <%# FIXME: deprecate or update CSV download %><%# link_to 'CSV File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :csv) %><%# | %><%= link_to 'Excel File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :xls) %><br/>
+	  <%= render 'physical_objects/physical_objects_table' %>
+	<% end %>
 </div>
 <div class="clear">
 	<% if @edit_mode %>
 		<%= f.submit(@submit_text) %>
 	<% end %>
 </div>
-<% end %>
-<h2>Physical Objects in this picklist</h2>
-<% if !@picklist.id.nil? && @picklist.physical_objects.any? %>
-Download list as: <%# FIXME: deprecate or update CSV download %><%# link_to 'CSV File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :csv) %><%# | %><%= link_to 'Excel File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :xls) %><br/>
-  <%= render 'physical_objects/physical_objects_table' %>
-<% end %>
-

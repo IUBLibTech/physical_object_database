@@ -114,31 +114,31 @@ class PicklistsController < ApplicationController
 						physical_object.has_ephemera = params[:physical_object][:has_ephemera]
 					end
 					
-					# branch logic: if bin or box are not nil then we are processing within the context of some container
+					# branch logic: if bin AND box are both nil, the form was navigated to from the picklist itself and the user will
+					# be providing the barcode of whatever container(s) the physical object is being packed into
 					if @box.nil? and @bin.nil?
-						# box barcode must be present and valid
+						# at least one of these must be specified
+						box = Box.where(mdpi_barcode: params[:box_barcode])[0]
+						bin = Bin.where(mdpi_barcode: params[:bin_barcode])[0]
 
+						if (box.nil? and bin.nil?)
+							flash[:notice] = "<b class='warning'>An existing Bin and/or Box barcode must be specified.</b>".html_safe
+						else
+							set_container(physical_object, box, bin)
+						end
 					elsif @box
 						# if the box barcode was provided and it's NOT the same as box.mdpi_barcode - error message
 						if params[:box_barcode].length > 0 and params[:box_barcode].to_i != 0 and params[:box_barcode].to_i != @box.mdpi_barcode
 							flash[:notice] = "<b class='warning'>Attempt to assign a different box barcode from the packing box. Physical Object has not been packed!</b>".html_safe
 						else
-							physical_object.box = @box;
-							template = WorkflowStatusTemplate.where(name: "Boxed")[0]
-							status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
-							physical_object.workflow_statuses << status
-							physical_object.save
+							set_container(physical_object, box, bin)
 						end
 					elsif @bin
 						# if the bin barcode was provided and it's not the same as bin.mdpi_barcode - error
 						if params[:bin_barcode].length > 0 and params[:bin_barcode].to_i != 0 and params[:bin_barcode].to_i != @bin.mdpi_barcode
 							flash[:notice] = "<b class='warning'>Attmempt to assign a different bin barcode from the packing bin. Physical Object has not been packed!</b>".html_safe
 						else
-							physical_object.bin = @bin
-							template = WorkflowStatusTemplate.where(name: "Binned")[0]
-							status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
-							physical_object.workflow_statuses << status
-							physical_object.save
+							set_container(physical_object, box, bin)
 						end		
 					end
 				else
@@ -154,11 +154,13 @@ class PicklistsController < ApplicationController
 		redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
 	end
 
+
+
 	def remove_from_container
 		puts params.to_yaml
 		physical_object = PhysicalObject.find(params[:po_id])
-		box_id = physical_object.box ? physical_object.box.id : ""
-		bin_id = physical_object.bin ? physical_object.bin.id : ""
+		box_id = params[:box_id] ? params[:box_id] : ""
+		bin_id = params[:bin_id] ? params[:bin_id] : ""
 		# remove the physical object from ALL containers it has been associated with
 		if physical_object.box
 			physical_object.box = nil
@@ -186,8 +188,17 @@ class PicklistsController < ApplicationController
 		  @picklist = Picklist.find(params[:id])
 		  @physical_objects = @picklist.physical_objects
 		end
+
 		def picklist_params
 			params.require(:picklist).permit(:name, :description)
 		end
 
+		def set_container(physical_object, box, bin)
+			physical_object.bin = bin
+			physical_object.box = box
+			template = WorkflowStatusTemplate.where(name: (bin.nil? ? "Boxed" : "Binned"))[0]
+			status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
+			physical_object.workflow_statuses << status
+			physical_object.save
+		end
 end

@@ -5,6 +5,8 @@
 		<%= form_for(:picklist, url: {action: 'container_full'}) do |f| %>
 			<% if @box %>
 				<%= hidden_field_tag "box_id", @box.id %>
+				Bin barcode for box: <%= text_field_tag('bin_barcode', nil, maxlength: "14", size: "14", class: "mdpi") %>
+				<br />
 			<% elsif @bin %>
 				<%= hidden_field_tag "bin_id", @bin.id %>
 			<% end %>
