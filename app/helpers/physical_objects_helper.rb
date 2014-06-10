@@ -7,12 +7,32 @@ module PhysicalObjectsHelper
     index = 0
     CSV.foreach(file, headers: true) do |r|
       #FIXME: probably can refactor this to be called once for the spreadsheet
-      unit_id = 0
+      unit_id = nil
       unit = Unit.find_by(abbreviation: r["Unit"])
       unit_id = unit.id unless unit.nil?
 
+      bin_id = nil
+      bin = Bin.find_by(mdpi_barcode: r["Bin"])
+      bin_id = bin.id unless bin.nil?
+      if bin_id.nil? && r["Bin"].to_i > 0
+        bin = Bin.new(mdpi_barcode: r["Bin"].to_i, identifier: "Spreadsheet upload of " + r["Bin"].to_i.to_s, description: "Created via spreadsheet upload")
+        bin.save
+        bin_id = bin.id
+      end
+
+      box_id = nil
+      box = Box.find_by(mdpi_barcode: r["Box"])
+      box_id = box.id unless box.nil?
+      if box_id.nil? && r["Box"].to_i > 0
+        box = Box.new(mdpi_barcode: r["Box"].to_i)
+        box.save
+        box_id = box.id
+      end
+
       po = PhysicalObject.new(
           author: r[PhysicalObject.human_attribute_name("author")],
+          bin_id: bin_id,
+          box_id: box_id,
           call_number: r[PhysicalObject.human_attribute_name("call_number")],
           catalog_key: r[PhysicalObject.human_attribute_name("catalog_key")],
           collection_identifier: r[PhysicalObject.human_attribute_name("collection_identifier")],
@@ -32,7 +52,11 @@ module PhysicalObjectsHelper
         )
       index += 1;
       po.picklist = picklist unless picklist.nil?
-      if po.save
+      if bin_id.nil? && r["Bin"].to_i > 0
+        failed << [index, bin]
+      elsif box_id.nil? && r["Box"].to_i > 0
+        failed << [index, box]
+      elsif po.save
         tm = po.create_tm(po.format)  
         tm.physical_object = po
         parse_tm(tm, r)

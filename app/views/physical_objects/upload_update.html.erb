@@ -12,7 +12,7 @@
 					<td>
 						<ul class='bad_upload'>
 							<% pair[1].errors.full_messages.each do |msg| %>
-								<li><%= msg %></li>
+								<li><%= pair[1].class.to_s.titleize %>: <%= msg %></li>
 							<% end %>
 						</ul>
 					</td>
