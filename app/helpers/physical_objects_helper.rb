@@ -1,25 +1,45 @@
 module PhysicalObjectsHelper
-	require 'csv'
-	
-	def PhysicalObjectsHelper.parse_csv(file, picklist)
-  	succeeded = []
+  require 'csv'
+  
+  def PhysicalObjectsHelper.parse_csv(file, picklist)
+    succeeded = []
     failed = []
     index = 0
-  	CSV.foreach(file, headers: true) do |r|
-        #FIXME: probably can refactor this to be called once for the spreadsheet
-		unit_id = 0
-		unit = Unit.find_by(abbreviation: r["Unit"])
-		unit_id = unit.id unless unit.nil?
+    CSV.foreach(file, headers: true) do |r|
+      #FIXME: probably can refactor this to be called once for the spreadsheet
+      unit_id = nil
+      unit = Unit.find_by(abbreviation: r["Unit"])
+      unit_id = unit.id unless unit.nil?
 
-  		po = PhysicalObject.new(
+      bin_id = nil
+      bin = Bin.find_by(mdpi_barcode: r["Bin"])
+      bin_id = bin.id unless bin.nil?
+      if bin_id.nil? && r["Bin"].to_i > 0
+        bin = Bin.new(mdpi_barcode: r["Bin"].to_i, identifier: "Spreadsheet upload of " + r["Bin"].to_i.to_s, description: "Created via spreadsheet upload")
+        bin.save
+        bin_id = bin.id
+      end
+
+      box_id = nil
+      box = Box.find_by(mdpi_barcode: r["Box"])
+      box_id = box.id unless box.nil?
+      if box_id.nil? && r["Box"].to_i > 0
+        box = Box.new(mdpi_barcode: r["Box"].to_i)
+        box.save
+        box_id = box.id
+      end
+
+      po = PhysicalObject.new(
           author: r[PhysicalObject.human_attribute_name("author")],
-      		call_number: r[PhysicalObject.human_attribute_name("call_number")],
+          bin_id: bin_id,
+          box_id: box_id,
+          call_number: r[PhysicalObject.human_attribute_name("call_number")],
           catalog_key: r[PhysicalObject.human_attribute_name("catalog_key")],
-		      collection_identifier: r[PhysicalObject.human_attribute_name("collection_identifier")],
+          collection_identifier: r[PhysicalObject.human_attribute_name("collection_identifier")],
           collection_name: r[PhysicalObject.human_attribute_name("collection_name")],
           format: r[PhysicalObject.human_attribute_name("format")],
           generation: r[PhysicalObject.human_attribute_name("generation")],
-		      home_location: r[PhysicalObject.human_attribute_name("home_location")],
+          home_location: r[PhysicalObject.human_attribute_name("home_location")],
           iucat_barcode: r[PhysicalObject.human_attribute_name("iucat_barcode")] ? r[PhysicalObject.human_attribute_name("iucat_barcode")].to_i : 0,
           mdpi_barcode: r[PhysicalObject.human_attribute_name("mdpi_barcode")] ? r[PhysicalObject.human_attribute_name("mdpi_barcode")] : 0,
           oclc_number: r[PhysicalObject.human_attribute_name("oclc_number")],
@@ -29,37 +49,39 @@ module PhysicalObjectsHelper
           title_control_number: r[PhysicalObject.human_attribute_name("title_control_number")],
           unit_id: unit_id,
           year: r[PhysicalObject.human_attribute_name("year")]
-  			)
+        )
       index += 1;
-      unless picklist.nil?
-        po.picklist = picklist
-      end
-  		if po.save
-        tm = po.create_tm(po.format)	
-    		tm.physical_object = po
+      po.picklist = picklist unless picklist.nil?
+      if bin_id.nil? && r["Bin"].to_i > 0
+        failed << [index, bin]
+      elsif box_id.nil? && r["Box"].to_i > 0
+        failed << [index, box]
+      elsif po.save
+        tm = po.create_tm(po.format)  
+        tm.physical_object = po
         parse_tm(tm, r)
-    		tm.save
-    		succeeded << po.id
+        tm.save
+        succeeded << po.id
         #create duplicated records if there was a "Quantity" column specified
-    		q = r["Quantity"]
-    		if ! q.nil?
-    			po.save
-    			(q.to_i - 1).times do |i|
-    				p_clone = po.dup
-    				p_clone.save
+        q = r["Quantity"]
+        if ! q.nil?
+          po.save
+          (q.to_i - 1).times do |i|
+            p_clone = po.dup
+            p_clone.save
             succeeded << p_clone.id
-    				tm_clone = tm.dup
-    				tm_clone.physical_object = p_clone
-    				tm_clone.save
-    			end
-    		end
+            tm_clone = tm.dup
+            tm_clone.physical_object = p_clone
+            tm_clone.save
+          end
+        end
       else
-        #failed contains pairs of spreadsheet row index and their constituent physical objects
-        failed << [index, po]
+       #failed contains pairs of spreadsheet row index and their constituent physical objects
+       failed << [index, po]
       end
-  	end
-  	{"succeeded" => succeeded, "failed" => failed}
-	end
+    end
+    {"succeeded" => succeeded, "failed" => failed}
+  end
 
   def PhysicalObjectsHelper.parse_tm(tm, row)
     if tm.is_a?(OpenReelTm)
