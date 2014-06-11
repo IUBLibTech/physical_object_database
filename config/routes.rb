@@ -1,7 +1,10 @@
 Pod::Application.routes.draw do
   root "physical_objects#index"
 
-  resources :batches
+  resources :batches do
+    post :add_bin, on: :member
+    post :remove_bin, on: :member
+  end
 
   resources :bins do
     post :add_barcode_item, on: :member

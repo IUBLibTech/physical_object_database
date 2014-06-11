@@ -37,6 +37,7 @@ class BatchesController < ApplicationController
       params[:id] = params[:id].sub(/batch_/, '')
     end
     @batch = Batch.find(params[:id])
+    @available_bins = Bin.available_bins
     @bins = @batch.bins
     respond_to do |format|
       format.html
@@ -56,6 +57,16 @@ class BatchesController < ApplicationController
       flash[:notice] = '<b class="warning">Unable to delete this Batch</b>'.html_safe
       render('show', id: @batch.id)
     end
+  end
+
+  def add_bin
+    @batch = Batch.find(params[:id])
+    
+    redirect_to(action: show, id: @batch.id)
+  end
+
+  def remove_bin
+    
   end
 
   private
