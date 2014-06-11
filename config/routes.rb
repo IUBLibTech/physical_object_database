@@ -1,7 +1,10 @@
 Pod::Application.routes.draw do
   root "physical_objects#index"
 
-  resources :batches
+  resources :batches do
+    post :add_bin, on: :member
+    post :remove_bin, on: :member
+  end
 
   resources :bins do
     post :add_barcode_item, on: :member
@@ -43,7 +46,11 @@ Pod::Application.routes.draw do
   end
 
   resources :picklists do
-    patch :process_box, on: :member
+    patch :process_list, on: :member
+    get :process_list, on: :member
+    patch :assign_to_container, on: :member
+    patch :remove_from_container, on: :member
+    post :container_full, on: :collection
   end
 
   resources :search, controller: :search, only: [:index] do

@@ -4,7 +4,7 @@
 			<th>MDPI Barcode</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, onchange: "validateBarcode(this)", onkeyup: "validateBarcode(this)") %>
+					<%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, class: "mdpi") %>
 				<% else %>
 					<%= @bin.mdpi_barcode %>
 				<% end %>

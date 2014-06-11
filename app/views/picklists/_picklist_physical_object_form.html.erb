@@ -1,0 +1,58 @@
+<%= form_for(p, url: {controller: 'picklists', action: ((p.bin or p.box) ? "remove_from_container" : "assign_to_container"), id: @picklist.id}) do |f| %>
+	<%= hidden_field_tag "po_id", p.id %>
+	<% unless @box.nil? %>
+		<%= hidden_field_tag "box_id", @box.id %>
+	<% end %>
+	<% unless @bin.nil? %>
+		<%= hidden_field_tag "bin_id", @bin.id %>
+	<% end %>
+	<table class="picklistTable">
+		<% packed = (p.bin or p.box) %>
+		<% css_class = (index.odd? ? 'odd' : 'even') + ((p.bin or p.box) ? ' packed' : '') %>
+		<tr class="<%= css_class %>">
+			<td rowspan="5">
+				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, {target: 'blank'}) %><br/>
+				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: 'blank'}) %><br/>
+				<%= f.submit(((p.bin or p.box) ? "Unpack" : "Pack"), class: "pl_button") %>
+			</td>
+			<td class="column">
+				<img alt="mdpi barcode" src="<%= packed ? '/gs_mdpi_barcode.png' : '/mdpi_barcode.png' %>" />
+				<%= f.text_field(:mdpi_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi") %>
+			</td>
+			<td class="column">
+				<img alt="iucat barcode" src="<%= packed ? '/gs_iucat_barcode.png' : '/iucat_barcode.png' %>" />
+				<%= f.text_field(:iucat_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "iucat") %>
+			</td>
+			<td class="column">
+				<img alt="box barcode" src="<%= packed ? '/gs_box_barcode.png' : '/box_barcode.png' %>" /> 
+				<%= text_field_tag(:box_barcode, p.box ? p.box.mdpi_barcode : (@box.nil? ? "" : @box.mdpi_barcode), readonly: packed, maxlength: "14", size: "14", class: "mdpi") %>
+			</td>
+			<td class="column">
+				<img alt="bin barcode" src="<%= packed ? '/gs_bin_barcode.png' : '/bin_barcode.png' %>" />
+				<%= text_field_tag(:bin_barcode, p.bin ? p.bin.mdpi_barcode : "", readonly: packed, maxlength: "14", size: "14", class: "mdpi") %> 
+			</td>
+		</tr>
+	
+		<% unless packed %>
+			<tr class="<%= index.odd? ? 'odd' : 'even' %>">
+				<td>
+					<span class="mdpi_red">Ephemera</span>
+					<%= f.check_box(:has_ephemera) %>
+				</td>
+				<td class="column">
+					<span class="mdpi_red">Call #</span>
+					<%= p.call_number %>
+				</td>
+				<td colspan="2">
+					<div id="title<%= p.id%>" title="<%= p.title %>">
+						<span class="mdpi_red">Title:</span> <i><%= p.title ? p.title[0..45] : "" %><%= (p.title and p.title.length > 45) ? "..." : "" %></i>
+					</div>
+				</td>
+			</tr>
+
+			<%# technical metadata %>
+			<% tm = p.technical_metadatum.as_technical_metadatum %>
+			<%= render PicklistsController.tm_to_partial(tm), tm: tm, index: index %>
+		<% end %>
+	</table>
+<% end %>

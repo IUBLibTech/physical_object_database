@@ -1,9 +1,7 @@
-function validateBarcode(barcodeEl) {
-	valid = false;
-	barcode = barcodeEl.value
-	if (barcode == "0") {
-		valid = true;
-	} else if (barcode.length == 14 && barcode.charAt(0) == 4 && (/^\d+$/.test(barcode))) {
+
+/* only checks wether the barcode check digit is correct */
+function validCheckDigit(barcode) {
+	if ((/^\d+$/.test(barcode))) {
 		check = barcode.slice(-1);
 		sum = 0;
 		var pairs = barcode.split("").reverse().join('').match(/.{1,2}/g);
@@ -13,14 +11,36 @@ function validateBarcode(barcodeEl) {
 		  sum += parseInt(pairs[i][0]);
 		}
 		sum -= check;
-		valid = (sum * 9) % 10 == check;
-	}
-
-	el = $(barcodeEl)
-	if (valid) {
-		el.removeClass("bad_barcode");
+		return (sum * 9) % 10 == check;
 	} else {
-		el.addClass("bad_barcode");
+		return false;
 	}
-
 }
+
+function markInvalid(barcodeEl) {
+	barcodeEl.addClass("bad_barcode");
+}
+
+function markValid(barcodeEl) {
+	barcodeEl.removeClass("bad_barcode");
+}
+
+
+function validateMdpiBarcode(barcodeEl) {
+	var hmm = validCheckDigit(barcodeEl.val());
+	if ((barcodeEl.val() == "0" || barcodeEl.val() == "") || (barcodeEl.val().length == 14 && barcodeEl.val().charAt(0) == 4 && validCheckDigit(barcodeEl.val()))) {
+		markValid(barcodeEl);
+	} else {
+		markInvalid(barcodeEl);
+	}
+}
+
+function validateIucatBarcode(barcodeEl) {
+	if ((barcodeEl.val() == "0" || barcodeEl.val() == "") || (barcodeEl.val().length == 14 && barcodeEl.val().charAt(0) == 3 && validCheckDigit(barcodeEl.val()))) {
+		markValid(barcodeEl);
+	} else {
+		markInvalid(barcodeEl);
+	}
+}
+
+

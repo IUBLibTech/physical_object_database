@@ -1,0 +1,14 @@
+<tr class='<%= index.odd? ? "odd" : "even" %>'>
+	<td>
+		<span class="mdpi_red">Damage: </span>
+		<%= tm.damage %>
+	</td>
+	<td colspan="2">
+		<span class="mdpi_red">Preservation problems: </span>
+		<%= tm.humanize_boolean_fields("breakdown_of_materials", "fungus", "other_contaminants") %>
+	</td>
+	<td>
+		<span>Format duration: </span>
+		<%= tm.format_duration %>
+	</td>
+</tr>

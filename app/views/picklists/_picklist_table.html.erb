@@ -1,74 +1,8 @@
-<table>
-	<thead>
-		<tr>
-			<th>Bin Barcode</th>
-			<th>Box Barcode</th>	
-			<th>IUCAT Barcode</th>
-			<th>MDPI Barcode</th>
-			<th>Call Number</th>
-			<th>Title</th>
-			<th>Ephemira</th>
-			<% unless @tm.nil? %>
-				<% @tm.attributes.each do |name, value| %>
-					<% unless name == "created_at" or name == "updated_at" %>
-						<th>
-							<%= @tm.class.human_attribute_name(name.to_s) %>
-						</th>
-					<% end %>
-				<% end %>
-			<% end %>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		<% index = 1 %>
-		<% @picklist.physical_objects.each do |p| %>
-			<%= form_for(p) do |f| %>
-			<tr class=<%= index.odd? ? "odd" : "even" %>>
-				<td>
-					<%= p.bin ? p.bin.mdpi_barcode : "" %> 
-				</td>
-				<td>
-					<%= p.box ? p.box.mdpi_barcode : "" %>
-				</td>
-				<td>
-					<%= p.iucat_barcode %>
-				</td>
-				<td>
-					<%= f.text_field(:mdpi_barcode) %>
-				</td>
-				<td>
-					<%= p.call_number %>
-				</td>
-				<td>
-					<div id="title<%= p.id%>">
-						<%= p.title[0..20] %>
-					</div>
-					<script type="text/javascript">
-						pl.mouseover(function() { $pl_tooltip.show(); } );
-						pl.mousemove(function(e) { 
-							$pl_tooltip.css( {left: e.pageX + offset.x, top: e.pageY + offset.y});
-	    				$pl_tooltip.html('<%= p.title %>');
-	    			});
-	    			pl.mouseout(function() { $pl_tooltip.hide();});
-					</script>
-				</td>
-				<td>
-					<%= p.has_ephemira %>
-				</td>
-				<% p.technical_metadatum.as_technical_metadatum.attributes.each do |name, value| %>
-					<% unless name == "created_at" or name == "updated_at" %>
-						<td>
-							<%= value %>
-						</td>
-					<% end %>
-				<% end %>
-				<td>
-					<%= f.submit("Packed") %>
-				</td>
-			</tr>
-			<% index += 1 %>
-			<% end %>
+<div class="headerDiv">
+
+</div>
+	<div class="scrollingDiv">
+		<% @picklist.physical_objects.each_with_index do |p, index| %>
+			<%= render 'picklist_physical_object_form', p: p, index: index %>
 		<% end %>
-	</tbody>
-</table>
+	</div>

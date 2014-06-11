@@ -15,7 +15,22 @@
 
 <div id="bin_div" class="left">
   <h2>Bin</h2>
-    <%= render 'bin' %>
+  <%= render 'bin' %>
+	<div>
+	    <h2>Pack This Bin</h2>
+	    <%= form_for(@bin, url: {controller: 'picklists', action: 'process_list', bin_id: @bin.id}) do |f| %>
+	      <table>
+	        <tr>
+	          <th>Select the picklist to pack this bin from</th>
+	          <td>
+	            <%= select('picklist', 'id', @picklists) %>
+	          </td>
+	        </tr>
+	      </table>
+	      <%= f.submit("Pack Bin") %>
+	    <% end %>
+	  </div>
+	</div>
 </div>
 <div class="left">
 	<h2>Boxes</h2>

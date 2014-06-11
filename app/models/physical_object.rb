@@ -120,7 +120,7 @@ class PhysicalObject < ActiveRecord::Base
   def physical_object_where_clause
     sql = " "
     self.attributes.each do |name, value|
-      if name == 'id' or name == 'created_at' or name == 'updated_at' or name == 'has_ephemira' or name == "technical_metadatum"
+      if name == 'id' or name == 'created_at' or name == 'updated_at' or name == 'has_ephemera' or name == "technical_metadatum"
         next
       elsif name =='mdpi_barcode' or name == 'iucat_barcode'
         unless value == 0 or value.nil?

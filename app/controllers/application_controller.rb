@@ -79,9 +79,9 @@ class ApplicationController < ActionController::Base
     # we could also do params.require(:some_field).permit*...
     # if certain fields were required for the object instantiation.
     params.require(:physical_object).permit(:title, :title_control_number, 
-      :unit, :home_location, :call_number, :iucat_barcode, :format, 
+      :unit_id, :home_location, :call_number, :iucat_barcode, :format, 
       :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
-      :has_ephemira, :author, :catalog_key, :collection_name, :generation, :oclc_number,
+      :has_ephemera, :author, :catalog_key, :collection_name, :generation, :oclc_number,
       :other_copies, :year, :bin_id, :unit, :current_workflow_status, 
       condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
   end

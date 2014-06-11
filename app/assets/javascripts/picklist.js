@@ -40,7 +40,7 @@
 //   });
 // }
 
-var $pl_tooltip = $('#tooltip'),
+var $pl_tooltip = $('#pl_tooltip'),
   offset = {x: 20, y: 20};
 
   

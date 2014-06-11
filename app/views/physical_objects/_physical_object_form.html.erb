@@ -50,7 +50,7 @@
       <tr>
         <th>IUCAT barcode</th>
         <td>
-          <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
+          <%= f.text_field(:iucat_barcode, readonly: !@edit_mode, class: "iucat") %>
         </td>
       </tr>
       <tr>
@@ -101,7 +101,7 @@
       <tr>
         <th>MDPI barcode</th>
         <td>
-          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, onchange: 'validateBarcode(this)', onkeyup: "validateBarcode(this)") %>
+          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, class: "mdpi") %>
         </td>
       </tr>
       <tr>
@@ -114,9 +114,9 @@
         <th>Has ephemera</th>
         <td>
           <% if @edit_mode %>
-            <%= f.check_box(:has_ephemira) %>
+            <%= f.check_box(:has_ephemera) %>
           <% else %>
-            <input type="text" name="has_ephemira" value=<%= @physical_object.has_ephemira ? "true" : "false" %> readonly />
+            <input type="text" name="has_ephemera" value=<%= @physical_object.has_ephemera ? "true" : "false" %> readonly />
           <% end %>
         </td>
       </tr>

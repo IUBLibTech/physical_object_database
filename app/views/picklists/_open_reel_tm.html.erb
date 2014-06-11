@@ -1,0 +1,49 @@
+<tr class='<%= index.odd? ? "odd" : "even" %>'>
+	<td>
+		<span class="mdpi_red">Pack deformation: </span>
+		<%= tm.pack_deformation %>
+	</td>
+	<td>
+		<span class="mdpi_red">Preservation problems: </span>
+		<%= tm.humanize_boolean_fields("fungus", "soft_binder_syndrome", "vinegar_syndrome", "other_contaminants") %>
+	</td>
+	<td>
+		<span class="mdpi_red">Reel size: </span>
+		<%= tm.reel_size %>
+	</td>
+	<td>
+		<span class="mdpi_red">Playback speed: </span>
+		<%= tm.humanize_boolean_fields("zero_point9375_ips", "one_point875_ips", "three_point75_ips", "seven_point5_ips", "fifteen_ips", "thirty_ips") %>
+	</td>
+</tr>
+
+<tr class='<%= index.odd? ? "odd" : "even" %>'>
+	<td>
+		<span class="mdpi_red">Track configuration: </span>
+		<%= tm.humanize_boolean_fields("full_track", "half_track", "quarter_track", "unknown_track") %>
+	</td>
+	<td>
+		<span class="mdpi_red">Tape thickness: </span>
+		<%= tm.humanize_boolean_fields("one_point5_mils", "one_mils", "zero_point5_mils") %>
+	</td>
+	<td>
+		<span class="mdpi_red">Sound field: </span>
+		<%=  tm.humanize_boolean_fields("mono", "stereo", "unknown_sound_field") %>
+	</td>
+	<td>
+		<span class="mdpi_red">Tape stock brand: </span>
+		<%= tm.tape_stock_brand %>
+	</td>
+</tr>
+<tr class='<%= index.odd? ? "odd" : "even" %>'>
+	<td colspan="2">
+		<span class="mdpi_red">Tape base: </span>
+		<%= tm.humanize_boolean_fields("acetate_base", "polyester_base", "pvc_base", "paper_base") %>
+	</td>
+	<td colspan="2">
+		<span class="mdpi_red">Directions recorded: </span>
+		<%= tm.humanize_boolean_fields("one_direction", "two_directions", "unknown_direction") %>
+	</td>
+	
+</tr>
+
