@@ -1,7 +1,7 @@
 module PhysicalObjectsHelper
   require 'csv'
   
-  def PhysicalObjectsHelper.parse_csv(file, picklist)
+  def PhysicalObjectsHelper.parse_csv(file, picklist, filename="(unknown filename)")
     succeeded = []
     failed = []
     index = 0
@@ -12,19 +12,19 @@ module PhysicalObjectsHelper
       unit_id = unit.id unless unit.nil?
 
       bin_id = nil
-      bin = Bin.find_by(mdpi_barcode: r["Bin"])
+      bin = Bin.find_by(mdpi_barcode: r["Bin barcode"])
       bin_id = bin.id unless bin.nil?
-      if bin_id.nil? && r["Bin"].to_i > 0
-        bin = Bin.new(mdpi_barcode: r["Bin"].to_i, identifier: "Spreadsheet upload of " + r["Bin"].to_i.to_s, description: "Created via spreadsheet upload")
+      if bin_id.nil? && r["Bin barcode"].to_i > 0
+        bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: "Spreadsheet upload of " + filename + " at " + Time.now.to_s.split(" ")[0,2].join(" ") + ", Row " + (index + 1).to_s, description: "Created via spreadsheet upload")
         bin.save
         bin_id = bin.id
       end
 
       box_id = nil
-      box = Box.find_by(mdpi_barcode: r["Box"])
+      box = Box.find_by(mdpi_barcode: r["Box barcode"])
       box_id = box.id unless box.nil?
-      if box_id.nil? && r["Box"].to_i > 0
-        box = Box.new(mdpi_barcode: r["Box"].to_i)
+      if box_id.nil? && r["Box barcode"].to_i > 0
+        box = Box.new(mdpi_barcode: r["Box barcode"].to_i, bin_id: bin_id)
         box.save
         box_id = box.id
       end
@@ -52,9 +52,9 @@ module PhysicalObjectsHelper
         )
       index += 1;
       po.picklist = picklist unless picklist.nil?
-      if bin_id.nil? && r["Bin"].to_i > 0
+      if bin_id.nil? && r["Bin barcode"].to_i > 0
         failed << [index, bin]
-      elsif box_id.nil? && r["Box"].to_i > 0
+      elsif box_id.nil? && r["Box barcode"].to_i > 0
         failed << [index, box]
       elsif po.save
         tm = po.create_tm(po.format)  
