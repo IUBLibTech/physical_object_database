@@ -1,7 +1,7 @@
 module PhysicalObjectsHelper
   require 'csv'
   
-  def PhysicalObjectsHelper.parse_csv(file, picklist)
+  def PhysicalObjectsHelper.parse_csv(file, picklist, filename="(unknown filename)")
     succeeded = []
     failed = []
     index = 0
@@ -15,7 +15,7 @@ module PhysicalObjectsHelper
       bin = Bin.find_by(mdpi_barcode: r["Bin barcode"])
       bin_id = bin.id unless bin.nil?
       if bin_id.nil? && r["Bin barcode"].to_i > 0
-        bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: "Spreadsheet upload of " + r["Bin barcode"].to_i.to_s, description: "Created via spreadsheet upload")
+        bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: "Spreadsheet upload of " + filename + " at " + Time.now.to_s.split(" ")[0,2].join(" ") + ", Row " + (index + 1).to_s, description: "Created via spreadsheet upload")
         bin.save
         bin_id = bin.id
       end
@@ -24,7 +24,7 @@ module PhysicalObjectsHelper
       box = Box.find_by(mdpi_barcode: r["Box barcode"])
       box_id = box.id unless box.nil?
       if box_id.nil? && r["Box barcode"].to_i > 0
-        box = Box.new(mdpi_barcode: r["Box barcode"].to_i)
+        box = Box.new(mdpi_barcode: r["Box barcode"].to_i, bin_id: bin_id)
         box.save
         box_id = box.id
       end
