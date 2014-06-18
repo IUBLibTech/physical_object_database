@@ -52,5 +52,11 @@ end
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
 
-# Use debugger
-gem 'debugger', group: [:development]
+group :development, :test do
+  gem 'childprocess'
+  gem 'debugger'
+  gem 'guard-rspec'
+  gem 'guard-spork'
+  gem 'rspec-rails'
+  gem 'spork-rails'
+end
