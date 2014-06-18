@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 #act_as_relation handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
 gem "acts_as_relation"
 
+gem "spork", git: 'https://github.com/codecarson/spork.git', branch: 'rspec3_runner'
+
 #nested_form handles form fields for the has_many objects associated to the main form object
 gem "nested_form"
 
@@ -54,9 +56,23 @@ end
 
 group :development, :test do
   gem 'childprocess'
-  gem 'debugger'
+  gem 'guard-livereload'
   gem 'guard-rspec'
   gem 'guard-spork'
   gem 'rspec-rails'
-  gem 'spork-rails'
+  gem 'spork-rails', '~> 4.0.0'
+end
+
+group :development do
+  gem 'debugger'
+end
+
+group :test do
+  gem 'rspec-rails'
+  gem 'selenium-webdriver', '2.35.1'
+  gem 'capybara'
+  gem 'factory_girl_rails'
+  #gem 'cucumber', '1.2.5' # Spork not supported as of Cucumber 1.3.0, need to use 1.2.5
+  gem 'cucumber-rails', :require => false
+  gem 'database_cleaner'
 end
