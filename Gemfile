@@ -1,9 +1,11 @@
 source 'https://rubygems.org'
+#SPECIAL CASES
+#spork granch to fix uninitialized constant RSpec::Core::CommandLine (NameError)
+gem "spork", git: 'https://github.com/codecarson/spork.git', branch: 'rspec3_runner'
 
+#STANDARD CASES
 #act_as_relation handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
 gem "acts_as_relation"
-
-gem "spork", git: 'https://github.com/codecarson/spork.git', branch: 'rspec3_runner'
 
 #nested_form handles form fields for the has_many objects associated to the main form object
 gem "nested_form"
@@ -59,6 +61,8 @@ group :development, :test do
   gem 'guard-livereload'
   gem 'guard-rspec'
   gem 'guard-spork'
+  #allows capybara access to session variable
+  gem 'rack_session_access'
   gem 'rspec-rails'
   gem 'spork-rails', '~> 4.0.0'
 end
