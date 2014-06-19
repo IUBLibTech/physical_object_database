@@ -69,6 +69,7 @@ end
 
 group :development do
   gem 'debugger'
+  gem 'spring'
 end
 
 group :test do

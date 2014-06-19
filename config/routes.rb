@@ -1,4 +1,5 @@
 Pod::Application.routes.draw do
+
   root "physical_objects#index"
 
   resources :batches do
@@ -9,7 +10,6 @@ Pod::Application.routes.draw do
   resources :bins do
     post :add_barcode_item, on: :member
     post :unbatch, on: :member
-
   end
 
   resources :boxes, except: [:edit] do
@@ -18,6 +18,8 @@ Pod::Application.routes.draw do
   end
 
   resources :condition_status_templates
+
+  resources :group_keys
 
   resources :physical_objects do
     get :download_spreadsheet_example, on: :collection

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140606172617) do
+ActiveRecord::Schema.define(version: 20140619185137) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -110,6 +110,12 @@ ActiveRecord::Schema.define(version: 20140606172617) do
     t.datetime "updated_at"
   end
 
+  create_table "group_keys", force: true do |t|
+    t.string   "identifier"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "lp_tms", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -169,6 +175,7 @@ ActiveRecord::Schema.define(version: 20140606172617) do
     t.boolean  "has_ephemera"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "unit_id"
     t.string   "author"
     t.string   "catalog_key"
     t.string   "collection_name"
@@ -176,9 +183,10 @@ ActiveRecord::Schema.define(version: 20140606172617) do
     t.string   "oclc_number"
     t.boolean  "other_copies"
     t.string   "year"
-    t.integer  "unit_id"
+    t.integer  "group_key_id"
   end
 
+  add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
   add_index "physical_objects", ["unit_id"], name: "index_physical_objects_on_unit_id", using: :btree
 
   create_table "picklist_specifications", force: true do |t|
