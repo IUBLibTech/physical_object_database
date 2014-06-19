@@ -38,4 +38,7 @@ Pod::Application.configure do
   config.assets.digest = true
 
   #config.action_controller.relative_url_root = '/pod'
+
+  #enable session variables in capybara
+  config.middleware.use RackSessionAccess::Middleware
 end

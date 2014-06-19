@@ -1,5 +1,9 @@
 source 'https://rubygems.org'
+#SPECIAL CASES
+#spork granch to fix uninitialized constant RSpec::Core::CommandLine (NameError)
+gem "spork", git: 'https://github.com/codecarson/spork.git', branch: 'rspec3_runner'
 
+#STANDARD CASES
 #act_as_relation handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
 gem "acts_as_relation"
 
@@ -52,5 +56,27 @@ end
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
 
-# Use debugger
-gem 'debugger', group: [:development]
+group :development, :test do
+  gem 'childprocess'
+  gem 'guard-livereload'
+  gem 'guard-rspec'
+  gem 'guard-spork'
+  #allows capybara access to session variable
+  gem 'rack_session_access'
+  gem 'rspec-rails'
+  gem 'spork-rails', '~> 4.0.0'
+end
+
+group :development do
+  gem 'debugger'
+end
+
+group :test do
+  gem 'rspec-rails'
+  gem 'selenium-webdriver', '2.35.1'
+  gem 'capybara'
+  gem 'factory_girl_rails'
+  #gem 'cucumber', '1.2.5' # Spork not supported as of Cucumber 1.3.0, need to use 1.2.5
+  gem 'cucumber-rails', :require => false
+  gem 'database_cleaner'
+end
