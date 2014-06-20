@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140619185137) do
+ActiveRecord::Schema.define(version: 20140620143839) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -111,9 +111,9 @@ ActiveRecord::Schema.define(version: 20140619185137) do
   end
 
   create_table "group_keys", force: true do |t|
-    t.string   "identifier"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "physical_objects_count"
   end
 
   create_table "lp_tms", force: true do |t|
@@ -168,7 +168,6 @@ ActiveRecord::Schema.define(version: 20140619185137) do
     t.string   "call_number"
     t.integer  "iucat_barcode",         limit: 8
     t.string   "format"
-    t.integer  "carrier_stream_index",            default: 0
     t.string   "collection_identifier"
     t.integer  "mdpi_barcode",          limit: 8
     t.string   "format_duration"
@@ -184,6 +183,7 @@ ActiveRecord::Schema.define(version: 20140619185137) do
     t.boolean  "other_copies"
     t.string   "year"
     t.integer  "group_key_id"
+    t.integer  "group_position"
   end
 
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree

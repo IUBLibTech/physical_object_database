@@ -15,6 +15,8 @@ FactoryGirl.define do
       format "Open Reel Audio Tape"
     end
 
+    group_position 1
+
     #at least one must be set of MDPI barcode, IUCAT barcode, title, call number
     title "FactoryGirl object"
   end

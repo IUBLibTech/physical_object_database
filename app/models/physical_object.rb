@@ -6,7 +6,7 @@ class PhysicalObject < ActiveRecord::Base
  
   belongs_to :box
   belongs_to :bin
-  belongs_to :group_key
+  belongs_to :group_key, counter_cache: true
   belongs_to :picklist
   belongs_to :container
   belongs_to :unit
@@ -17,8 +17,7 @@ class PhysicalObject < ActiveRecord::Base
   has_many :condition_statuses, :dependent => :destroy
 
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
-  
-  validates_presence_of :unit
+
   # needs to be declared before the validation that uses it
   def self.formats
     {
@@ -28,7 +27,9 @@ class PhysicalObject < ActiveRecord::Base
     }
   end
   validates_presence_of :format, inclusion: formats.keys
+  validates :group_position, presence: true
   validates :mdpi_barcode, mdpi_barcode: true
+  validates_presence_of :unit
   validates_with PhysicalObjectValidator
 
   after_initialize :init
@@ -57,6 +58,15 @@ class PhysicalObject < ActiveRecord::Base
 
   def init
     self.mdpi_barcode ||= 0
+  end
+
+  def group_identifier
+    "GR" + id.to_s.rjust(8, "0") 
+  end
+
+  def carrier_stream_index
+    return group_identifier + "_1_1" if group_key.nil?
+    return group_key.group_identifier + "_" + self.group_position.to_s + "_" + group_key.physical_objects_count.to_s
   end
 
   def container_id
