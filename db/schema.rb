@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 20140620143839) do
   create_table "group_keys", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "physical_objects_count"
+    t.integer  "physical_objects_count", default: 0, null: false
   end
 
   create_table "lp_tms", force: true do |t|

@@ -90,14 +90,14 @@ class PhysicalObjectsController < ApplicationController
       container = Container.new
       container.save
       template = PhysicalObject.find(params[:id])
-      template.carrier_stream_index = 1
+      template.group_position = 1
       template.container_id = container.id
       template.save
 
       (params[:count].to_i - 1).times do |i|
         po = template.dup
         po.mdpi_barcode = 0
-        po.carrier_stream_index = i + 2
+        po.group_position = i + 2
         po.container_id = container.id
         tm = template.technical_metadatum.as_technical_metadatum.dup
         tm.physical_object = po

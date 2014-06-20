@@ -65,7 +65,8 @@
           <%= f.select(:format, PhysicalObject.formats, {},	disabled: !@edit_mode, :onChange => "tm_div(this.value, 'PhysicalObject', #{@physical_object.id.nil? ? 0 : @physical_object.id}, #{@edit_mode})")  %>    
         </td>
       </tr>
-      <th>Other copies</th>
+      <tr>
+        <th>Other copies</th>
         <td>
           <% if @edit_mode %>
             <%= f.check_box(:other_copies) %>
@@ -73,10 +74,27 @@
             <input type="text" name="other_copies" value=<%= @physical_object.other_copies ? "true" : "false" %> readonly />
           <% end %>
         </td>
+      </tr>
+      <tr>
+        <th>Group key</th>
+	<td>
+	  <% if !@physical_object.group_key.nil? %>
+	    <%= link_to(@physical_object.group_key.group_identifier, group_key_path(@physical_object.group_key_id)) %>
+	  <% else %>
+	    Not assigned
+	  <% end %>
+	</td>
+      </tr>
+      <tr>
+        <th>Group position</th>
+	<td>
+	  <%= f.number_field(:group_position, readonly: !@edit_mode) %>
+	</td>
+      </tr>
       <tr>
         <th>Carrier stream index</th>
         <td>
-          <%= f.text_field(:carrier_stream_index, readonly: !@edit_mode) %>
+          <%= @physical_object.carrier_stream_index %>
         </td>
       </tr>
       <tr>

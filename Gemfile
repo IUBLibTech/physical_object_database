@@ -7,6 +7,9 @@ gem "spork", git: 'https://github.com/codecarson/spork.git', branch: 'rspec3_run
 #act_as_relation handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
 gem "acts_as_relation"
 
+#counter_culture improves default count_cache handling and adds additional features
+gem "counter_culture", "~> 0.1.18"
+
 #nested_form handles form fields for the has_many objects associated to the main form object
 gem "nested_form"
 

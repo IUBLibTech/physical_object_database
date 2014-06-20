@@ -3,6 +3,8 @@ class PhysicalObject < ActiveRecord::Base
   include WorkflowStatusModule
   include ConditionStatusModule
   include ActiveModel::Validations
+
+  after_initialize :default_values
  
   belongs_to :box
   belongs_to :bin
@@ -65,8 +67,11 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def carrier_stream_index
-    return group_identifier + "_1_1" if group_key.nil?
-    return group_key.group_identifier + "_" + self.group_position.to_s + "_" + group_key.physical_objects_count.to_s
+    if self.group_key.nil?
+      group_identifier + "_1_1"
+    else
+      self.group_key.group_identifier + "_" + self.group_position.to_s + "_" + self.group_key.physical_objects_count.to_s
+    end
   end
 
   def container_id
@@ -169,6 +174,9 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   private 
+  def default_values
+    self.group_position ||= 1
+  end
   # def open_reel_tm_where(stm)
   #   q = ""
   #   stm.attributes.each do |name, value|

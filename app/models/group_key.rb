@@ -3,8 +3,10 @@ class GroupKey < ActiveRecord::Base
 
   #FIXME: handle case of no associated objects?
   def group_identifier
-    return physical_objects.find_by(group_position: 1).group_identifier unless physical_objects.empty?
-    return "ERROR_NO_OBJECTS_IN_GROUP"
+    return "ERROR_NO_OBJECTS_IN_GROUP" if physical_objects.empty?
+    first_object = physical_objects.order(:group_position).first
+    return "ERROR_NO_OBJECT_IN_FIRST_POSITION" if first_object.nil?
+    return first_object.group_identifier
   end
 
 end
