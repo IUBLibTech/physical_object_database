@@ -65,6 +65,7 @@ class GroupKeysController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_group_key
       @group_key = GroupKey.find(params[:id])
+      @physical_objects = @group_key.physical_objects.order(:group_position)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

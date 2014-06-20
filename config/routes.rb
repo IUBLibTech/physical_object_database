@@ -19,7 +19,9 @@ Pod::Application.routes.draw do
 
   resources :condition_status_templates
 
-  resources :group_keys
+  resources :group_keys, except: [:create, :edit, :new, :update] do
+    resources :physical_objects, only: [:new]
+  end
 
   resources :physical_objects do
     get :download_spreadsheet_example, on: :collection

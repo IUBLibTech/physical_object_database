@@ -1,5 +1,7 @@
 <p id="notice"><%= notice %></p>
 
+<div id="group_key" class="left">
+<h2>Group Key</h2>
 <p>
   <strong>Group Identifier:</strong>
   <%= @group_key.group_identifier %>
@@ -8,6 +10,11 @@
   <strong>Physical Objects Count:</strong>
   <%= @group_key.physical_objects_count %>
 </p>
+<%= link_to "Add another physical object", new_group_key_physical_object_path(@group_key.id) %>
+</div>
 
-<%= link_to 'Edit', edit_group_key_path(@group_key) %> |
-<%= link_to 'Back', group_keys_path %>
+<div id="physical_objects" class="left">
+  <h2>Physical Objects in this Group</h2>
+  <%= render 'physical_objects/physical_objects_table' %>
+</div>
+

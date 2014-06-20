@@ -21,6 +21,12 @@ class PhysicalObjectsController < ApplicationController
     @action = "create"
     @submit_text = "Create Physical Object"
     @display_assigned = false
+
+    if !params[:group_key_id].nil?
+      @group_key = GroupKey.find(params[:group_key_id])
+      @physical_object.group_key = @group_key
+      @physical_object.group_position = @group_key.physical_objects_count + 1
+    end
   end
 
   def create
@@ -192,6 +198,7 @@ class PhysicalObjectsController < ApplicationController
       @tm = @physical_object.technical_metadatum.specialize unless @tm.nil?
       @bin = @physical_object.bin
       @box = @physical_object.box
+      @group_key = @physical_object.group_key
     end
 
     
