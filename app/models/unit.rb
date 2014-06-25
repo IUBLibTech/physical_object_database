@@ -1,6 +1,6 @@
 class Unit < ActiveRecord::Base
-  validates :abbreviation, presence: true
-  validates :name, presence: true
+  validates :abbreviation, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: true
 
   has_many :physical_objects
 

@@ -30,7 +30,7 @@
 			    <th>MDPI barcode</th>
 			    <th>Identifier</th>
 			    <th>Description</th>
-			    <th>Actions</th>
+			    <th>Add</th>
 			  </tr>
 			 </thead>
 			 <tbody>
@@ -46,7 +46,7 @@
 							<%= b.description %>
 						</td>
 						<td>
-							todo...
+							<%= check_box_tag 'bin_ids[]', b.id %>
 						</td>
 					</tr>
 			 	<% end %>

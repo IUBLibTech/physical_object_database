@@ -61,12 +61,16 @@ class BatchesController < ApplicationController
 
   def add_bin
     @batch = Batch.find(params[:id])
-    
-    redirect_to(action: show, id: @batch.id)
+    Batch.transaction do
+      params[:bin_ids].each do |b|
+        Bin.find(b).update_attributes(batch_id: @batch.id)
+      end
+    end
+    redirect_to(action: 'show', id: @batch.id)
   end
 
   def remove_bin
-    
+        
   end
 
   private

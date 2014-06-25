@@ -104,41 +104,37 @@ class PicklistsController < ApplicationController
 			# first check: see if we have a valid barcode for the physical object
 			if ApplicationHelper.valid_barcode?(po_barcode) and po_barcode != "0"
 				assigned = ApplicationHelper.barcode_assigned?(po_barcode)
-
 				# second check: see if the barcode has been assigned to something else
 				if assigned == false or assigned == physical_object
-
 					# update the physical object barcode
 					if params[:physical_object] and params[:physical_object][:mdpi_barcode]
 						physical_object.mdpi_barcode = params[:physical_object][:mdpi_barcode]
 						physical_object.has_ephemera = params[:physical_object][:has_ephemera]
 					end
-					
 					# branch logic: if bin AND box are both nil, the form was navigated to from the picklist itself and the user will
 					# be providing the barcode of whatever container(s) the physical object is being packed into
 					if @box.nil? and @bin.nil?
 						# at least one of these must be specified
 						box = Box.where(mdpi_barcode: params[:box_barcode])[0]
 						bin = Bin.where(mdpi_barcode: params[:bin_barcode])[0]
-
 						if (box.nil? and bin.nil?)
 							flash[:notice] = "<b class='warning'>An existing Bin and/or Box barcode must be specified.</b>".html_safe
 						else
 							set_container(physical_object, box, bin)
 						end
-					elsif @box
+					elsif !@box.nil?
 						# if the box barcode was provided and it's NOT the same as box.mdpi_barcode - error message
 						if params[:box_barcode].length > 0 and params[:box_barcode].to_i != 0 and params[:box_barcode].to_i != @box.mdpi_barcode
 							flash[:notice] = "<b class='warning'>Attempt to assign a different box barcode from the packing box. Physical Object has not been packed!</b>".html_safe
 						else
-							set_container(physical_object, box, bin)
+							set_container(physical_object, @box, @bin)
 						end
-					elsif @bin
+					elsif !@bin.nil?
 						# if the bin barcode was provided and it's not the same as bin.mdpi_barcode - error
 						if params[:bin_barcode].length > 0 and params[:bin_barcode].to_i != 0 and params[:bin_barcode].to_i != @bin.mdpi_barcode
 							flash[:notice] = "<b class='warning'>Attmempt to assign a different bin barcode from the packing bin. Physical Object has not been packed!</b>".html_safe
 						else
-							set_container(physical_object, box, bin)
+							set_container(physical_object, @box, @bin)
 						end		
 					end
 				else
@@ -173,7 +169,28 @@ class PicklistsController < ApplicationController
 	end
 
 	def container_full
-		redirect_to(bins_path)
+		bin = params[:bin_id].nil? ? nil : Bin.find(params[:bin_id])
+		box = params[:box_id].nil? ? nil : Box.find(params[:box_id])
+		
+		# use cases - box without a bin/box with bin/no box, just bin
+		Picklist.transaction do
+			if bin and !box
+				status = WorkflowStatusQueryModule.new_status(bin, "Packed")
+				bin.workflow_statuses << status
+				bin.save
+			elsif box and bin
+				box.bin = bin
+				box.save
+				PhysicalObject.where(box_id: box.id).update_all(bin_id: bin.id)
+			elsif box
+				# there is no workflow status currently for boxes so in this case there is nothing to do... yet
+			else
+				flash[:notice] = "<b class='warning'>Could not find a Bin with barcode: '<i>#{params[:bin_barcode]}</i>'</b>".html_safe
+				redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box.id)
+				return	
+			end
+			redirect_to(bins_path)
+		end
 	end
 
 
@@ -194,11 +211,11 @@ class PicklistsController < ApplicationController
 		end
 
 		def set_container(physical_object, box, bin)
-			physical_object.bin = bin
-			physical_object.box = box
-			template = WorkflowStatusTemplate.where(name: (bin.nil? ? "Boxed" : "Binned"))[0]
-			status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
-			physical_object.workflow_statuses << status
-			physical_object.save
+			PhysicalObject.transaction do
+				physical_object.update_attributes(bin_id: (bin.nil? ? 0 : bin.id), box_id: (box.nil? ? 0 : box.id))
+				template = WorkflowStatusTemplate.where(name: (bin.nil? ? "Boxed" : "Binned"))[0]
+				status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
+				status.save
+			end
 		end
 end

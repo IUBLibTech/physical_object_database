@@ -17,6 +17,13 @@ class Bin < ActiveRecord::Base
 		where(['batch_id = 0 OR batch_id is null'])
 	}
 
+	after_create :init
+
+	def init
+		default_status = WorkflowStatusQueryModule.default_status(self)
+    self.workflow_statuses << default_status
+	end
+
 	def spreadsheet_descriptor
 	  identifier
 	end
