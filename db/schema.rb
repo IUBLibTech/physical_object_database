@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140606172617) do
+ActiveRecord::Schema.define(version: 20140612182854) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -160,7 +160,7 @@ ActiveRecord::Schema.define(version: 20140606172617) do
     t.string   "title_control_number"
     t.string   "home_location"
     t.string   "call_number"
-    t.integer  "iucat_barcode",         limit: 8
+    t.string   "iucat_barcode"
     t.string   "format"
     t.integer  "carrier_stream_index",            default: 0
     t.string   "collection_identifier"
@@ -233,7 +233,6 @@ ActiveRecord::Schema.define(version: 20140606172617) do
     t.datetime "updated_at"
   end
 
-  add_index "workflow_status_templates", ["name"], name: "index_workflow_status_templates_on_name", unique: true, using: :btree
   add_index "workflow_status_templates", ["object_type", "sequence_index"], name: "index_wst_on_object_type_and_sequence_index", using: :btree
 
   create_table "workflow_statuses", force: true do |t|

@@ -12,7 +12,7 @@
     <tr class='even'>
     <%end%>
       <td><%= row.name %></td>
-      <td><%= row.description[0, 20] %><% if row.description.length > 20 %><%= '...' %><% end %></td>
+      <td title="<%= row.name %>: <%= row.description %>"><%= row.description[0, 20] %><% if row.description.length > 20 %><%= '...' %><% end %></td>
       <td><%= row.sequence_index %></td>
       <td>
         <%= link_to "Show", workflow_status_template_path(row.id) %>

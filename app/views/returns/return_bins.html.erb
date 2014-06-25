@@ -1,0 +1,30 @@
+<h2>Returning Bins For Batch <i><%= @batch.identifier%></i></h2>
+<div class="left">
+	<table>
+		<thead>
+			<tr>
+				<th>Bin Identifier</th>
+				<th>Current Status</th>
+				<th>
+					Action
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @bins.each_with_index do |bin, index| %>
+				<tr>
+					<td>
+						<%= bin.identifier %>
+					</td>
+					<td>
+						<%= bin.current_workflow_status.name %>
+					</td>
+					<td>
+						<%= link_to("Show", bin_path(bin)) %><br/>
+						<%= link_to("Unpack", return_bin_return_path(bin)) %>
+					</td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>

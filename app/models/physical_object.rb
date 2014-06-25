@@ -31,6 +31,7 @@ class PhysicalObject < ActiveRecord::Base
   validates_with PhysicalObjectValidator
 
   after_initialize :init
+  after_create :create
 
   accepts_nested_attributes_for :technical_metadatum
   scope :search_by_catalog, lambda {|query| where(["call_number = ?", query, query])}
@@ -56,6 +57,11 @@ class PhysicalObject < ActiveRecord::Base
 
   def init
     self.mdpi_barcode ||= 0
+  end
+
+  def create
+    default_status = WorkflowStatusQueryModule.default_status(self)
+    self.workflow_statuses << default_status
   end
 
   def container_id

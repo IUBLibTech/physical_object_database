@@ -8,11 +8,13 @@
 	<% end %>
 	<table class="picklistTable">
 		<% packed = (p.bin or p.box) %>
+		<% manual = !(@bin or @box) %>
 		<% css_class = (index.odd? ? 'odd' : 'even') + ((p.bin or p.box) ? ' packed' : '') %>
 		<tr class="<%= css_class %>">
 			<td rowspan="5">
 				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, {target: 'blank'}) %><br/>
 				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: 'blank'}) %><br/>
+				<%= link_to("Remove", unpick_physical_object_path(p), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Picklist?'})%><br/>
 				<%= f.submit(((p.bin or p.box) ? "Unpack" : "Pack"), class: "pl_button") %>
 			</td>
 			<td class="column">
@@ -21,15 +23,17 @@
 			</td>
 			<td class="column">
 				<img alt="iucat barcode" src="<%= packed ? '/gs_iucat_barcode.png' : '/iucat_barcode.png' %>" />
-				<%= f.text_field(:iucat_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "iucat") %>
+				<%= f.text_field(:iucat_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14") %>
 			</td>
 			<td class="column">
-				<img alt="box barcode" src="<%= packed ? '/gs_box_barcode.png' : '/box_barcode.png' %>" /> 
-				<%= text_field_tag(:box_barcode, p.box ? p.box.mdpi_barcode : (@box.nil? ? "" : @box.mdpi_barcode), readonly: packed, maxlength: "14", size: "14", class: "mdpi") %>
+				<img alt="box barcode" src="<%= (packed or !manual) ? '/gs_box_barcode.png' : '/box_barcode.png' %>" />
+				<% bc = @box ? @box.mdpi_barcode : (packed and p.box ? p.box.mdpi_barcode : "") %>
+				<%= text_field_tag(:box_barcode, bc, readonly: (packed or !manual), maxlength: "14", size: "14", class: "mdpi") %>
 			</td>
 			<td class="column">
-				<img alt="bin barcode" src="<%= packed ? '/gs_bin_barcode.png' : '/bin_barcode.png' %>" />
-				<%= text_field_tag(:bin_barcode, p.bin ? p.bin.mdpi_barcode : "", readonly: packed, maxlength: "14", size: "14", class: "mdpi") %> 
+				<img alt="bin barcode" src="<%= (packed or !manual) ? '/gs_bin_barcode.png' : '/bin_barcode.png' %>" />
+				<% bc = @bin ? @bin.mdpi_barcode : (packed and p.bin ? p.bin.mdpi_barcode : "") %>
+				<%= text_field_tag(:bin_barcode, bc, readonly: (packed or !manual), maxlength: "14", size: "14", class: "mdpi") %> 
 			</td>
 		</tr>
 	

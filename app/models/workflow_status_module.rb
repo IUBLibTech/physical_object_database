@@ -15,7 +15,7 @@ module WorkflowStatusModule
 
   def current_workflow_status=(workflow_status_name)
     return if workflow_status_name.nil? || workflow_status_name.blank?
-    workflow_status_template = WorkflowStatusTemplate.find_by(name: workflow_status_name)
+    workflow_status_template = WorkflowStatusTemplate.find_by(name: workflow_status_name, object_type: self.class_title)
     return if workflow_status_template.nil?
     return if !self.current_workflow_status.nil? and workflow_status_template.id == self.current_workflow_status.workflow_status_template.id
     self.workflow_statuses.new(workflow_status_template_id: workflow_status_template.id)

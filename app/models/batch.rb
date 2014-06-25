@@ -5,4 +5,10 @@ class Batch < ActiveRecord::Base
 	include WorkflowStatusModule
 
 	validates :identifier, presence: true, uniqueness: true
+	after_create :init
+
+	def init
+		default_status = WorkflowStatusQueryModule.default_status(self)
+    self.workflow_statuses << default_status
+	end
 end

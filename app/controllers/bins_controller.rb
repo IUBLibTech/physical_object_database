@@ -29,14 +29,17 @@ class BinsController < ApplicationController
 	end
 
 	def update
-		@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
-		assign_batch(params, @bin)
-		if @bin.update_attributes(bin_params)
-			flash[:notice] = "Successfully updated <i>#{@bin.identifier}</i>.".html_safe
-			redirect_to(:action => 'show', :id => @bin.id)
-		else
-			@edit_mode = true
-			render action: :edit
+		Bin.transaction do
+			@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
+			assign_batch(params, @bin)
+			if @bin.update_attributes(bin_params)
+
+				flash[:notice] = "Successfully updated <i>#{@bin.identifier}</i>.".html_safe
+				redirect_to(:action => 'show', :id => @bin.id)
+			else
+				@edit_mode = true
+				render action: :edit
+			end
 		end
 	end
 
@@ -48,16 +51,18 @@ class BinsController < ApplicationController
 	end
 
 	def destroy
-		if @bin.destroy
-			# we need to manually disassociate the physical objects/boxes form this bin since
-			# rails will leave this column value in those tables
-			PhysicalObject.update_all("bin_id = NULL", "bin_id = #{@bin.id}")
-			Box.update_all("bin_id = NULL", "bin_id = #{@bin_id}")
-			flash[:notice] = "<i>#{@bin.identifier}</i> was successfully destroyed.".html_safe
-			redirect_to bins_path
-		else
-			flash[:notice] = "<b>Failed to delete this Bin</b>".html_safe
-			render('show')
+		Bin.transaction do
+			if @bin.destroy
+				# we need to manually disassociate the physical objects/boxes form this bin since
+				# rails will leave this column value in those tables
+				PhysicalObject.update_all("bin_id = NULL", "bin_id = #{@bin.id}")
+				Box.update_all("bin_id = NULL", "bin_id = #{@bin.id}")
+				flash[:notice] = "<i>#{@bin.identifier}</i> was successfully destroyed.".html_safe
+				redirect_to bins_path
+			else
+				flash[:notice] = "<b>Failed to delete this Bin</b>".html_safe
+				render('show')
+			end
 		end
 	end
 
@@ -107,17 +112,19 @@ class BinsController < ApplicationController
 	end
 
 	def unbatch
-	   @bin.batch = nil
-	   if @bin.save
-	     flash[:notice] = "<em>Successfully removed Bin from Batch.</em>".html_safe
-	   else
-	     flash[:notice] = "<strong>Failed to remove this Bin from Batch.</strong>".html_safe
-	   end
-	   unless @batch.nil?
-	     redirect_to @batch
-	   else
-	     redirect_to @bin
-	   end
+		bin = @bin.batch
+		@bin.batch = nil
+		if @bin.save
+		 flash[:notice] = "Successfully removed Bin <i>#{@bin.identifier}</i> from Batch <i>#{bin.identifier}</i>.".html_safe
+		else
+		 flash[:notice] = "<b class='warninig'>Failed to remove this Bin from Batch.</b>".html_safe
+		end
+		# unless @batch.nil?
+		#   redirect_to @batch
+		# else
+		#   redirect_to @bin
+		# end
+redirect_to :back
 	end
 
 	private
@@ -141,9 +148,8 @@ class BinsController < ApplicationController
 	end
 
 	def assign_batch(params, bin)
-		if params[:batch] and params[:batch][:id].length > 0
-			puts("\n\n\nFinding a batch...")
-			bin.batch = Batch.find(params[:batch][:id])	
+		if params[:batch]
+			bin.batch_id = params[:batch][:id] == "" ? 0 : params[:batch][:id]
 		end
 	end
 end

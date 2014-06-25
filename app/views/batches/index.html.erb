@@ -4,30 +4,4 @@
 	</div>
 <% end %>
 <h2>Batches</h2>
-	
-<table>
-	<tr>
-		<th>Batch Identifier</th>
-		<th>Name</th>
-		<th>Description</th>
-		<th>Actions</th>
-	</tr>
-	<% count = 1 %>
-	<% @batches.each do |b| %>
-	<% if count.odd? %>
-		<tr class='odd'>
-	<% else %>
-		<tr>
-	<% end %>
-	<td><%= b.identifier %></td>
-	<td><%= b.name %></td>
-	<td><%= b.description %></td>
-	<td>
-		<%= link_to("Show", {:action => 'show', :id => b.id}, :class => 'action show') %>
-    <%= link_to("Edit", {:action => 'edit', :id => b.id}, :class => 'action edit') %>
-    <%= link_to("Delete", batch_path(b.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Batch?'}) %>
-
-	</td>
-</tr>
-	<% end %>
-</table>
+<%= render 'batch_table' %>

@@ -71,7 +71,6 @@ class PicklistSpecificationsController < ApplicationController
 		@picklists = Picklist.find(:all, order: 'name').collect{|p| [p.name, p.id]}
 		po = PhysicalObject.new(format: @ps.format)
 		po.technical_metadatum = @ps.technical_metadatum
-
 		@physical_objects = po.physical_object_query(true)
 		flash[:notice] = "Results for #{@ps.name}"
 	

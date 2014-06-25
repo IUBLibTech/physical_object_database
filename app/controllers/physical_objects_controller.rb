@@ -176,11 +176,13 @@ class PhysicalObjectsController < ApplicationController
     else
       flash[:notice] = "<strong>Failure; Physical Object was NOT removed from Picklist.</strong>".html_safe
     end
-    unless @picklist.nil?
-      redirect_to @picklist
-    else
-      redirect_to @physical_object
-    end
+    # testing redirecting back to the referrer
+    # unless @picklist.nil?
+    #   redirect_to @picklist
+    # else
+    #   redirect_to @physical_object
+    # end
+    redirect_to :back
   end
   
   private

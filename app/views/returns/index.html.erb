@@ -1,0 +1,25 @@
+<h2>Returns</h2>
+<div class="left">
+	<h2>Batches With <i>Returned</i> Current Workflow Status</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Identifier</th>
+				<th>Current Status</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @batches.each_with_index do |b, index| %>
+				<tr class=<%= index.odd? ? "odd" : "even" %>>
+					<td><%= b.identifier %></td>
+					<td><%= b.current_workflow_status ? b.current_workflow_status.name : ""%></td>
+					<td>
+						<%= link_to "Show", batch_path(b) %>
+						<%= link_to "Return Bins", return_bins_return_path(b.id) %>
+					</td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>
