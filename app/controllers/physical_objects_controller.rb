@@ -21,6 +21,12 @@ class PhysicalObjectsController < ApplicationController
     @action = "create"
     @submit_text = "Create Physical Object"
     @display_assigned = false
+
+    if !params[:group_key_id].nil?
+      @group_key = GroupKey.find(params[:group_key_id])
+      @physical_object.group_key = @group_key
+      @physical_object.group_position = @group_key.physical_objects_count + 1
+    end
   end
 
   def create
@@ -90,14 +96,14 @@ class PhysicalObjectsController < ApplicationController
       container = Container.new
       container.save
       template = PhysicalObject.find(params[:id])
-      template.carrier_stream_index = 1
+      template.group_position = 1
       template.container_id = container.id
       template.save
 
       (params[:count].to_i - 1).times do |i|
         po = template.dup
         po.mdpi_barcode = 0
-        po.carrier_stream_index = i + 2
+        po.group_position = i + 2
         po.container_id = container.id
         tm = template.technical_metadatum.as_technical_metadatum.dup
         tm.physical_object = po
@@ -194,6 +200,7 @@ class PhysicalObjectsController < ApplicationController
       @tm = @physical_object.technical_metadatum.specialize unless @tm.nil?
       @bin = @physical_object.bin
       @box = @physical_object.box
+      @group_key = @physical_object.group_key
     end
 
     

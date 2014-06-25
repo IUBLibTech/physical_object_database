@@ -80,7 +80,8 @@ class ApplicationController < ActionController::Base
     # if certain fields were required for the object instantiation.
     params.require(:physical_object).permit(:title, :title_control_number, 
       :unit_id, :home_location, :call_number, :iucat_barcode, :format, 
-      :carrier_stream_index, :collection_identifier, :mdpi_barcode, :format_duration,
+      :group_key_id, :group_key,
+      :group_position, :collection_identifier, :mdpi_barcode, :format_duration,
       :has_ephemera, :author, :catalog_key, :collection_name, :generation, :oclc_number,
       :other_copies, :year, :bin_id, :unit, :current_workflow_status, 
       condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])

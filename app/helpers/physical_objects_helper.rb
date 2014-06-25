@@ -5,6 +5,9 @@ module PhysicalObjectsHelper
     succeeded = []
     failed = []
     index = 0
+    current_group_key = ""
+    previous_group_key = ""
+    group_key_id = nil
     CSV.foreach(file, headers: true) do |r|
       #FIXME: probably can refactor this to be called once for the spreadsheet
       unit_id = nil
@@ -28,6 +31,23 @@ module PhysicalObjectsHelper
         box.save
         box_id = box.id
       end
+      #physical objects are only associated to one container
+      bin_id = nil if !box_id.nil?
+
+      current_group_key = r["Group key"]
+      if current_group_key.blank?
+        group_key_id = nil
+      else
+        if current_group_key != previous_group_key
+          group_key = GroupKey.new
+          group_key.save
+          group_key_id = group_key.id
+          previous_group_key = current_group_key
+	end
+      end
+
+      group_position = r[PhysicalObject.human_attribute_name("group_position")].to_i
+      group_position = 1 if group_position.zero?
 
       po = PhysicalObject.new(
           author: r[PhysicalObject.human_attribute_name("author")],
@@ -39,6 +59,8 @@ module PhysicalObjectsHelper
           collection_name: r[PhysicalObject.human_attribute_name("collection_name")],
           format: r[PhysicalObject.human_attribute_name("format")],
           generation: r[PhysicalObject.human_attribute_name("generation")],
+	  group_key_id: group_key_id,
+          group_position: group_position,
           home_location: r[PhysicalObject.human_attribute_name("home_location")],
           iucat_barcode: r[PhysicalObject.human_attribute_name("iucat_barcode")] ? r[PhysicalObject.human_attribute_name("iucat_barcode")].to_i : 0,
           mdpi_barcode: r[PhysicalObject.human_attribute_name("mdpi_barcode")] ? r[PhysicalObject.human_attribute_name("mdpi_barcode")] : 0,
@@ -52,10 +74,12 @@ module PhysicalObjectsHelper
         )
       index += 1;
       po.picklist = picklist unless picklist.nil?
-      if bin_id.nil? && r["Bin barcode"].to_i > 0
+      #Need extra check on box_id as we nullify bin_id for non-nil box_id
+      if bin_id.nil? && r["Bin barcode"].to_i > 0 && box_id.nil?
         failed << [index, bin]
       elsif box_id.nil? && r["Box barcode"].to_i > 0
         failed << [index, box]
+      #FIXME: add check for group_key?
       elsif po.save
         tm = po.create_tm(po.format)  
         tm.physical_object = po

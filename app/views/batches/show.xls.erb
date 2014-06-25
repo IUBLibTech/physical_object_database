@@ -32,6 +32,8 @@
         <% @po_columns.each do |column_name| %>
           <Cell><Data ss:Type="String"><%= "Object " + column_name.titlecase %></Data></Cell>
         <% end %>
+	<%# carrier stream index is handled separately as a virtual attribute %>
+        <Cell><Data ss:Type="String">Carrier Stream Index</Data></Cell>
         </Row>
         <% @bins.each do |bin| %>
           <%# LOOP THROUGH BOXES FIRST %>
@@ -47,6 +49,7 @@
               <% po.attributes.values_at(*@po_columns).each do |column_value| %>
                 <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
               <% end %>
+	      <Cell><Data ss:Type="String"><%= po.carrier_stream_index %></Data></Cell>
               </Row>
             <% end %>
           <% end %>
@@ -62,6 +65,7 @@
             <% po.attributes.values_at(*@po_columns).each do |column_value| %>
               <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
             <% end %>
+            <Cell><Data ss:Type="String"><%= po.carrier_stream_index %></Data></Cell>
             </Row>
           <% end %>
         <% end %>

@@ -3,9 +3,12 @@ class PhysicalObject < ActiveRecord::Base
   include WorkflowStatusModule
   include ConditionStatusModule
   include ActiveModel::Validations
+
+  after_initialize :default_values
  
   belongs_to :box
   belongs_to :bin
+  belongs_to :group_key, counter_cache: true
   belongs_to :picklist
   belongs_to :container
   belongs_to :unit
@@ -16,8 +19,7 @@ class PhysicalObject < ActiveRecord::Base
   has_many :condition_statuses, :dependent => :destroy
 
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
-  
-  validates_presence_of :unit
+
   # needs to be declared before the validation that uses it
   def self.formats
     {
@@ -27,7 +29,9 @@ class PhysicalObject < ActiveRecord::Base
     }
   end
   validates_presence_of :format, inclusion: formats.keys
+  validates :group_position, presence: true
   validates :mdpi_barcode, mdpi_barcode: true
+  validates_presence_of :unit
   validates_with PhysicalObjectValidator
 
   after_initialize :init
@@ -62,6 +66,18 @@ class PhysicalObject < ActiveRecord::Base
   def create
     default_status = WorkflowStatusQueryModule.default_status(self)
     self.workflow_statuses << default_status
+  end
+
+  def group_identifier
+    "GR" + id.to_s.rjust(8, "0") 
+  end
+
+  def carrier_stream_index
+    if self.group_key.nil?
+      group_identifier + "_1_1"
+    else
+      self.group_key.group_identifier + "_" + self.group_position.to_s + "_" + self.group_key.physical_objects_count.to_s
+    end
   end
 
   def container_id
@@ -164,6 +180,9 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   private 
+  def default_values
+    self.group_position ||= 1
+  end
   # def open_reel_tm_where(stm)
   #   q = ""
   #   stm.attributes.each do |name, value|
