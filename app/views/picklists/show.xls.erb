@@ -8,6 +8,8 @@
     <Table>
       <Row>
       <% @column_names = PhysicalObject.column_names %>
+      <%# manually add group_total virtual attribute %>
+      <% @column_names << 'group_total' unless @column_names.include?('group_total') %>
       <% @column_names.each do |column_name| %>
         <Cell><Data ss:Type="String"><%= column_name.titleize %></Data></Cell>
       <% end %>
@@ -31,6 +33,8 @@
 	      <% column_value = Kernel.const_get(column_name.titleize.gsub(' ', '')).find(column_value).spreadsheet_descriptor %>
 	    <% end %>
 	  <% end %>
+	  <%# reset group key column value if needed %>
+	  <% column_value = po.group_identifier if column_name == 'group_key_id' && column_value.blank? %>
           <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
 	<% end %>
         <% @md_values = po.technical_metadatum.as_technical_metadatum.attributes.values_at(*@md_columns) %>
