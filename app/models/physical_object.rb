@@ -6,7 +6,7 @@ class PhysicalObject < ActiveRecord::Base
   include ActiveModel::Validations
 
   after_initialize :default_values
- 
+
   belongs_to :box
   belongs_to :bin
   belongs_to :group_key, counter_cache: true
@@ -57,8 +57,19 @@ class PhysicalObject < ActiveRecord::Base
     HUMANIZED_COLUMNS[attribute[0].to_sym] || super
   end
 
+  #manually add virtual attributes to @attributes
+  def attributes
+    @attributes['group_total'] = group_total
+    @attributes
+  end
+
   def group_identifier
     "GR" + id.to_s.rjust(8, "0") 
+  end
+
+  def group_total
+    return 1 if self.group_key.nil?
+    return self.group_key.physical_objects_count
   end
 
   def carrier_stream_index
