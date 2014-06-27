@@ -3,6 +3,7 @@
 		<th>Batch Identifier</th>
 		<th>Name</th>
 		<th>Description</th>
+		<th>Objects Count</th>
 		<th>Current Status</th>
 		<th>Actions</th>
 	</tr>
@@ -12,6 +13,7 @@
 			<td><%= b.identifier %></td>
 			<td><%= b.name %></td>
 			<td><%= b.description %></td>
+			<td><%= b.physical_objects_count %></td>
 			<td><%= b.current_workflow_status ? b.current_workflow_status.name : "" %></td>
 			<td>
 				<%= link_to("Show", {controller: 'batches',:action => 'show', :id => b.id}, :class => 'action show') %>

@@ -2,8 +2,9 @@ require "rails_helper"
 
 describe "physical_objects/index" do
 
-  let(:po_cdr) { FactoryGirl.create :physical_object, :cdr }
-  let(:po_dat) { FactoryGirl.create :physical_object, :dat }
+  let(:unit) { FactoryGirl.create :unit }
+  let(:po_cdr) { FactoryGirl.create :physical_object, :cdr, unit: unit }
+  let(:po_dat) { FactoryGirl.create :physical_object, :dat, unit: unit }
 
   it "lists physical objects" do
     @physical_objects = [po_cdr, po_dat]

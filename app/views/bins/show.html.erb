@@ -33,10 +33,10 @@
 	</div>
 </div>
 <div class="left">
-	<h2>Boxes</h2>
+	<h2>Boxes: <%= @bin.boxes.size %></h2>
 	<%= render 'boxes/boxes_table' %>
 </div>
 <div class="left">
-	<h2>Physical Objects packed in this Bin</h2>
+	<h2>Physical Objects packed directly into this Bin: <%= @bin.physical_objects.size %></h2>
 	<%= render 'physical_objects/physical_objects_table' %>
 </div>
