@@ -17,12 +17,12 @@
 	    <%= render(:partial => "batch") %>
 	</div>
 	<div id="bins_div">
-	   <h2>Bins in this Batch</h2>
+	   <h2>Bins in this Batch: <%= @batch.bins.size %></h2>
 	   <%= render 'bins/bins_table' %>
 	</div>
 </div>
 <div class='left'>
-	<h2>Available Bins</h2>
+	<h2>Available Bins: <%= @available_bins.size %></h2>
 	<%= form_for(@batch, url: {action: 'add_bin'}) do |f| %>
 		<table>
 			<thead>
