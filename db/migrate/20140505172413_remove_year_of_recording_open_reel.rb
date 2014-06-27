@@ -5,6 +5,6 @@ class RemoveYearOfRecordingOpenReel < ActiveRecord::Migration
   end
 
   def down
-  	add_column :open_reel_tms, :year_of_recording
+  	add_column :open_reel_tms, :year_of_recording, :date
   end
 end

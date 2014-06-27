@@ -13,8 +13,8 @@ class AddMetadataToPhysicalObject < ActiveRecord::Migration
   end
 
   def down
-  	add_column :physical_objects, :content_duration
- 		add_column :physical_objects, :shelf_location
+  	add_column :physical_objects, :content_duration, :string
+ 		add_column :physical_objects, :shelf_location, :string
   	
   	remove_column :physical_objects, :year, :string
   	remove_column :physical_objects, :other_copies, :boolean
