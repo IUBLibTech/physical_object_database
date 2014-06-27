@@ -1,5 +1,6 @@
 class PhysicalObject < ActiveRecord::Base
-  
+
+  after_create :assign_default_workflow_status
   include WorkflowStatusModule
   include ConditionStatusModule
   include ActiveModel::Validations
@@ -34,9 +35,6 @@ class PhysicalObject < ActiveRecord::Base
   validates_presence_of :unit
   validates_with PhysicalObjectValidator
 
-  after_initialize :init
-  after_create :create
-
   accepts_nested_attributes_for :technical_metadatum
   scope :search_by_catalog, lambda {|query| where(["call_number = ?", query, query])}
   scope :search_by_barcode, lambda {|barcode| where(["mdpi_barcode = ? OR iucat_barcode = ?", barcode, barcode])}
@@ -57,15 +55,6 @@ class PhysicalObject < ActiveRecord::Base
   # overridden to provide for more human readable attribute names for things like :mdpi_barcode (so that mdpi is MDPI)
   def self.human_attribute_name(*attribute)
     HUMANIZED_COLUMNS[attribute[0].to_sym] || super
-  end
-
-  def init
-    self.mdpi_barcode ||= 0
-  end
-
-  def create
-    default_status = WorkflowStatusQueryModule.default_status(self)
-    self.workflow_statuses << default_status
   end
 
   def group_identifier
@@ -182,6 +171,7 @@ class PhysicalObject < ActiveRecord::Base
   private 
   def default_values
     self.group_position ||= 1
+    self.mdpi_barcode ||= 0
   end
   # def open_reel_tm_where(stm)
   #   q = ""

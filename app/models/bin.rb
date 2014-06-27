@@ -5,6 +5,7 @@ class Bin < ActiveRecord::Base
 	has_many :physical_objects
 	has_many :boxes
 	has_many :workflow_statuses, :dependent => :destroy
+	after_create :assign_default_workflow_status
 	include WorkflowStatusModule
 	has_many :condition_statuses, :dependent => :destroy
 	accepts_nested_attributes_for :condition_statuses, allow_destroy: true
@@ -16,13 +17,6 @@ class Bin < ActiveRecord::Base
 	scope :available_bins, -> {
 		where(['batch_id = 0 OR batch_id is null'])
 	}
-
-	after_create :init
-
-	def init
-		default_status = WorkflowStatusQueryModule.default_status(self)
-    self.workflow_statuses << default_status
-	end
 
 	def spreadsheet_descriptor
 	  identifier
