@@ -3,6 +3,7 @@ class Bin < ActiveRecord::Base
 	belongs_to :batch
 	belongs_to :picklist_specification
 	has_many :physical_objects
+	has_many :boxed_physical_objects, through: :boxes, source: :physical_objects
 	has_many :boxes
 	has_many :workflow_statuses, :dependent => :destroy
 	after_create :assign_default_workflow_status
@@ -17,6 +18,10 @@ class Bin < ActiveRecord::Base
 	scope :available_bins, -> {
 		where(['batch_id = 0 OR batch_id is null'])
 	}
+
+	def physical_objects_count
+	  physical_objects.size + boxed_physical_objects.size
+	end
 
 	def spreadsheet_descriptor
 	  identifier

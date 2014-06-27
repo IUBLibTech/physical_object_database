@@ -7,4 +7,8 @@ class Batch < ActiveRecord::Base
 
 	validates :identifier, presence: true, uniqueness: true
 
+	def physical_objects_count
+	  return bins.inject(0) { |sum, bin| sum + bin.physical_objects_count }
+	end
+
 end
