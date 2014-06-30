@@ -66,7 +66,6 @@ ActiveRecord::Schema.define(version: 20140630154420) do
     t.datetime "updated_at"
   end
 
-  add_index "condition_status_templates", ["name"], name: "index_condition_status_templates_on_name", unique: true, using: :btree
   add_index "condition_status_templates", ["object_type", "name"], name: "index_cst_on_object_and_name", using: :btree
 
   create_table "condition_statuses", force: true do |t|
@@ -184,7 +183,6 @@ ActiveRecord::Schema.define(version: 20140630154420) do
     t.boolean  "has_ephemera"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "unit_id"
     t.string   "author"
     t.string   "catalog_key"
     t.string   "collection_name"
@@ -192,6 +190,7 @@ ActiveRecord::Schema.define(version: 20140630154420) do
     t.string   "oclc_number"
     t.boolean  "other_copies"
     t.string   "year"
+    t.integer  "unit_id"
     t.integer  "group_key_id"
     t.integer  "group_position"
   end
@@ -251,7 +250,7 @@ ActiveRecord::Schema.define(version: 20140630154420) do
     t.datetime "updated_at"
   end
 
-  add_index "workflow_status_templates", ["name"], name: "index_workflow_status_templates_on_name", unique: true, using: :btree
+  add_index "workflow_status_templates", ["object_type", "name"], name: "index_wst_on_object_and_name", using: :btree
   add_index "workflow_status_templates", ["object_type", "sequence_index"], name: "index_wst_on_object_type_and_sequence_index", using: :btree
 
   create_table "workflow_statuses", force: true do |t|

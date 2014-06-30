@@ -8,7 +8,7 @@ class CreateWorkflowStatusTemplates < ActiveRecord::Migration
       t.timestamps
     end
 
-    # add_index :workflow_status_templates, :name, unique: true
+    #add_index :workflow_status_templates, :name, unique: true
 
   end
 end

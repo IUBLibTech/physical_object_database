@@ -7,6 +7,6 @@ class CreateConditionStatusTemplates < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :condition_status_templates, :name, unique: true
+    #add_index :condition_status_templates, :name, unique: true
   end
 end
