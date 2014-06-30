@@ -84,7 +84,8 @@ class ApplicationController < ActionController::Base
       :group_position, :collection_identifier, :mdpi_barcode, :format_duration,
       :has_ephemera, :author, :catalog_key, :collection_name, :generation, :oclc_number,
       :other_copies, :year, :bin_id, :unit, :current_workflow_status, 
-      condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
+      condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy],
+      notes_attributes: [:id, :body, :user, :_destroy])
   end
 
   def tm_params

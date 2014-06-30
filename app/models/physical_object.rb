@@ -21,6 +21,7 @@ class PhysicalObject < ActiveRecord::Base
   has_many :notes, :dependent => :destroy
 
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
+  accepts_nested_attributes_for :notes, allow_destroy: true
 
   # needs to be declared before the validation that uses it
   def self.formats

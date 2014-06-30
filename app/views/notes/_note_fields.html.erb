@@ -1,0 +1,27 @@
+<table>
+  <tr><th colspan="2">Note #<%= f.object.id %></th></tr>
+  <% if f.object.errors.any? %>
+  <tr><th>ERRORS</th><td><%= render 'shared/error_messages', object: f.object %></td></tr>
+  <% end %>
+  <tr>
+    <th></th>
+    <td><% if @edit_mode %><%= f.link_to_remove "Remove note" %><% end %></td>
+  </tr>
+  <tr>
+    <th>Text</th>
+    <td><%= f.text_area :body, readonly: !@edit_mode %></td>
+  </tr>
+  <tr>
+    <th>Creator</th>
+    <td><%= f.text_field(:user, readonly: true) %></td>
+  </tr>
+  <tr>
+    <th>Created At</th>
+    <td><%= f.text_field(:created_at, readonly: true) %></td>
+  </tr>
+  <tr>
+    <th>Updated At</th>
+    <td><%= f.text_field(:updated_at, readonly: true) %></td>
+  </tr>
+</table>
+

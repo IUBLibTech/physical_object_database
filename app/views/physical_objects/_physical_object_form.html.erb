@@ -201,12 +201,22 @@
         </table>
       </div>
     <% end %>
-    <%= f.fields_for :condition_statuses do |condition| %>
-      <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @physical_object %>
-    <% end %>
-    <% if @edit_mode %>
-      <%= f.link_to_add "Add a condition status", :condition_statuses %>
-    <% end %>
+    <div id="condition_statuses_div">
+      <%= f.fields_for :condition_statuses do |condition| %>
+        <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @physical_object %>
+      <% end %>
+      <% if @edit_mode %>
+        <%= f.link_to_add "Add a condition status", :condition_statuses %>
+      <% end %>
+    </div>
+    <div id="notes_div">
+      <%= f.fields_for :notes do |note| %>
+        <%= render 'notes/note_fields', f: note%>
+      <% end %>
+      <% if @edit_mode %>
+        <%= f.link_to_add "Add a note", :notes %>
+      <% end %>
+    </div>
   </div>
 
   
