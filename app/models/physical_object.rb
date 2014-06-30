@@ -18,6 +18,7 @@ class PhysicalObject < ActiveRecord::Base
   has_many :digital_files, :dependent => :destroy
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
+  has_many :notes, :dependent => :destroy
 
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
 
