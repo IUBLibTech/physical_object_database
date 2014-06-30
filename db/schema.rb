@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140630154420) do
+ActiveRecord::Schema.define(version: 20140630210217) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 20140630154420) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "bin_id"
+    t.string   "user"
   end
 
   add_index "condition_statuses", ["bin_id", "condition_status_template_id"], name: "index_cs_on_bin_and_cst", using: :btree

@@ -12,6 +12,10 @@
     <td><%= f.text_area :notes, readonly: !@edit_mode %></td>
   </tr>
   <tr>
+    <th>Creator</th>
+    <td><%= f.text_field(:user, readonly: true) %></td>
+  </tr>
+  <tr>
     <th>Created At</th>
     <td><%= f.text_field(:created_at, readonly: true) %></td>
   </tr>

@@ -9,6 +9,6 @@ class Note < ActiveRecord::Base
   after_initialize :default_values
 
   def default_values
-    self.user ||= SessionInfoModule.session[:username]
+    self.user ||= SessionInfoModule.session.nil? ? "UNAVAILABLE" : SessionInfoModule.session[:username]
   end
 end
