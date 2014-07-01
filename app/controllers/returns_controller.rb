@@ -12,7 +12,7 @@ class ReturnsController < ApplicationController
 	def return_bin
 		@bin = Bin.find(params[:id])
 		@returned = WorkflowStatusQueryModule.in_bin_where_current_status_is(@bin, "Returned")
-		@shipped = WorkflowStatusQueryModule.in_bin_where_current_status_is(@bin, "Returned")
+		@shipped = WorkflowStatusQueryModule.in_bin_where_current_status_is(@bin, "Shipped")
 	
 	end
 
