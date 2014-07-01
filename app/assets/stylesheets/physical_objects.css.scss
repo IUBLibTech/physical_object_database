@@ -7,6 +7,9 @@
 	margin-top: 25px;
 }
 
-td {
-	padding-left: 5px;
+#assigned_to_div, #condition_statuses_div, #notes_div {
+	margin-bottom: 15px;
+	table {
+		width: 485px;
+	}
 }

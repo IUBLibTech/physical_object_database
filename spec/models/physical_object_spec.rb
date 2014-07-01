@@ -30,4 +30,8 @@ describe PhysicalObject do
     expect(po.carrier_stream_index).to_not be_blank
   end
 
+  it "has no notes by default" do
+    expect(po.notes).to be_empty
+  end
+
 end
