@@ -5,10 +5,10 @@
   <% end %>
   <tr>
     <th><%= f.select :condition_status_template_id, target_object.condition_status_options, {}, prompt: 'Select a condition status...', disabled: !@edit_mode %></th>
-    <td><% if @edit_mode %><%= f.link_to_remove "Remove condition" %><% end %></td>
+    <td><% if @edit_mode %><%= f.link_to_remove("Delete condition", data: { confirm: 'Are you sure you want to mark this condition for deletion?  The condition will be deleted when you submit the form.'} ) %><% end %></td>
   </tr>
   <tr>
-    <th>Notes</th>
+    <th>Additional Notes</th>
     <td><%= f.text_area :notes, readonly: !@edit_mode %></td>
   </tr>
   <tr>
