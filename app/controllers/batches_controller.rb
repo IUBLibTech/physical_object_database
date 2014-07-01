@@ -24,11 +24,40 @@ class BatchesController < ApplicationController
 
   def update
     @batch = Batch.find(params[:id]);
-    if @batch.update_attributes(batch_params)
-      flash[:notice] = "<i>#{@batch.name}</i> was successfully updated.".html_safe
-      redirect_to(:action => 'show', :id => @batch.id)
-    else
-      render('show')
+    Batch.transaction do
+      if @batch.update_attributes(batch_params)
+        flash[:notice] = "<i>#{@batch.name}</i> was successfully updated.".html_safe
+        # if a batch status moves forward TO "Shipped", we need to propagate that status to all bins, and then all
+        # physical objects in the batch. If the current status ROLLED BACK from "Shipped", we need to also roll back
+        # the shipped status on all bins and physical objects
+        cs = @batch.current_workflow_status
+        ps = @batch.workflow_statuses.size > 1 ? @batch.workflow_statuses[@batch.workflow_statuses.size - 2] : nil
+        if (cs.name == "Shipped" or (! ps.nil? and ps.name == "Shipped"))
+          csi = cs.workflow_status_template.sequence_index
+          psi = ps.workflow_status_template.sequence_index
+          # advanced TO shipped
+          if (cs.name == "Shipped" and (csi > psi))
+            @batch.bins.each do |b|
+              b.update_attributes(current_workflow_status: "Shipped")
+              b.physical_objects.each do |p|
+                p.update_attributes(current_workflow_status: "Shipped")
+              end
+            end
+          # rolled back from shipped
+          elsif (ps.name == "Shipped" and (csi < psi)) 
+            @batch.bins.each do |b|
+              b.update_attributes(current_workflow_status: WorkflowStatusQueryModule.status_name_before(Bin, "Shipped"))
+              b.physical_objects.each do |p|
+                p.update_attributes(current_workflow_status: WorkflowStatusQueryModule.status_name_before(PhysicalObject, "Shipped"))
+              end
+            end
+          end 
+        end
+
+        redirect_to(:action => 'show', :id => @batch.id)
+      else
+        render('show')
+      end
     end
   end
 

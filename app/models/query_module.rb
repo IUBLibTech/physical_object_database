@@ -1,7 +1,7 @@
 module Sql
 
 	def Sql.physical_object_query(physical_object)
-		 "SELECT physical_object.* FROM physical_objects, technical_metadata, #{tm_table_name(physical_object.format)}" << 
+		 "SELECT physical_objects.* FROM physical_objects, technical_metadata, #{tm_table_name(physical_object.format)}" << 
 			"WHERE physical_objects.id=technical_metadata.physical_object_id " << 
 			"AND technical_metadata.as_technical_metadatum_id=tm_table_name(physical_object.format).id AND" <<
 			physical_object_where_clause(physical_object) 

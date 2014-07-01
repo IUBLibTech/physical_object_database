@@ -28,4 +28,5 @@ module WorkflowStatusModule
   def class_title
     self.class.to_s.gsub(/([a-z])([A-Z])/, '\1 \2')
   end
+
 end

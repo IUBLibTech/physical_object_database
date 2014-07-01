@@ -7,9 +7,9 @@ module WorkflowStatusQueryModule
 
 	def WorkflowStatusQueryModule.in_bin_where_current_status_is(bin, status)
 		sql = current_status_query(PhysicalObject, status)
-		new_sql = "SELECT physical_object.* FROM physical_objects " << 
-		"INNER JOIN (#{sql}) status ON physical_object.id = status.physical_object_id " <<
-		"WHERE physical_object.bin_id = #{bin.id}"
+		new_sql = "SELECT physical_objects.* FROM physical_objects " << 
+		"INNER JOIN (#{sql}) stat ON physical_objects.id = stat.id " <<
+		"WHERE physical_objects.bin_id = #{bin.id}"
 		PhysicalObject.find_by_sql(new_sql)
 	end
 

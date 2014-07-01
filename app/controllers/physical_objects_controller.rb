@@ -9,7 +9,7 @@ class PhysicalObjectsController < ApplicationController
   def new
     # we instantiate an new object here because rails will pick up any default values assigned
     # by the database and the form will be prepopulated with those values
-    # we can also pass a hash to PhysicalObject.new({iucat_barcode => 123436}) to assign defaults programmatically
+    # we can also pass a hash to PhysicalObject.new({iucat_barcode => "123436"}) to assign defaults programmatically
     @physical_object = PhysicalObject.new
     #default format for now
     format = PhysicalObject.formats["Open Reel Audio Tape"]
@@ -140,6 +140,9 @@ class PhysicalObjectsController < ApplicationController
   end
     
   def unbin
+    unless @physical_object.box.nil?
+      raise RuntimeError, "A physical object should not be unbin-able if it is in a box..."
+    end
     @bin = @physical_object.bin
     @physical_object.bin = nil
     if @bin.nil?
