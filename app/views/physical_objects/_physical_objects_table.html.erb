@@ -1,6 +1,6 @@
 <table class="po list">
   <tr class="header">
-    <th>ID</th>
+    <th>Current Status</th>
     <th>MDPI barcode</th>
     <th>IU barcode</th>
     <th>Call number</th>
@@ -15,7 +15,7 @@
         <%else%>
         <tr class='even'>
       <%end%>
-      <td><%= po.id %></td>
+      <td><%= po.current_workflow_status.name %></td>
       <td><%= po.mdpi_barcode %></td>
       <td><%= po.iucat_barcode %></td>
       <td><%= po.call_number %></td>

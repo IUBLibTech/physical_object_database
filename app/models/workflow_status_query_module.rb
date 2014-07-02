@@ -13,8 +13,8 @@ module WorkflowStatusQueryModule
 		PhysicalObject.find_by_sql(new_sql)
 	end
 
-	# this finds all objects that have made it past a certain workflow status based on their CURRENT workflow
-	def WorkflowStatusQueryModule.where_current_status_is_past(object_class, status)
+	# this finds all objects that have made it to or past a certain workflow status based on their CURRENT workflow
+	def WorkflowStatusQueryModule.where_current_status_at_least(object_class, status)
 		wst_id = template_id(object_class, status)
 		t = table(object_class)
 		inner_sql = "SELECT outside.#{t.singularize}_id " << 

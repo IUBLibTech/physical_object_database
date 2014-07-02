@@ -1,0 +1,15 @@
+<% @shipped.each do |p| %>
+	<%= form_for(p, url: {controller: 'returns', action: "physical_object_missing", id: p.id}) do |f| %>
+		<table class="picklistTable">
+				<tr class="odd packed">
+					<td class="column">
+						<img alt="mdpi barcode" src="/gs_mdpi_barcode.png" />
+						<%= f.text_field(:mdpi_barcode, readonly: true, maxlength: "14", size: "14", class: "mdpi") %>
+					</td>
+					<td class="column">
+						Call Number: <%= p.call_number %>
+					</td>
+				</tr>
+		</table>
+	<% end %>
+<% end %>

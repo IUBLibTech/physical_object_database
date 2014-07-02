@@ -14,4 +14,15 @@ module ConditionStatusModule
   def class_title
     self.class.to_s.gsub(/([a-z])([A-Z])/, '\1 \2')
   end
+
+  def ConditionStatusModule.has_condition?(object, status_name)
+  	# TODO: optimize this with either a query or better ruby code
+  	cst_id = ConditionStatusTemplate.where(name: status_name, object_type: object.class.name.titleize)
+  	object.condition_statuses.each do |s|
+  		if s.condition_status_template_id == cst_id
+  			true
+  		end
+  	end
+  	false
+  end
 end

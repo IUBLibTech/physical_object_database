@@ -32,7 +32,7 @@ class BatchesController < ApplicationController
         # the shipped status on all bins and physical objects
         cs = @batch.current_workflow_status
         ps = @batch.workflow_statuses.size > 1 ? @batch.workflow_statuses[@batch.workflow_statuses.size - 2] : nil
-        if (cs.name == "Shipped" or (! ps.nil? and ps.name == "Shipped"))
+        if (cs.name == "Shipped" or (!ps.nil? and ps.name == "Shipped"))
           csi = cs.workflow_status_template.sequence_index
           psi = ps.workflow_status_template.sequence_index
           # advanced TO shipped
