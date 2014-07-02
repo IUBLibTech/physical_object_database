@@ -9,4 +9,8 @@ class Box < ActiveRecord::Base
 		mdpi_barcode
 	end
 
+	def physical_objects_count
+		physical_objects.size
+	end
+
 end

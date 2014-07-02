@@ -23,7 +23,7 @@
 	<% end %>
 </div>
 <div class="left">
-	<h2>Physical Objects in this picklist</h2>
+	<h2>Physical Objects in this picklist: <%= @picklist.physical_objects.size %></h2>
 	<% if !@picklist.id.nil? && @picklist.physical_objects.any? %>
 	Download list as: <%# FIXME: deprecate or update CSV download %><%# link_to 'CSV File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :csv) %><%# | %><%= link_to 'Excel File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :xls) %><br/>
 	  <%= render 'physical_objects/physical_objects_table' %>

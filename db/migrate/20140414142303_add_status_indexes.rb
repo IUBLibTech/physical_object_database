@@ -7,6 +7,7 @@ class AddStatusIndexes < ActiveRecord::Migration
     add_index :workflow_statuses, [:physical_object_id, :workflow_status_template_id], name: :index_ws_on_po_and_wst
 
     add_index :condition_status_templates, [:object_type, :name], name: :index_cst_on_object_and_name
+    add_index :workflow_status_templates, [:object_type, :name], name: :index_wst_on_object_and_name
 
   end
 end

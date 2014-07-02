@@ -8,6 +8,14 @@
         <td><%= @box.mdpi_barcode %></td>
       </tr>
       <tr>
+        <th>Format</th>
+	<td><%= @box.physical_objects.size.zero? ? "" : @box.physical_objects.first.format %></td>
+      </tr>
+      <tr>
+        <th>Objects Count</th>
+	<td><%= @box.physical_objects_count %></td>
+      </tr>
+      <tr>
         <th>Assigned to Bin</th>
         <td>
           <% if @edit_mode %>
@@ -39,6 +47,6 @@
 </div>
 
 <div id="physical_objects" class="left">
-  <h2>Physical Objects packed in this Box</h2>
+  <h2>Physical Objects packed in this Box: <%= @box.physical_objects_count %></h2>
   <%= render 'physical_objects/physical_objects_table' %>
 </div>

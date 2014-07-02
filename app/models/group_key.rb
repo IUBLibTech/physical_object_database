@@ -9,4 +9,8 @@ class GroupKey < ActiveRecord::Base
     return first_object.group_identifier
   end
 
+  def spreadsheet_descriptor
+    group_identifier
+  end
+
 end

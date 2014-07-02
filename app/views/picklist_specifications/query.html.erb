@@ -8,7 +8,7 @@
 <% end %>
 <%= error_messages_for(@ps) %>
 <%= form_for(@ps, :url => {:action => @action, :id => @ps.id}) do |f| %>
-  <h2>Physical Objects Matching Spec <%= @ps.name %></h2> 
+  <h2>Physical Objects Matching Spec <%= @ps.name %>: <%= @physical_objects.nil? ? 0 : @physical_objects.size %></h2> 
   <% if @physical_objects.nil? or @physical_objects.size == 0 %>
     <div>No matching Physical Objects</div>
   <% else %>

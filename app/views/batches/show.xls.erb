@@ -15,6 +15,11 @@
         </Row>
       <% end %>
       <Row>
+        <Cell><Data ss:Type="String"><%= "Objects Count" %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= @batch.physical_objects_count %></Data></Cell>
+
+      </Row>
+      <Row>
         <Cell><Data ss:Type="String"><%= "Batch Workflow Status" %></Data></Cell>
         <Cell><Data ss:Type="String"><%= @batch.current_workflow_status.nil? ? "" : @batch.current_workflow_status.workflow_status_template.name %></Data></Cell>
       </Row>
