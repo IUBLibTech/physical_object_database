@@ -62,7 +62,7 @@ module PhysicalObjectsHelper
 	  group_key_id: group_key_id,
           group_position: group_position,
           home_location: r[PhysicalObject.human_attribute_name("home_location")],
-          iucat_barcode: r[PhysicalObject.human_attribute_name("iucat_barcode")] ? r[PhysicalObject.human_attribute_name("iucat_barcode")].to_i : 0,
+          iucat_barcode: r[PhysicalObject.human_attribute_name("iucat_barcode")] ? r[PhysicalObject.human_attribute_name("iucat_barcode")] : '0',
           mdpi_barcode: r[PhysicalObject.human_attribute_name("mdpi_barcode")] ? r[PhysicalObject.human_attribute_name("mdpi_barcode")] : 0,
           oclc_number: r[PhysicalObject.human_attribute_name("oclc_number")],
           other_copies: !r[PhysicalObject.human_attribute_name("other_copies")].nil?,
