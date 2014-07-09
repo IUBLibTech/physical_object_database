@@ -1,11 +1,16 @@
 # for use in objects that track workflow status history
 # current list: physical objects, bins, batches
 # Requirements:
+# Object including should call after_create :assign_default_workflow_status
 # Object including should have has_many :workflow_statuses in model
 # Object controller should permit :current_workflow_status as a param
 # WorkflowStatusTemplate model should have belongs_to :object reference
 # workflow_status_templates table should have object_id field
 module WorkflowStatusModule
+
+  def assign_default_workflow_status
+    self.current_workflow_status = default_workflow_status
+  end
 
   #return highest-ranking workflow status
   def current_workflow_status
@@ -19,6 +24,10 @@ module WorkflowStatusModule
     return if workflow_status_template.nil?
     return if !self.current_workflow_status.nil? and workflow_status_template.id == self.current_workflow_status.workflow_status_template.id
     self.workflow_statuses.new(workflow_status_template_id: workflow_status_template.id)
+  end
+
+  def default_workflow_status
+    self.is_a?(Bin) ? "Labelled" : "Created"
   end
 
   def workflow_status_options

@@ -2,13 +2,15 @@
   <tr class="header">
     <th>MDPI Barcode</th>
     <th>Format</th>
+    <th>Objects Count</th>
     <th>Actions</th>
   </tr>
   <% count = 1 %>
   <% @boxes.each do |box| %>
     <tr class=<%= count.odd? ? 'odd' : 'even'%>>
       <td><%= box.mdpi_barcode %></td>
-      <td><%= box.physical_objects.size.zero? ? "" : box.physical_objects.first.format %>
+      <td><%= box.physical_objects.size.zero? ? "" : box.physical_objects.first.format %></td>
+      <td><%= box.physical_objects_count %></td>
       <td>
         <%= link_to("Show", box_path(box)) %>
 	<% if @bin.nil? %>

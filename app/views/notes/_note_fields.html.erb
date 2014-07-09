@@ -1,0 +1,29 @@
+<table>
+  <tr><th colspan="2">General Note</th></tr>
+  <% if f.object.errors.any? %>
+  <tr><th>ERRORS</th><td><%= render 'shared/error_messages', object: f.object %></td></tr>
+  <% end %>
+  <% if @edit_mode %>
+    <tr>
+      <th></th>
+      <td><%= f.link_to_remove("Delete note", data: {confirm: 'Are you sure you want to mark this note for deletion?  The note will be deleted when you submit the form.'}) %></td>
+    </tr>
+  <% end %>
+  <tr>
+    <th>Notes</th>
+    <td><%= f.text_area :body, readonly: !@edit_mode %></td>
+  </tr>
+  <tr>
+    <th>Creator</th>
+    <td><%= f.text_field(:user, readonly: true) %></td>
+  </tr>
+  <tr>
+    <th>Created At</th>
+    <td><%= f.text_field(:created_at, readonly: true) %></td>
+  </tr>
+  <tr>
+    <th>Updated At</th>
+    <td><%= f.text_field(:updated_at, readonly: true) %></td>
+  </tr>
+</table>
+

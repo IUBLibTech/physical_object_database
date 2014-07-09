@@ -1,11 +1,12 @@
 class PhysicalObject < ActiveRecord::Base
-  
+
+  after_create :assign_default_workflow_status
   include WorkflowStatusModule
   include ConditionStatusModule
   include ActiveModel::Validations
 
   after_initialize :default_values
- 
+
   belongs_to :box
   belongs_to :bin
   belongs_to :group_key, counter_cache: true
@@ -17,8 +18,10 @@ class PhysicalObject < ActiveRecord::Base
   has_many :digital_files, :dependent => :destroy
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
+  has_many :notes, :dependent => :destroy
 
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
+  accepts_nested_attributes_for :notes, allow_destroy: true
 
   # needs to be declared before the validation that uses it
   def self.formats
@@ -33,9 +36,6 @@ class PhysicalObject < ActiveRecord::Base
   validates :mdpi_barcode, mdpi_barcode: true
   validates_presence_of :unit
   validates_with PhysicalObjectValidator
-
-  after_initialize :init
-  after_create :create
 
   accepts_nested_attributes_for :technical_metadatum
   scope :search_by_catalog, lambda {|query| where(["call_number = ?", query, query])}
@@ -59,17 +59,19 @@ class PhysicalObject < ActiveRecord::Base
     HUMANIZED_COLUMNS[attribute[0].to_sym] || super
   end
 
-  def init
-    self.mdpi_barcode ||= 0
-  end
-
-  def create
-    default_status = WorkflowStatusQueryModule.default_status(self)
-    self.workflow_statuses << default_status
+  #manually add virtual attributes to @attributes
+  def attributes
+    @attributes['group_total'] = group_total
+    @attributes
   end
 
   def group_identifier
     "GR" + id.to_s.rjust(8, "0") 
+  end
+
+  def group_total
+    return 1 if self.group_key.nil?
+    return self.group_key.physical_objects_count
   end
 
   def carrier_stream_index
@@ -182,6 +184,7 @@ class PhysicalObject < ActiveRecord::Base
   private 
   def default_values
     self.group_position ||= 1
+    self.mdpi_barcode ||= 0
   end
   # def open_reel_tm_where(stm)
   #   q = ""

@@ -37,23 +37,6 @@ module WorkflowStatusQueryModule
 
 	end 
 
-	def WorkflowStatusQueryModule.default_status(object)
-		wst_id = object.is_a?(Bin) ? template_id(Bin, "Labelled") : template_id(object.class, "Created")
-		WorkflowStatus.new(workflow_status_template_id: wst_id)
-	end
-
-	def WorkflowStatusQueryModule.new_status(object, status_name)
-		wst_id = template_id(object.class, status_name)
-		ws = WorkflowStatus.new(workflow_status_template_id: wst_id)
-		if object.is_a?(PhysicalObject)
-			ws.physical_object_id = object.id
-		elsif object.is_a?(Bin)
-			ws.bin_id = object.id
-		elsif object.is_a?(Batch)
-			ws.batch_id = object.id
-		end
-		ws		
-	end
 	# returns the name of the workflow status that appears sequenctially before the specified status name
 	def WorkflowStatusQueryModule.status_name_before(object_class, status)
 		statuses = WorkflowStatusTemplate.where(object_type: object_class.name.underscore.humanize.titleize).order(sequence_index: :desc)
@@ -67,7 +50,7 @@ module WorkflowStatusQueryModule
 
 	private
 	def WorkflowStatusQueryModule.template_id(object_class, status)
-		WorkflowStatusTemplate.where(name: status, object_type: object_class.name.underscore.humanize.titleize)[0].id
+		WorkflowStatusTemplate.find_by(name: status, object_type: object_class.name.underscore.humanize.titleize).id
 	end
 
 	def WorkflowStatusQueryModule.current_status_query(object_class, status)

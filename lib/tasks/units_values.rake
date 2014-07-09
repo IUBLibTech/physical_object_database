@@ -10,7 +10,7 @@ namespace :db do
 	      units_csv.each do |unit|
 	        Unit.create!(abbreviation: unit["Abbreviation"], name: unit["Name"])
 	      end
-	      puts "Database was seeded with unit data"
+	      puts "Database has been seeded with unit data"
 	    rescue
 	    	puts "Error #{$!}"
 	     	puts "It appears that unit data has already been seeded. Skipping to workflow statuses"
