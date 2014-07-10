@@ -153,18 +153,25 @@ class PicklistsController < ApplicationController
 
 
 	def remove_from_container
-		physical_object = PhysicalObject.find(params[:po_id])
-		box_id = params[:box_id] ? params[:box_id] : ""
-		bin_id = params[:bin_id] ? params[:bin_id] : ""
-		# remove the physical object from ALL containers it has been associated with
-		if physical_object.box
-			physical_object.box = nil
+		Picklist.transaction do
+			physical_object = PhysicalObject.find(params[:po_id])
+			box_id = params[:box_id] ? params[:box_id] : ""
+			bin_id = params[:bin_id] ? params[:bin_id] : ""
+			# remove the physical object from ALL containers it has been associated with
+			if physical_object.box
+				physical_object.box = nil
+				stat = WorkflowStatusQueryModule.new_status(physical_object, "Barcoded")
+				physical_object.save
+				stat.save
+			end
+			if physical_object.bin
+				physical_object.bin = nil
+				stat = WorkflowStatusQueryModule.new_status(physical_object, "Barcoded")
+				physical_object.save
+				stat.save
+			end			
+			redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
 		end
-		if physical_object.bin
-			physical_object.bin = nil
-		end		
-		physical_object.save
-		redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
 	end
 
 	def container_full

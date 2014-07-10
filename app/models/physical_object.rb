@@ -1,11 +1,11 @@
 class PhysicalObject < ActiveRecord::Base
 
-  after_create :assign_default_workflow_status
   include WorkflowStatusModule
   include ConditionStatusModule
   include ActiveModel::Validations
 
   after_initialize :default_values
+  after_initialize :assign_default_workflow_status
 
   belongs_to :box
   belongs_to :bin

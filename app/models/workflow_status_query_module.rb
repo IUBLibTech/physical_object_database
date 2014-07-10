@@ -13,6 +13,19 @@ module WorkflowStatusQueryModule
 		PhysicalObject.find_by_sql(new_sql)
 	end
 
+  def WorkflowStatusQueryModule.new_status(object, status_name)
+    wst_id = template_id(object.class, status_name)
+    ws = WorkflowStatus.new(workflow_status_template_id: wst_id)
+    if object.is_a?(PhysicalObject)
+      ws.physical_object_id = object.id
+    elsif object.is_a?(Bin)
+      ws.bin_id = object.id
+    elsif object.is_a?(Batch)
+      ws.batch_id = object.id
+    end
+    ws    
+  end 
+
 	# this finds all objects that have made it to or past a certain workflow status based on their CURRENT workflow
 	def WorkflowStatusQueryModule.where_current_status_at_least(object_class, status)
 		wst_id = template_id(object_class, status)

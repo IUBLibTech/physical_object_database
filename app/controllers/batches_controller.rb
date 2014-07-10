@@ -5,6 +5,7 @@ class BatchesController < ApplicationController
   end
 
   def new
+
     @batch = Batch.new
   end
 
@@ -92,7 +93,10 @@ class BatchesController < ApplicationController
     @batch = Batch.find(params[:id])
     Batch.transaction do
       params[:bin_ids].each do |b|
-        Bin.find(b).update_attributes(batch_id: @batch.id)
+        bin = Bin.find(b)
+        stat = WorkflowStatusQueryModule.new_status(bin, "Batched")
+        stat.save
+        bin.update_attributes(batch_id: @batch.id)
       end
     end
     redirect_to(action: 'show', id: @batch.id)

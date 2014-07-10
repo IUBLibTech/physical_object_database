@@ -6,7 +6,7 @@ class Bin < ActiveRecord::Base
 	has_many :boxed_physical_objects, through: :boxes, source: :physical_objects
 	has_many :boxes
 	has_many :workflow_statuses, :dependent => :destroy
-	after_create :assign_default_workflow_status
+	after_initialize :assign_default_workflow_status
 	include WorkflowStatusModule
 	has_many :condition_statuses, :dependent => :destroy
 	accepts_nested_attributes_for :condition_statuses, allow_destroy: true
@@ -18,6 +18,8 @@ class Bin < ActiveRecord::Base
 	scope :available_bins, -> {
 		where(['batch_id = 0 OR batch_id is null'])
 	}
+
+	
 
 	def physical_objects_count
 	  physical_objects.size + boxed_physical_objects.size
