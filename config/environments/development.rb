@@ -31,4 +31,6 @@ Pod::Application.configure do
   config.assets.digest = true
 
   #config.action_controller.relative_url_root = '/pod'
+
+  config.use.cas = false
 end
