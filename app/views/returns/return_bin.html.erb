@@ -10,14 +10,14 @@
 		</table>
 	<% end %>
 	<div>
-		<%= form_for(@bin, url: {controller: 'returns', action: 'physical_object_returned', id: @bin}) do |f| %>
+		<%= form_for(@bin, remote: true, html: {id: "barcode_check"}) do |f| %>
 			<table class="center_inline">
 				<tr>
 					<td colspan="2"><div style="font-weight: bold; font-size: 120%">Scan a barcode to return the object</div></td>
 				</tr>
 				<tr>
 					<td>
-						<%= text_field_tag(:mdpi_barcode, nil, {class: "mdpi"}) %>
+						<%= text_field_tag(:mdpi_barcode_check, nil, {class: "mdpi"}) %>
 					</td>
 					<td>
 						<%= f.submit("Unpack Physical Object") %>
@@ -36,4 +36,20 @@
 			<%= render "returned_physical_objects_table" %>
 		</div>
 	</div>
+</div>
+<div id="dialog" title="Ephemera" style="display: none">
+	<h2><i id="po_b"></i> has Ephemera</h2>
+	<%= form_for(@bin, url: {controller: 'returns', action: 'physical_object_returned', id: @bin}, html: {id: 'barcode_form'}) do |f| %>
+		<%= hidden_field_tag "mdpi_barcode", false %>
+		<table class="center_inline">
+			<tr>
+				<td>
+					Ephemera Returned?
+				</td>
+				<td>
+					<%= check_box "ephemera_returned", :ephemera_returned, {},  checked_value = "1", unchecked_value = "0"%>
+				</td>
+			</tr>
+		</table>
+	<% end %>
 </div>

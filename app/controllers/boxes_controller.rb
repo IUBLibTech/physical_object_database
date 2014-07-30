@@ -11,7 +11,7 @@ class BoxesController < ApplicationController
   end
 
   def show
-    @picklists = Picklist.find(:all, order: 'name').collect{|p| [p.name, p.id]}
+    @picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
   end
 
   def new

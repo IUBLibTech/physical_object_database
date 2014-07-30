@@ -10,6 +10,8 @@ Pod::Application.routes.draw do
   resources :bins do
     post :add_barcode_item, on: :member
     post :unbatch, on: :member
+    get :show_boxes, on: :member
+    patch :assign_boxes, on: :member
   end
 
   resources :boxes, except: [:edit] do
@@ -28,6 +30,7 @@ Pod::Application.routes.draw do
     get :tm_form, on: :collection
     get :split_show, on: :member
     get :upload_show, on: :collection
+    get :has_ephemera, on: :collection
 
     patch :split_update, on: :member
     post :upload_update, on: :collection

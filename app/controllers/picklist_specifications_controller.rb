@@ -68,7 +68,7 @@ class PicklistSpecificationsController < ApplicationController
 
 	def query
 		@ps = PicklistSpecification.find(params[:id])
-		@picklists = Picklist.find(:all, order: 'name').collect{|p| [p.name, p.id]}
+		@picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
 		po = PhysicalObject.new(format: @ps.format)
 		po.technical_metadatum = @ps.technical_metadatum
 		@physical_objects = po.physical_object_query(true)
@@ -100,7 +100,7 @@ class PicklistSpecificationsController < ApplicationController
 	end
 
 	def picklist_list
-		@picklists = Picklist.find(:all, order: 'name').collect{|p| [p.name, p.id]}
+		@picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
 		render(partial: "picklists/picklist_list")
 	end
 

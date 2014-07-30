@@ -20,6 +20,7 @@ class ReturnsController < ApplicationController
 	end
 
 	def physical_object_returned
+		puts params.to_yaml
 		@bin = Bin.find(params[:id])
 		po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode])[0]
 		if po.nil?
@@ -27,8 +28,10 @@ class ReturnsController < ApplicationController
 		elsif !po.bin.nil? and po.bin != @bin
 			flash[:notice] = "<b class='warning'>Physical Object with barcode <a href='#{physical_object_path(po.id)}' target='_blank'>#{po.mdpi_barcode}</a> was not originally shipped with this bin!</b>".html_safe
 		else
-			po.update_attributes(current_workflow_status: "Returned")
-			flash[:notice] = "Physical Object with barcode #{po.mdpi_barcode} was successfully returned!"
+			po.update_attributes(current_workflow_status: "Returned", ephemera_returned: params[:ephemera_returned][:ephemera_returned])
+			msg = "Physical Object with barcode #{po.mdpi_barcode} was successfully returned. ".html_safe +
+			(po.has_ephemera ? (po.ephemera_returned ? "Its ephemera was also returned." : "<b class='warning'>Its ephemera was NOT returned.</b>".html_safe) : "")
+			flash[:notice] = msg
 		end
 		redirect_to(action: 'return_bin', id: @bin.id)
 	end

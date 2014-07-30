@@ -17,7 +17,7 @@
   <h2>Bin</h2>
   <%= render 'bin' %>
 	<div>
-	    <h2>Pack This Bin</h2>
+	    <h2>Pack From Picklist</h2>
 	    <%= form_for(@bin, url: {controller: 'picklists', action: 'process_list', bin_id: @bin.id}) do |f| %>
 	      <table>
 	        <tr>
@@ -29,6 +29,13 @@
 	      </table>
 	      <%= f.submit("Pack Bin") %>
 	    <% end %>
+	    <h2>Or</h2>
+				<table>
+					<tr>
+						<th>Assign Boxes to this Bin</th>
+						<td><%= button_to "Assign Boxes", show_boxes_bin_path, :method => "get" %></td>
+					</tr>
+				</table>
 	  </div>
 	</div>
 </div>

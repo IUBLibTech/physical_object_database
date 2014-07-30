@@ -15,5 +15,6 @@
 //= require jquery-ui-1.10.4.custom.js
 //= require picklist_specification
 //= require picklist
+//= require returns
 
 

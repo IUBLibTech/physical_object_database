@@ -1,5 +1,5 @@
 class BinsController < ApplicationController
-  before_action :set_bin, only: [:show, :edit, :update, :destroy, :new_box, :unbatch]
+  before_action :set_bin, only: [:show, :edit, :update, :destroy, :new_box, :unbatch, :show_boxes, :assign_boxes]
 
 	def index
 		@bins = Bin.all
@@ -8,12 +8,12 @@ class BinsController < ApplicationController
 
 	def new
 		@bin = Bin.new(mdpi_barcode: 0)
-		@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
+		@batches = Batch.all.order('identifier').collect{|b| [b.identifier, b.id]}
 	end
 
 	def create
 		@bin = Bin.new(bin_params)
-		@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
+		@batches = Batch.all.order('identifier').collect{|b| [b.identifier, b.id]}
 		assign_batch(params, @bin)
 		if @bin.save
 			flash[:notice] = "<b>#{@bin.identifier}</b> was successfully created.".html_safe
@@ -24,13 +24,13 @@ class BinsController < ApplicationController
 	end
 
 	def edit
-		@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
+		@batches = Batch..all.order('identifier').collect{|b| [b.identifier, b.id]}
 		@batch = @bin.batch
 	end
 
 	def update
 		Bin.transaction do
-			@batches = Batch.find(:all, order: 'identifier').collect{|b| [b.identifier, b.id]}
+			@batches = Batch.all.order('identifier').collect{|b| [b.identifier, b.id]}
 			assign_batch(params, @bin)
 			if @bin.update_attributes(bin_params)
 
@@ -53,7 +53,7 @@ class BinsController < ApplicationController
 		else
 			@physical_objects = @bin.physical_objects
 		end
-		@picklists = Picklist.find(:all, order: 'name').collect{|p| [p.name, p.id]}
+		@picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
 		@edit_mode = false
 	end
 
@@ -133,6 +133,21 @@ class BinsController < ApplicationController
 		# end
 redirect_to :back
 	end
+
+	def show_boxes
+		@boxes = Box.where(bin_id: nil)
+	end
+
+	def assign_boxes
+		unless params[:box_ids].nil?
+			params[:box_ids].each do |b_id|
+				Box.find(b_id).update_attributes(bin_id: @bin.id)
+			end
+		end
+		redirect_to(bin_path(@bin.id))
+	end
+
+
 
 	private
 	def set_bin
