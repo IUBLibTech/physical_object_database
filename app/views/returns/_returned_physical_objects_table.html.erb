@@ -5,12 +5,14 @@
 					<td class='ephemera'>
 						<%= p.has_ephemera ? "<img alt='had ephemera' src='/folder.png' />".html_safe : '' %>
 					</td>
-					<td class="column">
+					<td>
 						<img alt="mdpi barcode" src="/mdpi_barcode.png" />
 						<%= f.text_field(:mdpi_barcode, readonly: true, maxlength: "14", size: "14", class: "mdpi") %>
 					</td>
-					<td class="column">
-						Call Number: <%= p.call_number %>
+					<td>
+						<%= link_to(physical_object_path(p.id), target: "_blank") do %>
+							Call Number: <%= p.call_number %>
+						<% end %>
 					</td>
 				</tr>
 		</table>

@@ -1,0 +1,27 @@
+<h2>Assign Boxes</h2>
+<p>Select Boxes to assign to <b><i><%= @bin.identifier%></i></b></p>
+<%= form_for(@bin, url: {action: 'assign_boxes', id: @bin.id}) do |f| %>
+	<table>
+		<tr>
+			<th>
+				<img src="/mdpi_barcode.png" alt="mdpi barcode" >
+			</th>
+			<th>Item Count</th>
+			<th>Add To Bin</th>
+		</tr>
+		<% @boxes.each do |b| %>
+			<tr>
+				<td>
+					<%= b.mdpi_barcode %>
+				</td>
+				<td>
+					<%= b.physical_objects.size %>
+				</td>
+				<td>
+					<%= check_box_tag 'box_ids[]', b.id, false %>
+				</td>
+			</tr>
+		<% end %>
+	</table>
+	<%= f.submit("Add Selected Boxes To #{@bin.identifier}") %>
+<% end %>

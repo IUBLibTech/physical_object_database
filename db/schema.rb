@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140630210217) do
+ActiveRecord::Schema.define(version: 20140722173416) do
 
   create_table "batches", force: true do |t|
     t.string   "identifier"
@@ -194,6 +194,7 @@ ActiveRecord::Schema.define(version: 20140630210217) do
     t.integer  "unit_id"
     t.integer  "group_key_id"
     t.integer  "group_position"
+    t.boolean  "ephemera_returned"
   end
 
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
