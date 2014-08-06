@@ -211,3 +211,18 @@ tr.packed {
 .pl_button {
   width: 65px;
 }
+
+.center_inline {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ephemera {
+  width: 24px;
+  text-align: center;
+}
+
+.ephemera img {
+  margin-left: auto;
+  margin-right: auto;
+}

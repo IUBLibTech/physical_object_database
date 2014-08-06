@@ -66,6 +66,9 @@ class BoxesController < ApplicationController
 
   def unbin
     @box.bin = nil
+    # physical_objects in the box would have been associated with the bin as well
+    PhysicalObject.where(box_id: @box.id).update_all(bin_id: nil)
+
     if @box.save
       flash[:notice] = "<em>Successfully removed Box from Bin.</em>".html_safe
     else

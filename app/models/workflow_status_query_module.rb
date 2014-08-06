@@ -7,14 +7,27 @@ module WorkflowStatusQueryModule
 
 	def WorkflowStatusQueryModule.in_bin_where_current_status_is(bin, status)
 		sql = current_status_query(PhysicalObject, status)
-		new_sql = "SELECT physical_object.* FROM physical_objects " << 
-		"INNER JOIN (#{sql}) status ON physical_object.id = status.physical_object_id " <<
-		"WHERE physical_object.bin_id = #{bin.id}"
+		new_sql = "SELECT physical_objects.* FROM physical_objects " << 
+		"INNER JOIN (#{sql}) stat ON physical_objects.id = stat.id " <<
+		"WHERE physical_objects.bin_id = #{bin.id}"
 		PhysicalObject.find_by_sql(new_sql)
 	end
 
-	# this finds all objects that have made it past a certain workflow status based on their CURRENT workflow
-	def WorkflowStatusQueryModule.where_current_status_is_past(object_class, status)
+  def WorkflowStatusQueryModule.new_status(object, status_name)
+    wst_id = template_id(object.class, status_name)
+    ws = WorkflowStatus.new(workflow_status_template_id: wst_id)
+    if object.is_a?(PhysicalObject)
+      ws.physical_object_id = object.id
+    elsif object.is_a?(Bin)
+      ws.bin_id = object.id
+    elsif object.is_a?(Batch)
+      ws.batch_id = object.id
+    end
+    ws    
+  end 
+
+	# this finds all objects that have made it to or past a certain workflow status based on their CURRENT workflow
+	def WorkflowStatusQueryModule.where_current_status_at_least(object_class, status)
 		wst_id = template_id(object_class, status)
 		t = table(object_class)
 		inner_sql = "SELECT outside.#{t.singularize}_id " << 

@@ -1,0 +1,18 @@
+<% @returned.each do |p| %>
+	<%= form_for(p, url: {controller: 'returns', action: "physical_object_missing", id: p.id}) do |f| %>
+		<table class="picklistTable">
+				<tr class="odd">
+					<td class='ephemera'>
+						<%= p.has_ephemera ? "<img alt='had ephemera' src='/folder.png' />".html_safe : '' %>
+					</td>
+					<td class="column">
+						<img alt="mdpi barcode" src="/mdpi_barcode.png" />
+						<%= f.text_field(:mdpi_barcode, readonly: true, maxlength: "14", size: "14", class: "mdpi") %>
+					</td>
+					<td class="column">
+						Call Number: <%= p.call_number %>
+					</td>
+				</tr>
+		</table>
+	<% end %>
+<% end %>

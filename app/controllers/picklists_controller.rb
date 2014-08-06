@@ -111,7 +111,7 @@ class PicklistsController < ApplicationController
 						physical_object.mdpi_barcode = params[:physical_object][:mdpi_barcode]
 						physical_object.has_ephemera = params[:physical_object][:has_ephemera]
 					end
-					# branch logic: if bin AND box are both nil, the form was navigated to from the picklist itself and the user will
+					# branch logic: if bin AND box are both nil, the form is being packed from picklist itself and the user will
 					# be providing the barcode of whatever container(s) the physical object is being packed into
 					if @box.nil? and @bin.nil?
 						# at least one of these must be specified
@@ -153,25 +153,36 @@ class PicklistsController < ApplicationController
 
 
 	def remove_from_container
-		puts params.to_yaml
-		physical_object = PhysicalObject.find(params[:po_id])
-		box_id = params[:box_id] ? params[:box_id] : ""
-		bin_id = params[:bin_id] ? params[:bin_id] : ""
-		# remove the physical object from ALL containers it has been associated with
-		if physical_object.box
-			physical_object.box = nil
+		Picklist.transaction do
+			physical_object = PhysicalObject.find(params[:po_id])
+			box_id = params[:box_id] ? params[:box_id] : ""
+			bin_id = params[:bin_id] ? params[:bin_id] : ""
+			# remove the physical object from ALL containers it has been associated with
+			if physical_object.box
+				physical_object.box = nil
+				stat = WorkflowStatusQueryModule.new_status(physical_object, "Barcoded")
+				physical_object.save
+				stat.save
+			end
+			if physical_object.bin
+				physical_object.bin = nil
+				stat = WorkflowStatusQueryModule.new_status(physical_object, "Barcoded")
+				physical_object.save
+				stat.save
+			end			
+			redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
 		end
-		if physical_object.bin
-			physical_object.bin = nil
-		end		
-		physical_object.save
-		redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
 	end
 
 	def container_full
 		bin = params[:bin_id].nil? ? nil : Bin.find(params[:bin_id])
 		box = params[:box_id].nil? ? nil : Box.find(params[:box_id])
 		
+		# it's also possible for the form to submit a bin barcode when marking a box as packed
+		if !bin and params[:bin_barcode] and params[:bin_barcode].length > 0
+			bin = Bin.where(mdpi_barcode: params[:bin_barcode])[0]
+		end
+
 		# use cases - box without a bin/box with bin/no box, just bin
 		Picklist.transaction do
 			if bin and !box

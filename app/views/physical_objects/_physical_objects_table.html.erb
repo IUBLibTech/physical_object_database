@@ -1,6 +1,6 @@
 <table class="po list">
   <tr class="header">
-    <th>ID</th>
+    <th>Current Status</th>
     <th>MDPI barcode</th>
     <th>IU barcode</th>
     <th>Call number</th>
@@ -15,7 +15,7 @@
         <%else%>
         <tr class='even'>
       <%end%>
-      <td><%= po.id %></td>
+      <td><%= po.current_workflow_status.name %></td>
       <td><%= po.mdpi_barcode %></td>
       <td><%= po.iucat_barcode %></td>
       <td><%= po.call_number %></td>
@@ -26,7 +26,7 @@
           <%= link_to("Edit", edit_physical_object_path(po), :class => 'action edit') %>
           <%= link_to("Split", split_show_physical_object_path(po), :class => 'action split')%>
           <%= link_to("Delete", physical_object_path(po.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Physical Object?'})%>
-        <% elsif !@bin.nil? %>
+        <% elsif (!@bin.nil? and po.box.nil?) %>
           <%= link_to("Remove", unbin_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Bin?'}) %>
         <% elsif !@box.nil? %>
           <%= link_to("Remove", unbox_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Box?'}) %>

@@ -1,9 +1,39 @@
-<h2>Bin <i><%= @bin.identifier %></i></h2>
+<h2>Unpacking <i><%= @bin.identifier %></i></h2>
 
-<div class="left">
-	<table>
-		<thead>
-			<tr></tr>
-		</thead>
-	</table>
+<div style="padding-bottom: 20px">
+	<%= form_for(@bin, url: {controller: 'returns', action: 'bin_unpacked', id: @bin}) do |f| %>
+		<table>
+			<tr>
+				<td>Mark Bin as Unpacked</td>
+				<td><%= f.submit("Unpack Bin") %></td>
+			</tr>
+		</table>
+	<% end %>
+	<div>
+		<%= form_for(@bin, url: {controller: 'returns', action: 'physical_object_returned', id: @bin}) do |f| %>
+			<table class="center_inline">
+				<tr>
+					<td colspan="2"><div style="font-weight: bold; font-size: 120%">Scan a barcode to return the object</div></td>
+				</tr>
+				<tr>
+					<td>
+						<%= text_field_tag(:mdpi_barcode, nil, {class: "mdpi"}) %>
+					</td>
+					<td>
+						<%= f.submit("Unpack Physical Object") %>
+					</td>
+				</tr>
+			</table>
+		<% end %>
+	</div>
+	<div>
+		<div class="left" style="width: 48%">
+			<h2>Items Shipped [<%= @shipped.size %>]</h2>
+			<%= render "shipped_physical_objects_table" %> 
+		</div>
+		<div class="left" style="width: 48%">
+			<h2>Items Returned [<%= @returned.size %>]</h2>
+			<%= render "returned_physical_objects_table" %>
+		</div>
+	</div>
 </div>

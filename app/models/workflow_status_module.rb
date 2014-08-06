@@ -9,7 +9,9 @@
 module WorkflowStatusModule
 
   def assign_default_workflow_status
-    self.current_workflow_status = default_workflow_status
+    if self.current_workflow_status.nil?
+      self.current_workflow_status = default_workflow_status
+    end
   end
 
   #return highest-ranking workflow status
@@ -37,4 +39,5 @@ module WorkflowStatusModule
   def class_title
     self.class.to_s.gsub(/([a-z])([A-Z])/, '\1 \2')
   end
+
 end

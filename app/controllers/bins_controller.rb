@@ -44,8 +44,15 @@ class BinsController < ApplicationController
 	end
 
 	def show
-		@physical_objects = @bin.physical_objects
 		@boxes = @bin.boxes
+		if @boxes.size > 0
+			@physical_objects = Array.new
+			@boxes.each do |b| 
+				@physical_objects.concat(b.physical_objects)
+			end
+		else
+			@physical_objects = @bin.physical_objects
+		end
 		@picklists = Picklist.find(:all, order: 'name').collect{|p| [p.name, p.id]}
 		@edit_mode = false
 	end
