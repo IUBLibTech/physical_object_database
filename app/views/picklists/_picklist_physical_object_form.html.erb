@@ -22,8 +22,8 @@
 				<%= f.text_field(:mdpi_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi") %>
 			</td>
 			<td class="column">
-				<img alt="iucat barcode" src="<%= packed ? '/gs_iucat_barcode.png' : '/iucat_barcode.png' %>" />
-				<%= f.text_field(:iucat_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14") %>
+				Call Number
+				<%= f.text_field(:call_number, readonly: true, maxlength: "14", size: "14") %>
 			</td>
 			<td class="column">
 				<img alt="box barcode" src="<%= (packed or !manual) ? '/gs_box_barcode.png' : '/box_barcode.png' %>" />
