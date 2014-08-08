@@ -236,6 +236,8 @@ ActiveRecord::Schema.define(version: 20140722173416) do
     t.datetime "updated_at"
   end
 
+  add_index "technical_metadata", ["as_technical_metadatum_id", "as_technical_metadatum_type"], name: "technical_metadata_as_technical_metadatum_index", using: :btree
+
   create_table "units", force: true do |t|
     t.string   "abbreviation"
     t.string   "name"
