@@ -1,4 +1,5 @@
-#Sign-in method for testing
+#authentication methods for testing in Capybara
+
 def sign_in(username)
   page.set_rack_session(username: username)
   SessionInfoModule.session = page.get_rack_session

@@ -5,7 +5,8 @@ class TechnicalMetadatum < ActiveRecord::Base
 	belongs_to :picklist_specification
 
 	def specialize
-		Kernel.const_get(self.as_technical_metadatum_type).find(self.as_technical_metadatum_id)
+	#	Kernel.const_get(self.as_technical_metadatum_type).find(self.as_technical_metadatum_id)
+		self.as_technical_metadatum
 	end
 
 end

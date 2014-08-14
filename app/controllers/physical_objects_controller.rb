@@ -58,7 +58,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def update
-    puts params.to_yaml
+    #puts params.to_yaml
     PhysicalObject.transaction do
       old_format = @physical_object.format
       if ! @physical_object.update_attributes(physical_object_params)
@@ -211,7 +211,7 @@ class PhysicalObjectsController < ApplicationController
       @physical_object = PhysicalObject.find(params[:id])
       @digital_files = @physical_object.digital_files
       @tm = @physical_object.technical_metadatum
-      @tm = @physical_object.technical_metadatum.specialize unless @tm.nil?
+      @tm = @physical_object.technical_metadatum.as_technical_metadatum unless @tm.nil?
       @bin = @physical_object.bin
       @box = @physical_object.box
       @group_key = @physical_object.group_key

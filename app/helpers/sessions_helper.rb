@@ -19,7 +19,7 @@ module SessionsHelper
   end
 
   def signed_in_user
-    puts "signed_in_user: current user: #{current_user}"
+    #puts "signed_in_user: current user: #{current_user}"
     unless signed_in?
       store_location
       redirect_to signin_url
