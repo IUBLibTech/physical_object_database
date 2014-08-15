@@ -110,12 +110,16 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
-  def self.to_csv(physical_objects)
+  def self.to_csv(physical_objects, picklist = nil)
     CSV.generate do |csv|
+      unless picklist.nil?
+        csv << ["Picklist:", picklist.name]
+      end
       if physical_objects.any?
         md_columns = physical_objects.first.technical_metadatum.as_technical_metadatum.class.column_names
 	csv << column_names + md_columns
         physical_objects.each do |physical_object|
+	  #FIXME spoof _id column values as in Excel doc
           csv << physical_object.attributes.values_at(*column_names) + physical_object.technical_metadatum.as_technical_metadatum.attributes.values_at(*md_columns)
         end
       end

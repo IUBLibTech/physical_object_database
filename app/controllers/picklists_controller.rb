@@ -36,7 +36,7 @@ class PicklistsController < ApplicationController
 
 		respond_to do |format|
 			format.html
-			format.csv { send_data PhysicalObject.to_csv(@physical_objects) }
+			format.csv { send_data PhysicalObject.to_csv(@physical_objects, @picklist) }
 			format.xls
 		end
 	end

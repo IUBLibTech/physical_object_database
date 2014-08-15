@@ -7,6 +7,10 @@
   <Worksheet ss:Name="Sheet1">
     <Table>
       <Row>
+        <Cell><Data ss:type="String">Picklist:</Data></Cell>
+        <Cell><Data ss:type="String"><%= @picklist.name %></Data></Cell>
+      </Row>
+      <Row>
       <% @column_names = PhysicalObject.column_names %>
       <%# manually add group_total virtual attribute %>
       <% @column_names << 'group_total' unless @column_names.include?('group_total') %>
