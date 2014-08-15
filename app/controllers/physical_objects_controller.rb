@@ -195,7 +195,7 @@ class PhysicalObjectsController < ApplicationController
     redirect_to :back
   end
 
-  # ajax method to determine if a physical object has emphemera - returns plain text yes/no
+  # ajax method to determine if a physical object has emphemera - returns plain text true/false
   def has_ephemera
     has_it = false
     if params[:mdpi_barcode] and (po = PhysicalObject.find_by(mdpi_barcode: params[:mdpi_barcode]))

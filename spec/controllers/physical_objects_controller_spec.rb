@@ -1,9 +1,10 @@
 require 'rails_helper'
-#FIXME: refactor capybara testing to automatically include sign_in?
 
 describe PhysicalObjectsController do
   before(:each) { sign_in("user@example.com") }
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
+  let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
+  let(:invalid_physical_object) { FactoryGirl.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
 
   describe "GET index" do
     before(:each) do
@@ -51,7 +52,7 @@ describe PhysicalObjectsController do
 
   describe "POST create" do
     context "with valid attributes" do
-      let(:creation) { post :create, physical_object: physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
       it "saves the new physical object in the database" do
         physical_object
         expect{ creation }.to change(PhysicalObject, :count).by(1)
@@ -64,7 +65,7 @@ describe PhysicalObjectsController do
 
     context "with invalid attributes" do
       #FIXME: test that invalid object is invalid?
-      let(:creation) { post :create, physical_object: FactoryGirl.attributes_for(:invalid_physical_object, :cdr), tm: FactoryGirl.attributes_for(:cdr_tm) }
+      let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
       it "does not save the new physical object in the database" do
         physical_object
 	expect{ creation }.not_to change(PhysicalObject, :count)
@@ -125,4 +126,216 @@ describe PhysicalObjectsController do
       expect(response).to redirect_to physical_objects_path
     end
   end
+
+  describe "GET download_spreadsheet_example" do
+    it "downloads example import spreadsheet" do
+      expect(controller).to receive(:send_file) { controller.render nothing: true }
+      get :download_spreadsheet_example
+    end
+  end
+
+  describe "GET split_show" do
+    before(:each) { get :split_show, id: physical_object.id }
+    it "assigns the physical_object" do
+      expect(assigns(:physical_object)).to eq physical_object
+    end
+    it "renders the split_show template" do
+      expect(response).to render_template(:split_show)
+    end
+  end
+  
+  describe "PATCH split_update" do
+    let(:count) { 3 }
+    let(:split_update) { patch :split_update, id: physical_object.id, count: count }
+    it "creates additional records" do
+      physical_object
+      expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+    end
+    it "flashes a success notice" do
+      split_update
+      expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+
+    end
+    it "redirects to the index" do
+      split_update
+      expect(response).to redirect_to(action: :index)
+    end
+  end
+
+  describe "GET upload_show" do
+    before(:each) { get :upload_show }
+    it "assigns a new physical_object" do
+      expect(assigns(:physical_object)).to be_a_new(PhysicalObject)
+    end
+    it "renders the upload_show template" do
+      expect(response).to render_template(:upload_show)
+    end
+  end
+
+  describe "POST upload_update" do
+    context "without specifying a file" do
+      before(:each) { post :upload_update }
+      it "flashes a notice" do
+        expect(flash[:notice]).to eq "Please specify a file to upload"
+      end
+      it "redirects to upload_show" do
+        expect(response).to redirect_to(action: :upload_show)
+      end
+    end
+    context "specifying a file and picklist" do
+      let(:upload_update) { post :upload_update, pl: { name: "Test picklist", description: "Test description"}, physical_object: { csv_file: fixture_file_upload('files/po_import_cdr.csv', 'text/csv') } }
+      it "should create a picklist" do
+        expect{ upload_update }.to change(Picklist, :count).by(1)
+      end
+      it "flashes a success notice" do
+        upload_update
+        expect(flash[:notice]).to eq "2 records were successfully imported.".html_safe
+      end
+      it "creates records" do
+	expect{ upload_update }.to change(PhysicalObject, :count).by(2)
+      end
+    end
+  end
+
+  describe "POST unbin" do
+    let(:post_unbin) { post :unbin, id: physical_object.id }
+    context "when in a box" do
+      let(:box) { FactoryGirl.create(:box) }
+      before(:each) do
+        physical_object.box = box
+	physical_object.save
+      end
+      it "raises an error" do
+        expect{ post_unbin }.to raise_error RuntimeError
+      end
+    end
+    context "when not in a bin" do
+      before(:each) do
+        physical_object.box = nil
+        physical_object.bin = nil
+        physical_object.save
+	post_unbin
+      end
+      it "displays an error message" do
+        expect(flash[:notice]).to eq "<strong>Physical Object was not associated to a Bin.</strong>".html_safe
+      end
+      it "redirects to the object" do
+	expect(response).to redirect_to physical_object
+      end
+    end
+    context "when in a bin" do
+      let(:bin) { FactoryGirl.create(:bin) }
+      before(:each) do
+        physical_object.box = nil
+        physical_object.bin = bin
+	physical_object.save
+	post_unbin
+      end
+      it "displays a success message" do
+        expect(flash[:notice]).to eq "<em>Physical Object was successfully removed from bin.</em>".html_safe
+      end
+      it "unbins the object" do
+        expect(physical_object.bin).not_to be_nil
+	physical_object.reload
+        expect(physical_object.bin).to be_nil
+      end
+      it "redirects to the bin" do
+	expect(response).to redirect_to bin
+      end
+    end
+  end
+
+  describe "POST unbox" do
+    let(:post_unbox) { post :unbox, id: physical_object.id }
+    context "when not in a box" do
+      before(:each) do
+        physical_object.box = nil
+	physical_object.save
+	post_unbox
+      end
+      it "displays an error message" do
+        expect(flash[:notice]).to eq "<strong>Physical Object was not associated to a Box.</strong>".html_safe
+      end
+      it "redirects to the object" do
+        expect(response).to redirect_to physical_object
+      end
+    end
+    context "when in a box" do
+      let(:box) { FactoryGirl.create(:box) }
+      before(:each) do
+        physical_object.box = box
+        physical_object.save
+        post_unbox
+      end
+      it "displays a success message" do
+        expect(flash[:notice]).to eq "<em>Physical Object was successfully removed from box.</em>".html_safe
+      end
+      it "unboxes the object" do
+        expect(physical_object.box).not_to be_nil
+        physical_object.reload
+        expect(physical_object.box).to be_nil
+      end
+      it "redirects to the box" do
+        expect(response).to redirect_to box
+      end
+    end
+  end
+
+  describe "POST unpick" do
+    let(:post_unpick) { post :unpick, id: physical_object.id }
+    before(:each) { request.env["HTTP_REFERER"] = "referring_page" }
+    context "when not in a picklist" do
+      before(:each) do 
+        physical_object.picklist = nil
+        physical_object.save
+        post_unpick
+      end
+      it "displays an error message" do
+        expect(flash[:notice]).to eq "<strong>Physical Object was not associated to a Picklist.</strong>".html_safe
+      end
+      it "redirects :back" do
+        expect(response).to redirect_to "referring_page"
+      end
+    end
+    context "when in a picklist" do
+      let(:picklist) { FactoryGirl.create(:picklist) }
+      before(:each) do
+        physical_object.picklist = picklist
+        physical_object.save
+        post_unpick
+      end
+      it "displays a success message" do
+        expect(flash[:notice]).to eq "<em>Physical Object was successfully removed from Picklist.</em>".html_safe
+      end
+      it "unpicks the object" do
+        expect(physical_object.picklist).not_to be_nil
+        physical_object.reload
+        expect(physical_object.picklist).to be_nil
+      end
+      it "redirects to the box" do
+        expect(response).to redirect_to "referring_page"
+      end
+    end
+  end
+
+  describe "POST has_ephemera" do
+    let(:post_has_ephemera) { post :has_ephemera, mdpi_barcode: physical_object.mdpi_barcode }
+    it "returns 'true' when ephemera present" do
+      physical_object.has_ephemera = true
+      physical_object.save
+      post_has_ephemera
+      expect(response.body).to eq "true"
+    end
+    it "returns 'false' when ephemera not present" do
+      physical_object.has_ephemera = false
+      physical_object.save
+      post_has_ephemera
+      expect(response.body).to eq "false"
+    end
+    it "returns 'unknown physical Object' when physical object not found" do
+      post :has_ephemera
+      expect(response.body).to eq "unknown physical Object"
+    end
+  end
+
 end

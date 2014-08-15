@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe PhysicalObject do
 
-  let(:po) { FactoryGirl.create :physical_object, :cdr }
+  let(:po) { FactoryGirl.build :physical_object, :cdr }
 
   it "requires a format" do
     expect(po.format).not_to be_blank

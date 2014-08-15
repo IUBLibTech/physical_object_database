@@ -1,5 +1,4 @@
 require "rails_helper"
-require "support/feature_helper"
 
 feature "Physical Object management" do
 
@@ -7,7 +6,7 @@ feature "Physical Object management" do
     before(:each) { sign_out }
 
     scenario "tries to access the form for a new physical object" do
-      #NOTE: the rack test server cannot visit external URLs, so a redirect to CAS rasises an error
+      #NOTE: the rack test server cannot visit external URLs, so a redirect to CAS raises an error
       sign_in(nil)
       expect{ visit new_physical_object_path }.to raise_error(ActionController::RoutingError, /No route matches/)
     end

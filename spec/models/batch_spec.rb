@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Batch do
 
   let(:batch) { FactoryGirl.create :batch }
-  let(:duplicate) { FactoryGirl.create :batch, identifier: "duplicate" }
+  let(:duplicate) { FactoryGirl.build :batch, identifier: "duplicate" }
 
   it "requires an identifier" do
     expect(batch).to be_valid
