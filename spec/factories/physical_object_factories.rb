@@ -7,6 +7,9 @@ FactoryGirl.define do
 
     trait :cdr do
       format "CD-R"
+      after(:create) do |physical_object, evaluator|
+        create(:technical_metadatum, :cdr, physical_object: physical_object)
+      end
     end
     trait :dat do
       format "DAT"
@@ -19,6 +22,12 @@ FactoryGirl.define do
 
     #at least one must be set of MDPI barcode, IUCAT barcode, title, call number
     title "FactoryGirl object"
+
   end
+
+  factory :invalid_physical_object, parent: :physical_object do
+    title nil
+  end
+  
 
 end
