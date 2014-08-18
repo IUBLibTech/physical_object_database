@@ -79,7 +79,7 @@ class BatchesController < ApplicationController
     @batch = Batch.find(params[:id])
     # Rails does not clear the id field so if a batch is somehow recreated with the same id as the
     # deleted one, all of the previous bins will be incorrectly associated
-    Bin.update_all("batch_id = NULL", "batch_id = #{@batch.id}")
+    Bin.where(batch_id: @batch.id).update_all(batch_id: nil)
     if @batch.destroy
       flash[:notice] = "<i>#{@batch.name}</i> successfully destroyed".html_safe
       redirect_to(:action => 'index')
