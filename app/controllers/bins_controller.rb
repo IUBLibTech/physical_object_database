@@ -24,7 +24,7 @@ class BinsController < ApplicationController
 	end
 
 	def edit
-		@batches = Batch..all.order('identifier').collect{|b| [b.identifier, b.id]}
+		@batches = Batch.all.order('identifier').collect{|b| [b.identifier, b.id]}
 		@batch = @bin.batch
 	end
 
