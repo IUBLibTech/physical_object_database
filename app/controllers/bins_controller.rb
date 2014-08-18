@@ -62,7 +62,7 @@ class BinsController < ApplicationController
 			if @bin.destroy
 				# we need to manually disassociate the physical objects/boxes form this bin since
 				# rails will leave this column value in those tables
-				PhysicalObject.update_all("bin_id = NULL", "bin_id = #{@bin.id}")
+				PhysicalObject.where(bin_id: @bin.id).update_all(bin_id: nil)
 				Box.update_all("bin_id = NULL", "bin_id = #{@bin.id}")
 				flash[:notice] = "<i>#{@bin.identifier}</i> was successfully destroyed.".html_safe
 				redirect_to bins_path
