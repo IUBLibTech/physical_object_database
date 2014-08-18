@@ -52,7 +52,7 @@ Pod::Application.routes.draw do
     post :update, on: :member
   end
 
-  resources :picklists do
+  resources :picklists, except: [:index] do
     patch :process_list, on: :member
     get :process_list, on: :member
     patch :assign_to_container, on: :member

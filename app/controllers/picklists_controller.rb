@@ -64,7 +64,8 @@ class PicklistsController < ApplicationController
 
 	def destroy
 		if @picklist.destroy
-			PhysicalObject.update_all("picklist_id = NULL", "picklist_id = #{@picklist.id}")
+			#manually dissociate physical objects
+			PhysicalObject.where(picklist_id: @picklist.id).update_all(picklist_id: nil)
 			flash[:notice] = "Successfully deleted #{@picklist.name}"
 			redirect_to(controller: 'picklist_specifications', action: 'index')
 		else
