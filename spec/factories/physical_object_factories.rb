@@ -7,8 +7,8 @@ FactoryGirl.define do
 
     trait :cdr do
       format "CD-R"
-      after(:create) do |physical_object, evaluator|
-        create(:technical_metadatum, :cdr, physical_object: physical_object)
+      after(:build) do |physical_object, evaluator|
+        build(:technical_metadatum, :cdr, physical_object: physical_object)
       end
     end
     trait :dat do

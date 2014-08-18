@@ -110,18 +110,65 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
-  def self.to_csv(physical_objects)
+  def self.to_csv(physical_objects, picklist = nil)
     CSV.generate do |csv|
+      unless picklist.nil?
+        csv << ["Picklist:", picklist.name]
+      end
       if physical_objects.any?
-        md_columns = physical_objects.first.technical_metadatum.as_technical_metadatum.class.column_names
-	csv << column_names + md_columns
+        csv << physical_objects.first.printable_column_headers.map { |x| x.titleize }
         physical_objects.each do |physical_object|
-          csv << physical_object.attributes.values_at(*column_names) + physical_object.technical_metadatum.as_technical_metadatum.attributes.values_at(*md_columns)
+          csv << physical_object.printable_row
+          csv << ["test row"]
         end
       end
     end
   end
 
+  #manually add virtual attribute
+  def printable_columns
+    self.class.printable_columns
+  end
+
+  def self.printable_columns
+    @column_names = column_names
+    @column_names << 'group_total' unless @column_names.include?('group_total')
+    @column_names
+  end
+  
+  def printable_attributes
+    @printable_attributes = attributes
+    @printable_attributes.each do |key, value|
+      #look up descriptive values for associated objects
+      if key =~ /_id$/
+        if key.nil? || value.blank? || value.to_i.zero?
+          @printable_attributes[key] = ""
+        else
+          @printable_attributes[key] = Kernel.const_get(key.titleize.gsub(' ', '')).find(value).spreadsheet_descriptor
+        end
+      end   
+      #reset group key column value if needed
+      @printable_attributes[key] = group_identifier if key == 'group_key_id' && value.blank?
+    end
+    @printable_attributes
+  end
+
+  def metadata_attributes
+    technical_metadatum.as_technical_metadatum.attributes
+  end
+
+  def metadata_columns
+    technical_metadatum.as_technical_metadatum.class.column_names
+  end
+
+  def printable_column_headers
+    printable_columns + metadata_columns
+  end
+
+  def printable_row
+    printable_attributes.values_at(*printable_columns) + metadata_attributes.values_at(*metadata_columns)
+  end
+  
   # omit_picklisted is a boolean specifying whether physical objects that have been added to
   # a picklist should be omitted from the search results
   def physical_object_query(omit_picklisted)

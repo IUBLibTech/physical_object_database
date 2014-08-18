@@ -15,7 +15,7 @@ describe Bin do
   	expect(batch.bins.where(id: bin.id).first).to be_nil
   end
 
-  if "can belong to a picklist specification" do
+  it "can belong to a picklist specification" do
 
   end
 
