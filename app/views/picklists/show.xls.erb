@@ -11,14 +11,12 @@
         <Cell><Data ss:type="String"><%= @picklist.name %></Data></Cell>
       </Row>
       <Row>
-      <% @column_names = PhysicalObject.column_names %>
-      <%# manually add group_total virtual attribute %>
-      <% @column_names << 'group_total' unless @column_names.include?('group_total') %>
+      <% @column_names = PhysicalObject.printable_columns %>
       <% @column_names.each do |column_name| %>
         <Cell><Data ss:Type="String"><%= column_name.titleize %></Data></Cell>
       <% end %>
       <% if @physical_objects.any? %>
-        <% @md_columns = @physical_objects.first.technical_metadatum.as_technical_metadatum.class.column_names %>
+        <% @md_columns = @physical_objects.first.metadata_columns %>
         <% @md_columns.each do |md_column| %>
           <Cell><Data ss:Type="String"><%= md_column.titleize %></Data></Cell>
         <% end %>
@@ -26,25 +24,9 @@
       </Row>
     <% @physical_objects.each do |po| %>
       <Row>
-        <% @attributes = po.attributes %>
-        <% @column_names.each do |column_name| %>
-	  <% column_value = @attributes[column_name] %>
-	  <%# look up descriptive values for associated objects %>
-	  <% if column_name =~ /_id$/ %>
-	    <% if column_value.nil? || column_value.blank? || column_value.to_i.zero? %>
-	      <% column_value = "" %>
-	    <% else %>
-	      <% column_value = Kernel.const_get(column_name.titleize.gsub(' ', '')).find(column_value).spreadsheet_descriptor %>
-	    <% end %>
-	  <% end %>
-	  <%# reset group key column value if needed %>
-	  <% column_value = po.group_identifier if column_name == 'group_key_id' && column_value.blank? %>
-          <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
+        <% po.printable_row.each do |cell_value| %>
+          <Cell><Data ss:Type="String"><%= cell_value %></Data></Cell>
 	<% end %>
-        <% @md_values = po.technical_metadatum.as_technical_metadatum.attributes.values_at(*@md_columns) %>
-        <% @md_values.each do |md_value| %>
-          <Cell><Data ss:Type="String"><%= md_value %></Data></Cell>
-        <% end %>
       </Row>
     <% end %>
     </Table>

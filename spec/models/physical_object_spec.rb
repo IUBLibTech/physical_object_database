@@ -2,7 +2,8 @@ require 'rails_helper'
 
 describe PhysicalObject do
 
-  let(:po) { FactoryGirl.build :physical_object, :cdr }
+  let(:po) { FactoryGirl.create :physical_object, :cdr }
+  let(:picklist) { FactoryGirl.create :picklist }
 
   it "requires a format" do
     expect(po.format).not_to be_blank
@@ -32,6 +33,20 @@ describe PhysicalObject do
 
   it "has no notes by default" do
     expect(po.notes).to be_empty
+  end
+
+  #class methods
+  describe "::to_csv" do
+    it "lists the picklist, if present" do
+      expect(PhysicalObject.to_csv([], picklist)).to eq "Picklist:,FactoryGirl picklist\n"
+    end
+    it "does not list the picklist, if absent" do
+      expect(PhysicalObject.to_csv([], nil)).to eq ""
+    end
+    it "lists physical objects" do
+      po.save
+      expect(PhysicalObject.to_csv([po])).to match(/FactoryGirl object/i)
+    end
   end
 
 end

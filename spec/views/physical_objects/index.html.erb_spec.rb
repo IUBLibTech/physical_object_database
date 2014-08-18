@@ -17,7 +17,7 @@ describe "physical_objects/index" do
   end
 
   it "lists standard action links in each object row" do
-    pending "TODO: find way to loop through table rows"
+    skip "TODO: find way to loop through table rows"
   end
 
 end
