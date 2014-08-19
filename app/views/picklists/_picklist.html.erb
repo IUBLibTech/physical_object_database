@@ -1,6 +1,8 @@
 <%= error_messages_for(@picklist) %>
+<% url_args = { action: @action } %>
+<% url_args[:id] = @picklist.id unless @picklist.nil? || @picklist.id.nil? %>
 <div class="left">
-	<%= form_for(@picklist, url: {action: @action, id: @picklist.id}) do |f| %>
+	<%= form_for(@picklist, url: url_args) do |f| %>
 		<h2>Picklist</h2>
 		<table>
 			<tr>
@@ -16,21 +18,26 @@
 				</td>
 			</tr>
 		</table>
+                <div class="clear">
+                  <% if @edit_mode %>
+                    <%= f.submit(@submit_text) %>
+                  <% end %>
+                </div>
 	<% end %>
-	<%= form_for(@picklist, url: {action: 'process_list'}) do |f| %>
-		<%= hidden_field_tag "picklist[id]", @picklist.id %>
-		<%= f.submit("Pack Items") %>
+	<% unless @picklist.id.nil? || @action == 'update' || @picklist.physical_objects.empty? %>
+	  <%= form_for(@picklist, url: {action: 'process_list', id: @picklist.id}) do |f| %>
+		  <%= hidden_field_tag "picklist[id]", @picklist.id %>
+		  <%= f.submit("Pack Items") %>
+	  <% end %>
 	<% end %>
 </div>
 <div class="left">
 	<h2>Physical Objects in this picklist: <%= @picklist.physical_objects.size %></h2>
 	<% if !@picklist.id.nil? && @picklist.physical_objects.any? %>
-	Download list as: <%= link_to 'CSV File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :csv) %><%# | %><%= link_to 'Excel File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :xls) %><br/>
+	  Download list as:
+          <%= link_to 'CSV File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :csv) %>
+          |
+          <%= link_to 'Excel File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :xls) %><br/>
 	  <%= render 'physical_objects/physical_objects_table' %>
-	<% end %>
-</div>
-<div class="clear">
-	<% if @edit_mode %>
-		<%= f.submit(@submit_text) %>
 	<% end %>
 </div>

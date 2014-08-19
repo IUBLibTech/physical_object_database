@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe BatchesController do
-  before(:each) { sign_in("user@example.com") }
+  before(:each) { sign_in }
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:valid_batch) { FactoryGirl.build(:batch) }

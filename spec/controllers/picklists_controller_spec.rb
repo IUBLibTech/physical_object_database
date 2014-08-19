@@ -8,6 +8,7 @@ describe PicklistsController do
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr, picklist: picklist) }
 
   #no index
+  render_views
 
   describe "GET show" do
     context "html format" do

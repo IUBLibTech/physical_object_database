@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe PhysicalObjectsController do
-  before(:each) { sign_in("user@example.com") }
+  before(:each) { sign_in }
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
   let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
   let(:invalid_physical_object) { FactoryGirl.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
