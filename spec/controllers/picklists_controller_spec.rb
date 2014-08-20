@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe PicklistsController do
+  render_views
   before(:each) { sign_in }
   let(:picklist) { FactoryGirl.create(:picklist) }
   let(:valid_picklist) { FactoryGirl.build(:picklist) }
@@ -8,7 +9,6 @@ describe PicklistsController do
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr, picklist: picklist) }
 
   #no index
-  render_views
 
   describe "GET show" do
     context "html format" do
@@ -24,16 +24,18 @@ describe PicklistsController do
       let(:show_csv) { get :show, id: picklist.id, format: :csv }
       it "sends a csv file" do
         expect(controller).to receive(:send_data).with(PhysicalObject.to_csv(picklist.physical_objects, picklist)) { controller.render nothing: true }
-	show_csv
+        show_csv
       end
     end
     context "xls format" do
       let(:show_xls) { get :show, id: picklist.id, format: :xls }
       it "renders the :show template" do
         skip "test should pass for Excel template, but fails"
-	# expect(response).to render_template(:show)
+        #expect(response).to render_template(:show)
       end
-      #TODO: test file content
+      it "contains the correct Excel file content" do
+        skip "TODO: test Excel file content"
+      end
     end
   end
 
@@ -73,11 +75,11 @@ describe PicklistsController do
       let(:creation) { post :create, picklist: invalid_picklist.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
       it "does not save the new physical object in the database" do
         expect(invalid_picklist).to be_invalid
-	expect{ creation }.not_to change(Picklist, :count)
+        expect{ creation }.not_to change(Picklist, :count)
       end
       it "re-renders the :new template" do
         creation
-	expect(response).to render_template(:new)
+        expect(response).to render_template(:new)
       end
     end
   end
@@ -92,9 +94,9 @@ describe PicklistsController do
         expect(assigns(:picklist)).to eq picklist
       end
       it "changes the object's attributes" do
-	expect(picklist.name).not_to eq "Updated Test Picklist"
+        expect(picklist.name).not_to eq "Updated Test Picklist"
         picklist.reload
-	expect(picklist.name).to eq "Updated Test Picklist"
+        expect(picklist.name).to eq "Updated Test Picklist"
       end
       it "redirects to the picklist specficications index" do
         expect(response).to redirect_to(controller: :picklist_specifications, action: :index) 

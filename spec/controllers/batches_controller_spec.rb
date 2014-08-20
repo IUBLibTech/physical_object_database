@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe BatchesController do
+  render_views
   before(:each) { sign_in }
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin) }
@@ -140,11 +141,6 @@ describe BatchesController do
       add_bin
       expect(bin.current_workflow_status.name).to eq "Batched"
     end
-  end
-
-  describe "POST remove_bin" do
-    let(:remove_bin) { post :remove_bin, id: batch.id }
-    pending "empty method; remove?"
   end
 
 end

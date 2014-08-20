@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe PhysicalObjectsController do
+  render_views
   before(:each) { sign_in }
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
   let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
@@ -8,6 +9,7 @@ describe PhysicalObjectsController do
 
   describe "GET index" do
     before(:each) do
+      physical_object
       get :index
     end
     it "populates an array of physical objects" do
