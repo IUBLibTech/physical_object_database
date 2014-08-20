@@ -1,8 +1,8 @@
 #mock authentication for testing in controllers
 
 module ControllerHelpers
-  def sign_in(user = double('user'))
-    allow(controller).to receive(:current_user).and_return(user)
+  def sign_in(username = "user@example.com" )
+    allow(controller).to receive(:current_user).and_return(username)
   end
 end
 

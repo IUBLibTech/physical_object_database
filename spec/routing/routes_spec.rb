@@ -135,6 +135,9 @@ describe "picklist_specifications" do
 end
 
 describe "picklists" do
+  it "does not route to index" do
+    expect(get("/picklists")).not_to be_routable
+  end
   it "routes to process_list" do
     expect(patch("/picklists/:id/process_list")).to be_routable
   end

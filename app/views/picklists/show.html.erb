@@ -6,4 +6,5 @@
 		<%= link_to("Delete", picklist_path(@picklist.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Picklist?'}) %>
   </div>
 <% end %>
+<% @action = 'show' %>
 <%= render(:partial => "picklist") %>

@@ -5,4 +5,9 @@ FactoryGirl.define do
     description "FactoryGirl picklist description"
   end
 
+  factory :invalid_picklist, parent: :picklist do
+    name ""
+    description "Invalid picklist description"
+  end
+
 end

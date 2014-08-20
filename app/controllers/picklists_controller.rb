@@ -33,6 +33,7 @@ class PicklistsController < ApplicationController
 
 	def show
 		@edit_mode = false
+		#@action = 'show'
 
 		respond_to do |format|
 			format.html
@@ -48,7 +49,8 @@ class PicklistsController < ApplicationController
 	end
 
 	def update
-		if Picklist.where("id != ? AND name=?", @picklist.id, params[:picklist][:name]).size > 0
+		#FIXME: do we need this manual check?  Just add it as a model validation?
+		if Picklist.where("id != ? AND name=?", @picklist.id, params[:picklist][:name]).size > 0 && false
 			flash[:notice] = "There is another picklist with name #{params[:picklist][:name]}."
 			@edit_mode = true
 			@action = 'update'
@@ -58,13 +60,18 @@ class PicklistsController < ApplicationController
 			flash[:notice] = "Successfully updated #{@picklist.name}"
 			redirect_to(controller: 'picklist_specifications', action: 'index')	
 		else
-			render('edit')
+			@edit_mode = true
+			@action = 'update'
+			@submit_text = "Update Picklist"
+			render(action: :edit)
+			#render('edit')
 		end
 	end
 
 	def destroy
 		if @picklist.destroy
-			PhysicalObject.update_all("picklist_id = NULL", "picklist_id = #{@picklist.id}")
+			#manually dissociate physical objects
+			PhysicalObject.where(picklist_id: @picklist.id).update_all(picklist_id: nil)
 			flash[:notice] = "Successfully deleted #{@picklist.name}"
 			redirect_to(controller: 'picklist_specifications', action: 'index')
 		else

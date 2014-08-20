@@ -5,7 +5,6 @@ class BatchesController < ApplicationController
   end
 
   def new
-
     @batch = Batch.new
   end
 
@@ -21,10 +20,13 @@ class BatchesController < ApplicationController
 
   def edit
     @batch = Batch.find(params[:id])
+    @bins = @batch.bins
   end
 
   def update
     @batch = Batch.find(params[:id]);
+    @bins = @batch.bins
+    @available_bins = Bin.available_bins
     Batch.transaction do
       if @batch.update_attributes(batch_params)
         flash[:notice] = "<i>#{@batch.name}</i> was successfully updated.".html_safe
@@ -100,10 +102,6 @@ class BatchesController < ApplicationController
       end
     end
     redirect_to(action: 'show', id: @batch.id)
-  end
-
-  def remove_bin
-        
   end
 
   private
