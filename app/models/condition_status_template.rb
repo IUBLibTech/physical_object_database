@@ -1,7 +1,8 @@
 class ConditionStatusTemplate < ActiveRecord::Base
 
 	has_many :condition_statuses
-	validates :name, presence: true, uniqueness: true
+	validates :name, presence: true, uniqueness: true#, uniqueness: {scope: object_type}
+	#validates :object_type, presence: true
 	
         attr_accessor :object_types
         def object_types

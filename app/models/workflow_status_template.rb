@@ -2,6 +2,7 @@ class WorkflowStatusTemplate < ActiveRecord::Base
 	
 	has_many :workflow_statuses
 	validates :name, presence: true, uniqueness: {scope: :object_type}
+	validates :sequence_index, presence: true
 
 	attr_accessor :object_types
 	def object_types
