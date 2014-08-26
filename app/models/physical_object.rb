@@ -28,7 +28,8 @@ class PhysicalObject < ActiveRecord::Base
     {
       "CD-R" => "CD-R",
       "DAT" => "DAT",
-      "Open Reel Audio Tape" => "Open Reel Audio Tape"
+      "Open Reel Audio Tape" => "Open Reel Audio Tape",
+      "LP" => "LP"
     }
   end
   validates_presence_of :format, inclusion: formats.keys
@@ -92,6 +93,8 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
+  # the passed in value for f should be the human readable name of the format - in the case of AnalogSoundDisc
+  # technical metadatum, this could be LP/45/78/Lacquer Disc/etc
   def create_tm(f)
     if f == "Open Reel Audio Tape"
       OpenReelTm.new
@@ -99,8 +102,11 @@ class PhysicalObject < ActiveRecord::Base
       CdrTm.new
     elsif f == 'DAT'
       DatTm.new
+    elsif f == "LP"
+      # setting the subtype should trigger and after_initialize callback to set defaults
+      AnalogSoundDiscTm.new(subtype: "LP")
     else
-      raise 'Unknown format type' + format
+      raise 'Unknown format type ' + format
     end 
   end
 
@@ -176,6 +182,8 @@ class PhysicalObject < ActiveRecord::Base
       "cdr_tms"
     elsif format == "DAT"
       "dat_tms"
+    elsif format == "LP"
+      "analog_sound_disc_tms"
     else
       raise "Unsupported format: #{format}"
     end

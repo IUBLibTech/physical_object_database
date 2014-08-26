@@ -11,6 +11,8 @@ class PicklistSpecification < ActiveRecord::Base
 				CdrTm.new(picklist_specification: self)
 			elsif format == "DAT"
 				DatTm.new(picklist_specification: self)
+			elsif format == "LP"
+				AnalogSoundDiscTm.new(subtype: "LP", picklist_specification: self)
 			else
 				raise "Unknown format #{format}"
 			end

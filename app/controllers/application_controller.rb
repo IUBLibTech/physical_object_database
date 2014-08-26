@@ -19,6 +19,8 @@ class ApplicationController < ActionController::Base
       "technical_metadatum/show_cdr_tm"
     elsif technical_metadatum.class == DatTm
       "technical_metadatum/show_dat_tm"
+    elsif technical_metadatum.class == AnalogSoundDiscTm
+      "technical_metadatum/show_analog_sound_disc_tm"
     else
       "technical_metadatum/show_unknown_tm"
     end
@@ -64,6 +66,9 @@ class ApplicationController < ActionController::Base
       render(partial: 'technical_metadatum/show_cdr_tm')
     elsif f == "DAT"
       render(partial: 'technical_metadatum/show_dat_tm')
+    # analog sound discs are a single class used to cover LPs, 45s, 78s, Lacquer discs, etc
+    elsif f == "LP"
+      render(partial: 'technical_metadatum/show_analog_sound_disc_tm')
     end
   end
 
@@ -101,7 +106,11 @@ class ApplicationController < ActionController::Base
       #fields for cd-r's not covered by open reel audio tape fields
       :damage, :breakdown_of_materials, :format_duration,
       #fields for dat not covered so far
-      :sample_rate_32k, :sample_rate_44_1_k, :sample_rate_48k, :sample_rate_96k
+      :sample_rate_32k, :sample_rate_44_1_k, :sample_rate_48k, :sample_rate_96k,
+      #fields for analog sound discs
+      :diameter, :speed, :groove_size, :groove_orientation, :recording_method, :material, :substrate,
+      :coating, :equalization, :country_of_origin, :delamination, :exudation, :oxidation, :cracked,
+      :warped, :dirty, :scratched, :worn, :broken, :label
       )
   end
 
