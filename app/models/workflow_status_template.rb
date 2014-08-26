@@ -10,7 +10,7 @@ class WorkflowStatusTemplate < ActiveRecord::Base
 		 "Batch" => "Batch",
 		 "Bin" => "Bin"}
 	end
-
+	#FIXME: why is a name/name hash, while Condtion statuses have name/id?
 	def self.select_options(object_type)
 	  options = {}
 	  self.where(object_type: object_type).order('sequence_index ASC').each do |template|

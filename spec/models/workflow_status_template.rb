@@ -66,6 +66,18 @@ describe WorkflowStatusTemplate do
     end
   end
 
-  it "#select_options"
+  describe "has relationships:" do
+    it "many workflow_statuses" do
+      expect(valid_workflow_status_template.workflow_statuses.size).to eq 0 
+    end
+  end
+
+  describe ".select_options(object_type)" do
+    let(:select_options) { WorkflowStatusTemplate.select_options(workflow_status_template.object_type) }
+    it "returns name/name hash" do
+      expect(select_options[workflow_status_template.name]).to eq workflow_status_template.name
+    end
+  end
+
   
 end

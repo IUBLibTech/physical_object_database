@@ -42,13 +42,21 @@ describe ConditionStatus do
   end
 
   describe "has relationships:" do
-    it "physical object"
-    it "bin"
+    it "can belong to a physical object" do
+      expect(valid_condition_status.physical_object).to be_nil
+    end
+    it "can belong to a bin" do
+      expect(valid_condition_status.bin).to be_nil
+    end
   end
 
-  describe "has virtual attributes:" do
-    it "name"
-    it "description"
+   describe "has virtual attributes:" do
+    it "name returns condition_status_template name" do
+      expect(valid_condition_status.name).to eq valid_condition_status.condition_status_template.name
+    end
+    it "description returns condition_status_template_name" do
+      expect(valid_condition_status.description).to eq valid_condition_status.condition_status_template.description
+    end
   end
-  
+ 
 end
