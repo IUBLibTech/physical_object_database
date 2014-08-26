@@ -27,5 +27,9 @@ describe Bin do
     expect(bin.physical_objects_count).to eq 0 
   end
 
+  describe "includes ConditionStatusModule" do
+    it "does 3 things"
+  end
+
 end
 

@@ -7,7 +7,7 @@ describe Unit do
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, unit: unit }
   describe "should be seeded with data:" do
     it "76 values" do
-      expect(Unit.all.size).to eq 77
+      expect(Unit.all.size).to eq 76
     end
   end
   it "requires an abbreviation" do
