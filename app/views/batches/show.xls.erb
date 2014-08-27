@@ -6,7 +6,7 @@
   xmlns:html="http://www.w3.org/TR/REC-html40">
   <Worksheet ss:Name="Sheet1">
     <Table>
-      <% @column_names = ["Object Barcode", "Batch number", "Batch description", "Format", "Unit", "IU Object ID - Call number", "IU Object ID - Catalog barcode", "IU Collection ID", "Title", "Carrier Stream Index", "Container barcode", "Container name", "Container description", "Physical Condition – Damage", "Physical Condition - Preservation Problems"]%>
+      <% @column_names = ["Object Barcode", "Batch number", "Batch description", "Format", "Unit", "IU Object ID - Call number", "IU Object ID - Catalog barcode", "IU Collection ID", "Title", "Carrier Stream Index", "Container barcode", "Container name", "Container description", "Physical Condition – Damage", "Physical Condition - Preservation Problems", "Number of preservation masters expected", "Output file-name prefix"]%>
       <Row>
       <% @column_names.each do |column_name| %>
         <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
@@ -48,6 +48,8 @@
             <%# more object info %>
 	      <Cell><Data ss:Type="String"><%= tm.damage %></Data></Cell>
 	      <Cell><Data ss:Type="String"><%= tm.humanize_boolean_fields(["breakdown_of_materials", "fungus", "other_contaminants"]) %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= "FIXME: MASTERS" %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= "MDPI_#{po.mdpi_barcode}" %></Data></Cell>
 	    <%# audio objects %>
 	    <%# metadata-specific: DAT %>
 	    <%# metadata-specific: CDR %>
