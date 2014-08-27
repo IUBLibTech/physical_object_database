@@ -17,12 +17,15 @@ module ConditionStatusModule
 
   def ConditionStatusModule.has_condition?(object, status_name)
   	# TODO: optimize this with either a query or better ruby code
-  	cst_id = ConditionStatusTemplate.where(name: status_name, object_type: object.class.name.titleize)
-  	object.condition_statuses.each do |s|
-  		if s.condition_status_template_id == cst_id
-  			true
+  	cst_list = ConditionStatusTemplate.where(name: status_name, object_type: object.class.name.titleize)
+	found_flag = false
+	# TODO: rewrite to distinguish case of status_name not valid?
+	if cst_list.any?
+		cst_id = cst_list.first.id
+  		object.condition_statuses.each do |s|
+  			found_flag = true if s.condition_status_template_id == cst_id
   		end
-  	end
-  	false
+	end
+  	found_flag
   end
 end
