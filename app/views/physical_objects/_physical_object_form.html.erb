@@ -167,6 +167,10 @@
               <% else %>
                 Not Assigned
               <% end %>
+              <% if @edit_mode %>
+                <%= @physical_object.picklist.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
+                <%= f.collection_select :picklist_id, Picklist.order('name ASC'), :id, :name %>
+              <% end %>
             </td>
           </tr>
           <tr>

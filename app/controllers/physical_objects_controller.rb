@@ -1,5 +1,6 @@
 class PhysicalObjectsController < ApplicationController
   before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :split_show, :unbin, :unbox, :unpick]  
+  before_action :set_picklists, only: [:edit]
   helper :all
 
   def download_spreadsheet_example
@@ -58,7 +59,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def update
-    #puts params.to_yaml
+    puts params.to_yaml
     PhysicalObject.transaction do
       old_format = @physical_object.format
       if ! @physical_object.update_attributes(physical_object_params)
@@ -217,5 +218,8 @@ class PhysicalObjectsController < ApplicationController
       @group_key = @physical_object.group_key
     end
 
+    def set_picklists
+      @picklists = Picklist.all
+    end
     
 end
