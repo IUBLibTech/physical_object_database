@@ -41,6 +41,7 @@ module TechnicalMetadatumModule
     self.const_set(:TM_FORMAT_CLASSES, TM_FORMAT_CLASSES)
     self.const_set(:TM_CLASS_FORMATS, TM_CLASS_FORMATS)
     self.const_set(:TM_PARTIALS, TM_PARTIALS)
+    self.const_set(:TM_TABLE_NAMES, TM_TABLE_NAMES)
     unless self.const_defined?(:HUMANIZED_COLUMNS)
       self.const_set(:HUMANIZED_COLUMNS, {})
     end
