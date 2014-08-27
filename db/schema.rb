@@ -11,7 +11,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140722173416) do
+ActiveRecord::Schema.define(version: 20140819175312) do
+
+  create_table "analog_sound_disc_tms", force: true do |t|
+    t.string   "diameter"
+    t.string   "speed"
+    t.string   "groove_size"
+    t.string   "groove_orientation"
+    t.string   "recording_method"
+    t.string   "material"
+    t.string   "substrate"
+    t.string   "coating"
+    t.string   "equalization"
+    t.string   "country_of_origin"
+    t.boolean  "delamination"
+    t.boolean  "exudation"
+    t.boolean  "oxidation"
+    t.boolean  "cracked"
+    t.boolean  "warped"
+    t.boolean  "dirty"
+    t.boolean  "scratched"
+    t.boolean  "worn"
+    t.boolean  "broken"
+    t.boolean  "fungus"
+    t.string   "label"
+    t.string   "sound_field"
+    t.string   "subtype"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "batches", force: true do |t|
     t.string   "identifier"

@@ -19,6 +19,8 @@ class ApplicationController < ActionController::Base
       "technical_metadatum/show_cdr_tm"
     elsif technical_metadatum.class == DatTm
       "technical_metadatum/show_dat_tm"
+    elsif technical_metadatum.class == AnalogSoundDiscTm
+      "technical_metadatum/show_analog_sound_disc_tm"
     else
       "technical_metadatum/show_unknown_tm"
     end
@@ -64,6 +66,9 @@ class ApplicationController < ActionController::Base
       render(partial: 'technical_metadatum/show_cdr_tm')
     elsif f == "DAT"
       render(partial: 'technical_metadatum/show_dat_tm')
+    # analog sound discs are a single class used to cover LPs, 45s, 78s, Lacquer discs, etc
+    elsif f == "LP"
+      render(partial: 'technical_metadatum/show_analog_sound_disc_tm')
     end
   end
 
@@ -83,7 +88,7 @@ class ApplicationController < ActionController::Base
       :group_key_id, :group_key,
       :group_position, :collection_identifier, :mdpi_barcode, :format_duration,
       :has_ephemera, :author, :catalog_key, :collection_name, :generation, :oclc_number,
-      :other_copies, :year, :bin_id, :unit, :current_workflow_status, 
+      :other_copies, :year, :bin_id, :unit, :current_workflow_status, :picklist_id,
       condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :user, :_destroy],
       notes_attributes: [:id, :body, :user, :_destroy])
   end
@@ -101,7 +106,11 @@ class ApplicationController < ActionController::Base
       #fields for cd-r's not covered by open reel audio tape fields
       :damage, :breakdown_of_materials, :format_duration,
       #fields for dat not covered so far
-      :sample_rate_32k, :sample_rate_44_1_k, :sample_rate_48k, :sample_rate_96k
+      :sample_rate_32k, :sample_rate_44_1_k, :sample_rate_48k, :sample_rate_96k,
+      #fields for analog sound discs
+      :diameter, :speed, :groove_size, :groove_orientation, :recording_method, :material, :substrate,
+      :coating, :equalization, :country_of_origin, :delamination, :exudation, :oxidation, :cracked,
+      :warped, :dirty, :scratched, :worn, :broken, :label
       )
   end
 
