@@ -66,4 +66,10 @@ describe PhysicalObject do
     end
   end
 
+  describe "includes WorkflowStatusModule:" do
+    it "does WorkflowStatusModule things..." do
+      skip "TODO"
+    end
+  end
+
 end
