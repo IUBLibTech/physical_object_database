@@ -6,71 +6,41 @@
   xmlns:html="http://www.w3.org/TR/REC-html40">
   <Worksheet ss:Name="Sheet1">
     <Table>
-      <%# BATCH INFORMATION %>
-      <% @column_names = ["identifier", "name", "description", "updated_at"]%>
+      <% @column_names = ["Object Barcode", "Batch number", "Batch description", "Format", "Unit", "IU Object ID - Call number", "IU Object ID - Catalog barcode", "IU Collection ID", "Title"]%>
+      <Row>
       <% @column_names.each do |column_name| %>
-        <Row>
-          <Cell><Data ss:Type="String"><%= "Batch " + column_name.titlecase %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= @batch.attributes[column_name] %></Data></Cell>
-        </Row>
+        <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
       <% end %>
-      <Row>
-        <Cell><Data ss:Type="String"><%= "Objects Count" %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= @batch.physical_objects_count %></Data></Cell>
-
-      </Row>
-      <Row>
-        <Cell><Data ss:Type="String"><%= "Batch Workflow Status" %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= @batch.current_workflow_status.nil? ? "" : @batch.current_workflow_status.workflow_status_template.name %></Data></Cell>
       </Row>
       <% if @bins.any? %>
-        <Row>
-        <% @bin_columns = ["identifier", "name", "description", "mdpi_barcode"] %>
-        <% @bin_columns.each do |column_name| %>
-          <Cell><Data ss:Type="String"><%= "Bin " + column_name.titlecase %></Data></Cell>
-        <% end %>
-        <% @box_columns = ["mdpi_barcode"] %>
-        <% @box_columns.each do |column_name| %>
-          <Cell><Data ss:Type="String"><%= "Box Barcode (if applicable)" %></Data></Cell>
-        <% end %>
         <% @po_columns = ["mdpi_barcode", "title"] %>
-        <% @po_columns.each do |column_name| %>
-          <Cell><Data ss:Type="String"><%= "Object " + column_name.titlecase %></Data></Cell>
-        <% end %>
-	<%# carrier stream index is handled separately as a virtual attribute %>
-        <Cell><Data ss:Type="String">Carrier Stream Index</Data></Cell>
-        </Row>
+        <% @spoofed_columns = { "mdpi_barcode" => "Object Barcode", "call_number" => "IU Object ID – Call number", "iucat_barcode" => "IU Object ID – Catalog barcode", "collection_identifier" => "IU Collection ID", "format_duration" => "Cassette length" } %>
         <% @bins.each do |bin| %>
           <%# LOOP THROUGH BOXES FIRST %>
           <% bin.boxes.each do |box| %>
             <% box.physical_objects.each do |po| %>
               <Row>
-              <% bin.attributes.values_at(*@bin_columns).each do |column_value| %>
-                <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-              <% end %>
-              <% box.attributes.values_at(*@box_columns).each do |column_value| %>
-                <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-              <% end %>
-              <% po.attributes.values_at(*@po_columns).each do |column_value| %>
-                <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-              <% end %>
-	      <Cell><Data ss:Type="String"><%= po.carrier_stream_index %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= po.mdpi_barcode %></Data></Cell>
               </Row>
             <% end %>
           <% end %>
           <%# LIST UNBOXED ITEMS LAST %>
           <% bin.physical_objects.each do |po| %>
             <Row>
-            <% bin.attributes.values_at(*@bin_columns).each do |column_value| %>
-              <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-            <% end %>
-            <% @box_columns.each do |column_value| %>
-              <Cell><Data ss:Type="String"><%= "(not in box)" %></Data></Cell>
-            <% end %>
-            <% po.attributes.values_at(*@po_columns).each do |column_value| %>
-              <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-            <% end %>
-            <Cell><Data ss:Type="String"><%= po.carrier_stream_index %></Data></Cell>
+            <%# mdpi barcode %>
+              <Cell><Data ss:Type="String"><%= po.mdpi_barcode %></Data></Cell>
+            <%# batch info %>
+              <Cell><Data ss:Type="String"><%= @batch.identifier %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= @batch.description %></Data></Cell>
+            <%# some object info %>
+	      <Cell><Data ss:Type="String"><%= po.format %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= po.unit.spreadsheet_descriptor %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= po.call_number %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= po.iucat_barcode %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= po.collection_identifier %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= po.title %></Data></Cell>
+            <%# bin info %>
+            <%# more object info %>
             </Row>
           <% end %>
         <% end %>
