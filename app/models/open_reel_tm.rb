@@ -1,5 +1,6 @@
 class OpenReelTm < ActiveRecord::Base
 	acts_as :technical_metadatum
+	include TechnicalMetadatumModule
 
 	# this hash holds the human reable attribute name for this class
 	HUMANIZED_COLUMNS = {:zero_point9375_ips => "0.9375 ips", :one_point875_ips => "1.875 ips", 
@@ -24,22 +25,5 @@ class OpenReelTm < ActiveRecord::Base
 	def directions_recorded_vals
 		{"" => "", "1" => "1", "2" => "2"}
 	end
-
-	def generalize
-    TechnicalMetadatum.find_by(as_technical_metadatum_id: self.id)
-  end
-
-  def humanize_boolean_fields(*field_names)
-  	str = ""
-  	field_names.each do |f|
-  		str << ((!self[f].nil? and self[f]) ? (str.length > 0 ? ", " << OpenReelTm.human_attribute_name(f) : OpenReelTm.human_attribute_name(f)) : "")
-  	end
-  	str
-  end
-
-  # overridden to provide for more human readable attribute names for things like :zero_point9375_ips
-  def self.human_attribute_name(attribute)
-    HUMANIZED_COLUMNS[attribute.to_sym] || super
-  end
 
 end
