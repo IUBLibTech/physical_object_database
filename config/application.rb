@@ -26,5 +26,9 @@ module Pod
     config.generators do |g|
       g.test_framework :rspec
     end
+
+    # Autoload lib/ folder including all subdirectories
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
+
   end
 end

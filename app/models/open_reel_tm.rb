@@ -1,6 +1,7 @@
 class OpenReelTm < ActiveRecord::Base
 	acts_as :technical_metadatum
 	include TechnicalMetadatumModule
+	extend TechnicalMetadatumClassModule
 
 	# this hash holds the human reable attribute name for this class
 	HUMANIZED_COLUMNS = {:zero_point9375_ips => "0.9375 ips", :one_point875_ips => "1.875 ips", 

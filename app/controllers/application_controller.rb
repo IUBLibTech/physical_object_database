@@ -51,7 +51,6 @@ class ApplicationController < ActionController::Base
     end
 
     render(partial: TechnicalMetadatumModule::TM_PARTIALS[f])
-    end
   end
 
   def barcode_assigned(barcode)

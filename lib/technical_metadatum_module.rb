@@ -9,6 +9,12 @@ module TechnicalMetadatumModule
     "Open Reel Audio Tape" => "Open Reel Audio Tape"
   }
 
+  TM_GENRES = {
+    "CD-R" => :audio,
+    "DAT" => :audio,
+    "Open Reel Audio Tape" => :audio
+  }
+
   TM_FORMAT_CLASSES = {
     "CD-R" => CdrTm,
     "DAT" => DatTm,
@@ -37,17 +43,18 @@ module TechnicalMetadatumModule
   #include instance methods, class methods, default class constants
   def self.included(base)
     base.extend(ClassMethods)
-    self.const_set(:TM_FORMATS, TM_FORMATS)
-    self.const_set(:TM_FORMAT_CLASSES, TM_FORMAT_CLASSES)
-    self.const_set(:TM_CLASS_FORMATS, TM_CLASS_FORMATS)
-    self.const_set(:TM_PARTIALS, TM_PARTIALS)
-    self.const_set(:TM_TABLE_NAMES, TM_TABLE_NAMES)
-    unless self.const_defined?(:HUMANIZED_COLUMNS)
-      self.const_set(:HUMANIZED_COLUMNS, {})
-    end
+    self.const_set(:TM_FORMATS, TM_FORMATS) unless self.const_defined?(:TM_FORMATS)
+    self.const_set(:TM_GENRES, TM_GENRES) unless self.const_defined?(:TM_GENRES)
+    self.const_set(:TM_FORMAT_CLASSES, TM_FORMAT_CLASSES) unless self.const_defined?(:TM_FORMAT_CLASSES)
+    self.const_set(:TM_CLASS_FORMATS, TM_CLASS_FORMATS) unless self.const_defined?(:TM_CLASS_FORMATS)
+    self.const_set(:TM_PARTIALS, TM_PARTIALS) unless self.const_defined?(:TM_PARTIALS)
+    self.const_set(:TM_TABLE_NAMES, TM_TABLE_NAMES) unless self.const_defined?(:TM_TABLE_NAMES)
+    #default empty values
+    self.const_set(:PRESERVATION_PROBLEM_FIELDS, []) unless self.const_defined?(:PRESERVATION_PROBLEM_FIELDS)
+    self.const_set(:HUMANIZED_COLUMNS, {}) unless self.const_defined?(:HUMANIZED_COLUMNS)
   end
 
-  def humanize_boolean_fields(field_names)
+  def humanize_boolean_fields(*field_names)
     str = ""
     field_names.each do |f|
       str << (self[f] ? (str.length > 0 ? ", " << self.class.human_attribute_name(f) : self.class.human_attribute_name(f)) : "")
@@ -55,11 +62,8 @@ module TechnicalMetadatumModule
     str
   end
 
-  module ClassMethods
-   # overridden to provide for more human readable attribute names for things like :sample_rate_32k
-    def human_attribute_name(attribute)
-      self::HUMANIZED_COLUMNS[attribute.to_sym] || super
-    end
+  def preservation_problems
+    humanize_boolean_fields(*self.class.const_get(:PRESERVATION_PROBLEM_FIELDS))
   end
 
 end

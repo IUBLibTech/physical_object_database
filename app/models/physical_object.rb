@@ -4,6 +4,8 @@ class PhysicalObject < ActiveRecord::Base
   include ConditionStatusModule
   include ActiveModel::Validations
   include TechnicalMetadatumModule
+  extend TechnicalMetadatumClassModule
+
 
   after_initialize :default_values
   after_initialize :assign_default_workflow_status
@@ -91,6 +93,26 @@ class PhysicalObject < ActiveRecord::Base
     else
       raise 'Unknown format type' + format
     end 
+  end
+
+  def file_prefix
+    "MDPI_" + mdpi_barcode.to_s
+  end
+
+  def file_bext
+    "Indiana University Bloomington. " +
+    (unit.nil? ? "" : unit.name + ". ") +
+    (collection_identifier.nil? ? "" : collection_identifier + ". ") +
+    (call_number.nil? ? "" : call_number + ". ") +
+    "File use: "
+  end
+
+  def file_icmt
+    file_bext
+  end
+
+  def file_iarl
+    "Indiana University Bloomington. " + (unit.nil? ? "" : unit.name + ".")
   end
 
   def format_class
