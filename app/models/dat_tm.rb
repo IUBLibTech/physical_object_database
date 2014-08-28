@@ -14,7 +14,7 @@ class DatTm < ActiveRecord::Base
 	SAMPLE_RATE_FIELDS = ["sample_rate_32k", "sample_rate_44_1_k", "sample_rate_48k", "sample_rate_96k"]
 
 	def sample_rates
-		humanize_boolean_fields(*self.class.const_get(:SAMPLE_RATE_FIELDS))
+		humanize_boolean_fieldset(:SAMPLE_RATE_FIELDS)
 	end
 
 end

@@ -16,7 +16,7 @@
         <% @column_names += ["Box barcode"] %>
       <% elsif @media_format == "DAT" %>
         <% @column_names += ["Box barcode", "Sample rate", "Cassette length"] %>
-      <% elsif @media_format == "Open Reel Tape" %>
+      <% elsif @media_format == "Open Reel Audio Tape" %>
         <% @column_names += ["Year", "Tape base", "Reel size", "Track configuration", "Sound field", "Playback speed", "Tape thickness", "Tape stock brand", "Directions recorded"] %>
       <% end %>
       <Row>
@@ -56,7 +56,7 @@
 	      <Cell><Data ss:Type="String"><%= bin.identifier %></Data></Cell>
 	      <Cell><Data ss:Type="String"><%= bin.description %></Data></Cell>
             <%# more object info %>
-	      <% if @media_format == "CD-R" %>
+	      <% if ["CD-R", "Open Reel Audio Tape"].include?(@media_format) %>
 	        <Cell><Data ss:Type="String"><%= tm.damage %></Data></Cell>
 	      <% else %>
 	        <Cell><Data ss:Type="String"><%= "" %></Data></Cell>
@@ -77,19 +77,17 @@
 	      <%# FIXME %>
 	      <Cell><Data ss:Type="String"><%= tm.sample_rates %></Data></Cell>
 	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	    <% elsif @media_format == "Open Reel Tape" %>
+	    <% elsif @media_format == "Open Reel Audio Tape" %>
 	    <%# metadata-specific: ORT %>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-	      <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= po.year %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= tm.tape_base %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= tm.reel_size %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= tm.track_configuration %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= tm.sound_field %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= tm.playback_speed %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= tm.tape_thickness %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= tm.tape_stock_brand %></Data></Cell>
+	      <Cell><Data ss:Type="String"><%= tm.directions_recorded %></Data></Cell>
 	    <% end %>
 	    <%# metadata-specific: ??? %>
             </Row>

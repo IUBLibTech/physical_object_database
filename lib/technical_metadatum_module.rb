@@ -42,7 +42,7 @@ module TechnicalMetadatumModule
 
   #include instance methods, class methods, default class constants
   def self.included(base)
-    base.extend(ClassMethods)
+    #base.extend(ClassMethods)
     self.const_set(:TM_FORMATS, TM_FORMATS) unless self.const_defined?(:TM_FORMATS)
     self.const_set(:TM_GENRES, TM_GENRES) unless self.const_defined?(:TM_GENRES)
     self.const_set(:TM_FORMAT_CLASSES, TM_FORMAT_CLASSES) unless self.const_defined?(:TM_FORMAT_CLASSES)
@@ -62,8 +62,12 @@ module TechnicalMetadatumModule
     str
   end
 
+  def humanize_boolean_fieldset(fieldset_symbol)
+    humanize_boolean_fields(*self.class.const_get(fieldset_symbol))
+  end
+
   def preservation_problems
-    humanize_boolean_fields(*self.class.const_get(:PRESERVATION_PROBLEM_FIELDS))
+    humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS)
   end
 
 end
