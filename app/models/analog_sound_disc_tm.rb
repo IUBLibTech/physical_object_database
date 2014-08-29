@@ -1,6 +1,15 @@
 class AnalogSoundDiscTm < ActiveRecord::Base
 	acts_as :technical_metadatum
 	after_initialize :default_values
+	include TechnicalMetadatumModule
+	extend TechnicalMetadatumClassModule
+
+	PRESERVATION_PROBLEM_FIELDS = [
+	  "delamination", "exudation", "oxidation"
+	]
+	DAMAGE_FIELDS = [
+	  "broken", "cracked", "dirty", "fungus", "scratched", "warped", "worn"
+	]
 
 	def default_values
 		if subtype == "LP"
@@ -13,14 +22,6 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 			self.coating ||="N/A"
 			self.material ||= "Plastic"
 		end
-	end
-
-	def humanize_boolean_fields(*field_names)
-		str = ""
-  	field_names.each do |f|
-  		str << ((!self[f].nil? and self[f]) ? (str.length > 0 ? ", " << AnalogSoundDiscTm.human_attribute_name(f) : AnalogSoundDiscTm.human_attribute_name(f)) : "")
-  	end
-  	str
 	end
 
 	def diameter_values
@@ -63,4 +64,14 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	def sound_field_values
 		{"Mono" => "Mono", "Stereo" => "Stereo", "Unknown" => "Unknown"}
 	end
+
+	def damage
+		humanize_boolean_fieldset(:DAMAGE_FIELDS)
+	end
+
+	#FIXME: remove when label field is added
+	def label
+		""
+	end
+
 end
