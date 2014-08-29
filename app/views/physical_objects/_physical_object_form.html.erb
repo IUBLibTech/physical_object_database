@@ -126,7 +126,7 @@
       <tr>
         <th>Generation</th>
         <td>
-          <%= f.text_field(:generation, readonly: !@edit_mode) %>
+          <%= f.select(:generation, @physical_object.generation_values, {}, disabled:!@edit_mode) %>
         </td>
       </tr>
       <tr>

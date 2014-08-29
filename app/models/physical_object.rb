@@ -53,6 +53,11 @@ class PhysicalObject < ActiveRecord::Base
       :oclc_number => "OCLC number"
   }
 
+  attr_accessor :generation_values
+  def generation_values
+    {"" => "", "Original" => "Original", "Copy" => "Copy", "Unknown" => "Unknown"}
+  end
+
   #manually add virtual attributes to @attributes
   def attributes
     @attributes['group_total'] = group_total
