@@ -50,6 +50,28 @@ describe PhysicalObject do
     end
   end
 
+  describe "provides virtual attributes:" do
+    it "#carrier_stream_index" do
+      skip "TODO"
+    end
+    it "#file_prefix" do
+      expect(valid_po.file_prefix).to eq "MDPI_" + valid_po.mdpi_barcode.to_s
+    end
+    it "#file_bext" do
+      expect(valid_po.file_bext).to eq "Indiana University Bloomington. " +
+	valid_po.unit.name + ". " +
+	(valid_po.collection_identifier.nil? ? "" : valid_po.collection_identifier + ". ") +
+	(valid_po.call_number.nil? ? "" : valid_po.call_number + ". ") +
+	"File use: "
+    end
+    it "#file_icmt" do
+      expect(valid_po.file_icmt).to eq valid_po.file_bext
+    end
+    it "#file_iarl" do
+      expect(valid_po.file_iarl).to eq "Indiana University Bloomington. #{valid_po.unit.name}."
+    end
+  end
+
   describe "includes ConditionStatusModule:" do
     let(:condition_status) { FactoryGirl.create(:condition_status, physical_object: po) }
     it "#class_title returns 'Physical Object'" do

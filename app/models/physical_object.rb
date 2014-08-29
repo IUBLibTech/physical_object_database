@@ -3,6 +3,9 @@ class PhysicalObject < ActiveRecord::Base
   include WorkflowStatusModule
   include ConditionStatusModule
   include ActiveModel::Validations
+  include TechnicalMetadatumModule
+  extend TechnicalMetadatumClassModule
+
 
   after_initialize :default_values
   after_initialize :assign_default_workflow_status
@@ -25,12 +28,7 @@ class PhysicalObject < ActiveRecord::Base
 
   # needs to be declared before the validation that uses it
   def self.formats
-    {
-      "CD-R" => "CD-R",
-      "DAT" => "DAT",
-      "Open Reel Audio Tape" => "Open Reel Audio Tape",
-      "LP" => "LP"
-    }
+    TM_FORMATS
   end
   validates_presence_of :format, inclusion: formats.keys
   validates :group_position, presence: true
@@ -54,11 +52,6 @@ class PhysicalObject < ActiveRecord::Base
       :iucat_barcode => "IUCAT barcode",
       :oclc_number => "OCLC number"
   }
-
-  # overridden to provide for more human readable attribute names for things like :mdpi_barcode (so that mdpi is MDPI)
-  def self.human_attribute_name(*attribute)
-    HUMANIZED_COLUMNS[attribute[0].to_sym] || super
-  end
 
   #manually add virtual attributes to @attributes
   def attributes
@@ -95,25 +88,39 @@ class PhysicalObject < ActiveRecord::Base
 
   # the passed in value for f should be the human readable name of the format - in the case of AnalogSoundDisc
   # technical metadatum, this could be LP/45/78/Lacquer Disc/etc
-  def create_tm(f)
-    if f == "Open Reel Audio Tape"
-      OpenReelTm.new
-    elsif f == 'CD-R'
-      CdrTm.new
-    elsif f == 'DAT'
-      DatTm.new
-    elsif f == "LP"
+  def create_tm(format)
+    tm_class = TM_FORMAT_CLASSES[format]
+    unless tm_class.nil?
       # setting the subtype should trigger and after_initialize callback to set defaults
-      AnalogSoundDiscTm.new(subtype: "LP")
+      format_args = ( ["LP"].include?(format) ? { subtype: format } : {} )
+      tm_class.new(**format_args)
     else
-      raise 'Unknown format type ' + format
+      raise "Unknown format: #{format}"
     end 
   end
 
+  def file_prefix
+    "MDPI_" + mdpi_barcode.to_s
+  end
+
+  def file_bext
+    "Indiana University Bloomington. " +
+    (unit.nil? ? "" : unit.name + ". ") +
+    (collection_identifier.nil? ? "" : collection_identifier + ". ") +
+    (call_number.nil? ? "" : call_number + ". ") +
+    "File use: "
+  end
+
+  def file_icmt
+    file_bext
+  end
+
+  def file_iarl
+    "Indiana University Bloomington. " + (unit.nil? ? "" : unit.name + ".")
+  end
+
   def format_class
-    if format == "OpenReelTm"
-      OpenReelTm.class
-    end
+    return TM_FORMAT_CLASSES[self.format]
   end
 
   def self.to_csv(physical_objects, picklist = nil)
@@ -223,16 +230,11 @@ class PhysicalObject < ActiveRecord::Base
 
   private
   def tm_table_name(format)
-    if format == "Open Reel Audio Tape"
-      "open_reel_tms"
-    elsif format == "CD-R"
-      "cdr_tms"
-    elsif format == "DAT"
-      "dat_tms"
-    elsif format == "LP"
-      "analog_sound_disc_tms"
+    table_name = TM_TABLE_NAMES[format]
+    unless table_name.nil?
+      table_name
     else
-      raise "Unsupported format: #{format}"
+      raise "Unknown format: #{format}"
     end
   end
 

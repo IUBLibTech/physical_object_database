@@ -6,72 +6,39 @@
   xmlns:html="http://www.w3.org/TR/REC-html40">
   <Worksheet ss:Name="Sheet1">
     <Table>
-      <%# BATCH INFORMATION %>
-      <% @column_names = ["identifier", "name", "description", "updated_at"]%>
-      <% @column_names.each do |column_name| %>
-        <Row>
-          <Cell><Data ss:Type="String"><%= "Batch " + column_name.titlecase %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= @batch.attributes[column_name] %></Data></Cell>
-        </Row>
+      <% @media_format = @batch.media_format %>
+      <% @media_genre = TechnicalMetadatumModule::TM_GENRES[@media_format] %>
+      <% @column_names = ["Object Barcode", "Batch number", "Batch description", "Format", "Unit", "IU Object ID - Call number", "IU Object ID - Catalog barcode", "IU Collection ID", "Title", "Carrier Stream Index", "Container barcode", "Container name", "Container description", "Physical Condition – Damage", "Physical Condition - Preservation Problems", "Number of preservation masters expected", "Output file-name prefix"]%>
+      <% if @media_genre == :audio %>
+        <% @column_names += ["Embedded file info - Bext Chunk - Description", "Embedded file info - Info List - ICMT", "Embedded file info - Info List - IARL"] %>
+      <% end %>
+      <%# box column %>
+      <% if ["CD-R","DAT"].include?(@media_format) %>
+        <% @column_names << "Box barcode" %>
+      <% end %>
+      <%# format-specific columns %>
+      <% if @media_format == "CD-R" %>
+      <% elsif @media_format == "DAT" %>
+        <% @column_names += ["Sample rate", "Cassette length"] %>
+      <% elsif @media_format == "Open Reel Audio Tape" %>
+        <% @column_names += ["Year", "Tape base", "Reel size", "Track configuration", "Sound field", "Playback speed", "Tape thickness", "Tape stock brand", "Directions recorded"] %>
       <% end %>
       <Row>
-        <Cell><Data ss:Type="String"><%= "Objects Count" %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= @batch.physical_objects_count %></Data></Cell>
-
-      </Row>
-      <Row>
-        <Cell><Data ss:Type="String"><%= "Batch Workflow Status" %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= @batch.current_workflow_status.nil? ? "" : @batch.current_workflow_status.workflow_status_template.name %></Data></Cell>
+      <% @column_names.each do |column_name| %>
+        <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
+      <% end %>
       </Row>
       <% if @bins.any? %>
-        <Row>
-        <% @bin_columns = ["identifier", "name", "description", "mdpi_barcode"] %>
-        <% @bin_columns.each do |column_name| %>
-          <Cell><Data ss:Type="String"><%= "Bin " + column_name.titlecase %></Data></Cell>
-        <% end %>
-        <% @box_columns = ["mdpi_barcode"] %>
-        <% @box_columns.each do |column_name| %>
-          <Cell><Data ss:Type="String"><%= "Box Barcode (if applicable)" %></Data></Cell>
-        <% end %>
-        <% @po_columns = ["mdpi_barcode", "title"] %>
-        <% @po_columns.each do |column_name| %>
-          <Cell><Data ss:Type="String"><%= "Object " + column_name.titlecase %></Data></Cell>
-        <% end %>
-	<%# carrier stream index is handled separately as a virtual attribute %>
-        <Cell><Data ss:Type="String">Carrier Stream Index</Data></Cell>
-        </Row>
         <% @bins.each do |bin| %>
           <%# LOOP THROUGH BOXES FIRST %>
           <% bin.boxes.each do |box| %>
             <% box.physical_objects.each do |po| %>
-              <Row>
-              <% bin.attributes.values_at(*@bin_columns).each do |column_value| %>
-                <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-              <% end %>
-              <% box.attributes.values_at(*@box_columns).each do |column_value| %>
-                <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-              <% end %>
-              <% po.attributes.values_at(*@po_columns).each do |column_value| %>
-                <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-              <% end %>
-	      <Cell><Data ss:Type="String"><%= po.carrier_stream_index %></Data></Cell>
-              </Row>
+	      <%= render 'shipping_manifest_physical_object', bin: bin, box: box, po: po %>
             <% end %>
           <% end %>
           <%# LIST UNBOXED ITEMS LAST %>
           <% bin.physical_objects.each do |po| %>
-            <Row>
-            <% bin.attributes.values_at(*@bin_columns).each do |column_value| %>
-              <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-            <% end %>
-            <% @box_columns.each do |column_value| %>
-              <Cell><Data ss:Type="String"><%= "(not in box)" %></Data></Cell>
-            <% end %>
-            <% po.attributes.values_at(*@po_columns).each do |column_value| %>
-              <Cell><Data ss:Type="String"><%= column_value %></Data></Cell>
-            <% end %>
-            <Cell><Data ss:Type="String"><%= po.carrier_stream_index %></Data></Cell>
-            </Row>
+	    <%= render 'shipping_manifest_physical_object', bin: bin, box: nil, po: po %>
           <% end %>
         <% end %>
       <% end %>

@@ -13,17 +13,7 @@ class ApplicationController < ActionController::Base
   # that this pass value is the subclass (OpenReelTm, CassetteTapeTm, etc)
   # and not the super class TechnicalMetadatum
   def tm_partial_path(technical_metadatum)
-  	if technical_metadatum.class == OpenReelTm
-      "technical_metadatum/show_open_reel_tape_tm"
-    elsif technical_metadatum.class == CdrTm
-      "technical_metadatum/show_cdr_tm"
-    elsif technical_metadatum.class == DatTm
-      "technical_metadatum/show_dat_tm"
-    elsif technical_metadatum.class == AnalogSoundDiscTm
-      "technical_metadatum/show_analog_sound_disc_tm"
-    else
-      "technical_metadatum/show_unknown_tm"
-    end
+    TechnicalMetadatumModule::TM_PARTIALS[TechnicalMetadatumModule::TM_CLASS_FORMATS[technical_metadatum.class]]
   end
 
   def tm_form
@@ -60,16 +50,7 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    if f == "Open Reel Audio Tape"
-      render(partial: 'technical_metadatum/show_open_reel_tape_tm')
-    elsif f == "CD-R"
-      render(partial: 'technical_metadatum/show_cdr_tm')
-    elsif f == "DAT"
-      render(partial: 'technical_metadatum/show_dat_tm')
-    # analog sound discs are a single class used to cover LPs, 45s, 78s, Lacquer discs, etc
-    elsif f == "LP"
-      render(partial: 'technical_metadatum/show_analog_sound_disc_tm')
-    end
+    render(partial: TechnicalMetadatumModule::TM_PARTIALS[f])
   end
 
   def barcode_assigned(barcode)

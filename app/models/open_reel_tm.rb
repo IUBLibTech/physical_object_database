@@ -1,5 +1,7 @@
 class OpenReelTm < ActiveRecord::Base
 	acts_as :technical_metadatum
+	include TechnicalMetadatumModule
+	extend TechnicalMetadatumClassModule
 
 	# this hash holds the human reable attribute name for this class
 	HUMANIZED_COLUMNS = {:zero_point9375_ips => "0.9375 ips", :one_point875_ips => "1.875 ips", 
@@ -9,6 +11,23 @@ class OpenReelTm < ActiveRecord::Base
 		:acetate_base => "Acetate", :polyester_base => "Polyester", :pvc_base => "PVC", :paper_base => "Paper",
 		:unknown_playback_speed => "Unknown", :one_direction => "1", :two_directions => "2", :unknown_direction => "Unknown" 
 	}
+	PRESERVATION_PROBLEM_FIELDS = ["fungus", "soft_binder_syndrome", "vinegar_syndrome", "other_contaminants"]
+	PLAYBACK_SPEED_FIELDS = [
+          "zero_point9375_ips",
+          "one_point875_ips",
+          "three_point75_ips",
+          "seven_point5_ips",
+          "fifteen_ips",
+          "thirty_ips",
+          "unknown_playback_speed"
+	]
+	TRACK_CONFIGURATION_FIELDS = [
+	  "full_track", "half_track", "quarter_track", "unknown_track"
+	]
+	TAPE_THICKNESS_FIELDS = [ "zero_point5_mils", "one_mils", "one_point5_mils" ]
+	SOUND_FIELD_FIELDS = ["mono","stereo","unknown_sound_field"]
+	TAPE_BASE_FIELDS = ["acetate_base","polyester_base","pvc_base","paper_base"]
+	DIRECTIONS_RECORDED_FIELDS = ["one_direction","two_directions","unknown_direction"]
 
 	attr_accessor :reel_sizes
 	def reel_sizes
@@ -25,21 +44,32 @@ class OpenReelTm < ActiveRecord::Base
 		{"" => "", "1" => "1", "2" => "2"}
 	end
 
-	def generalize
-    TechnicalMetadatum.find_by(as_technical_metadatum_id: self.id)
-  end
+	def damage
+	  pack_deformation
+	end
 
-  def humanize_boolean_fields(*field_names)
-  	str = ""
-  	field_names.each do |f|
-  		str << ((!self[f].nil? and self[f]) ? (str.length > 0 ? ", " << OpenReelTm.human_attribute_name(f) : OpenReelTm.human_attribute_name(f)) : "")
-  	end
-  	str
-  end
+	def playback_speed
+	  humanize_boolean_fieldset(:PLAYBACK_SPEED_FIELDS)
+	end
 
-  # overridden to provide for more human readable attribute names for things like :zero_point9375_ips
-  def self.human_attribute_name(attribute)
-    HUMANIZED_COLUMNS[attribute.to_sym] || super
-  end
+	def track_configuration
+	  humanize_boolean_fieldset(:TRACK_CONFIGURATION_FIELDS)
+	end
+
+	def tape_thickness
+	  humanize_boolean_fieldset(:TAPE_THICKNESS_FIELDS)
+	end
+
+	def sound_field
+	  humanize_boolean_fieldset(:SOUND_FIELD_FIELDS)
+	end
+
+	def tape_base
+	  humanize_boolean_fieldset(:TAPE_BASE_FIELDS)
+	end
+
+	def directions_recorded
+          humanize_boolean_fieldset(:DIRECTIONS_RECORDED_FIELDS)
+	end
 
 end
