@@ -11,24 +11,18 @@
         <Cell><Data ss:type="String"><%= @picklist.name %></Data></Cell>
       </Row>
       <Row>
-      <% @column_names = PhysicalObject.printable_columns %>
+      <% @column_names = ['call_number', 'iucat_barcode'] %>
       <% @column_names.each do |column_name| %>
         <Cell><Data ss:Type="String"><%= column_name.titleize %></Data></Cell>
       <% end %>
-      <% if @physical_objects.any? %>
-        <% @md_columns = @physical_objects.first.metadata_columns %>
-        <% @md_columns.each do |md_column| %>
-          <Cell><Data ss:Type="String"><%= md_column.titleize %></Data></Cell>
-        <% end %>
+      </Row>
+      <% @physical_objects.each do |po| %>
+        <Row>
+          <% po.attributes.values_at(*@column_names).each do |cell_value| %>
+            <Cell><Data ss:Type="String"><%= cell_value %></Data></Cell>
+	  <% end %>
+        </Row>
       <% end %>
-      </Row>
-    <% @physical_objects.each do |po| %>
-      <Row>
-        <% po.printable_row.each do |cell_value| %>
-          <Cell><Data ss:Type="String"><%= cell_value %></Data></Cell>
-	<% end %>
-      </Row>
-    <% end %>
     </Table>
   </Worksheet>
 </Workbook>

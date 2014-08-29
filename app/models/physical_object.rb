@@ -132,7 +132,6 @@ class PhysicalObject < ActiveRecord::Base
         csv << physical_objects.first.printable_column_headers.map { |x| x.titleize }
         physical_objects.each do |physical_object|
           csv << physical_object.printable_row
-          csv << ["test row"]
         end
       end
     end
