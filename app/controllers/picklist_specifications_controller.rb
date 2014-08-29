@@ -9,15 +9,14 @@ class PicklistSpecificationsController < ApplicationController
 		@formats = PhysicalObject.formats
 		@edit_mode = true
 		@ps = PicklistSpecification.new(id: 0, format: "CD-R")
-		@tm = @ps.create_tm
+		@tm = @ps.ensure_tm
 		@action = 'create'
 		@submit_text = "Create New Picklist Specification"
 	end
 
 	def create
 		@ps = PicklistSpecification.new(picklist_specification_params)
-		@tm = @ps.create_tm
-		@tm.picklist_specification = @ps;
+		@tm = @ps.ensure_tm
 		@tm.update_attributes(tm_params)
 		
 		redirect_to(action: 'index')
@@ -35,13 +34,7 @@ class PicklistSpecificationsController < ApplicationController
 		@ps = PicklistSpecification.find(params[:id])
 		orig_format = @ps.format
 		if (@ps.update_attributes(picklist_specification_params))
-			if orig_format == @ps.format
-				@tm = @ps.technical_metadatum.as_technical_metadatum
-			else
-				@ps.technical_metadatum.destroy
-				@tm = @ps.create_tm
-				@tm.picklist_specification = @ps
-			end
+			@tm = @ps.ensure_tm
 			@tm.update_attributes(tm_params)
 			flash[:notice] = "#{@ps.name} successfully updated."
 		else
@@ -112,7 +105,6 @@ class PicklistSpecificationsController < ApplicationController
     def picklist_specification_params
       params.require(:ps).permit(:format, :name, :description)
     end
-
 
 	def format_tm_where(tm)
 		q = ""

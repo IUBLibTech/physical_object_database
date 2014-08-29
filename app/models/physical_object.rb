@@ -90,12 +90,12 @@ class PhysicalObject < ActiveRecord::Base
 
   # the passed in value for f should be the human readable name of the format - in the case of AnalogSoundDisc
   # technical metadatum, this could be LP/45/78/Lacquer Disc/etc
-  def create_tm(format)
+  def create_tm(format, tm_args = {})
     tm_class = TM_FORMAT_CLASSES[format]
     unless tm_class.nil?
       # setting the subtype should trigger and after_initialize callback to set defaults
-      format_args = ( ["LP"].include?(format) ? { subtype: format } : {} )
-      tm_class.new(**format_args)
+      tm_args[:subtype] = format if ["LP"].include?(format)
+      tm_class.new(**tm_args)
     else
       raise "Unknown format: #{format}"
     end 
@@ -201,6 +201,17 @@ class PhysicalObject < ActiveRecord::Base
     PhysicalObject.find_by_sql(sql)
   end
 
+  def ensure_tm
+    if TechnicalMetadatumModule::TM_FORMATS[self.format]
+      if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule::TM_FORMAT_CLASSES[self.format].to_s
+        self.technical_metadatum.destroy unless self.technical_metadatum.nil?
+        @tm = create_tm(self.format, physical_object: self)
+      else
+        @tm = self.technical_metadatum.as_technical_metadatum
+      end
+    end
+  end
+
   private
   def physical_object_where_clause
     sql = " "
@@ -245,14 +256,6 @@ class PhysicalObject < ActiveRecord::Base
     self.mdpi_barcode ||= 0
   end
 
-  def ensure_tm
-    if TechnicalMetadatumModule::TM_FORMATS[self.format]
-      if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule::TM_FORMAT_CLASSES[self.format].to_s
-        @tm = create_tm(self.format)
-        @tm.physical_object = self
-      end
-    end
-  end
   # def open_reel_tm_where(stm)
   #   q = ""
   #   stm.attributes.each do |name, value|

@@ -15,7 +15,7 @@ class PhysicalObjectsController < ApplicationController
     #default format for now
     format = PhysicalObject.formats["Open Reel Audio Tape"]
     @physical_object.format = format
-    @tm = @physical_object.create_tm(format)
+    @tm = @physical_object.ensure_tm
     @digital_files = []
     @formats = PhysicalObject.formats
     @edit_mode = true
@@ -32,8 +32,7 @@ class PhysicalObjectsController < ApplicationController
 
   def create
     @physical_object = PhysicalObject.new(physical_object_params)
-    @tm = @physical_object.create_tm(@physical_object.format)
-    @tm.physical_object = @physical_object
+    @tm = @physical_object.ensure_tm
     if @physical_object.save and @tm.update_attributes(tm_params)
       flash[:notice] = "Physical Object was successfully created.".html_safe
       redirect_to(:action => 'index')
@@ -67,13 +66,9 @@ class PhysicalObjectsController < ApplicationController
         render action: :edit
       else
         # format change requires deleting the old technical_metadatum and creating a new one
-        if old_format != params[:physical_object][:format]
-          @tm.destroy
-          @tm = @physical_object.create_tm(@physical_object.format)
-          @tm.physical_object = @physical_object
-        end
+        @tm = @physical_object.ensure_tm
+        #FIXME: check for update success on tm?
         @tm.update_attributes(tm_params)
-        @tm.save
         flash[:notice] = "Physical Object successfully updated".html_safe
         redirect_to(action: 'index')
       end
