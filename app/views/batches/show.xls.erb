@@ -13,13 +13,15 @@
         <% @column_names += ["Embedded file info - Bext Chunk - Description", "Embedded file info - Info List - ICMT", "Embedded file info - Info List - IARL"] %>
       <% end %>
       <%# box column %>
-      <% if ["CD-R","DAT"].include?(@media_format) %>
+      <% if ["CD-R","DAT","LP"].include?(@media_format) %>
         <% @column_names << "Box barcode" %>
       <% end %>
       <%# format-specific columns %>
       <% if @media_format == "CD-R" %>
       <% elsif @media_format == "DAT" %>
         <% @column_names += ["Sample rate", "Cassette length"] %>
+      <% elsif @media_format == "LP" %>
+        <% @column_names += ["Year", "Label", "Diameter in inches", "Recording type", "Groove type", "Playback speed"] %>
       <% elsif @media_format == "Open Reel Audio Tape" %>
         <% @column_names += ["Year", "Tape base", "Reel size", "Track configuration", "Sound field", "Playback speed", "Tape thickness", "Tape stock brand", "Directions recorded"] %>
       <% end %>
