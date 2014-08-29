@@ -9,6 +9,7 @@ class PhysicalObject < ActiveRecord::Base
 
   after_initialize :default_values
   after_initialize :assign_default_workflow_status
+  before_validation :ensure_tm
 
   belongs_to :box
   belongs_to :bin
@@ -33,7 +34,8 @@ class PhysicalObject < ActiveRecord::Base
   validates_presence_of :format, inclusion: formats.keys
   validates :group_position, presence: true
   validates :mdpi_barcode, mdpi_barcode: true
-  validates_presence_of :unit
+  validates :unit, presence: true
+  validates :technical_metadatum, presence: true
   validates_with PhysicalObjectValidator
 
   accepts_nested_attributes_for :technical_metadatum
@@ -241,6 +243,15 @@ class PhysicalObject < ActiveRecord::Base
   def default_values
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
+  end
+
+  def ensure_tm
+    if TechnicalMetadatumModule::TM_FORMATS[self.format]
+      if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule::TM_FORMAT_CLASSES[self.format].to_s
+        @tm = create_tm(self.format)
+        @tm.physical_object = self
+      end
+    end
   end
   # def open_reel_tm_where(stm)
   #   q = ""
