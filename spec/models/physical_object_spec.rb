@@ -36,6 +36,18 @@ describe PhysicalObject do
     expect(po.notes).to be_empty
   end
 
+  describe "#generation_values" do
+    let(:values) { valid_po.generation_values }
+    it "maps values to themselves " do
+      values.each do |key, value|
+        expect(key).to eq value
+      end
+    end
+    it "includes: (blank), Original, Copy, Unknown" do
+      expect(values.keys.sort).to eq ["", "Original", "Copy", "Unknown"].sort
+    end
+  end
+
   #class methods
   describe "::to_csv" do
     it "lists the picklist, if present" do
