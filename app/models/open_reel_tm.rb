@@ -11,6 +11,7 @@ class OpenReelTm < ActiveRecord::Base
 		:acetate_base => "Acetate", :polyester_base => "Polyester", :pvc_base => "PVC", :paper_base => "Paper",
 		:unknown_playback_speed => "Unknown", :one_direction => "1", :two_directions => "2", :unknown_direction => "Unknown" 
 	}
+	PRESERVATION_PROBLEM_FIELDS = ["fungus", "soft_binder_syndrome", "vinegar_syndrome", "other_contaminants"]
 	PLAYBACK_SPEED_FIELDS = [
           "zero_point9375_ips",
           "one_point875_ips",

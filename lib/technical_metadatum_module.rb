@@ -70,4 +70,9 @@ module TechnicalMetadatumModule
     humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS)
   end
 
+  #awaiting user story
+  def master_copies
+    ""
+  end
+
 end
