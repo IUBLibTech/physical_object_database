@@ -81,8 +81,7 @@ module PhysicalObjectsHelper
         failed << [index, box]
       #FIXME: add check for group_key?
       elsif po.save
-        tm = po.create_tm(po.format)  
-        tm.physical_object = po
+        tm = po.ensure_tm
         parse_tm(tm, r)
         tm.save
         succeeded << po.id

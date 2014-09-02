@@ -48,6 +48,26 @@ describe PhysicalObject do
     end
   end
 
+  describe "technical metadata" do
+    it "is generated before validation, if missing" do
+      valid_po.technical_metadatum = nil
+      valid_po.valid?
+      expect(valid_po.technical_metadatum).not_to be_nil
+    end
+    it "is re-generated before validation, on format change" do
+      expect(valid_po.technical_metadatum.as_technical_metadatum_type).not_to eq "DatTm"
+      valid_po.format = "DAT"
+      valid_po.valid?
+      expect(valid_po.technical_metadatum.as_technical_metadatum_type).to eq "DatTm"
+    end
+    it "is not generated for invalid format" do
+      valid_po.technical_metadatum = nil
+      valid_po.format = "INVALID FORMAT"
+      expect(valid_po).not_to be_valid
+      expect(valid_po.technical_metadatum).to be_nil
+    end
+  end
+
   #class methods
   describe "::to_csv" do
     it "lists the picklist, if present" do
