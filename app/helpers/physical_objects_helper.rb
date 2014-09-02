@@ -18,7 +18,7 @@ module PhysicalObjectsHelper
       bin = Bin.find_by(mdpi_barcode: r["Bin barcode"])
       bin_id = bin.id unless bin.nil?
       if bin_id.nil? && r["Bin barcode"].to_i > 0
-        bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: "Spreadsheet upload of " + filename + " at " + Time.now.to_s.split(" ")[0,2].join(" ") + ", Row " + (index + 1).to_s, description: "Created via spreadsheet upload")
+        bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: r["Bin identifier"], description: "Created by spreadsheet upload of " + filename + " at " + Time.now.to_s.split(" ")[0,2].join(" ") + ", Row " + (index + 1).to_s)
         bin.save
         bin_id = bin.id
       end
