@@ -178,21 +178,14 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def unpick
-    @picklist = @physical_object.picklist
     @physical_object.picklist = nil
-    if @picklist.nil?
-      flash[:notice] = "<strong>Physical Object was not associated to a Picklist.</strong>".html_safe
-    elsif @physical_object.save
-      flash[:notice] = "<em>Physical Object was successfully removed from Picklist.</em>".html_safe
-    else
-      flash[:notice] = "<strong>Failure; Physical Object was NOT removed from Picklist.</strong>".html_safe
+    new_bc = Integer(params[:mdpi_barcode])
+    update = (!new_bc.nil? and @physical_object.mdpi_barcode != new_bc)
+    if (update)
+      @physical_object.mdpi_barcode = new_bc
     end
-    # testing redirecting back to the referrer
-    # unless @picklist.nil?
-    #   redirect_to @picklist
-    # else
-    #   redirect_to @physical_object
-    # end
+    @physical_object.save
+    flash[:notice] = "The Physical Object was removed from the Pick List" + (update ? " and its barcode updated." : ".");
     redirect_to :back
   end
 

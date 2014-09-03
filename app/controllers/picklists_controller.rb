@@ -8,6 +8,8 @@ class PicklistsController < ApplicationController
   		"/picklists/cdr_tm"
   	elsif tm.class == OpenReelTm
   		"/picklists/open_reel_tm"
+  	elsif tm.class == AnalogSoundDiscTm
+  		"/picklists/analog_sound_disc_tm"
   	end
   end
 
@@ -82,7 +84,7 @@ class PicklistsController < ApplicationController
 
 	def process_list
 		puts params.to_yaml
-		@picklist = Picklist.find(params[:picklist][:id])
+		@picklist = Picklist.find(params[:id])
 		# box_id or bin_id will be present if the form is "auto" populating - in which case the view will create a
 		# hidden field for the box/bin and its id attribute
 		if params[:box_id] and params[:box_id].length > 0

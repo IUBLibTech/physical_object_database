@@ -14,12 +14,12 @@
 			<td rowspan="5">
 				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, {target: 'blank'}) %><br/>
 				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: 'blank'}) %><br/>
-				<%= link_to("Remove", unpick_physical_object_path(p), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Picklist?'})%><br/>
+				<%= link_to("Remove", unpick_physical_object_path(p), method: :post, id: "remove_#{p.id}")%><br/>
 				<%= f.submit(((p.bin or p.box) ? "Unpack" : "Pack"), class: "pl_button") %>
 			</td>
 			<td class="column">
 				<img alt="mdpi barcode" src="<%= packed ? '/gs_mdpi_barcode.png' : '/mdpi_barcode.png' %>" />
-				<%= f.text_field(:mdpi_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi") %>
+				<%= f.text_field(:mdpi_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi", id: "po_mdpi_barcode_#{p.id}") %>
 			</td>
 			<td class="column">
 				Call Number
