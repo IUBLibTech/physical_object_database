@@ -5,37 +5,56 @@ describe PhysicalObject do
   let(:po) { FactoryGirl.create :physical_object, :cdr }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:picklist) { FactoryGirl.create :picklist }
+  let(:box) { FactoryGirl.create :box }
+  let(:bin) { FactoryGirl.create :bin }
 
-  it "requires a format" do
-    expect(po.format).not_to be_blank
-    po.format = ""
-    expect(po).to be_invalid
+  describe "has required attributes:" do
+    it "requires a format" do
+      expect(valid_po.format).not_to be_blank
+      valid_po.format = ""
+      expect(valid_po).to be_invalid
+    end
+  
+    it "requires a format from format list" do
+      valid_po.format = "invalid format"
+      expect(valid_po).to be_invalid
+    end
+  
+    it "requires a unit" do
+      expect(valid_po.unit).not_to be_nil
+      valid_po.unit = nil
+      expect(valid_po).to be_invalid
+    end
+  
+    it "requires a group_position" do
+      expect(valid_po.group_position).to be > 0
+      valid_po.group_position = nil
+      expect(valid_po).to be_invalid
+    end
+
+    #technical_metadatum: separate section
+    #mdpi_barcode: separate section
+
+    it "requires one of mdpi_barcode, iucat_barcode, title, call_number" do
+      valid_po.mdpi_barcode = valid_po.iucat_barcode = valid_po.title = valid_po.call_number = ""
+      expect(valid_po).to be_invalid
+    end
   end
-
-  it "requires a unit" do
-    expect(po.unit).not_to be_nil
-    po.unit = nil
-    expect(po).to be_invalid
+ 
+  describe "has optional attributes:" do
+    it "can have a group_key" do
+      expect(valid_po.group_key).to be_nil
+    end
+    
+    it "generates a carrier_stream_index" do
+      expect(valid_po.carrier_stream_index).to_not be_blank
+    end
+  
+    it "has no notes by default" do
+      expect(valid_po.notes).to be_empty
+    end
   end
-
-  it "requires a group_position" do
-    expect(po.group_position).to be > 0
-    po.group_position = nil
-    expect(po).to be_invalid
-  end
-
-  it "can have a group_key" do
-    expect(po.group_key).to be_nil
-  end
-
-  it "generates a carrier_stream_index" do
-    expect(po.carrier_stream_index).to_not be_blank
-  end
-
-  it "has no notes by default" do
-    expect(po.notes).to be_empty
-  end
-
+  
   describe "#generation_values" do
     let(:values) { valid_po.generation_values }
     it "maps values to themselves " do
@@ -45,6 +64,27 @@ describe PhysicalObject do
     end
     it "includes: (blank), Original, Copy, Unknown" do
       expect(values.keys.sort).to eq ["", "Original", "Copy", "Unknown"].sort
+    end
+  end
+
+  describe "mdpi_barcode" do
+    it "accepts 0 values" do
+      valid_po.mdpi_barcode = 0
+      expect(valid_po).to be_valid
+    end
+    it "accepts valid full unique values" do
+      valid_po.mdpi_barcode = "40000000000002"
+      expect(valid_po).to be_valid
+    end
+    it "rejects valid, duplicate values" do
+      box.mdpi_barcode = "40000000000002"
+      box.save
+      valid_po.mdpi_barcode = box.mdpi_barcode
+      expect(valid_po).to be_invalid
+    end
+    it "rejects invalid values" do
+      valid_po.mdpi_barcode = "40000000000003"
+      expect(valid_po).to be_invalid
     end
   end
 
@@ -84,7 +124,24 @@ describe PhysicalObject do
 
   describe "provides virtual attributes:" do
     it "#carrier_stream_index" do
+      expect(valid_po.carrier_stream_index).to eq valid_po.group_identifier + "_1_1"
+    end
+    it "#carrier_stream_index for object in group" do
       skip "TODO"
+    end
+    describe "#container_id" do
+      it "returns nil if uncontained" do
+        expect(valid_po.container_id).to be_nil
+      end
+      it "returns box id if boxed" do
+        valid_po.box = box
+	valid_po.bin = bin
+	expect(valid_po.container_id).to eq box.id
+      end
+      it "returns bin id if binned" do
+        valid_po.bin = bin
+	expect(valid_po.container_id).to eq bin.id
+      end
     end
     it "#file_prefix" do
       expect(valid_po.file_prefix).to eq "MDPI_" + valid_po.mdpi_barcode.to_s
@@ -101,6 +158,35 @@ describe PhysicalObject do
     end
     it "#file_iarl" do
       expect(valid_po.file_iarl).to eq "Indiana University Bloomington. #{valid_po.unit.name}."
+    end
+    it "#group_identifier" do
+      expect(valid_po.group_identifier).to eq "GR" + valid_po.id.to_s.rjust(8, "0")
+    end
+    it "#group_identifier for object in group" do
+      skip "TODO"
+    end
+    it "#group_total" do
+      expect(valid_po.group_total).to eq 1
+    end
+    it "#group_total for object in group" do
+      skip "TODO"
+    end
+  end
+
+  describe "create_tm" do
+    TechnicalMetadatumModule::TM_FORMATS.keys.each do |format|
+      context "with valid simple format" do
+        let(:tm) { valid_po.create_tm(format) }
+        it "creates a new TM" do
+          expect(tm).to be_a_new(TechnicalMetadatumModule::TM_FORMAT_CLASSES[format])
+        end
+      end
+    end
+    context "with invalid format" do
+      let(:tm) { valid_po.create_tm("invalid format") }
+      it "raises an error" do
+        expect{tm}.to raise_error "Unknown format: invalid format"
+      end
     end
   end
 
