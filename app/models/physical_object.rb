@@ -32,7 +32,7 @@ class PhysicalObject < ActiveRecord::Base
   def self.formats
     TM_FORMATS
   end
-  validates_presence_of :format, inclusion: formats.keys
+  validates :format, presence: true, inclusion: { in: formats.keys }
   validates :group_position, presence: true
   validates :mdpi_barcode, mdpi_barcode: true
   validates :unit, presence: true
