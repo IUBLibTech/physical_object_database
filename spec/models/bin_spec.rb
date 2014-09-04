@@ -93,10 +93,12 @@ describe Bin do
     end
   end
 
-  describe "includes WorkflowStatusModule:" do
-    it "does WorkflowStatusModule things..." do
-      skip "TODO"
-    end
+  it_behaves_like "includes Workflow Status Module" do
+    let(:object) { valid_bin }
+    let(:default_status) { "Labelled" }
+    let(:new_status) { "Shipped" }
+    let(:valid_status_values) { ["Barcoded", "Batched", "Labelled", "Packed", "Returned", "Returned Complete", "Returned Incomplete", "Shipped", "Unpacked"] }
+    let(:class_title) { "Bin" }
   end
 
 end

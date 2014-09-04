@@ -206,10 +206,12 @@ describe PhysicalObject do
     end
   end
 
-  describe "includes WorkflowStatusModule:" do
-    it "does WorkflowStatusModule things..." do
-      skip "TODO"
-    end
+  it_behaves_like "includes Workflow Status Module" do
+    let(:object) { valid_po }
+    let(:default_status) { "Created" }
+    let(:new_status) { "Shipped" }
+    let(:valid_status_values) { ["Created", "Verified", "Barcoded", "Boxed", "Binned", "Shipped", "Returned", "Reshelved"] }
+    let(:class_title) { "Physical Object" }
   end
 
 end
