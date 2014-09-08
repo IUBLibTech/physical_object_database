@@ -78,6 +78,8 @@ end
 group :test do
   gem 'selenium-webdriver', '2.35.1'
   gem 'capybara'
+  #for capybara javascript access
+  gem 'capybara-webkit'
   gem 'factory_girl_rails'
   #gem 'cucumber', '1.2.5' # Spork not supported as of Cucumber 1.3.0, need to use 1.2.5
   gem 'cucumber-rails', :require => false
