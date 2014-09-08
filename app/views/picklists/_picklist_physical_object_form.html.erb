@@ -27,12 +27,12 @@
 			</td>
 			<td class="column">
 				<img alt="box barcode" src="<%= (packed or !manual) ? '/gs_box_barcode.png' : '/box_barcode.png' %>" />
-				<% bc = @box ? @box.mdpi_barcode : (packed and p.box ? p.box.mdpi_barcode : "") %>
+				<% bc = p.box.nil? ? (@box.nil? ? "" : @box.mdpi_barcode) : p.box.mdpi_barcode %>
 				<%= text_field_tag(:box_barcode, bc, readonly: (packed or !manual), maxlength: "14", size: "14", class: "mdpi") %>
 			</td>
 			<td class="column">
 				<img alt="bin barcode" src="<%= (packed or !manual) ? '/gs_bin_barcode.png' : '/bin_barcode.png' %>" />
-				<% bc = @bin ? @bin.mdpi_barcode : (packed and p.bin ? p.bin.mdpi_barcode : "") %>
+				<% bc = p.bin.nil? ? (@bin.nil? ? "" : @bin.mdpi_barcode) : p.bin.mdpi_barcode %>
 				<%= text_field_tag(:bin_barcode, bc, readonly: (packed or !manual), maxlength: "14", size: "14", class: "mdpi") %> 
 			</td>
 		</tr>
