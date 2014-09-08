@@ -13,6 +13,9 @@ Spork.prefork do
   require 'rspec/rails'
   #require 'rspec/autorun'
   require 'capybara/rspec'
+  #next 2 lines support javascript via capybara-webkit
+  require 'capybara/webkit/matchers'
+  Capybara.javascript_driver = :webkit
   require 'rack_session_access/capybara'
 
   Rails.application.config do |config|
@@ -88,6 +91,7 @@ Spork.prefork do
     #     --seed 1234
     config.order = "random"
     config.include Capybara::DSL
+    config.include(Capybara::Webkit::RspecMatchers, :type => :feature)
   end
 end
 
