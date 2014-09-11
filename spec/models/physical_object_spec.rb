@@ -53,6 +53,11 @@ describe PhysicalObject do
     it "has no notes by default" do
       expect(valid_po.notes).to be_empty
     end
+
+    it "must have a valid generation value" do
+      valid_po.generation = "invalid value"
+      expect(valid_po).not_to be_valid
+    end
   end
   
   describe "#generation_values" do

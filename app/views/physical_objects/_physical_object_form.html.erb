@@ -1,6 +1,7 @@
 <% @controller ||= 'physical_objects' %>
 <% @tm ||= @physical_object.technical_metadatum.as_technical_metadatum %>
 <%= error_messages_for(@physical_object) %>
+<%= error_messages_for(@tm) %>
 <%= nested_form_for(@physical_object) do |f| %>
   <div id="physicalObject" class="left">
     <h2>Physical Object</h2>

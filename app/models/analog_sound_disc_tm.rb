@@ -10,59 +10,92 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	DAMAGE_FIELDS = [
 	  "broken", "cracked", "dirty", "fungus", "scratched", "warped", "worn"
 	]
+	DIAMETER_VALUES = hashify [5, 6, 7, 8, 9, 10, 12, 16]
+	SPEED_VALUES = hashify [33.3, 45, 78]
+	GROOVE_SIZE_VALUES = hashify ['Coarse', 'Micro']
+	GROOVE_ORIENTATION_VALUES = hashify ['Lateral', 'Vertical']
+	RECORDING_METHOD_VALUES = hashify ['Pressed', 'Cut', 'Pregrooved']
+	MATERIAL_VALUES = hashify ['Shellac', 'Plastic', 'N/A']
+	SUBSTRATE_VALUES = hashify ["Aluminum", "Glass", "Fiber", "Steel", "Zinc", "N/A"]
+	COATING_VALUES = hashify ['None', 'Lacquer', 'N/A']
+	EQUALIZATION_VALUES = hashify ['RIAA', 'Other', 'Unknown']
+	SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
+
+	validates :diameter, inclusion: { in: DIAMETER_VALUES.keys }
+	validates :speed, inclusion: { in: SPEED_VALUES.keys }
+	validates :groove_size, inclusion: { in: GROOVE_SIZE_VALUES.keys }
+	validates :groove_orientation, inclusion: { in: GROOVE_ORIENTATION_VALUES.keys }
+	validates :recording_method, inclusion: { in: RECORDING_METHOD_VALUES.keys }
+	validates :material, inclusion: { in: MATERIAL_VALUES.keys }
+	validates :substrate, inclusion: { in: SUBSTRATE_VALUES.keys }
+	validates :coating, inclusion: { in: COATING_VALUES.keys }
+	validates :equalization, inclusion: { in: EQUALIZATION_VALUES.keys }
+	#validates :sound_field, inclusion: { in: SOUND_FIELD_VALUES.keys }
+
+	DEFAULT_VALUES = {
+		"LP" => { diameter: 12,
+			  speed: 33.3,
+			  groove_size: "Micro",
+			  groove_orientation: "Lateral",
+			  recording_method: "Pressed",
+			  substrate: "N/A",
+			  coating: "N/A",
+			  material: "Plastic"
+			}
+	}
 
 	def default_values
-		if subtype == "LP"
-			self.diameter ||= 12
-			self.speed ||= 33.3
-			self.groove_size ||= "Micro"
-			self.groove_orientation ||= "Lateral"
-			self.recording_method ||= "Pressed"
-			self.substrate ||= "N/A"
-			self.coating ||="N/A"
-			self.material ||= "Plastic"
+		values_hash = DEFAULT_VALUES[subtype]
+		unless values_hash.nil?
+			self.diameter ||= values_hash[:diameter]
+			self.speed ||= values_hash[:speed]
+			self.groove_size ||= values_hash[:groove_size]
+			self.groove_orientation ||= values_hash[:groove_orientation]
+			self.recording_method ||= values_hash[:recording_method]
+			self.substrate ||= values_hash[:substrate]
+			self.coating ||= values_hash[:coating]
+			self.material ||= values_hash[:material]
 		end
 	end
 
 	def diameter_values
-		{5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 12 => 12, 16 => 16}
+		DIAMETER_VALUES
 	end
 
 	def speed_values
-		{33.3 => 33.3, 45 => 45, 78 => 78 }
-		
+        	SPEED_VALUES
 	end
 	
 	def groove_size_values
-		{"Coarse" => "Coarse", "Micro" => "Micro"}
+        	GROOVE_SIZE_VALUES
 	end
 	
 	def groove_orientation_values
-		{"Lateral" => "Lateral", "Vertical" => "Vertical"}
+		GROOVE_ORIENTATION_VALUES
 	end
 
 	def recording_method_values
-		{"Pressed" => "Pressed", "Cut" => "Cut", "Pregrooved" => "Pregrooved"}
+		RECORDING_METHOD_VALUES
 	end
 
 	def material_values
-		{"Shellac" => "Shellac", "Plastic" => "Plastic", "N/A" => "N/A"}
+		MATERIAL_VALUES
 	end
 
 	def substrate_values
-		{"Aluminum" => "Aluminum", "Glass" =>"Glass", "Fiber" => "Fiber", "Steel" => "Steel", "Zinc" => "Zinc", "N/A" => "N/A"}
+		SUBSTRATE_VALUES
 	end
 
 	def coating_values
-		{"None" => "None", "Lacquer" => "Lacquer", "N/A" => "N/A"}
+		COATING_VALUES
 	end
 
 	def equalization_values
-		{"RIAA" => "RIAA", "Other" => "Other", "Unknown" => "Unknown"}
+		EQUALIZATION_VALUES
 	end
 
 	def sound_field_values
-		{"Mono" => "Mono", "Stereo" => "Stereo", "Unknown" => "Unknown"}
+		SOUND_FIELD_VALUES
 	end
 
 	def damage

@@ -3,12 +3,16 @@
 #
 module TechnicalMetadatumModule
 
-  TM_FORMATS = {
-    "CD-R" => "CD-R",
-    "DAT" => "DAT",
-    "Open Reel Audio Tape" => "Open Reel Audio Tape",
-    "LP" => "LP"
-  }
+  def hashify(array)
+    Hash[array.map{ |v| [v.to_s,v.to_s] }]
+  end
+  def TechnicalMetadatumModule.hashify(array)
+    Hash[array.map{ |v| [v.to_s,v.to_s] }]
+  end
+
+  TM_FORMATS = hashify [ "CD-R", "DAT", "Open Reel Audio Tape", "LP" ]
+
+  TM_SUBTYPES = ["LP"]
 
   TM_GENRES = {
     "CD-R" => :audio,
@@ -50,6 +54,7 @@ module TechnicalMetadatumModule
   def self.included(base)
     #base.extend(ClassMethods)
     self.const_set(:TM_FORMATS, TM_FORMATS) unless self.const_defined?(:TM_FORMATS)
+    self.const_set(:TM_SUBTYPES, TM_SUBTYPES) unless self.const_defined?(:TM_SUBTYPES)
     self.const_set(:TM_GENRES, TM_GENRES) unless self.const_defined?(:TM_GENRES)
     self.const_set(:TM_FORMAT_CLASSES, TM_FORMAT_CLASSES) unless self.const_defined?(:TM_FORMAT_CLASSES)
     self.const_set(:TM_CLASS_FORMATS, TM_CLASS_FORMATS) unless self.const_defined?(:TM_CLASS_FORMATS)

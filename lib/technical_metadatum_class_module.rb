@@ -8,4 +8,8 @@ module TechnicalMetadatumClassModule
     self.const_get(:HUMANIZED_COLUMNS)[attribute.to_sym] || super
   end
 
+  def hashify(array)
+    Hash[array.map{ |v| [v.to_s,v.to_s] }]
+  end
+
 end

@@ -68,9 +68,13 @@ class PhysicalObjectsController < ApplicationController
         # format change requires deleting the old technical_metadatum and creating a new one
         @tm = @physical_object.ensure_tm
         #FIXME: check for update success on tm?
-        @tm.update_attributes(tm_params)
-        flash[:notice] = "Physical Object successfully updated".html_safe
-        redirect_to(action: 'index')
+        if @tm.update_attributes(tm_params)
+          flash[:notice] = "Physical Object successfully updated".html_safe
+          redirect_to(action: 'index')
+	else
+	  @edit_mode = true
+	  render action: :edit
+	end
       end
     end
   end
