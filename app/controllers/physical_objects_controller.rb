@@ -58,7 +58,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def update
-    puts params.to_yaml
+    #puts params.to_yaml
     PhysicalObject.transaction do
       old_format = @physical_object.format
       if ! @physical_object.update_attributes(physical_object_params)

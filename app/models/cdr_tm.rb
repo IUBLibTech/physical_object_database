@@ -8,6 +8,10 @@ class CdrTm < ActiveRecord::Base
 	PRESERVATION_PROBLEM_FIELDS = ["breakdown_of_materials", "fungus", "other_contaminants"]
 	DAMAGE_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
 	FORMAT_DURATION_VALUES = hashify ["", "74 min", "80 min", "90 min", "99 min", "Unknown"]
+	SIMPLE_FIELDS = ["damage", "format_duration"]
+	MULTIVALUED_FIELDSETS = {
+		"Preservation problems" => :PRESERVATION_PROBLEM_FIELDS
+	}
 
 	validates :damage, inclusion: { in: DAMAGE_VALUES.keys }
 	validates :format_duration, inclusion: { in: FORMAT_DURATION_VALUES.keys }
@@ -21,5 +25,4 @@ class CdrTm < ActiveRecord::Base
 	def format_duration_values
 	  FORMAT_DURATION_VALUES
 	end
-
 end

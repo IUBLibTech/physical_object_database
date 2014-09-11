@@ -184,8 +184,9 @@ describe PhysicalObjectsController do
         expect(response).to redirect_to(action: :upload_show)
       end
     end
-    context "specifying a file and picklist" do
-      let(:upload_update) { post :upload_update, pl: { name: "Test picklist", description: "Test description"}, physical_object: { csv_file: fixture_file_upload('files/po_import_cdr.csv', 'text/csv') } }
+    ["po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv"].each do |filename|
+    context "specifying a file (#{filename}) and picklist" do
+      let(:upload_update) { post :upload_update, pl: { name: "Test picklist", description: "Test description"}, physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } }
       it "should create a picklist" do
         expect{ upload_update }.to change(Picklist, :count).by(1)
       end
@@ -196,6 +197,7 @@ describe PhysicalObjectsController do
       it "creates records" do
 	expect{ upload_update }.to change(PhysicalObject, :count).by(2)
       end
+    end
     end
   end
 
