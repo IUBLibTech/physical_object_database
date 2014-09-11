@@ -80,27 +80,32 @@ module PhysicalObjectsHelper
       elsif box_id.nil? && r["Box barcode"].to_i > 0
         failed << [index, box]
       #FIXME: add check for group_key?
-      elsif po.save
+      else
         tm = po.ensure_tm
         parse_tm(tm, r)
-        tm.save
-        succeeded << po.id
-        #create duplicated records if there was a "Quantity" column specified
-        q = r["Quantity"]
-        if ! q.nil?
-          po.save
-          (q.to_i - 1).times do |i|
-            p_clone = po.dup
-            p_clone.save
-            succeeded << p_clone.id
-            tm_clone = tm.dup
-            tm_clone.physical_object = p_clone
-            tm_clone.save
+        if tm.nil?
+          #error
+        elsif !tm.save
+          failed << [index, tm]
+        elsif po.save
+          succeeded << po.id
+          #create duplicated records if there was a "Quantity" column specified
+          q = r["Quantity"]
+          unless q.nil? || q.blank? || q.to_i < 2
+            (q.to_i - 1).times do |i|
+              p_clone = po.dup
+              p_clone.save
+              succeeded << p_clone.id
+              tm_clone = tm.dup
+              tm_clone.physical_object = p_clone
+              tm_clone.save
+            end
           end
+        else
+          #need to remove tm
+          tm.destroy
+          failed << [index, po]
         end
-      else
-       #failed contains pairs of spreadsheet row index and their constituent physical objects
-       failed << [index, po]
       end
     end
     {"succeeded" => succeeded, "failed" => failed}

@@ -260,7 +260,7 @@ class PhysicalObject < ActiveRecord::Base
 
   private 
   def default_values
-    self.generation = ""
+    self.generation ||= ""
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
   end

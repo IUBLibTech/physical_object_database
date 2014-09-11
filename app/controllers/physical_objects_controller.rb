@@ -132,7 +132,7 @@ class PhysicalObjectsController < ApplicationController
       path = params[:physical_object][:csv_file].path
       filename = params[:physical_object][:csv_file].original_filename
       added = PhysicalObjectsHelper.parse_csv(path, @pl, filename)
-      flash[:notice] = "#{added['succeeded'].size} records were successfully imported.".html_safe
+      flash[:notice] = "#{added['succeeded'].size} record" + (added['succeeded'].size == 1 ? " was" : "s were") + " successfully imported.".html_safe
       if added['failed'].size > 0
         @failed = added['failed']
       end
