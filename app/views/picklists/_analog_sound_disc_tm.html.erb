@@ -1,0 +1,13 @@
+<tr class='<%= index.odd? ? "odd" : "even" %>'>
+	<td>Need to finish the TM view for LPs in the picklist processing screen</td>
+</tr>
+<tr class='<%= index.odd? ? "odd" : "even" %>'>
+	<td>
+		<span class="mdpi_red">Damage: </span>
+		<%= tm.humanize_boolean_fields("broken", "cracked", "dirty", "fungus", "scartched", "warped", "worn") %>
+	</td>
+	<td colspan="2">
+		<span class="mdpi_red">Preservation problems: </span>
+		<%= tm.humanize_boolean_fields("delamination", "exudation", "oxidation") %>
+	</td>
+</tr>

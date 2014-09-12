@@ -46,11 +46,11 @@
   <div id="contextMenu">
     <%= yield :context_menu %>
   </div>
-  <% if !flash[:notice].blank? %>
-    <div class="notice">
+  <div class="notice">
+    <% unless flash[:notice].blank? %>
       <%= flash[:notice]%>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
   
   <%= yield %>
 

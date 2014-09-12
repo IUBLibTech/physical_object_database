@@ -23,9 +23,11 @@ class ReturnsController < ApplicationController
 		puts params.to_yaml
 		@bin = Bin.find(params[:id])
 		po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode])[0]
+		debugger
+
 		if po.nil?
 			flash[:notice] = "<b class='warning'>No Physical Object with barcode #{params[:mdpi_barcode]} was found.</b>".html_safe
-		elsif !po.bin.nil? and po.bin != @bin
+		elsif po.bin.nil? or po.bin != @bin
 			flash[:notice] = "<b class='warning'>Physical Object with barcode <a href='#{physical_object_path(po.id)}' target='_blank'>#{po.mdpi_barcode}</a> was not originally shipped with this bin!</b>".html_safe
 		else
 			po.update_attributes(current_workflow_status: "Returned", ephemera_returned: params[:ephemera_returned][:ephemera_returned])

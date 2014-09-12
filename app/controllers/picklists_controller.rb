@@ -8,6 +8,8 @@ class PicklistsController < ApplicationController
   		"/picklists/cdr_tm"
   	elsif tm.class == OpenReelTm
   		"/picklists/open_reel_tm"
+  	elsif tm.class == AnalogSoundDiscTm
+  		"/picklists/analog_sound_disc_tm"
   	end
   end
 
@@ -81,103 +83,78 @@ class PicklistsController < ApplicationController
 	end
 
 	def process_list
-		puts params.to_yaml
-		@picklist = Picklist.find(params[:picklist][:id])
+		@picklist = Picklist.find(params[:id])
 		# box_id or bin_id will be present if the form is "auto" populating - in which case the view will create a
 		# hidden field for the box/bin and its id attribute
-		if params[:box_id] and params[:box_id].length > 0
-			@box = Box.find(params[:box_id])
-		elsif params[:bin_id] and params[:bin_id].length > 0
-			@bin = Bin.find(params[:bin_id])
-		# otherwise the user is manually scanning a box and/or bin barcode for the physical object
-		else
-
-		end
+		@box = (params[:box_id] and params[:box_id].length > 0) ? Box.find(params[:box_id]) : nil
+		@bin = (params[:bin_id] and params[:bin_id].length > 0) ? Bin.find(params[:bin_id]) : nil
 	end
 
 	def assign_to_container
-		PhysicalObject.transaction do
-			physical_object = PhysicalObject.find(params[:po_id])
-			po_barcode = params[:physical_object][:mdpi_barcode]
-			
-			# if the form was being processed from within the context of a box, a hidden attribute with that
-			# box id will be passed along
-			@box = (!params[:box_id].nil? and params[:box_id].length > 0) ? Box.find(params[:box_id]) : nil
-			
-			# if the form was being processed from within the contect of a bin, a hidden attribute with that
-			# bin id will be passed along
-			@bin = (!params[:bin_id].nil? and params[:bin_id].length > 0) ? Bin.find(params[:bin_id]) : nil
+		physical_object = PhysicalObject.find(params[:po_id])
+		physical_object.mdpi_barcode = params[:physical_object][:mdpi_barcode]
+		physical_object.has_ephemera = params[:physical_object][:has_ephemera]
+		
+		po_barcode = params[:physical_object][:mdpi_barcode]
+		# the return value from barcode_assigned is either false (if unassigned) or the object to which it is assigned
+		assigned = ApplicationHelper.barcode_assigned?(po_barcode)
 
-			# first check: see if we have a valid barcode for the physical object
-			if ApplicationHelper.valid_barcode?(po_barcode) and po_barcode != "0"
-				assigned = ApplicationHelper.barcode_assigned?(po_barcode)
-				# second check: see if the barcode has been assigned to something else
-				if assigned == false or assigned == physical_object
-					# update the physical object barcode
-					if params[:physical_object] and params[:physical_object][:mdpi_barcode]
-						physical_object.mdpi_barcode = params[:physical_object][:mdpi_barcode]
-						physical_object.has_ephemera = params[:physical_object][:has_ephemera]
-					end
-					# branch logic: if bin AND box are both nil, the form is being packed from picklist itself and the user will
-					# be providing the barcode of whatever container(s) the physical object is being packed into
-					if @box.nil? and @bin.nil?
-						# at least one of these must be specified
-						box = Box.where(mdpi_barcode: params[:box_barcode])[0]
-						bin = Bin.where(mdpi_barcode: params[:bin_barcode])[0]
-						if (box.nil? and bin.nil?)
-							flash[:notice] = "<b class='warning'>An existing Bin and/or Box barcode must be specified.</b>".html_safe
-						else
-							set_container(physical_object, box, bin)
-						end
-					elsif !@box.nil?
-						# if the box barcode was provided and it's NOT the same as box.mdpi_barcode - error message
-						if params[:box_barcode].length > 0 and params[:box_barcode].to_i != 0 and params[:box_barcode].to_i != @box.mdpi_barcode
-							flash[:notice] = "<b class='warning'>Attempt to assign a different box barcode from the packing box. Physical Object has not been packed!</b>".html_safe
-						else
-							set_container(physical_object, @box, @bin)
-						end
-					elsif !@bin.nil?
-						# if the bin barcode was provided and it's not the same as bin.mdpi_barcode - error
-						if params[:bin_barcode].length > 0 and params[:bin_barcode].to_i != 0 and params[:bin_barcode].to_i != @bin.mdpi_barcode
-							flash[:notice] = "<b class='warning'>Attmempt to assign a different bin barcode from the packing bin. Physical Object has not been packed!</b>".html_safe
-						else
-							set_container(physical_object, @box, @bin)
-						end		
-					end
-				else
-					flash[:notice] = "<b class='warning'>Barcode: #{po_barcode} has already been assigned to another #{assigned.class.name.underscore.humanize}</b>".html_safe
-				end
-			else
-				flash[:notice] = "<b class='warning'>Invalid MDPI Barcode: #{po_barcode}</b>".html_safe
-			end
+		# hidden input values will be present if the packing context is a bin or box
+		@box = (!params[:box_id].nil? and params[:box_id].length > 0) ? Box.find(params[:box_id]) : nil		
+		@bin = (!params[:bin_id].nil? and params[:bin_id].length > 0) ? Bin.find(params[:bin_id]) : nil
+		# or in manual mode, the user specifies these in the visible input fields
+		box = !params[:box_barcode].nil? ? Box.where(mdpi_barcode: params[:box_barcode])[0] : nil
+		bin = !params[:bin_barcode].nil? ? Bin.where(mdpi_barcode: params[:bin_barcode])[0] : nil
+		#Need to finish the TM view fro LPs in the picklist processing screendebugger
+		error_msg = nil
+		# you must have a container to put a physical object into		
+		if (@box.nil? and @bin.nil?) and (box.nil? and bin.nil?) 
+			error_msg = "<b class='warning'>An existing Bin and/or Box barcode must be specified.</b>".html_safe
+		# physical objects can't be packed without a valid MDPI barcode
+		elsif !ApplicationHelper.valid_barcode?(po_barcode) or po_barcode == "0"
+			error_msg = "<b class='warning'>Invalid MDPI Barcode: #{po_barcode}</b>".html_safe
+		# valid barcode can't have already been assigned to another physical object
+		elsif assigned and assigned != physical_object
+			error_msg = "<b class='warning'>Barcode: #{po_barcode} has already been assigned to another #{assigned.class.name.underscore.humanize}</b>".html_safe
+		# packing a box but the hidden box id and the form provided box mdpi barcode don't match up
+		elsif !@box.nil? and params[:box_barcode].to_i != @box.mdpi_barcode
+			error_msg = "<b class='warning'>Attempt to assign a different box barcode from the packing box. Physical Object has not been packed!</b>".html_safe
+		# packing a bin but the hidden bin id and the form provided bin barcode do not match up
+		elsif !@bin.nil? and params[:bin_barcode].to_i != @bin.mdpi_barcode
+			error_msg = "<b class='warning'>Attmempt to assign a different bin barcode from the packing bin. Physical Object has not been packed!</b>".html_safe
 		end
 
-		box_id = @box.nil? ? "" : @box.id
-		bin_id = @bin.nil? ? "" : @bin.id
-		redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
+		PhysicalObject.transaction do
+			# determine what gets pass into the set_container method - the hidden form box parameters, or the visible user parameters
+			@box = @box.nil? ? box : @box
+			@bin = @bin.nil? ? bin : @bin
+			if error_msg.nil? and set_container(physical_object, @box, @bin)
+				render(partial: "picklist_physical_object_form", locals: {p: physical_object, index: 0, box: @box, bin: @bin})
+			else
+				render(partial: "/ajax_error/ajax_error_popup", status: 422, locals: {message: (error_msg.nil? ? "<b class='warning'>Failed to update the Physical Object...</b>".html_safe : error_msg)})	
+			end
+		end
 	end
-
-
 
 	def remove_from_container
 		Picklist.transaction do
 			physical_object = PhysicalObject.find(params[:po_id])
-			box_id = params[:box_id] ? params[:box_id] : ""
-			bin_id = params[:bin_id] ? params[:bin_id] : ""
+			box_id = params[:box_id] ? params[:box_id] : nil
+			bin_id = params[:bin_id] ? params[:bin_id] : nil
+			box = box_id.nil? ? nil : Box.find(box_id)
+			bin = bin_id.nil? ? nil : Bin.find(bin_id)
 			# remove the physical object from ALL containers it has been associated with
-			if physical_object.box
+			if physical_object.box or physical_object.bin
 				physical_object.box = nil
-				stat = WorkflowStatusQueryModule.new_status(physical_object, "Barcoded")
-				physical_object.save
-				stat.save
-			end
-			if physical_object.bin
 				physical_object.bin = nil
 				stat = WorkflowStatusQueryModule.new_status(physical_object, "Barcoded")
-				physical_object.save
 				stat.save
 			end			
-			redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: box_id, bin_id: bin_id)
+			if physical_object.save
+				render(partial: "picklist_physical_object_form", locals: {p: physical_object, box: box, bin: bin, index: 0})
+			else
+				render(partial: "/ajax_error/ajax_error_popup", status: 422, locals: {message: (error_msg.nil? ? "<b class='warning'>An error occured while trying to update the Physical Object...</b>".html_safe : error_msg)})
+			end
 		end
 	end
 
@@ -232,7 +209,7 @@ class PicklistsController < ApplicationController
 				physical_object.update_attributes(bin_id: (bin.nil? ? 0 : bin.id), box_id: (box.nil? ? 0 : box.id))
 				template = WorkflowStatusTemplate.where(name: (bin.nil? ? "Boxed" : "Binned"))[0]
 				status = WorkflowStatus.new(physical_object_id: physical_object.id, workflow_status_template_id: template.id)
-				status.save
+				return status.save
 			end
 		end
 end

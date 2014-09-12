@@ -55,6 +55,7 @@ Pod::Application.routes.draw do
   resources :picklists, except: [:index] do
     patch :process_list, on: :member
     get :process_list, on: :member
+    patch :assign_to_container_ajax, on: :member
     patch :assign_to_container, on: :member
     patch :remove_from_container, on: :member
     post :container_full, on: :member

@@ -1,4 +1,12 @@
-<%= form_for(p, url: {controller: 'picklists', action: ((p.bin or p.box) ? "remove_from_container" : "assign_to_container"), id: @picklist.id}) do |f| %>
+<%= form_for(p, url: {controller: 'picklists', action: ((p.bin or p.box) ? "remove_from_container" : "assign_to_container"), id: p.picklist.id}, remote: true) do |f| %>
+	<% 
+		 # this is hackish but the ajax call to add/remove a bin/box passes references to bin/box in the render() call through 
+		 # locals: {box: box, bin: bin}. I don't quite understand the differences between declaring @bin vs bin, so these lines 
+		 # work around that
+	%>
+	<% @bin ||= bin %>
+	<% @box ||= box %>
+
 	<%= hidden_field_tag "po_id", p.id %>
 	<% unless @box.nil? %>
 		<%= hidden_field_tag "box_id", @box.id %>
@@ -14,12 +22,12 @@
 			<td rowspan="5">
 				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, {target: 'blank'}) %><br/>
 				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: 'blank'}) %><br/>
-				<%= link_to("Remove", unpick_physical_object_path(p), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Picklist?'})%><br/>
-				<%= f.submit(((p.bin or p.box) ? "Unpack" : "Pack"), class: "pl_button") %>
+				<%= link_to("Remove", unpick_physical_object_path(p), {method: :post, id: "remove_#{p.id}", target: "blank", remote: true})%><br/>
+				<%= f.submit(((packed) ? "Unpack" : "Pack"), class: "pl_button") %>
 			</td>
 			<td class="column">
 				<img alt="mdpi barcode" src="<%= packed ? '/gs_mdpi_barcode.png' : '/mdpi_barcode.png' %>" />
-				<%= f.text_field(:mdpi_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi") %>
+				<%= f.text_field(:mdpi_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi", id: "po_mdpi_barcode_#{p.id}") %>
 			</td>
 			<td class="column">
 				Call Number

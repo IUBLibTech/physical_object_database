@@ -58,7 +58,6 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def update
-    puts params.to_yaml
     PhysicalObject.transaction do
       old_format = @physical_object.format
       if ! @physical_object.update_attributes(physical_object_params)
@@ -173,22 +172,20 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def unpick
-    @picklist = @physical_object.picklist
+    #FIXME: this currently is being used in an ajax call and the rendered result is not used by the calling page
+    # SEE - views/picklists/provess_list.html.erb "$("[id^=remove_]").click(function(event) {" javascript
     @physical_object.picklist = nil
-    if @picklist.nil?
-      flash[:notice] = "<strong>Physical Object was not associated to a Picklist.</strong>".html_safe
-    elsif @physical_object.save
-      flash[:notice] = "<em>Physical Object was successfully removed from Picklist.</em>".html_safe
-    else
-      flash[:notice] = "<strong>Failure; Physical Object was NOT removed from Picklist.</strong>".html_safe
+    @physical_object.save
+    new_bc = Integer(params[:mdpi_barcode]) if params[:mdpi_barcode]
+    update = (!new_bc.nil? and @physical_object.mdpi_barcode != new_bc)
+    if (update)
+      @physical_object.mdpi_barcode = new_bc
+      update = @physical_object.save
     end
-    # testing redirecting back to the referrer
-    # unless @picklist.nil?
-    #   redirect_to @picklist
-    # else
-    #   redirect_to @physical_object
-    # end
-    redirect_to :back
+    flash[:notice] = "The Physical Object was removed from the Pick List" + (update ? " and its barcode updated." : ".")
+    #FIXME: comment or change redirect?
+    #render :json {}
+    redirect_to action: "edit"
   end
 
   # ajax method to determine if a physical object has emphemera - returns plain text true/false

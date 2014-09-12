@@ -17,4 +17,71 @@
 <% else %>
 	<h2>Manually Associating Items From Pick List <i><%= @picklist.name %></i></h2>
 <% end %>
-<%= render(partial: 'picklist_table') %>
+<%= render(partial: 'picklist_table', locals: {box: @box, bin: @bin}) %>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("input[type='text'].mdpi").on("click", function () {
+			if ($(this).val() == '0') {
+   			$(this).select();
+			}
+		});
+
+		// the function that handles the pack and unpack form posts when processing a picklist
+		function ajax_picklist() {
+			var el = $(this);
+			var postData = $(this).serializeArray();
+		  var formURL = $(this).attr("action");
+		  $.ajax(
+		  {
+		      url : formURL,
+		      type: "POST",
+		      data : postData,
+		      dataType: "html",
+		      success:function(data, textStatus, jqXHR)
+		      {
+		      	// get a reference to the ajax call returned element, then replace the original with the new one, then bind the 
+		      	// callback so the form can respond to the ajax call it makes. Finally, clear the ".notice" div of any previous
+		      	// error messages that might be present
+		      	newEl = $(jqXHR.responseText);
+		      	el.replaceWith(newEl);
+		      	newEl.submit(ajax_picklist);
+		      	$(".notice").html("");
+		      },
+		      error: function(jqXHR, textStatus, errorThrown)
+		      {
+		        $(".notice").html(jqXHR.responseText);  
+		      }
+		  });
+		}
+
+		$("[id^=edit_physical_object_]").submit(ajax_picklist);
+
+
+		$("[id^=remove_]").click(function(event) {
+			var oref = $(this).attr("href");
+			var id = $(this).attr("id").substring("remove_".length);
+			var mdpi = $('#po_mdpi_barcode_'+id).val();
+			if (mdpi > 0) {
+				var params = {mdpi_barcode: mdpi}
+				var href = $(this).attr("href")+"?"+jQuery.param(params);
+				$(this).attr("href", href);
+			}
+			if (confirm("This will remove the Physical Object from the Pick List. Do you wish to continue?") == true) {
+				var xhr = $.ajax($(this).attr("href", href)).
+				done(function() {
+					$("#edit_physical_object_"+id).remove();
+					$(".notice").replaceWith("Physical Object removed from the Pick List.");
+				}).
+				fail(function() {
+					alert("An error occured while trying to remove the item from the pick. The page will be refreshed...")
+					location.reload();
+				}).
+				always(function() {
+					var nt = window.open(window.location.protocol+"//"+window.location.host+"/physical_objects/"+id+"/edit", '_blank');
+					nt.focus();
+				});
+			}
+		});
+	});
+</script>
