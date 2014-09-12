@@ -195,6 +195,13 @@ describe PhysicalObject do
     end
   end
 
+  describe "ensure_tm" do
+    specify "returns nil for an invalid format"
+    specify "returns existing tm if valid and matching"
+    specify "returns a new tm if missing"
+    specify "returns a new tm if format changes"
+  end
+
   describe "includes ConditionStatusModule:" do
     let(:condition_status) { FactoryGirl.create(:condition_status, physical_object: po) }
     it "#class_title returns 'Physical Object'" do
