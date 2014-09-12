@@ -110,7 +110,7 @@ module PhysicalObjectsHelper
     end
     #FIXME: testing
     testing = false
-    unless (failed.nil? || testing )
+    unless (failed.nil? || !testing )
       failed.each do |pair|
         puts pair[0]
 	puts pair[1].class.to_s.titleize
