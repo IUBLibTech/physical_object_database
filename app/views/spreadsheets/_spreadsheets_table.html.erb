@@ -1,0 +1,31 @@
+<table class="list">
+  <thead>
+    <tr class="header">
+      <th>Filename</th>
+      <th>Note</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% unless @spreadsheets.nil? %>
+      <% count = 1 %>
+      <% @spreadsheets.each do |spreadsheet| %>
+        <% tr_class = (count.odd? ? 'odd' : 'even') %>
+	<% count += 1 %>
+        <tr class='<%= tr_class %>'>
+          <td><%= spreadsheet.filename %></td>
+          <td>
+	    <%= spreadsheet.note? ? spreadsheet.note[0..45] : "" %>
+	    <%= "..." if spreadsheet.note and spreadsheet.note.size > 45 %>
+	  </td>
+          <td>
+	    <%= link_to 'Show', spreadsheet %>
+            <%= link_to 'Edit', edit_spreadsheet_path(spreadsheet) %>
+            <%# link_to 'Delete', spreadsheet, method: :delete, data: { confirm: 'Are you sure you want to delete this spreadsheet?  This will also delete all associated physical objects.' } %>
+	  </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

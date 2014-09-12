@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140819175312) do
+ActiveRecord::Schema.define(version: 20140912143418) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -254,6 +254,15 @@ ActiveRecord::Schema.define(version: 20140819175312) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "spreadsheets", force: true do |t|
+    t.string   "filename"
+    t.text     "note"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "spreadsheets", ["filename"], name: "index_spreadsheets_on_filename", unique: true, using: :btree
 
   create_table "technical_metadata", force: true do |t|
     t.integer  "as_technical_metadatum_id"

@@ -1,0 +1,27 @@
+<%= form_for(@spreadsheet) do |f| %>
+  <table>
+    <tr>
+      <th>Filename</th>
+      <td><%= @spreadsheet.filename %></td>
+    </tr>
+    <tr>
+      <th>Imported at</th>
+      <td><%= @spreadsheet.created_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S") %></td>
+    </tr>
+    <tr>
+      <th colspan="2">Note</th>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <% if @edit_mode %>
+          <%= f.text_area :note %>
+	<% else %>
+	  <%= @spreadsheet.note %>
+	<% end %>
+      </td>
+    </tr>
+  </table>
+  <% if @edit_mode %>
+    <div class="clear"><%= submit_tag(@submit_text) %></div>
+  <% end %>
+<% end %>

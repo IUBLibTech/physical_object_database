@@ -187,6 +187,10 @@ describe PhysicalObjectsController do
     ["po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv"].each do |filename|
     context "specifying a file (#{filename}) and picklist" do
       let(:upload_update) { post :upload_update, pl: { name: "Test picklist", description: "Test description"}, physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } }
+      it "should create a spreadsheet object" do
+        expect{ upload_update }.to change(Spreadsheet, :count).by(1)
+	expect(Spreadsheet.last.filename).to eq filename
+      end
       it "should create a picklist" do
         expect{ upload_update }.to change(Picklist, :count).by(1)
       end
@@ -196,6 +200,10 @@ describe PhysicalObjectsController do
       end
       it "creates records" do
 	expect{ upload_update }.to change(PhysicalObject, :count).by(2)
+      end
+      it "fails if repeated, due to duplicate filename" do
+        upload_update
+	expect{ upload_update }.not_to change(Spreadsheet, :count)
       end
     end
     end

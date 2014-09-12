@@ -122,7 +122,7 @@ tr.even {
   display: none
 }
 
-#bin_div, #box_div {
+#bin_div, #box_div, #spreadsheet_div {
   width: 25%;
 }
 

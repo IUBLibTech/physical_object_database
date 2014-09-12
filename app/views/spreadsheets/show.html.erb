@@ -1,0 +1,21 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Edit Spreadsheet", {:action => 'edit', :id => @spreadsheet.id}) %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Delete", @spreadsheet, method: :delete, data: {:confirm=>'Are you sure you want to delete this Spreadsheet?  This will delete all associated physical objects.'})%>
+  </div>
+<% end %>
+
+<%= error_messages_for(@spreadsheet) %>
+
+<div id="spreadsheet_div" class="left">
+  <h2>Spreadsheet</h2>
+  <%= render 'spreadsheet' %>
+</div>
+
+<div class="left">
+  <h2>Physical Objects uploaded via this spreadsheet: FIXME</h2>
+  <%= render 'physical_objects/physical_objects_table' %>
+</div>
+
