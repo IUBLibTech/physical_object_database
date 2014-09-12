@@ -180,13 +180,16 @@ class PhysicalObjectsController < ApplicationController
     #FIXME: this currently is being used in an ajax call and the rendered result is not used by the calling page
     # SEE - views/picklists/provess_list.html.erb "$("[id^=remove_]").click(function(event) {" javascript
     @physical_object.picklist = nil
-    new_bc = Integer(params[:mdpi_barcode])
+    @physical_object.save
+    new_bc = Integer(params[:mdpi_barcode]) if params[:mdpi_barcode]
     update = (!new_bc.nil? and @physical_object.mdpi_barcode != new_bc)
     if (update)
       @physical_object.mdpi_barcode = new_bc
+      update = @physical_object.save
     end
-    @physical_object.save
-    flash[:notice] = "The Physical Object was removed from the Pick List" + (update ? " and its barcode updated." : ".");
+    flash[:notice] = "The Physical Object was removed from the Pick List" + (update ? " and its barcode updated." : ".")
+    #FIXME: comment or change redirect?
+    #render :json {}
     redirect_to action: "edit"
   end
 

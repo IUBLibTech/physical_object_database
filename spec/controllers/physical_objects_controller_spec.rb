@@ -284,38 +284,67 @@ describe PhysicalObjectsController do
   end
 
   describe "POST unpick" do
-    let(:post_unpick) { post :unpick, id: physical_object.id }
-    before(:each) { request.env["HTTP_REFERER"] = "referring_page" }
+    let(:valid_barcode) { "40000000000002" }
+    let(:invalid_barcode) { "40000000000003" }
+    let(:barcode_value) { physical_object.mdpi_barcode }
+    let(:post_unpick_missing_barcode) { post :unpick, id: physical_object.id }
+    let(:post_unpick_with_same_barcode) { post :unpick, id: physical_object.id, mdpi_barcode: barcode_value }
+    let(:post_unpick_with_valid_barcode) { post :unpick, id: physical_object.id, mdpi_barcode: valid_barcode }
+    let(:post_unpick_with_invalid_barcode) { post :unpick, id: physical_object.id, mdpi_barcode: invalid_barcode }
+    let(:removed_message) { "The Physical Object was removed from the Pick List."}
+    let(:updated_message) { "The Physical Object was removed from the Pick List and its barcode updated." }
+
+    shared_examples "flashes successful removal message" do
+      it "displays a success message" do
+        expect(flash[:notice]).to eq removed_message
+      end
+    end
+    shared_examples "flashes successful update message" do
+      it "displays a success message" do
+        expect(flash[:notice]).to eq updated_message
+      end
+    end
+    shared_examples "unpicks the object" do
+      it "disassociates the object from the picklist" do
+        physical_object.reload
+        expect(physical_object.picklist).to be_nil
+      end
+    end
+
     context "when not in a picklist" do
       before(:each) do 
         physical_object.picklist = nil
         physical_object.save
-        post_unpick
+        post_unpick_with_same_barcode
       end
-      it "displays an error message" do
-        expect(flash[:notice]).to eq "<strong>Physical Object was not associated to a Picklist.</strong>".html_safe
-      end
-      it "redirects :back" do
-        expect(response).to redirect_to "referring_page"
-      end
+      include_examples "flashes successful removal message"
+      include_examples "unpicks the object"
     end
     context "when in a picklist" do
       let(:picklist) { FactoryGirl.create(:picklist) }
       before(:each) do
         physical_object.picklist = picklist
         physical_object.save
-        post_unpick
       end
-      it "displays a success message" do
-        expect(flash[:notice]).to eq "<em>Physical Object was successfully removed from Picklist.</em>".html_safe
+      context "setting the same barcode" do
+        before(:each) { post_unpick_with_same_barcode }
+	include_examples "flashes successful removal message"
+	include_examples "unpicks the object"
       end
-      it "unpicks the object" do
-        expect(physical_object.picklist).not_to be_nil
-        physical_object.reload
-        expect(physical_object.picklist).to be_nil
+      context "not sending a barcode parameter" do
+        before(:each) { post_unpick_missing_barcode }
+	include_examples "flashes successful removal message"
+	include_examples "unpicks the object"
       end
-      it "redirects to the box" do
-        expect(response).to redirect_to "referring_page"
+      context "sending an updated valid barcode" do
+        before(:each) { post_unpick_with_valid_barcode }
+	include_examples "flashes successful update message"
+	include_examples "unpicks the object"
+      end
+      context "sending an invalid barcode" do
+        before(:each) { post_unpick_with_invalid_barcode }
+        include_examples "flashes successful removal message"
+        include_examples "unpicks the object"
       end
     end
   end
