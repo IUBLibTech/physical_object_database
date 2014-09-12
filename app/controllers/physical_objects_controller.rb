@@ -59,7 +59,6 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def update
-    puts params.to_yaml
     PhysicalObject.transaction do
       old_format = @physical_object.format
       if ! @physical_object.update_attributes(physical_object_params)
@@ -178,6 +177,8 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def unpick
+    #FIXME: this currently is being used in an ajax call and the rendered result is not used by the calling page
+    # SEE - views/picklists/provess_list.html.erb "$("[id^=remove_]").click(function(event) {" javascript
     @physical_object.picklist = nil
     new_bc = Integer(params[:mdpi_barcode])
     update = (!new_bc.nil? and @physical_object.mdpi_barcode != new_bc)
@@ -186,7 +187,7 @@ class PhysicalObjectsController < ApplicationController
     end
     @physical_object.save
     flash[:notice] = "The Physical Object was removed from the Pick List" + (update ? " and its barcode updated." : ".");
-    redirect_to :back
+    redirect_to action: "edit"
   end
 
   # ajax method to determine if a physical object has emphemera - returns plain text true/false
