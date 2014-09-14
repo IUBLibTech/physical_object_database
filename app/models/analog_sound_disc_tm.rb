@@ -20,6 +20,16 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	COATING_VALUES = hashify ['None', 'Lacquer', 'N/A']
 	EQUALIZATION_VALUES = hashify ['RIAA', 'Other', 'Unknown']
 	SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
+	SUBTYPE_VALUES = hashify ['LP']
+	SIMPLE_FIELDS = [
+          "diameter", "speed", "groove_size", "groove_orientation",
+	  "recording_method", "material", "substrate", "coating",
+	  "equalization", "country_of_origin"
+	]
+	MULTIVALUED_FIELDSETS = {
+	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
+	  "Damage" => :DAMAGE_FIELDS,
+	}
 
 	validates :diameter, inclusion: { in: DIAMETER_VALUES.keys }
 	validates :speed, inclusion: { in: SPEED_VALUES.keys }
@@ -31,6 +41,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	validates :coating, inclusion: { in: COATING_VALUES.keys }
 	validates :equalization, inclusion: { in: EQUALIZATION_VALUES.keys }
 	#validates :sound_field, inclusion: { in: SOUND_FIELD_VALUES.keys }
+	validates :subtype, inclusion: { in: SUBTYPE_VALUES.keys }
 
 	DEFAULT_VALUES = {
 		"LP" => { diameter: 12,
@@ -100,11 +111,6 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 
 	def damage
 		humanize_boolean_fieldset(:DAMAGE_FIELDS)
-	end
-
-	#FIXME: remove when label field is added
-	def label
-		""
 	end
 
 end

@@ -26,27 +26,8 @@ describe CdrTm do
       expect(cdr_tm).not_to be_valid
     end
   end
- 
-  #FIXME: abstract out boolean fieldset verification
-  #FIXME: abstract out controlled fieldset verification?
-  describe "has boolean fieldsets:" do
-    describe "preservation problems" do
-      CdrTm::PRESERVATION_PROBLEM_FIELDS.each do |field|
-        it "includes boolean field: #{field}" do
-          expect(cdr_tm.send(field.to_sym)).to eq false
-	end
-      end
-    end
-  end
 
-  describe "has relationships:" do
-    it "can belong to a picklist specification" do
-      expect(cdr_tm.picklist_specification).to be_nil
-    end
-    it "can belong to a physical object" do
-      expect(cdr_tm.physical_object).to be_nil
-    end
-  end
+  it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:cdr_tm) 
 
 end
 
