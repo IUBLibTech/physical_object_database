@@ -58,6 +58,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def update
+    #puts params.to_yaml
     PhysicalObject.transaction do
       old_format = @physical_object.format
       if ! @physical_object.update_attributes(physical_object_params)
@@ -67,9 +68,13 @@ class PhysicalObjectsController < ApplicationController
         # format change requires deleting the old technical_metadatum and creating a new one
         @tm = @physical_object.ensure_tm
         #FIXME: check for update success on tm?
-        @tm.update_attributes(tm_params)
-        flash[:notice] = "Physical Object successfully updated".html_safe
-        redirect_to(action: 'index')
+        if @tm.update_attributes(tm_params)
+          flash[:notice] = "Physical Object successfully updated".html_safe
+          redirect_to(action: 'index')
+        else
+          @edit_mode = true
+          render action: :edit
+        end
       end
     end
   end
@@ -127,7 +132,7 @@ class PhysicalObjectsController < ApplicationController
       path = params[:physical_object][:csv_file].path
       filename = params[:physical_object][:csv_file].original_filename
       added = PhysicalObjectsHelper.parse_csv(path, @pl, filename)
-      flash[:notice] = "#{added['succeeded'].size} records were successfully imported.".html_safe
+      flash[:notice] = "#{added['succeeded'].size} record" + (added['succeeded'].size == 1 ? " was" : "s were") + " successfully imported.".html_safe
       if added['failed'].size > 0
         @failed = added['failed']
       end

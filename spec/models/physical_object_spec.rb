@@ -53,6 +53,11 @@ describe PhysicalObject do
     it "has no notes by default" do
       expect(valid_po.notes).to be_empty
     end
+
+    it "must have a valid generation value" do
+      valid_po.generation = "invalid value"
+      expect(valid_po).not_to be_valid
+    end
   end
   
   describe "#generation_values" do
@@ -188,6 +193,13 @@ describe PhysicalObject do
         expect{tm}.to raise_error "Unknown format: invalid format"
       end
     end
+  end
+
+  describe "ensure_tm" do
+    specify "returns nil for an invalid format"
+    specify "returns existing tm if valid and matching"
+    specify "returns a new tm if missing"
+    specify "returns a new tm if format changes"
   end
 
   describe "includes ConditionStatusModule:" do

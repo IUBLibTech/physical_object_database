@@ -29,19 +29,30 @@ class OpenReelTm < ActiveRecord::Base
 	TAPE_BASE_FIELDS = ["acetate_base","polyester_base","pvc_base","paper_base"]
 	DIRECTIONS_RECORDED_FIELDS = ["one_direction","two_directions","unknown_direction"]
 
+	REEL_SIZE_VALUES = hashify ["", "3 in.", "4 in.", "5 in.", "6 in.", "7 in.", "10 in.", "10.5 in."] 
+	PACK_DEFORMATION_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
+	SIMPLE_FIELDS = ["pack_deformation", "reel_size", "tape_stock_brand"]
+	MULTIVALUED_FIELDSETS = {
+	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
+	  "Playback speed" => :PLAYBACK_SPEED_FIELDS,
+	  "Track configuration" => :TRACK_CONFIGURATION_FIELDS,
+	  "Tape Thickness" => :TAPE_THICKNESS_FIELDS,
+	  "Sound field" => :SOUND_FIELD_FIELDS,
+	  "Tape base" => :TAPE_BASE_FIELDS,
+	  "Directions recorded" => :DIRECTIONS_RECORDED_FIELDS
+	}
+
+	validates :pack_deformation, inclusion: { in: PACK_DEFORMATION_VALUES.keys }
+	validates :reel_size, inclusion: { in: REEL_SIZE_VALUES.keys }
+
 	attr_accessor :reel_sizes
 	def reel_sizes
-		{"" => "","3 in." => "3 in.", "4 in." => "4 in.", "5 in." => "5 in.", "6 in." => "6 in.", "7 in." => "7 in.", "10 in." => "10 in.", "10.5 in." => "10.5 in."} 
+	  REEL_SIZE_VALUES
 	end
 
 	attr_accessor :pack_deformations
 	def pack_deformations
-		{"None" => "None", "Minor" => "Minor", "Moderate" => "Moderate", "Severe" => "Severe"}
-	end
-
-	attr_accessor :directions_recorded_vals
-	def directions_recorded_vals
-		{"" => "", "1" => "1", "2" => "2"}
+	  PACK_DEFORMATION_VALUES
 	end
 
 	def damage

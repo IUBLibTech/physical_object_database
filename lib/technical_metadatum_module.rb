@@ -3,12 +3,16 @@
 #
 module TechnicalMetadatumModule
 
-  TM_FORMATS = {
-    "CD-R" => "CD-R",
-    "DAT" => "DAT",
-    "Open Reel Audio Tape" => "Open Reel Audio Tape",
-    "LP" => "LP"
-  }
+  def hashify(array)
+    Hash[array.map{ |v| [v.to_s,v.to_s] }]
+  end
+  def TechnicalMetadatumModule.hashify(array)
+    Hash[array.map{ |v| [v.to_s,v.to_s] }]
+  end
+
+  TM_FORMATS = hashify [ "CD-R", "DAT", "Open Reel Audio Tape", "LP" ]
+
+  TM_SUBTYPES = ["LP"]
 
   TM_GENRES = {
     "CD-R" => :audio,
@@ -46,18 +50,27 @@ module TechnicalMetadatumModule
     "LP" => "analog_sound_disc_tms"
   }
 
+  #default values
+  PRESERVATION_PROBLEM_FIELDS = []
+  HUMANIZED_COLUMNS = {}
+  SIMPLE_FIELDS = []
+  MULTIVALUED_FIELDSETS = {}
+
   #include instance methods, class methods, default class constants
   def self.included(base)
     #base.extend(ClassMethods)
     self.const_set(:TM_FORMATS, TM_FORMATS) unless self.const_defined?(:TM_FORMATS)
+    self.const_set(:TM_SUBTYPES, TM_SUBTYPES) unless self.const_defined?(:TM_SUBTYPES)
     self.const_set(:TM_GENRES, TM_GENRES) unless self.const_defined?(:TM_GENRES)
     self.const_set(:TM_FORMAT_CLASSES, TM_FORMAT_CLASSES) unless self.const_defined?(:TM_FORMAT_CLASSES)
     self.const_set(:TM_CLASS_FORMATS, TM_CLASS_FORMATS) unless self.const_defined?(:TM_CLASS_FORMATS)
     self.const_set(:TM_PARTIALS, TM_PARTIALS) unless self.const_defined?(:TM_PARTIALS)
     self.const_set(:TM_TABLE_NAMES, TM_TABLE_NAMES) unless self.const_defined?(:TM_TABLE_NAMES)
     #default empty values
-    self.const_set(:PRESERVATION_PROBLEM_FIELDS, []) unless self.const_defined?(:PRESERVATION_PROBLEM_FIELDS)
-    self.const_set(:HUMANIZED_COLUMNS, {}) unless self.const_defined?(:HUMANIZED_COLUMNS)
+    self.const_set(:PRESERVATION_PROBLEM_FIELDS, PRESERVATION_PROBLEM_FIELDS) unless self.const_defined?(:PRESERVATION_PROBLEM_FIELDS)
+    self.const_set(:HUMANIZED_COLUMNS, HUMANIZED_COLUMNS) unless self.const_defined?(:HUMANIZED_COLUMNS)
+    self.const_set(:SIMPLE_FIELDS, SIMPLE_FIELDS) unless self.const_defined?(:SIMPLE_FIELDS)
+    self.const_set(:MULTIVALUED_FIELDSETS, MULTIVALUED_FIELDSETS) unless self.const_defined?(:MULTIVALUED_FIELDSETS)
   end
 
   def humanize_boolean_fields(*field_names)

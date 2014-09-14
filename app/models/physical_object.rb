@@ -32,7 +32,16 @@ class PhysicalObject < ActiveRecord::Base
   def self.formats
     TM_FORMATS
   end
-  validates :format, presence: true, inclusion: { in: formats.keys }
+  # this hash holds the human reable attribute name for this class
+  HUMANIZED_COLUMNS = {
+      :mdpi_barcode => "MDPI barcode",
+      :iucat_barcode => "IUCAT barcode",
+      :oclc_number => "OCLC number"
+  }
+  GENERATION_VALUES = hashify ["", "Original", "Copy", "Unknown"]
+
+  validates :format, presence: true, inclusion: { in: TM_FORMATS.keys }
+  validates :generation, inclusion: { in: GENERATION_VALUES.keys }
   validates :group_position, presence: true
   validates :mdpi_barcode, mdpi_barcode: true
   validates :unit, presence: true
@@ -49,16 +58,9 @@ class PhysicalObject < ActiveRecord::Base
     po.physical_object_query(false)
   }
 
-  # this hash holds the human reable attribute name for this class
-  HUMANIZED_COLUMNS = {
-      :mdpi_barcode => "MDPI barcode",
-      :iucat_barcode => "IUCAT barcode",
-      :oclc_number => "OCLC number"
-  }
-
   attr_accessor :generation_values
   def generation_values
-    {"" => "", "Original" => "Original", "Copy" => "Copy", "Unknown" => "Unknown"}
+    GENERATION_VALUES
   end
 
   #manually add virtual attributes to @attributes
@@ -100,7 +102,7 @@ class PhysicalObject < ActiveRecord::Base
     tm_class = TM_FORMAT_CLASSES[format]
     unless tm_class.nil?
       # setting the subtype should trigger and after_initialize callback to set defaults
-      tm_args[:subtype] = format if ["LP"].include?(format)
+      tm_args[:subtype] = format if TM_SUBTYPES.include?(format)
       tm_class.new(**tm_args)
     else
       raise "Unknown format: #{format}"
@@ -209,7 +211,7 @@ class PhysicalObject < ActiveRecord::Base
 
   def ensure_tm
     if TechnicalMetadatumModule::TM_FORMATS[self.format]
-      if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule::TM_FORMAT_CLASSES[self.format].to_s
+      if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule::TM_FORMAT_CLASSES[self.format].to_s
         self.technical_metadatum.destroy unless self.technical_metadatum.nil?
         @tm = create_tm(self.format, physical_object: self)
       else
@@ -258,6 +260,7 @@ class PhysicalObject < ActiveRecord::Base
 
   private 
   def default_values
+    self.generation ||= ""
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
   end

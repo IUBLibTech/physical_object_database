@@ -91,7 +91,8 @@ class ApplicationController < ActionController::Base
       #fields for analog sound discs
       :diameter, :speed, :groove_size, :groove_orientation, :recording_method, :material, :substrate,
       :coating, :equalization, :country_of_origin, :delamination, :exudation, :oxidation, :cracked,
-      :warped, :dirty, :scratched, :worn, :broken, :label
+      :warped, :dirty, :scratched, :worn, :broken, :label,
+      :subtype
       )
   end
 
