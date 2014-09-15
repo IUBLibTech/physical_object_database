@@ -60,7 +60,7 @@
 				<% end %>
 			</td>
 		</tr>
-		<% material = (@edit_mode or (@tm.recording_method == "Pressed") or (@tm_recording_method == "Pregrooved")) %>
+		<% material = (["Pressed","Pregrooved"].include?(@tm.recording_method)) %>
 		<tr id="material_row" style="display: <%= material ? "table-row" : "none" %>" >
 			<th>Material</th>
 			<td>

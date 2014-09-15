@@ -200,7 +200,7 @@ describe PhysicalObjectsController do
       end
     end
 
-    ["po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv"].each do |filename|
+    ["po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv"].each do |filename|
       context "specifying a file (#{filename}) and picklist" do
         let(:upload_update) { post :upload_update, pl: { name: "Test picklist", description: "Test description"}, physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } }
         it "should create a spreadsheet object" do
