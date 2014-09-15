@@ -3,6 +3,9 @@
       <%= link_to("Create New Physical Object", controller: 'physical_objects', action: 'new') %>
     </div>
     <div class="contextMenuItem">
+      <%= link_to("View Imported Spreadsheets", spreadsheets_path) %>
+    </div>
+    <div class="contextMenuItem">
       <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) %>
     </div>
   <% end %>

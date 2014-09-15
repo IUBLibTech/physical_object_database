@@ -1,9 +1,12 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
+    <%= link_to("View Imported Spreadsheets", spreadsheets_path) %>
+  </div>
+  <div class="contextMenuItem">
     <%= link_to("Edit Spreadsheet", {:action => 'edit', :id => @spreadsheet.id}) %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Delete", @spreadsheet, method: :delete, data: {:confirm=>'Are you sure you want to delete this Spreadsheet?  This will delete all associated physical objects.'})%>
+    <%= link_to("Delete Spreadsheet", @spreadsheet, method: :delete, data: {:confirm=>'Are you sure you want to delete this Spreadsheet?  This will delete all associated physical objects, bins, and boxes.'})%>
   </div>
 <% end %>
 
