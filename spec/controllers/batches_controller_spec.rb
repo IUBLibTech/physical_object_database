@@ -56,7 +56,7 @@ describe BatchesController do
   describe "POST create" do
     context "with valid attributes" do
       let(:creation) { post :create, batch: valid_batch.attributes.symbolize_keys }
-      it "saves the new physical object in the database" do
+      it "saves the new object in the database" do
         expect{ creation }.to change(Batch, :count).by(1)
       end
       it "redirects to the objects index" do
@@ -68,7 +68,7 @@ describe BatchesController do
     context "with invalid attributes" do
       #FIXME: test that invalid object is invalid?
       let(:creation) { post :create, batch: invalid_batch.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
-      it "does not save the new physical object in the database" do
+      it "does not save the new object in the database" do
         batch
 	expect{ creation }.not_to change(Batch, :count)
       end

@@ -1,5 +1,5 @@
 class BinsController < ApplicationController
-  before_action :set_bin, only: [:show, :edit, :update, :destroy, :new_box, :unbatch, :show_boxes, :assign_boxes]
+  before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :show_boxes, :assign_boxes]
 
 	def index
 		@bins = Bin.all
@@ -25,7 +25,6 @@ class BinsController < ApplicationController
 
 	def edit
 		@batches = Batch.all.order('identifier').collect{|b| [b.identifier, b.id]}
-		@batch = @bin.batch
 	end
 
 	def update
@@ -73,18 +72,6 @@ class BinsController < ApplicationController
 		end
 	end
 
-	def new_box	
-	end
-
-	def create_box
-		bc = params[:barcode][:mdpi_barcode]
-		if barcode_assigned(bc)
-			flash[:notice] = '<b class="warning">#{bc} has already been assigned to another object</b>'
-		else
-
-		end
-	end
-
 	def add_barcode_item
 		bc = params[:barcode][:mdpi_barcode]
 		@bin = Bin.find(params[:bin][:id])
@@ -119,19 +106,13 @@ class BinsController < ApplicationController
 	end
 
 	def unbatch
-		bin = @bin.batch
 		@bin.batch = nil
 		if @bin.save
-		 flash[:notice] = "Successfully removed Bin <i>#{@bin.identifier}</i> from Batch <i>#{bin.identifier}</i>.".html_safe
+		  flash[:notice] = "Successfully removed Bin <i>#{@bin.identifier}</i> from Batch <i>#{@batch.identifier}</i>.".html_safe
 		else
-		 flash[:notice] = "<b class='warninig'>Failed to remove this Bin from Batch.</b>".html_safe
+		  flash[:notice] = "<b class='warning'>Failed to remove this Bin from Batch.</b>".html_safe
 		end
-		# unless @batch.nil?
-		#   redirect_to @batch
-		# else
-		#   redirect_to @bin
-		# end
-redirect_to :back
+                redirect_to :back
 	end
 
 	def show_boxes
@@ -152,6 +133,7 @@ redirect_to :back
 	private
 	def set_bin
 		@bin = Bin.find(params[:id])
+		@batch = @bin.batch
 	end
 
 	def bin_index(bins, bin_id)

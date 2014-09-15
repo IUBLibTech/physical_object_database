@@ -5,4 +5,8 @@ FactoryGirl.define do
     mdpi_barcode 0
   end
 
+  factory :invalid_bin, parent: :bin do
+    identifier nil
+  end
+
 end
