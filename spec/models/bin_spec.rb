@@ -23,7 +23,7 @@ describe Bin do
       expect(valid_bin).to be_valid
     end
     it "mdpi_barcode by mdpi_barcode validation" do
-      valid_bin.mdpi_barcode = nil
+      valid_bin.mdpi_barcode = "40000000000003"
       expect(valid_bin).not_to be_valid
     end
   end
