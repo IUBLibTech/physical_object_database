@@ -70,11 +70,11 @@ describe PhysicalObjectsController do
       let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
       it "does not save the new physical object in the database" do
         physical_object
-	expect{ creation }.not_to change(PhysicalObject, :count)
+        expect{ creation }.not_to change(PhysicalObject, :count)
       end
       it "re-renders the :new template" do
         creation
-	expect(response).to render_template(:new)
+        expect(response).to render_template(:new)
       end
     end
   end
@@ -89,9 +89,9 @@ describe PhysicalObjectsController do
         expect(assigns(:physical_object)).to eq physical_object
       end
       it "changes the object's attributes" do
-	expect(physical_object.title).not_to eq "Updated title"
+        expect(physical_object.title).not_to eq "Updated title"
         physical_object.reload
-	expect(physical_object.title).to eq "Updated title"
+        expect(physical_object.title).to eq "Updated title"
       end
       it "redirects to the updated object" do
         expect(response).to redirect_to(controller: :physical_objects, action: :index) 
@@ -184,28 +184,44 @@ describe PhysicalObjectsController do
         expect(response).to redirect_to(action: :upload_show)
       end
     end
-    ["po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv"].each do |filename|
-    context "specifying a file (#{filename}) and picklist" do
-      let(:upload_update) { post :upload_update, pl: { name: "Test picklist", description: "Test description"}, physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } }
-      it "should create a spreadsheet object" do
-        expect{ upload_update }.to change(Spreadsheet, :count).by(1)
-	expect(Spreadsheet.last.filename).to eq filename
+
+    describe "with invalid columns headers" do
+      context "running header validation" do
+        let(:upload_update) { post :upload_update, pl: {name: "", description: ""}, physical_object: { csv_file: fixture_file_upload('files/po_import_invalid_headers.csv', 'text/csv') } }
+        it "should NOT create a spreadsheet object" do
+          expect{ upload_update}.not_to change(Spreadsheet, :count)
+        end
       end
-      it "should create a picklist" do
-        expect{ upload_update }.to change(Picklist, :count).by(1)
-      end
-      it "flashes a success notice" do
-        upload_update
-        expect(flash[:notice]).to eq "2 records were successfully imported.".html_safe
-      end
-      it "creates records" do
-	expect{ upload_update }.to change(PhysicalObject, :count).by(2)
-      end
-      it "fails if repeated, due to duplicate filename" do
-        upload_update
-	expect{ upload_update }.not_to change(Spreadsheet, :count)
+      context "skipping header validation" do
+        let(:upload_update) { post :upload_update, pl: {name: "", description: ""}, physical_object: { csv_file: fixture_file_upload('files/po_import_invalid_headers.csv', 'text/csv') }, header_validation: "false" }
+        it "should create a spreadsheet object" do
+          expect{ upload_update}.to change(Spreadsheet, :count).by(1)
+        end
       end
     end
+
+    ["po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv"].each do |filename|
+      context "specifying a file (#{filename}) and picklist" do
+        let(:upload_update) { post :upload_update, pl: { name: "Test picklist", description: "Test description"}, physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } }
+        it "should create a spreadsheet object" do
+          expect{ upload_update }.to change(Spreadsheet, :count).by(1)
+          expect(Spreadsheet.last.filename).to eq filename
+        end
+        it "should create a picklist" do
+          expect{ upload_update }.to change(Picklist, :count).by(1)
+        end
+        it "flashes a success notice" do
+          upload_update
+          expect(flash[:notice]).to eq "Spreadsheet uploaded.<br/>2 records were successfully imported.".html_safe
+        end
+        it "creates records" do
+          expect{ upload_update }.to change(PhysicalObject, :count).by(2)
+        end
+        it "fails if repeated, due to duplicate filename" do
+          upload_update
+          expect{ upload_update }.not_to change(Spreadsheet, :count)
+        end
+      end
     end
   end
 
@@ -215,7 +231,7 @@ describe PhysicalObjectsController do
       let(:box) { FactoryGirl.create(:box) }
       before(:each) do
         physical_object.box = box
-	physical_object.save
+        physical_object.save
       end
       it "raises an error" do
         expect{ post_unbin }.to raise_error RuntimeError
@@ -226,13 +242,13 @@ describe PhysicalObjectsController do
         physical_object.box = nil
         physical_object.bin = nil
         physical_object.save
-	post_unbin
+        post_unbin
       end
       it "displays an error message" do
         expect(flash[:notice]).to eq "<strong>Physical Object was not associated to a Bin.</strong>".html_safe
       end
       it "redirects to the object" do
-	expect(response).to redirect_to physical_object
+        expect(response).to redirect_to physical_object
       end
     end
     context "when in a bin" do
@@ -240,19 +256,19 @@ describe PhysicalObjectsController do
       before(:each) do
         physical_object.box = nil
         physical_object.bin = bin
-	physical_object.save
-	post_unbin
+        physical_object.save
+        post_unbin
       end
       it "displays a success message" do
         expect(flash[:notice]).to eq "<em>Physical Object was successfully removed from bin.</em>".html_safe
       end
       it "unbins the object" do
         expect(physical_object.bin).not_to be_nil
-	physical_object.reload
+        physical_object.reload
         expect(physical_object.bin).to be_nil
       end
       it "redirects to the bin" do
-	expect(response).to redirect_to bin
+        expect(response).to redirect_to bin
       end
     end
   end
@@ -262,8 +278,8 @@ describe PhysicalObjectsController do
     context "when not in a box" do
       before(:each) do
         physical_object.box = nil
-	physical_object.save
-	post_unbox
+        physical_object.save
+        post_unbox
       end
       it "displays an error message" do
         expect(flash[:notice]).to eq "<strong>Physical Object was not associated to a Box.</strong>".html_safe

@@ -36,7 +36,7 @@ class OpenReelTm < ActiveRecord::Base
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
 	  "Playback speed" => :PLAYBACK_SPEED_FIELDS,
 	  "Track configuration" => :TRACK_CONFIGURATION_FIELDS,
-	  "Tape Thickness" => :TAPE_THICKNESS_FIELDS,
+	  "Tape thickness" => :TAPE_THICKNESS_FIELDS,
 	  "Sound field" => :SOUND_FIELD_FIELDS,
 	  "Tape base" => :TAPE_BASE_FIELDS,
 	  "Directions recorded" => :DIRECTIONS_RECORDED_FIELDS
