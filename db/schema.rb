@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140912143418) do
+ActiveRecord::Schema.define(version: 20140915000623) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -57,14 +57,20 @@ ActiveRecord::Schema.define(version: 20140912143418) do
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "spreadsheet_id"
   end
 
+  add_index "bins", ["spreadsheet_id"], name: "index_bins_on_spreadsheet_id", using: :btree
+
   create_table "boxes", force: true do |t|
-    t.integer  "bin_id",       limit: 8
-    t.integer  "mdpi_barcode", limit: 8
+    t.integer  "bin_id",         limit: 8
+    t.integer  "mdpi_barcode",   limit: 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "spreadsheet_id"
   end
+
+  add_index "boxes", ["spreadsheet_id"], name: "index_boxes_on_spreadsheet_id", using: :btree
 
   create_table "cassette_tape_tms", force: true do |t|
     t.datetime "created_at"
@@ -223,9 +229,11 @@ ActiveRecord::Schema.define(version: 20140912143418) do
     t.integer  "group_key_id"
     t.integer  "group_position"
     t.boolean  "ephemera_returned"
+    t.integer  "spreadsheet_id"
   end
 
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
+  add_index "physical_objects", ["spreadsheet_id"], name: "index_physical_objects_on_spreadsheet_id", using: :btree
   add_index "physical_objects", ["unit_id"], name: "index_physical_objects_on_unit_id", using: :btree
 
   create_table "picklist_specifications", force: true do |t|

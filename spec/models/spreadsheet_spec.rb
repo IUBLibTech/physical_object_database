@@ -26,4 +26,16 @@ describe Spreadsheet do
     end
   end
 
+  describe "relationships:" do
+    it "has many bins" do
+      expect(valid_spreadsheet.bins.size).to eq 0
+    end
+    it "has many boxes" do
+      expect(valid_spreadsheet.boxes.size).to eq 0
+    end
+    it "has many physical objects" do
+      expect(valid_spreadsheet.physical_objects.size).to eq 0
+    end
+  end
+
 end

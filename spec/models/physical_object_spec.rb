@@ -59,6 +59,30 @@ describe PhysicalObject do
       expect(valid_po).not_to be_valid
     end
   end
+
+  describe "has relationships" do
+    specify "can belong to a box" do
+      expect(valid_po.box).to be_nil
+    end
+    specify "can belong to a bin" do
+      expect(valid_po.bin).to be_nil
+    end
+    specify "can belong to a group_key" do
+      expect(valid_po.group_key).to be_nil
+    end
+    specify "can belong to a picklist" do
+      expect(valid_po.picklist).to be_nil
+    end
+    specify "can belong to a container" do
+      expect(valid_po.container).to be_nil
+    end
+    specify "can belong to a spreadsheet" do
+      expect(valid_po.spreadsheet).to be_nil
+    end
+    specify "must belong to a unit" do
+      expect(valid_po.unit).not_to be_nil
+    end
+  end
   
   describe "#generation_values" do
     let(:values) { valid_po.generation_values }

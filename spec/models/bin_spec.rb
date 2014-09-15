@@ -44,11 +44,12 @@ describe Bin do
       expect(bin.batch).to eq nil
       expect(batch.bins.where(id: bin.id).first).to be_nil
     end
-  
     it "can belong to a picklist specification" do
       expect(bin.picklist_specification).to be_nil
     end
-
+    it "can belong to a spreadsheet" do
+      expect(bin.spreadsheet).to be_nil
+    end
     it "has many physical objects" do
       expect(bin.physical_objects.size).to eq 0
     end

@@ -17,6 +17,7 @@ class PhysicalObject < ActiveRecord::Base
   counter_culture :group_key
   belongs_to :picklist
   belongs_to :container
+  belongs_to :spreadsheet
   belongs_to :unit
   
   has_one :technical_metadatum, :dependent => :destroy

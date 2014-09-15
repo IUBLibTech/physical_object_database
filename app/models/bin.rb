@@ -2,6 +2,8 @@ class Bin < ActiveRecord::Base
 	
 	belongs_to :batch
 	belongs_to :picklist_specification
+	belongs_to :spreadsheet
+
 	has_many :physical_objects
 	has_many :boxed_physical_objects, through: :boxes, source: :physical_objects
 	has_many :boxes
