@@ -38,6 +38,10 @@
 		</div>
 		<div class="left top5">
 			<h2>Upload File</h2>
+		  <p>
+		  Apply column header validation: <%= select_tag :header_validation, options_for_select([["Yes", "true"], ["No", "false"]], "true") %><br/>
+		  (Turn off column header validation at your own risk.)
+		  </p>
 		  <br/>
 		  <%= f.file_field :csv_file %>
 		  <br/>

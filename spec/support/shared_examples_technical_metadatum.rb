@@ -25,5 +25,27 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
     end
   end
 
+  describe "provides class methods" do 
+    describe "::valid_headers" do
+      it "returns an array of valid headers" do
+        expect(tm_object.class.valid_headers).not_to be_empty
+      end
+    end
+    describe "::human_attribute_name" do
+      it "returns a string" do
+        expect(tm_object.class.human_attribute_name("foo_bar")).to eq "Foo bar"
+      end
+    end
+    describe "::hashify" do
+      it "turns an array into a hash of reflexive string values" do
+        expect(tm_object.class.hashify([1, :foo])).to eq Hash[[["1","1"],["foo","foo"]]]
+      end
+    end
+    describe "::parse_tm" do
+      it "updates the passed tm object with the passed values" do
+        skip "TODO"
+      end
+    end
+  end
 end
 

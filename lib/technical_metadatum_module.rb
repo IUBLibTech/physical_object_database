@@ -1,5 +1,5 @@
-#
-#
+# Provides instance methods and class constants for physical objects,
+# technical metadatum types.
 #
 module TechnicalMetadatumModule
 

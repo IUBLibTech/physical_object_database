@@ -40,6 +40,11 @@ class PhysicalObject < ActiveRecord::Base
       :oclc_number => "OCLC number"
   }
   GENERATION_VALUES = hashify ["", "Original", "Copy", "Unknown"]
+  SIMPLE_FIELDS = [ 'title', 'title_control_number', 'home_location',
+    'call_number', 'iucat_barcode', 'format', 'collection_identifier',
+    'mdpi_barcode', 'format_duration', 'has_ephemera', 'author', 'catalog_key',
+    'collection_name', 'generation', 'oclc_number', 'other_copies', 'year', 'group_position', 'ephemera_returned' ]
+  MULTIVALUED_FIELDSETS = {}
 
   validates :format, presence: true, inclusion: { in: TM_FORMATS.keys }
   validates :generation, inclusion: { in: GENERATION_VALUES.keys }

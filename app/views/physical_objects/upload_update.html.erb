@@ -1,4 +1,14 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) %>
+  </div>
+<% end %>
 <div class="left">
+	<% unless @spreadsheet.nil? || @spreadsheet.id.nil? %>
+	  <p>
+	    View uploaded spreadsheet: <%= link_to @spreadsheet.filename, @spreadsheet %>
+	  </p>
+	<% end %>
 	<% unless @failed.nil? %>
 		<p>The following Physical Objects failed import into the POD</p>
 		<table>

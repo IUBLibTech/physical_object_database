@@ -1,5 +1,4 @@
-#
-#
+# Provides class methods for physical objects, technical metadatum types.
 #
 module TechnicalMetadatumClassModule
 
@@ -25,6 +24,11 @@ module TechnicalMetadatumClassModule
         end
       end
     end
+  end
+
+  #returns valid headers for CSV upload
+  def valid_headers
+      self.const_get(:SIMPLE_FIELDS).map { |field| self.human_attribute_name(field) } + self.const_get(:MULTIVALUED_FIELDSETS).keys
   end
 
 end
