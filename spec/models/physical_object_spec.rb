@@ -124,6 +124,7 @@ describe PhysicalObject do
       expect(valid_po.technical_metadatum).not_to be_nil
     end
     it "is re-generated before validation, on format change" do
+      expect(valid_po).to be_valid
       expect(valid_po.technical_metadatum.as_technical_metadatum_type).not_to eq "DatTm"
       valid_po.format = "DAT"
       valid_po.valid?
@@ -202,9 +203,9 @@ describe PhysicalObject do
     end
   end
 
-  describe "create_tm" do
+  describe "#create_tm" do
     TechnicalMetadatumModule::TM_FORMATS.keys.each do |format|
-      context "with valid simple format" do
+      context "with valid format: #{format}" do
         let(:tm) { valid_po.create_tm(format) }
         it "creates a new TM" do
           expect(tm).to be_a_new(TechnicalMetadatumModule::TM_FORMAT_CLASSES[format])
@@ -219,11 +220,8 @@ describe PhysicalObject do
     end
   end
 
-  describe "ensure_tm" do
-    specify "returns nil for an invalid format"
-    specify "returns existing tm if valid and matching"
-    specify "returns a new tm if missing"
-    specify "returns a new tm if format changes"
+  include_examples "ensure_tm examples" do
+    let(:test_object) { po }
   end
 
   describe "includes ConditionStatusModule:" do

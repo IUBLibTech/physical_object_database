@@ -7,12 +7,12 @@ FactoryGirl.define do
 
     trait :cdr do
       format "CD-R"
-      after(:build) do |physical_object, evaluator|
-        build(:technical_metadatum, :cdr, physical_object: physical_object)
-      end
     end
     trait :dat do
       format "DAT"
+    end
+    trait :lp do
+      format "LP"
     end
     trait :open_reel do
       format "Open Reel Audio Tape"
