@@ -74,6 +74,8 @@ Pod::Application.routes.draw do
     post :search_results, on: :collection
   end
 
+  resources :spreadsheets, except: [:new, :create]
+
   resources :status_templates, only: [:index]
 
   match '/signin', to: 'sessions#new', via: :get

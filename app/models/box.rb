@@ -1,7 +1,9 @@
 class Box < ActiveRecord::Base
 
-	has_many :physical_objects
 	belongs_to :bin
+	belongs_to :spreadsheet
+
+	has_many :physical_objects
 
 	validates :mdpi_barcode, mdpi_barcode: true
 

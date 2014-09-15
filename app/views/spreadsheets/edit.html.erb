@@ -1,0 +1,14 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+          <%= link_to("Cancel", {:action => 'show', :id => @spreadsheet.id}) %>
+        </div>
+<% end %>
+<%= error_messages_for(@spreadsheet) %>
+
+<div class="left">
+  <h2>Edit spreadsheet</h2>
+    <% @edit_mode = true %>
+    <% @action = "update" %>
+    <% @submit_text = "Update Spreadsheet" %>
+    <%= render partial: "spreadsheet" %>
+</div>
