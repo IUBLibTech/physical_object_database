@@ -1,5 +1,6 @@
 class SpreadsheetsController < ApplicationController
   before_action :set_spreadsheet, only: [:show, :edit, :update, :destroy]
+  before_action :set_associated_objects, only: [:show]
 
   def index
     @spreadsheets = Spreadsheet.all
@@ -38,6 +39,12 @@ class SpreadsheetsController < ApplicationController
     def set_spreadsheet
       @spreadsheet = Spreadsheet.find(params[:id])
       #@physical_objects = @spreadsheet.physical_objects unless @spreadsheet.nil?
+    end
+
+    def set_associated_objects
+      @bins = @spreadsheet.bins
+      @boxes = @spreadsheet.boxes
+      @physical_objects = @spreadsheet.physical_objects
     end
 
     def spreadsheet_params

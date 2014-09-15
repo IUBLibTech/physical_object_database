@@ -15,6 +15,15 @@
 				<td><%= @box.physical_objects_count %>
 			</tr>
 			<tr>
+				<th>Imported from spreadsheet</th>
+				<td>
+				<% if !@box.spreadsheet.nil? %>
+					<%= link_to("#{@box.spreadsheet.filename}", @box.spreadsheet) %>
+				<% end %>
+				</td>
+			</tr>
+
+			<tr>
 				<th>Assigned to Bin</th>
 				<td>
 					<% if @edit_mode %>

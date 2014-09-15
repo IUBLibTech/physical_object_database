@@ -141,7 +141,15 @@
         </td>
       </tr>
       <tr>
-        <th>Created</th>
+        <th>Imported from spreadsheet</th>
+        <td>
+          <% if !@physical_object.spreadsheet.nil? %>
+            <%= link_to("#{@physical_object.spreadsheet.filename}", @physical_object.spreadsheet) %>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+	<th>Created</th>
         <td>
           <%= f.text_field(:created_at, readonly: true) %>
         </td>

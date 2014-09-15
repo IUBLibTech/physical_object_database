@@ -17,8 +17,17 @@
   <%= render 'spreadsheet' %>
 </div>
 
+
 <div class="left">
-  <h2>Physical Objects uploaded via this spreadsheet: FIXME</h2>
+  <h2>Physical Objects uploaded via this spreadsheet: <%= @physical_objects.size %></h2>
   <%= render 'physical_objects/physical_objects_table' %>
+</div>
+<div class="left">
+  <h2>Bins created via this spreadsheet: <%= @bins.size %></h2>
+  <%= render 'bins/bins_table' %>
+</div>
+<div class="left">
+  <h2>Boxes created via this spreadsheet: <%= @boxes.size %></h2>
+  <%= render 'boxes/boxes_table' %>
 </div>
 

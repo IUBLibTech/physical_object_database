@@ -3,6 +3,9 @@ require 'rails_helper'
 describe Spreadsheet do
   let(:spreadsheet) { FactoryGirl.create :spreadsheet }
   let(:valid_spreadsheet) { FactoryGirl.build :spreadsheet }
+  let(:box) { FactoryGirl.create :box, spreadsheet: spreadsheet }
+  let(:bin) { FactoryGirl.create :bin, spreadsheet: spreadsheet }
+  let(:physical_object) { FactoryGirl.create :physical_object, :cdr, spreadsheet: spreadsheet }
 
   it "gets a valid object from FactoryGirl" do
     expect(valid_spreadsheet).to be_valid
@@ -30,11 +33,26 @@ describe Spreadsheet do
     it "has many bins" do
       expect(valid_spreadsheet.bins.size).to eq 0
     end
+    specify "bins are deleted upon spreadsheet deletion" do
+      bin_id = bin.id
+      spreadsheet.destroy
+      expect(Bin.where(id: bin_id)).to be_empty
+    end
     it "has many boxes" do
       expect(valid_spreadsheet.boxes.size).to eq 0
     end
+    specify "boxes are deleted upon spreadsheet deletion" do
+      box_id = box.id
+      spreadsheet.destroy
+      expect(Box.where(id: box_id)).to be_empty
+    end
     it "has many physical objects" do
       expect(valid_spreadsheet.physical_objects.size).to eq 0
+    end
+    specify "physical objects are deleted upon spreadsheet deletion" do
+      physical_object_id = physical_object.id
+      spreadsheet.destroy
+      expect(PhysicalObject.where(id: physical_object_id)).to be_empty
     end
   end
 

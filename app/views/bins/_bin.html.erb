@@ -31,6 +31,14 @@
  			</td>
  		</tr>
 		<tr>
+			<th>Imported from spreadsheet</th>
+			<td>
+			<% if !@bin.spreadsheet.nil? %>
+				<%= link_to("#{@bin.spreadsheet.filename}", @bin.spreadsheet) %>
+			<% end %>
+			</td>
+		</tr>
+		<tr>
 			<th>Assigned to batch</th>
 			<td>
 				<% if @edit_mode %>

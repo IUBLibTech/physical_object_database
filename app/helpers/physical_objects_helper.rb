@@ -23,6 +23,7 @@ module PhysicalObjectsHelper
         bin_id = bin.id unless bin.nil?
         if bin_id.nil? && r["Bin barcode"].to_i > 0
           bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: r["Bin identifier"], description: "Created by spreadsheet upload of " + filename + " at " + Time.now.to_s.split(" ")[0,2].join(" ") + ", Row " + (index + 1).to_s)
+          bin.spreadsheet = spreadsheet
           bin.save
           bin_id = bin.id
         end
@@ -32,6 +33,7 @@ module PhysicalObjectsHelper
         box_id = box.id unless box.nil?
         if box_id.nil? && r["Box barcode"].to_i > 0
           box = Box.new(mdpi_barcode: r["Box barcode"].to_i, bin_id: bin_id)
+          box.spreadsheet = spreadsheet
           box.save
           box_id = box.id
         end
@@ -54,6 +56,7 @@ module PhysicalObjectsHelper
         group_position = 1 if group_position.zero?
   
         po = PhysicalObject.new(
+            spreadsheet: spreadsheet,
             author: r[PhysicalObject.human_attribute_name("author")],
             bin_id: bin_id,
             box_id: box_id,
