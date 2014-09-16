@@ -43,6 +43,13 @@ module TechnicalMetadatumModule
     nil => "technical_metadatum/show_unknown_tm"
   }
 
+  TM_CLASS_PICKLIST_PARTIALS = {
+    CdrTm => "/picklists/cdr_tm",
+    DatTm => "/picklists/dat_tm",
+    OpenReelTm => "/picklists/open_reel_tm",
+    AnalogSoundDiscTm => "/picklists/analog_sound_disc_tm"
+  }
+
   TM_TABLE_NAMES = {
     "CD-R" => "cdr_tms",
     "DAT" => "dat_tms",

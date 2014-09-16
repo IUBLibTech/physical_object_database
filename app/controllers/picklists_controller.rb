@@ -1,17 +1,5 @@
 class PicklistsController < ApplicationController
-  before_action :set_picklist, only: [:show, :edit, :update, :destroy]
-
-  def self.tm_to_partial(tm)
-  	if tm.class == DatTm
-  		"/picklists/dat_tm"
-  	elsif tm.class == CdrTm 
-  		"/picklists/cdr_tm"
-  	elsif tm.class == OpenReelTm
-  		"/picklists/open_reel_tm"
-  	elsif tm.class == AnalogSoundDiscTm
-  		"/picklists/analog_sound_disc_tm"
-  	end
-  end
+  before_action :set_picklist, only: [:show, :edit, :update, :destroy, :process_list]
 
 	def new
 		@picklist = Picklist.new
@@ -83,13 +71,13 @@ class PicklistsController < ApplicationController
 	end
 
 	def process_list
-		@picklist = Picklist.find(params[:id])
 		# box_id or bin_id will be present if the form is "auto" populating - in which case the view will create a
 		# hidden field for the box/bin and its id attribute
 		@box = (params[:box_id] and params[:box_id].length > 0) ? Box.find(params[:box_id]) : nil
 		@bin = (params[:bin_id] and params[:bin_id].length > 0) ? Bin.find(params[:bin_id]) : nil
 	end
 
+	#FIXME: BUG: if multiple bins have "0" as their mdpi_barcode
 	def assign_to_container
 		physical_object = PhysicalObject.find(params[:po_id])
 		physical_object.mdpi_barcode = params[:physical_object][:mdpi_barcode]
@@ -110,6 +98,8 @@ class PicklistsController < ApplicationController
 		# you must have a container to put a physical object into		
 		if (@box.nil? and @bin.nil?) and (box.nil? and bin.nil?) 
 			error_msg = "<b class='warning'>An existing Bin and/or Box barcode must be specified.</b>".html_safe
+		elsif (@box.nil? and !box.nil? and box.mdpi_barcode == "0") or (@bin.nil? and !bin.nil? and bin.mdpi_barcode == "0")
+			error_msg = "<b class='warning'>You may not specify an MDPI Barcode of 0 for a Bin or Box.</b>".html_safe
 		# physical objects can't be packed without a valid MDPI barcode
 		elsif !ApplicationHelper.valid_barcode?(po_barcode) or po_barcode == "0"
 			error_msg = "<b class='warning'>Invalid MDPI Barcode: #{po_barcode}</b>".html_safe

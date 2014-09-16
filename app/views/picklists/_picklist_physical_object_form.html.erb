@@ -64,7 +64,7 @@
 
 			<%# technical metadata %>
 			<% tm = p.technical_metadatum.as_technical_metadatum %>
-			<%= render PicklistsController.tm_to_partial(tm), tm: tm, index: index %>
+			<%= render TechnicalMetadatumModule::TM_CLASS_PICKLIST_PARTIALS[tm.class], tm: tm, index: index %>
 		<% end %>
 	</table>
 <% end %>
