@@ -126,6 +126,10 @@ tr.even {
   width: 25%;
 }
 
+#associated_div {
+  width: 70%;
+}
+
 #add_item_div > p {
   margin: 0px;
 }
