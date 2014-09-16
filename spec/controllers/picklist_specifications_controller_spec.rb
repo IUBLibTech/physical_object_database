@@ -7,6 +7,7 @@ describe PicklistSpecificationsController do
   let(:valid_picklist_specification) { FactoryGirl.build(:picklist_specification, :cdr) }
   let(:invalid_picklist_specification) { FactoryGirl.build(:invalid_picklist_specification, :cdr) }
   let(:picklist) { FactoryGirl.create(:picklist) }
+  let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
 
   describe "GET index" do
     before(:each) do
@@ -132,9 +133,71 @@ describe PicklistSpecificationsController do
     end
   end
 
-  #query
-  #query_add
-  #picklist_list
-  #new_picklist
+  describe "GET query" do
+    let(:get_query) { get :query, id: picklist_specification.id }
+    it "assigns picklist dropdown values to @picklists" do
+      picklist
+      get_query
+      expect(assigns(:picklists)).to eq [[picklist.name, picklist.id]]
+    end
+    it "sets @edit_mode to true" do
+      get_query
+      expect(assigns(:edit_mode)).to eq true
+    end
+    it "sets @action to 'query_add'" do
+      get_query
+      expect(assigns(:action)).to eq "query_add"
+    end
+    it "assigns matching physical objects to @physical_objects" do
+      physical_object
+      get_query
+      expect(assigns(:physical_objects)).to eq [physical_object]
+    end
+    it "render :query template" do
+      get_query
+      expect(response).to render_template :query
+    end
+  end
+
+  describe "PATCH query_add" do
+    context "adding to an existing picklist" do
+      let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'existing', picklist: { id: picklist.id }, po_ids: [physical_object.id] }
+      it "assigns the physical object to the existing picklist" do
+        expect(physical_object.picklist).to be_nil
+	query_add
+	physical_object.reload
+	expect(physical_object.picklist).to eq picklist
+      end
+    end
+    context "adding to a new picklist" do
+      let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'new', picklist: { name: "query_add picklist" }, po_ids: [physical_object.id] }
+      it "assigns the physical object to the new picklist" do
+        expect(physical_object.picklist).to be_nil
+        query_add
+        physical_object.reload
+        expect(physical_object.picklist).not_to be_nil
+      end
+    end
+  end
+
+  describe "GET picklist_list" do
+    let(:picklist_list) { get :picklist_list }
+    it "assigns picklist dropdown values to @picklists" do
+      picklist
+      picklist_list
+      expect(assigns(:picklists)).to eq [[picklist.name, picklist.id]]
+    end
+    it "renders picklists/picklist_list" do
+      picklist_list
+      expect(response).to render_template(partial: 'picklists/_picklist_list')
+    end
+  end
+
+  describe "GET new_picklist" do
+    before(:each) { get :new_picklist }
+    it "renders picklists/new_picklist" do
+      expect(response).to render_template(partial: 'picklists/_new_picklist')
+    end
+  end
 
 end

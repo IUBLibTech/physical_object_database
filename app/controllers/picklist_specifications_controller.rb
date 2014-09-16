@@ -1,5 +1,6 @@
 class PicklistSpecificationsController < ApplicationController
 	before_action :set_picklist_specification, only: [:show, :edit, :update, :destroy, :query]
+	before_action :set_picklist_dropdown, only: [:query, :picklist_list]
 
 	def index
 		@picklist_specs = PicklistSpecification.all
@@ -67,7 +68,6 @@ class PicklistSpecificationsController < ApplicationController
 	end
 
 	def query
-		@picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
 		po = PhysicalObject.new(format: @ps.format)
 		po.technical_metadatum = @ps.technical_metadatum
 		@physical_objects = po.physical_object_query(true)
@@ -99,7 +99,6 @@ class PicklistSpecificationsController < ApplicationController
 	end
 
 	def picklist_list
-		@picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
 		render(partial: "picklists/picklist_list")
 	end
 
@@ -112,6 +111,10 @@ class PicklistSpecificationsController < ApplicationController
       @ps = PicklistSpecification.find(params[:id])
       @tm = @ps.technical_metadatum
       @tm = @tm.as_technical_metadatum unless @tm.nil?
+    end
+
+    def set_picklist_dropdown
+      @picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
     end
 
     def picklist_specification_params
