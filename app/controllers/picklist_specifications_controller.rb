@@ -1,4 +1,5 @@
 class PicklistSpecificationsController < ApplicationController
+	before_action :set_picklist_specification, only: [:show, :edit, :update, :destroy, :query]
 
 	def index
 		@picklist_specs = PicklistSpecification.all
@@ -17,50 +18,55 @@ class PicklistSpecificationsController < ApplicationController
 	def create
 		@ps = PicklistSpecification.new(picklist_specification_params)
 		@tm = @ps.ensure_tm
-		@tm.update_attributes(tm_params)
-		
-		redirect_to(action: 'index')
+		if @ps.save and @tm.update_attributes(tm_params)
+			flash[:notice] = "Picklist Specification was successfully created".html_safe
+			redirect_to action: :index
+		else
+			@edit_mode = true
+			render :new
+		end
 	end
 
 	def edit
-		@ps = PicklistSpecification.find(params[:id])
-		@tm = @ps.technical_metadatum.as_technical_metadatum
 		@edit_mode = true
 		@action = 'update'
 		@submit_text = "Update Picklist Specification"
 	end
 
 	def update
-		@ps = PicklistSpecification.find(params[:id])
-		orig_format = @ps.format
-		if (@ps.update_attributes(picklist_specification_params))
-			@tm = @ps.ensure_tm
-			@tm.update_attributes(tm_params)
-			flash[:notice] = "#{@ps.name} successfully updated."
-		else
-			flash[:notice] = "Failed to update #{@ps.name}."
+		PicklistSpecification.transaction do 
+		  if ! @ps.update_attributes(picklist_specification_params)
+		    @edit_mode = true
+		    flash[:notice] = "Failed to update #{@ps.name}."
+		    render :edit
+                  else
+		    @tm = @ps.ensure_tm
+		    if @tm.update_attributes(tm_params)
+		      flash[:notice] = "#{@ps.name} successfully updated."
+		      redirect_to action: :index
+		    else
+                      @edit_mode = true
+		      flash[:notice] = "Failed to update #{@ps.name}."
+                      render :edit
+		    end
+                  end
 		end
-		redirect_to(action: 'index')
 	end
 
 	def show
-		@ps = PicklistSpecification.find(params[:id])
-		@tm = @ps.technical_metadatum.as_technical_metadatum
 		@edit_mode = false
 	end
 
 	def destroy
-		@ps = PicklistSpecification.find(params[:id])
 		if @ps.destroy
 			flash[:notice] = "#{@ps.name} was successfully deleted."
 		else
 			flash[:warning] = "#{@ps.name} could not be deleted."
 		end
-		redirect_to(action: 'index')
+		redirect_to action: :index
 	end
 
 	def query
-		@ps = PicklistSpecification.find(params[:id])
 		@picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
 		po = PhysicalObject.new(format: @ps.format)
 		po.technical_metadatum = @ps.technical_metadatum
@@ -102,6 +108,12 @@ class PicklistSpecificationsController < ApplicationController
 	end
 
   private
+    def set_picklist_specification
+      @ps = PicklistSpecification.find(params[:id])
+      @tm = @ps.technical_metadatum
+      @tm = @tm.as_technical_metadatum unless @tm.nil?
+    end
+
     def picklist_specification_params
       params.require(:ps).permit(:format, :name, :description)
     end

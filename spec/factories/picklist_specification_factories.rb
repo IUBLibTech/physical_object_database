@@ -6,15 +6,19 @@ FactoryGirl.define do
 
     trait :cdr do
       format "CD-R"
+      association :technical_metadatum, factory: [:technical_metadatum, :cdr]
     end
     trait :dat do
       format "DAT"
+      association :technical_metadatum, factory: [:technical_metadatum, :dat]
     end
     trait :lp do
       format "LP"
+      association :technical_metadatum, factory: [:technical_metadatum, :lp]
     end
     trait :open_reel do
       format "Open Reel Audio Tape"
+      association :technical_metadatum, factory: [:technical_metadatum, :open_reel]
     end
   end
 

@@ -31,7 +31,7 @@ describe PicklistSpecificationsController do
       expect(assigns(:ps)).to eq picklist_specification
     end
     it "assigns tm to @tm" do
-      expect(assigns(:tm)).to eq picklist_specification.ensure_tm
+      expect(assigns(:tm)).to eq picklist_specification.technical_metadatum.as_technical_metadatum
     end
     it "renders the :show template" do
       expect(response).to render_template(:show)
@@ -132,8 +132,9 @@ describe PicklistSpecificationsController do
     end
   end
 
-  #process_list get/post?
-  #assign_to_container
-  #remove_from_container
-  #container_full
+  #query
+  #query_add
+  #picklist_list
+  #new_picklist
+
 end

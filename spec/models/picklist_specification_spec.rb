@@ -10,6 +10,8 @@ describe PicklistSpecification do
   describe "FactoryGirl" do
     it "generates a valid object" do
       expect(valid_picklist_specification).to be_valid
+      expect(valid_picklist_specification.technical_metadatum).to be_valid
+      expect(valid_picklist_specification.technical_metadatum.as_technical_metadatum).to be_valid
     end
     it "generates an invalid object" do
       expect(invalid_picklist_specification).not_to be_valid

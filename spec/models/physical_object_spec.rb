@@ -8,6 +8,14 @@ describe PhysicalObject do
   let(:box) { FactoryGirl.create :box }
   let(:bin) { FactoryGirl.create :bin }
 
+  describe "FactoryGirl" do
+    specify "provides a valid object" do
+      expect(po).to be_valid
+      expect(po.technical_metadatum).to be_valid
+      expect(po.technical_metadatum.as_technical_metadatum).to be_valid
+    end
+  end
+
   describe "has required attributes:" do
     it "requires a format" do
       expect(valid_po.format).not_to be_blank
