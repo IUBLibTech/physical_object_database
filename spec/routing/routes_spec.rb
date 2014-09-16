@@ -142,16 +142,16 @@ describe "picklists" do
     expect(patch("/picklists/:id/process_list")).to be_routable
   end
   it "routes to process_list" do
-    expect(get("/picklists/:id/process_list")).to be_routable
+    expect(get("/picklists/process_list")).to be_routable
   end
   it "routes to assign_to_container" do
-    expect(patch("/picklists/:id/assign_to_container")).to be_routable
+    expect(patch("/picklists/assign_to_container")).to be_routable
   end
   it "routes to remove_from_container" do
-    expect(patch("/picklists/:id/remove_from_container")).to be_routable
+    expect(patch("/picklists/remove_from_container")).to be_routable
   end
   it "routes to container_full" do
-    expect(post("/picklists/:id/container_full")).to be_routable
+    expect(post("/picklists/container_full")).to be_routable
   end
 end
 
