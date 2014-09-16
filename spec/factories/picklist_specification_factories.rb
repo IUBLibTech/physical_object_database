@@ -1,9 +1,8 @@
 FactoryGirl.define do
 
-  #specify a format type as a trait when creating a physical object
-  factory :physical_object, class: PhysicalObject do
-    #required fields
-    association :unit
+  factory :picklist_specification, class: PicklistSpecification do
+    name "Test Pick List"
+    description "Lorem ipsum"
 
     trait :cdr do
       format "CD-R"
@@ -21,18 +20,10 @@ FactoryGirl.define do
       format "Open Reel Audio Tape"
       association :technical_metadatum, factory: [:technical_metadatum, :open_reel]
     end
-
-    generation ""
-    group_position 1
-
-    #at least one must be set of MDPI barcode, IUCAT barcode, title, call number
-    title "FactoryGirl object"
-
   end
 
-  factory :invalid_physical_object, parent: :physical_object do
-    title nil
+  factory :invalid_picklist_specification, parent: :picklist_specification do
+    name nil
   end
-  
 
 end

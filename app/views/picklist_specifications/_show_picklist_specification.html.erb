@@ -1,3 +1,5 @@
+<%= error_messages_for(@ps) %>
+<%= error_messages_for(@tm) %>
 <%# special case where :ps is needed instead of @ps %>
 <%= form_for(:ps, url: {action: @action, id: @ps.id}) do |f| %>
 	<div id="picklistSpec" class="left">
@@ -19,7 +21,7 @@
 				<th>Format</th>
 				<td>
 					<% if @edit_mode %>
-						<%= f.select(:format, PhysicalObject.formats, {}, onchange:  "tm_div(this.value, 'PicklistSpecification', #{@ps.id}, #{@edit_mode})") %>
+						<%= f.select(:format, PhysicalObject.formats, {}, onchange:  "tm_div(this.value, 'PicklistSpecification', #{@ps.id.nil? ? 0 : @ps.id}, #{@edit_mode})") %>
 					<% else %>
 						<%= @ps.format %>
 					<% end %>
@@ -28,9 +30,7 @@
 		</table>
 	</div>
 	<div id="technicalMetadatum" class="left">
-		<script type="text/javascript">
-			tm_div(<%= "'#{@ps.format}'".html_safe %>, "PicklistSpecification", <%= @ps.id %>, <%= @edit_mode %>)
-		</script>
+		<%= render partial: tm_partial_path(@tm) %>
 	</div>
 	<div class="clear" >
 	<% if @edit_mode %>

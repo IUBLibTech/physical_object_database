@@ -43,9 +43,11 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	#validates :sound_field, inclusion: { in: SOUND_FIELD_VALUES.keys }
 	validates :subtype, inclusion: { in: SUBTYPE_VALUES.keys }
 
+	#NOTE: default values must be string values
+	#FIXME: default equalization value?
 	DEFAULT_VALUES = {
-		"LP" => { diameter: 12,
-			  speed: 33.3,
+		"LP" => { diameter: "12",
+			  speed: "33.3",
 			  groove_size: "Micro",
 			  groove_orientation: "Lateral",
 			  recording_method: "Pressed",

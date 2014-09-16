@@ -60,7 +60,6 @@ class PhysicalObjectsController < ApplicationController
   def update
     #puts params.to_yaml
     PhysicalObject.transaction do
-      old_format = @physical_object.format
       if ! @physical_object.update_attributes(physical_object_params)
         @edit_mode = true
         render action: :edit
@@ -80,9 +79,11 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def destroy
-    @tm.destroy unless @tm.nil?
-    @physical_object.destroy
-    flash[:notice] = "Physical Object was successfully deleted.".html_safe
+    if @physical_object.destroy
+      flash[:notice] = "Physical Object was successfully deleted.".html_safe
+    else
+      flash[:notice] = "Physical Object could not be deleted.".html_safe
+    end
     redirect_to physical_objects_path
   end
   
