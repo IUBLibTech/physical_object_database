@@ -1,5 +1,6 @@
 class OpenReelTm < ActiveRecord::Base
 	acts_as :technical_metadatum
+	after_initialize :default_values
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
 
@@ -53,6 +54,11 @@ class OpenReelTm < ActiveRecord::Base
 	attr_accessor :pack_deformations
 	def pack_deformations
 	  PACK_DEFORMATION_VALUES
+	end
+
+	def default_values
+	  self.pack_deformation ||= "None"
+	  self.reel_size ||= ""
 	end
 
 	def damage

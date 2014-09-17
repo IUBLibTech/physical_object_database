@@ -1,5 +1,6 @@
 class CdrTm < ActiveRecord::Base
 	acts_as :technical_metadatum
+	after_initialize :default_values
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
 
@@ -24,5 +25,10 @@ class CdrTm < ActiveRecord::Base
 	attr_accessor :format_duration_values
 	def format_duration_values
 	  FORMAT_DURATION_VALUES
+	end
+
+	def default_values
+	  self.damage ||= "None"
+	  self.format_duration ||= ""
 	end
 end
