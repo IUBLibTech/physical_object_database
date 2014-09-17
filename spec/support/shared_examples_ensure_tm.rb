@@ -22,6 +22,12 @@ shared_examples "ensure_tm examples" do
       expect(new_tm).to be_a_new TechnicalMetadatum
       expect(new_tm).not_to equal original_tm
     end
+    specify "generates a valid tm" do
+      test_object.technical_metadatum = nil
+      test_object.ensure_tm
+      expect(test_object.technical_metadatum).to be_valid
+      expect(test_object.technical_metadatum.as_technical_metadatum).to be_valid
+    end
     specify "returns a new tm if format changes" do
       original_tm
       expect(test_object.format).to eq "CD-R"

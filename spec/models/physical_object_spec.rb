@@ -4,15 +4,19 @@ describe PhysicalObject do
 
   let(:po) { FactoryGirl.create :physical_object, :cdr }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
+  let(:invalid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:picklist) { FactoryGirl.create :picklist }
   let(:box) { FactoryGirl.create :box }
   let(:bin) { FactoryGirl.create :bin }
 
   describe "FactoryGirl" do
     specify "provides a valid object" do
-      expect(po).to be_valid
-      expect(po.technical_metadatum).to be_valid
-      expect(po.technical_metadatum.as_technical_metadatum).to be_valid
+      expect(valid_po).to be_valid
+      expect(valid_po.technical_metadatum).to be_valid
+      expect(valid_po.technical_metadatum.as_technical_metadatum).to be_valid
+    end
+    specify "provides an invalid object" do
+      expect(invalid_po).to be_valid
     end
   end
 

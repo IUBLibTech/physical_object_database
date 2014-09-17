@@ -53,7 +53,8 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 			  recording_method: "Pressed",
 			  substrate: "N/A",
 			  coating: "N/A",
-			  material: "Plastic"
+			  material: "Plastic",
+			  equalization: "Unknown"
 			}
 	}
 
@@ -68,6 +69,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 			self.substrate ||= values_hash[:substrate]
 			self.coating ||= values_hash[:coating]
 			self.material ||= values_hash[:material]
+			self.equalization ||= values_hash[:equalization]
 		end
 	end
 
