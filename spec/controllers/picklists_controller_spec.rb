@@ -9,6 +9,7 @@ describe PicklistsController do
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr, picklist: picklist, mdpi_barcode: "40000000000002" ) }
   let(:box) { FactoryGirl.create(:box) }
   let(:bin) { FactoryGirl.create(:bin) }
+  let(:container_barcode) { "40000000000010" }
 
   #no index
 
@@ -142,28 +143,28 @@ describe PicklistsController do
     end
   end
 
-  describe "GET process_list on member" do
+  describe "GET process_list on collection" do
     it "assigns @picklist" do
-      get :process_list, id: picklist.id
+      get :process_list, picklist: { id: picklist.id }
       expect(assigns(:picklist)).to eq picklist
     end
     it "assigns a @box if passed" do
-      get :process_list, id: picklist.id, box_id: box.id
+      get :process_list, picklist: { id: picklist.id }, box_id: box.id
       expect(assigns(:box)).to eq box
     end
     it "assigns a @bin if passed" do
-      get :process_list, id: picklist.id, bin_id: bin.id
+      get :process_list, picklist: { id: picklist.id }, bin_id: bin.id
       expect(assigns(:bin)).to eq bin
     end
     it "renders :process_list" do
-      get :process_list, id: picklist.id
+      get :process_list, picklist: { id: picklist.id }
       expect(response).to render_template :process_list
     end
   end
 
   #FIXME: allow assigning to box and bin, together?
-  describe "PATCH assign_to_container on member" do
-    let(:assign_arguments) { {id: picklist.id, po_id: physical_object.id, physical_object: { mdpi_barcode: physical_object.mdpi_barcode, has_ephemera: physical_object.has_ephemera }, bin_id: nil, box_id: nil, bin_barcode: nil, box_barcode: nil} }
+  describe "PATCH assign_to_container on collection" do
+    let(:assign_arguments) { {po_id: physical_object.id, physical_object: { mdpi_barcode: physical_object.mdpi_barcode, has_ephemera: physical_object.has_ephemera }, bin_id: nil, box_id: nil, bin_barcode: nil, box_barcode: nil} }
     let(:assign_to_container) { patch :assign_to_container, **assign_arguments }
     it "assigns a physical object to a bin by bin_id" do
       assign_arguments[:bin_id] = bin.id 
@@ -172,10 +173,20 @@ describe PicklistsController do
       expect(physical_object.bin).to eq bin
     end
     it "assigns a physical object to a bin by bin_barcode" do
+      bin.mdpi_barcode = container_barcode
+      bin.save
       assign_arguments[:bin_barcode] = bin.mdpi_barcode 
       assign_to_container
       physical_object.reload
       expect(physical_object.bin).to eq bin
+    end
+    it "rejects a 0 for bin_barcode" do
+      bin.mdpi_barcode = "0"
+      bin.save
+      assign_arguments[:bin_barcode] = bin.mdpi_barcode
+      assign_to_container
+      physical_object.reload
+      expect(physical_object.bin).to be_nil
     end
     it "assigns a physical object to a box by box_id" do
       assign_arguments[:box_id] = box.id 
@@ -184,15 +195,33 @@ describe PicklistsController do
       expect(physical_object.box).to eq box
     end
     it "assigns a physical object to a box by box_barcode" do
+      box.mdpi_barcode = container_barcode
+      box.save
       assign_arguments[:box_barcode] = box.mdpi_barcode
       assign_to_container
       physical_object.reload
       expect(physical_object.box).to eq box
     end
+    it "rejects a 0 for box_barcode" do
+      box.mdpi_barcode = "0"
+      box.save
+      assign_arguments[:box_barcode] = box.mdpi_barcode
+      assign_to_container
+      physical_object.reload
+      expect(physical_object.box).to be_nil
+    end
+    it "sets only box when assigning both a bin and box simultaneously" do
+      assign_arguments[:bin_id] = bin.id
+      assign_arguments[:box_id] = box.id
+      assign_to_container
+      physical_object.reload
+      expect(physical_object.box).not_to be_nil
+      expect(physical_object.bin).to be_nil
+    end
   end
 
-  describe "PATCH remove_from_container on member" do
-    let(:remove_from_container) { patch :remove_from_container, id: picklist.id, po_id: physical_object.id }
+  describe "PATCH remove_from_container on collection" do
+    let(:remove_from_container) { patch :remove_from_container, po_id: physical_object.id }
     it "removes the physical object from a bin" do
       physical_object.bin = bin
       physical_object.save
@@ -212,5 +241,57 @@ describe PicklistsController do
       expect(physical_object.box).to be_nil
     end
   end
-  #container_full
+
+  describe "PATCH container_full on collection" do
+    let(:patch_arguments) { {bin_id: nil, box_id: nil, bin_barcode: nil} }
+    let(:container_full) { patch :container_full, **patch_arguments }
+    context "with box_id and bin_id argument" do
+      it "associates bin to box" do
+        expect(box.bin).to be_nil
+        patch_arguments[:bin_id] = bin.id
+        patch_arguments[:box_id] = box.id
+        container_full
+        box.reload
+        expect(box.bin).to eq bin
+      end
+    end
+    context "with box_id and bin_barcode argument" do
+      it "associates bin to box" do
+        expect(box.bin).to be_nil
+        patch_arguments[:bin_barcode] = bin.mdpi_barcode
+        patch_arguments[:box_id] = box.id
+        container_full
+        box.reload
+        expect(box.bin).to eq bin
+      end
+    end
+    context "with box_id argument" do
+      skip "TODO: no effect when packing box"
+    end
+    context "with bin_id argument" do
+      it "sets bin status to Packed" do
+        expect(bin.current_workflow_status.name).not_to eq "Packed"
+	patch_arguments[:bin_id] = bin.id
+	container_full
+	bin.reload
+        expect(bin.current_workflow_status.name).to eq "Packed"
+      end
+    end
+    context "with bin_barcode argument" do
+      it "sets bin status to Packed" do
+        expect(bin.current_workflow_status.name).not_to eq "Packed"
+	patch_arguments[:bin_barcode] = bin.mdpi_barcode
+	container_full
+	bin.reload
+        expect(bin.current_workflow_status.name).to eq "Packed"
+      end
+    end
+    context "with no box or bin" do
+      it "flashes an error" do
+        container_full
+	expect(flash[:notice]).to match /Could not find a Bin/
+      end
+    end
+  end
+
 end

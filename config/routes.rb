@@ -53,13 +53,11 @@ Pod::Application.routes.draw do
   end
 
   resources :picklists, except: [:index] do
-    patch :process_list, on: :member
-    get :process_list, on: :member
-    #FIXME: deprecated?
-    patch :assign_to_container_ajax, on: :member
-    patch :assign_to_container, on: :member
-    patch :remove_from_container, on: :member
-    post :container_full, on: :member
+    patch :process_list, on: :collection
+    get :process_list, on: :collection
+    patch :assign_to_container, on: :collection
+    patch :remove_from_container, on: :collection
+    post :container_full, on: :collection
   end
 
   resources :returns do
