@@ -21,7 +21,13 @@ class Bin < ActiveRecord::Base
 		where(['batch_id = 0 OR batch_id is null'])
 	}
 
-	
+        def packed_status?
+          ["Packed"].include? self.current_workflow_status.name
+        end
+
+	def Bin.packed_status_message
+	  "This bin has been marked as packed. To enable packing and assigning boxes, please change the workflow status."
+	end
 
 	def physical_objects_count
 	  physical_objects.size + boxed_physical_objects.size

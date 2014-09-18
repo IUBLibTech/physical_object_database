@@ -17,7 +17,7 @@ class BoxesController < ApplicationController
   def new
     if @bin
       @box = @bin.boxes.new(mdpi_barcode: 0)
-      render(partial: 'minimal_new', box: @box)
+      #render(partial: 'minimal_new', box: @box)
     else
       @box = Box.new
     end
@@ -41,13 +41,15 @@ class BoxesController < ApplicationController
     end
   end
 
+  #edit disabled
+
   def update
     respond_to do |format|
       if @box.update(box_params)
         format.html { redirect_to @box, notice: 'Box was successfully updated.' }
         format.json { render action: 'show', status: :created, location: @box }
       else
-        format.html { render action: 'edit' }
+        format.html { redirect_to @box, notice: 'Box was NOT successfully updated.' }
         format.json { render json: @box.errors, status: :unprocessable_entity }
       end
     end
@@ -66,14 +68,19 @@ class BoxesController < ApplicationController
   end
 
   def unbin
-    @box.bin = nil
-    # physical_objects in the box would have been associated with the bin as well
-    PhysicalObject.where(box_id: @box.id).update_all(bin_id: nil)
-
-    if @box.save
-      flash[:notice] = "<em>Successfully removed Box from Bin.</em>".html_safe
-    else
-      flash[:notice] = "<strong>Failed to remove this Box from Bin.</strong>".html_safe
+    if @box.bin.nil?
+      flash[:notice] = "<strong>Box was not associated to a Bin.</strong>".html_safe
+    elsif @bin and @box.bin != @bin
+      flash[:notice] = "<strong>Box is associated to a different Bin. </strong>".html_safe
+    else 
+      @box.bin = nil
+      if @box.save
+	flash[:notice] = "<em>Successfully removed Box from Bin.</em>".html_safe
+        # physical_objects in the box would have been associated with the bin as well
+        PhysicalObject.where(box_id: @box.id).update_all(bin_id: nil)
+      else
+        flash[:notice] = "<strong>Failed to remove this Box from Bin.</strong>".html_safe
+      end
     end
     unless @bin.nil?
       redirect_to @bin
@@ -122,7 +129,7 @@ class BoxesController < ApplicationController
       @physical_objects = @box.physical_objects
     end
     def box_params
-      params.require(:box).permit(:mdpi_barcode)
+      params.require(:box).permit(:mdpi_barcode, :spreadsheet, :spreadsheet_id)
     end
 
 end

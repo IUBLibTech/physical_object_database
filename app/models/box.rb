@@ -7,6 +7,14 @@ class Box < ActiveRecord::Base
 
 	validates :mdpi_barcode, mdpi_barcode: true
 
+        def packed_status?
+          !self.bin.nil?
+        end
+
+	def Box.packed_status_message
+          "This box has been associated to a bin. To enable packing, please remove it from the bin."
+        end
+
 	def spreadsheet_descriptor
 		mdpi_barcode
 	end

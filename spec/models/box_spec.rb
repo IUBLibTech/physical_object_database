@@ -41,5 +41,23 @@ describe Box do
     expect(box.physical_objects_count).to eq 0 
   end
 
+  describe "#packed_status?" do
+    it "returns true if associated to a bin" do
+      expect(box.bin).not_to be_nil
+      expect(box.packed_status?).to eq true
+    end
+    it "returns false if not associated to a bin" do
+      box.bin = nil
+      expect(box.packed_status?).to eq false
+    end
+  end
+
+  describe "::packed_status_message" do
+    it "returns a message that the Box is associated to a bin" do
+      expect(Box.packed_status_message).to match /This box has been associated to a bin/
+    end
+  end
+
+
 end
 

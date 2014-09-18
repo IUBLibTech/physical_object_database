@@ -75,6 +75,22 @@ describe Bin do
     it "provides a physical object count" do
       expect(bin.physical_objects_count).to eq 0 
     end
+    describe "#packed_status?" do
+      it "returns true if in Packed status" do
+	bin.current_workflow_status = "Packed"
+        expect(bin.packed_status?).to eq true
+      end
+      it "returns false if not in Packed status" do
+        expect(bin.current_workflow_status.name).not_to eq "Packed"
+        expect(bin.packed_status?).to eq false
+      end
+    end
+  end
+
+  describe "::packed_status_message" do
+    it "returns a message that the Bin is in Packed status" do
+      expect(Bin.packed_status_message).to match /This bin has been marked as packed/
+    end
   end
   
   describe "includes ConditionStatusModule:" do
