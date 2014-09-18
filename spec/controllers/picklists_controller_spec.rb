@@ -6,10 +6,9 @@ describe PicklistsController do
   let(:picklist) { FactoryGirl.create(:picklist) }
   let(:valid_picklist) { FactoryGirl.build(:picklist) }
   let(:invalid_picklist) { FactoryGirl.build(:invalid_picklist) }
-  let(:physical_object) { FactoryGirl.create(:physical_object, :cdr, picklist: picklist, mdpi_barcode: "40000000000002" ) }
+  let(:physical_object) { FactoryGirl.create(:physical_object, :cdr, picklist: picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode ) }
   let(:box) { FactoryGirl.create(:box) }
   let(:bin) { FactoryGirl.create(:bin) }
-  let(:container_barcode) { "40000000000010" }
 
   #no index
 
@@ -173,7 +172,7 @@ describe PicklistsController do
       expect(physical_object.bin).to eq bin
     end
     it "assigns a physical object to a bin by bin_barcode" do
-      bin.mdpi_barcode = container_barcode
+      bin.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
       bin.save
       assign_arguments[:bin_barcode] = bin.mdpi_barcode 
       assign_to_container
@@ -195,8 +194,6 @@ describe PicklistsController do
       expect(physical_object.box).to eq box
     end
     it "assigns a physical object to a box by box_barcode" do
-      box.mdpi_barcode = container_barcode
-      box.save
       assign_arguments[:box_barcode] = box.mdpi_barcode
       assign_to_container
       physical_object.reload

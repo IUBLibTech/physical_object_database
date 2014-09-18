@@ -5,7 +5,7 @@ class Box < ActiveRecord::Base
 
 	has_many :physical_objects
 
-	validates :mdpi_barcode, mdpi_barcode: true
+	validates :mdpi_barcode, mdpi_barcode: true, numericality: { greater_than: 0 }
 
         def packed_status?
           !self.bin.nil?

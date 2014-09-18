@@ -111,10 +111,10 @@ class PicklistsController < ApplicationController
 		elsif assigned and assigned != physical_object
 			error_msg = "<b class='warning'>Barcode: #{po_barcode} has already been assigned to another #{assigned.class.name.underscore.humanize}</b>".html_safe
 		# packing a box but the hidden box id and the form provided box mdpi barcode don't match up
-		elsif !@box.nil? and box_barcode != @box.mdpi_barcode
+		elsif !@box.nil? and box_barcode > 0 and box_barcode != @box.mdpi_barcode
 			error_msg = "<b class='warning'>Attempt to assign a different box barcode from the packing box. Physical Object has not been packed!</b>".html_safe
 		# packing a bin but the hidden bin id and the form provided bin barcode do not match up
-		elsif !@bin.nil? and bin_barcode != @bin.mdpi_barcode
+		elsif !@bin.nil? and bin_barcode > 0 and bin_barcode != @bin.mdpi_barcode
 			error_msg = "<b class='warning'>Attempt to assign a different bin barcode from the packing bin. Physical Object has not been packed!</b>".html_safe
 		#elsif (@bin or bin) and (@box or box)
 			#error_msg = "<b class='warning'>Attempt to assign to both a bin and a box.  Please select only one container type for packing.  Physical object has not been packed!</b>".html_safe
@@ -132,6 +132,7 @@ class PicklistsController < ApplicationController
 				render(partial: "/ajax_error/ajax_error_popup", status: 422, locals: {message: (error_msg.nil? ? "<b class='warning'>Failed to update the Physical Object...</b>".html_safe : error_msg)})	
 			end
 		end
+		@error_msg = error_msg
 	end
 
 	#Unpack action

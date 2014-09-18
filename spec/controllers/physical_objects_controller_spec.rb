@@ -310,13 +310,10 @@ describe PhysicalObjectsController do
   end
 
   describe "POST unpick" do
-    let(:valid_barcode) { "40000000000002" }
-    let(:invalid_barcode) { "40000000000003" }
-    let(:barcode_value) { physical_object.mdpi_barcode }
     let(:post_unpick_missing_barcode) { post :unpick, id: physical_object.id }
-    let(:post_unpick_with_same_barcode) { post :unpick, id: physical_object.id, mdpi_barcode: barcode_value }
-    let(:post_unpick_with_valid_barcode) { post :unpick, id: physical_object.id, mdpi_barcode: valid_barcode }
-    let(:post_unpick_with_invalid_barcode) { post :unpick, id: physical_object.id, mdpi_barcode: invalid_barcode }
+    let(:post_unpick_with_same_barcode) { post :unpick, id: physical_object.id, mdpi_barcode: physical_object.mdpi_barcode }
+    let(:post_unpick_with_valid_barcode) { post :unpick, id: physical_object.id, mdpi_barcode: valid_mdpi_barcode }
+    let(:post_unpick_with_invalid_barcode) { post :unpick, id: physical_object.id, mdpi_barcode: invalid_mdpi_barcode }
     let(:removed_message) { "The Physical Object was removed from the Pick List."}
     let(:updated_message) { "The Physical Object was removed from the Pick List and its barcode updated." }
 

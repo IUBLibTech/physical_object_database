@@ -10,6 +10,21 @@ describe Box do
     expect(box).to be_valid
   end
 
+  describe "has required attributes" do
+    it "requires a barcode" do
+      box.mdpi_barcode = nil
+      expect(box).not_to be_valid
+    end
+    it "requires a valid barcode" do
+      box.mdpi_barcode = invalid_mdpi_barcode
+      expect(box).not_to be_valid
+    end
+    it "requires a non-zero barcode" do
+      box.mdpi_barcode = 0
+      expect(box).not_to be_valid
+    end
+  end
+
   describe "has relationships:" do
     it "has many physical_objects" do 
   	  expect(box.physical_objects).to be_empty	
@@ -29,16 +44,13 @@ describe Box do
     end
   end
 
-  it "has a barcode" do
-  	expect(box.mdpi_barcode).not_to be_nil
-  end
-
-  it "provides a spreadsheet descriptor" do
-  	expect(box.spreadsheet_descriptor).to eq(box.mdpi_barcode)
-  end
-
-  it "provides a physical object count" do
-    expect(box.physical_objects_count).to eq 0 
+  describe "has virtual attributes:" do
+    it "provides a spreadsheet descriptor" do
+  	  expect(box.spreadsheet_descriptor).to eq(box.mdpi_barcode)
+    end
+    it "provides a physical object count" do
+      expect(box.physical_objects_count).to eq 0 
+    end
   end
 
   describe "#packed_status?" do
