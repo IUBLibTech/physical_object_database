@@ -1,7 +1,7 @@
 FactoryGirl.define do
 
   factory :box, class: Box do
-    mdpi_barcode 0
+    mdpi_barcode { BarcodeHelper.valid_mdpi_barcode }
   end
 
   factory :invalid_box, parent: :box do

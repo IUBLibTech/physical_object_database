@@ -45,7 +45,6 @@ describe PhysicalObject do
     end
 
     #technical_metadatum: separate section
-    #mdpi_barcode: separate section
 
     it "requires one of mdpi_barcode, iucat_barcode, title, call_number" do
       valid_po.mdpi_barcode = valid_po.iucat_barcode = valid_po.title = valid_po.call_number = ""
@@ -114,17 +113,15 @@ describe PhysicalObject do
       expect(valid_po).to be_valid
     end
     it "accepts valid full unique values" do
-      valid_po.mdpi_barcode = "40000000000002"
+      valid_po.mdpi_barcode = valid_mdpi_barcode
       expect(valid_po).to be_valid
     end
     it "rejects valid, duplicate values" do
-      box.mdpi_barcode = "40000000000002"
-      box.save
       valid_po.mdpi_barcode = box.mdpi_barcode
       expect(valid_po).to be_invalid
     end
     it "rejects invalid values" do
-      valid_po.mdpi_barcode = "40000000000003"
+      valid_po.mdpi_barcode = invalid_mdpi_barcode
       expect(valid_po).to be_invalid
     end
   end
