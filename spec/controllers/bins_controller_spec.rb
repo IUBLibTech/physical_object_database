@@ -6,9 +6,13 @@ describe BinsController do
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:box) { FactoryGirl.create(:box, bin: bin) }
-  let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: box) }
-  let(:binned_object) { FactoryGirl.create(:physical_object, :cdr, bin: bin) }
+  let(:unit) { FactoryGirl.create(:unit) }
+  let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit, box: box) }
+  let(:other_boxed_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit, box: unassigned_box) }
+  let(:binned_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit, bin: bin) }
+  let(:unassigned_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit) }
   let(:unassigned_box) { FactoryGirl.create(:box) }
+  let(:picklist) { FactoryGirl.create(:picklist) }
   let(:valid_bin) { FactoryGirl.build(:bin) }
   let(:invalid_bin) { FactoryGirl.build(:invalid_bin) }
 
@@ -42,9 +46,12 @@ describe BinsController do
 
   describe "GET show" do
     before(:each) do
-      bin.save
-      box.save
-      boxed_object.save
+      bin
+      box
+      binned_object
+      other_boxed_object
+      boxed_object
+      unassigned_object
       get :show, id: bin.id
     end
     it "assigns the requested object to @bin" do
@@ -54,10 +61,12 @@ describe BinsController do
       expect(assigns(:boxes)).to eq [box]
     end
     describe "assigns contained physical objects to @physical_objects" do
-      it "assigns boxed objects" do
+      it "assigns boxed objects (only)" do
         expect(assigns(:physical_objects)).to eq [boxed_object]
       end
-      #FIXME
+    end
+    it "assigns @picklists to picklists dropdown values" do
+      
     end
     it "renders the :show template" do
       expect(response).to render_template(:show)
@@ -197,29 +206,58 @@ describe BinsController do
   end
   
   describe "GET show_boxes" do
-    before(:each) do 
-      box.bin = nil
-      box.save
-      get :show_boxes, id: bin.id
+    context "for an unpacked bin" do
+      before(:each) do 
+        box.bin = nil
+        box.save
+        get :show_boxes, id: bin.id
+      end
+      it "assigns unassigned boxes to @boxes" do
+        expect(assigns(:boxes)).to eq [box]
+      end
+      it "renders :show_boxes" do
+        expect(response).to render_template :show_boxes
+      end
     end
-    it "assigns unassigned boxes to @boxes" do
-      expect(assigns(:boxes)).to eq [box]
-    end
-    it "renders :show_boxes" do
-      expect(response).to render_template :show_boxes
+    context "for a packed bin" do
+      before(:each) do
+        bin.current_workflow_status = "Packed"
+        bin.save
+        get :show_boxes, id: bin.id
+      end
+      it "flashes packed_status_message" do
+        expect(flash[:notice]).to eq Box.packed_status_message
+      end
+      it "redirect to :show" do
+        expect(response).to redirect_to action: :show
+      end
     end
   end
-  
+ 
   describe "PATCH assign_boxes" do
-    before(:each) do
-      box.bin = nil
-      box.save
-      patch :assign_boxes, id: bin.id, box_ids: [box.id]
+    context "for an unpacked bin" do
+      before(:each) do
+        patch :assign_boxes, id: bin.id, box_ids: [unassigned_box.id]
+      end
+      it "assigns boxes to bin" do
+        unassigned_box.reload
+        expect(unassigned_box.bin).to eq bin
+      end
     end
-    it "assigns boxes to bin" do
-      box.reload
-      expect(box.bin).to eq bin
+    context "for a packed bin" do
+      before(:each) do 
+        bin.current_workflow_status = "Packed"
+        bin.save
+        patch :assign_boxes, id: bin.id, box_ids: [unassigned_box.id]
+      end
+      it "flashes packed_status_message" do
+        expect(flash[:notice]).to eq Box.packed_status_message
+      end
+      it "redirects to :show" do
+        expect(response).to redirect_to action: :show
+      end
     end
+    it "NOTE: does not check if box is already binned in another bin"
   end
 
 end

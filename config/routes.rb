@@ -12,6 +12,7 @@ Pod::Application.routes.draw do
     post :unbatch, on: :member
     get :show_boxes, on: :member
     patch :assign_boxes, on: :member
+    resources :boxes, only: [:index, :new, :create]
   end
 
   resources :boxes, except: [:edit] do

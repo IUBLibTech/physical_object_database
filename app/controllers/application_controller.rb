@@ -69,7 +69,8 @@ class ApplicationController < ActionController::Base
       :group_key_id, :group_key,
       :group_position, :collection_identifier, :mdpi_barcode, :format_duration,
       :has_ephemera, :author, :catalog_key, :collection_name, :generation, :oclc_number,
-      :other_copies, :year, :bin_id, :unit, :current_workflow_status, :picklist_id,
+      :other_copies, :year, :bin, :bin_id, :unit, :unit_id, :current_workflow_status, :picklist_id,
+      :spreadsheet, :spreadsheet_id, :box, :box_id,
       condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :user, :_destroy],
       notes_attributes: [:id, :body, :user, :_destroy])
   end

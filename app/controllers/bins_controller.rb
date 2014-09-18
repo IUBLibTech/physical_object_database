@@ -117,9 +117,18 @@ class BinsController < ApplicationController
 
 	def show_boxes
 		@boxes = Box.where(bin_id: nil)
+		if @bin.packed_status?
+		  flash[:notice] = Box.packed_status_message
+		  redirect_to action: :show
+		end
 	end
 
 	def assign_boxes
+                if @bin.packed_status?
+                  flash[:notice] = Box.packed_status_message
+                  redirect_to action: :show
+		  return
+                end
 		unless params[:box_ids].nil?
 			params[:box_ids].each do |b_id|
 				Box.find(b_id).update_attributes(bin_id: @bin.id)
@@ -127,8 +136,6 @@ class BinsController < ApplicationController
 		end
 		redirect_to(bin_path(@bin.id))
 	end
-
-
 
 	private
 	def set_bin
@@ -147,7 +154,7 @@ class BinsController < ApplicationController
 	end
 
 	def bin_params
-		params.require(:bin).permit(:mdpi_barcode, :identifier, :description, :batch, :current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
+		params.require(:bin).permit(:mdpi_barcode, :identifier, :description, :batch, :batch_id, :spreadsheet, :spreadsheet_id, :current_workflow_status, condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :_destroy])
 
 	end
 

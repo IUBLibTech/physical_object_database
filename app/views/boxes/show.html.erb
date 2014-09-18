@@ -38,6 +38,10 @@
       <%= f.submit("Update Box") %>
     <% end %>
   <% end %>
+  <% packed_status = @box.packed_status? %>
+  <% if packed_status %>
+    <div><%= Box.packed_status_message %></div>
+  <% end %>
   <div>
     <h2>Pack This Box</h2>
     <%= form_for(@box, url: {controller: 'picklists', action: 'process_list', box_id: @box.id}) do |f| %>
@@ -45,11 +49,11 @@
         <tr>
           <th>Select the picklist to pack this box from</th>
           <td>
-            <%= select('picklist', 'id', @picklists) %>
+            <%= select('picklist', 'id', @picklists, {}, disabled: packed_status) %>
           </td>
         </tr>
       </table>
-      <%= f.submit("Pack Box") %>
+      <%= f.submit("Pack Box", { disabled: packed_status }) %>
     <% end %>
   </div>
 </div>
