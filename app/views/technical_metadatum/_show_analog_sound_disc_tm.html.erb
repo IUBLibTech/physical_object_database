@@ -91,8 +91,16 @@
 				<% end %>
 			</td>
 		</tr>
-		
-
+                <tr>
+                        <th>Sound field</th>
+                        <td>
+                                <% if @edit_mode %>
+                                        <%= f.select(:sound_field, @tm.sound_field_values) %>
+                                <% else %>
+                                        <%= f.text_field(:sound_field, readonly: true) %>
+                                <% end %>
+                        </td>
+                </tr>
 		<tr>
 			<th>Equalization</th>
 			<td>
@@ -109,7 +117,12 @@
 				<%= f.text_field(:country_of_origin, readonly: !@edit_mode) %>
 			</td>
 		</tr>
-
+                <tr>
+                        <th>Label</th>
+                        <td>
+                                <%= f.text_field(:label, readonly: !@edit_mode) %>
+                        </td>
+                </tr>
 		<tr>
 			<th>Preservation Problems</th>
 			<td>

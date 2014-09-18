@@ -24,18 +24,18 @@ FactoryGirl.define do
   end
 
   factory :analog_sound_disc_tm, class: AnalogSoundDiscTm do
-    diameter "5"
+    diameter "12"
     speed "33.3"
-    groove_size "Coarse"
+    groove_size "Micro"
     groove_orientation "Lateral"
     recording_method "Pressed"
-    material "Shellac"
-    substrate "Aluminum"
-    coating "None"
+    material "Plastic"
+    substrate "N/A"
+    coating "N/A"
     equalization "RIAA"
     country_of_origin ""
     label ""
-    sound_field ""
+    sound_field "Mono"
     subtype "LP"
 
     delamination 0

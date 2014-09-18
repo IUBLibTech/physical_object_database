@@ -34,6 +34,5 @@ FactoryGirl.define do
   factory :invalid_physical_object, parent: :physical_object do
     title nil
   end
-  
 
 end
