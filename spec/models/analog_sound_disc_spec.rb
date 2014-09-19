@@ -25,6 +25,10 @@ describe AnalogSoundDiscTm do
       analog_sound_disc_tm.groove_orientation = "invalid value"
       expect(analog_sound_disc_tm).not_to be_valid
     end
+    specify "sound_field in values list" do
+      analog_sound_disc_tm.sound_field = "invalid value"
+      expect(analog_sound_disc_tm).not_to be_valid
+    end
     specify "recording_method in values list" do
       analog_sound_disc_tm.recording_method = "invalid value"
       expect(analog_sound_disc_tm).not_to be_valid
@@ -58,10 +62,6 @@ describe AnalogSoundDiscTm do
     end
     specify "label" do
       analog_sound_disc_tm.label = nil
-      expect(analog_sound_disc_tm).to be_valid
-    end
-    specify "sound_field" do
-      analog_sound_disc_tm.sound_field = nil
       expect(analog_sound_disc_tm).to be_valid
     end
   end

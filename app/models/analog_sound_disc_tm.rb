@@ -24,7 +24,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	SIMPLE_FIELDS = [
           "diameter", "speed", "groove_size", "groove_orientation",
 	  "recording_method", "material", "substrate", "coating",
-	  "equalization", "country_of_origin"
+	  "equalization", "country_of_origin", "label"
 	]
 	MULTIVALUED_FIELDSETS = {
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
@@ -40,16 +40,16 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	validates :substrate, inclusion: { in: SUBSTRATE_VALUES.keys }
 	validates :coating, inclusion: { in: COATING_VALUES.keys }
 	validates :equalization, inclusion: { in: EQUALIZATION_VALUES.keys }
-	#validates :sound_field, inclusion: { in: SOUND_FIELD_VALUES.keys }
+	validates :sound_field, inclusion: { in: SOUND_FIELD_VALUES.keys }
 	validates :subtype, inclusion: { in: SUBTYPE_VALUES.keys }
 
 	#NOTE: default values must be string values
-	#FIXME: default equalization value?
 	DEFAULT_VALUES = {
 		"LP" => { diameter: "12",
 			  speed: "33.3",
 			  groove_size: "Micro",
 			  groove_orientation: "Lateral",
+			  sound_field: "Unknown",
 			  recording_method: "Pressed",
 			  substrate: "N/A",
 			  coating: "N/A",
@@ -65,6 +65,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 			self.speed ||= values_hash[:speed]
 			self.groove_size ||= values_hash[:groove_size]
 			self.groove_orientation ||= values_hash[:groove_orientation]
+			self.sound_field ||= values_hash[:sound_field]
 			self.recording_method ||= values_hash[:recording_method]
 			self.substrate ||= values_hash[:substrate]
 			self.coating ||= values_hash[:coating]
