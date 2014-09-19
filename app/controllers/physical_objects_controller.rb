@@ -135,7 +135,7 @@ class PhysicalObjectsController < ApplicationController
       header_validation = true unless params[:header_validation] == "false"
       upload_results = PhysicalObjectsHelper.parse_csv(path, header_validation, @pl, filename)
       @spreadsheet = upload_results[:spreadsheet]
-      flash[:notice] = ("Spreadsheet " + ((@spreadsheet.nil? || @spreadsheet.id.nil?) ? "NOT" : "")  + "uploaded.<br/>").html_safe
+      flash[:notice] = ("Spreadsheet " + ((@spreadsheet.nil? || @spreadsheet.id.nil?) ? "NOT " : "")  + "uploaded.<br/>").html_safe
       flash[:notice] += "CSV headers NOT checked for validation.</br>".html_safe unless header_validation
       flash[:notice] += "#{upload_results['succeeded'].size} record" + (upload_results['succeeded'].size == 1 ? " was" : "s were") + " successfully imported.".html_safe
       if upload_results['failed'].size > 0

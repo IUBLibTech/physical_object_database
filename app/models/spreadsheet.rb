@@ -3,8 +3,8 @@
 #
 class Spreadsheet < ActiveRecord::Base
 
-  has_many :bins, dependent: :destroy
-  has_many :boxes, dependent: :destroy
+  has_many :bins
+  has_many :boxes
   has_many :physical_objects, dependent: :destroy
 
   validates :filename, presence: true, uniqueness: true
