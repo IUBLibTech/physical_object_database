@@ -33,18 +33,18 @@ describe Spreadsheet do
     it "has many bins" do
       expect(valid_spreadsheet.bins.size).to eq 0
     end
-    specify "bins are deleted upon spreadsheet deletion" do
+    specify "bins are NOT deleted upon spreadsheet deletion" do
       bin_id = bin.id
       spreadsheet.destroy
-      expect(Bin.where(id: bin_id)).to be_empty
+      expect(Bin.where(id: bin_id)).not_to be_empty
     end
     it "has many boxes" do
       expect(valid_spreadsheet.boxes.size).to eq 0
     end
-    specify "boxes are deleted upon spreadsheet deletion" do
+    specify "boxes are NOT deleted upon spreadsheet deletion" do
       box_id = box.id
       spreadsheet.destroy
-      expect(Box.where(id: box_id)).to be_empty
+      expect(Box.where(id: box_id)).not_to be_empty
     end
     it "has many physical objects" do
       expect(valid_spreadsheet.physical_objects.size).to eq 0
