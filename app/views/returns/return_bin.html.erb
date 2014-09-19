@@ -17,7 +17,7 @@
 				</tr>
 				<tr>
 					<td>
-						<%= text_field_tag(:mdpi_barcode_check, nil, {class: "mdpi"}) %>
+						<%= text_field_tag(:mdpi_barcode_check, nil) %>
 					</td>
 					<td>
 						<%= f.submit("Unpack Physical Object") %>
@@ -55,7 +55,23 @@
 </div>
 
 <script type="text/javascript">
+
 	$(document).ready(function () {
+		// keypresses when the user types in a barcode
+		$("#mdpi_barcode_check").bind("keyup", function() {
+			validateMdpiBarcode($(this));
+		})
+		// when a barcode is pasted (or scanned), change event fires so handle both the barcode validation
+		// as well as automating the form submission
+		$("#mdpi_barcode_check").bind("paste", function() {
+			var _this = $(this)
+			validateMdpiBarcode(_this);
+			setTimeout( function() {
+          if (isValidBarcode(_this.val())) {
+						$("#barcode_check").submit();
+          }
+      }, 100);
+		})
 		$("#mdpi_barcode_check").focus();
 	});
 </script>

@@ -3,6 +3,14 @@
 // *) if it doesn't, it then hands off to the hidden 'barcode_submit' form and manually submits that form
 // *) if it does have ephemera, it displays a dialog the user interact
 $( document ).ready(function() {
+	$("#ephemera_returned_ephemera_returned").click(function() {
+		if ($(this).is(":checked")) {
+			$("#mdpi_barcode").val(bc);
+			$("#barcode_form").submit();
+			$( this ).dialog( "close" ); 
+		}
+	});
+
 	$( "#barcode_check" ).submit(
 		function(event) {
 			event.preventDefault()

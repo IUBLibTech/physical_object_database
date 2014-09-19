@@ -3,7 +3,6 @@
 </div>
 <div class="scrollingDiv">
 	<% @picklist.physical_objects.each_with_index do |p, index| %>
-	<% #debugger %>
 		<%= render(partial: 'picklist_physical_object_form', locals: {p: p, index: index, box: box, bin: bin}) %>
 	<% end %>
 </div>

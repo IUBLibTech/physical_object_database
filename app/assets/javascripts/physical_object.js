@@ -25,10 +25,13 @@ function markValid(barcodeEl) {
 	barcodeEl.removeClass("bad_barcode");
 }
 
+function isValidBarcode(barcode) {
+	return barcode.length == 14 && barcode.charAt(0) == 4 && validCheckDigit(barcode);
+}
+
 
 function validateMdpiBarcode(barcodeEl) {
-	var hmm = validCheckDigit(barcodeEl.val());
-	if ((barcodeEl.val() == "0" || barcodeEl.val() == "") || (barcodeEl.val().length == 14 && barcodeEl.val().charAt(0) == 4 && validCheckDigit(barcodeEl.val()))) {
+	if ((barcodeEl.val() == "0" || barcodeEl.val() == "") || isValidBarcode(barcodeEl.val())) {
 		markValid(barcodeEl);
 	} else {
 		markInvalid(barcodeEl);

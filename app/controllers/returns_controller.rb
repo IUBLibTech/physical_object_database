@@ -23,7 +23,6 @@ class ReturnsController < ApplicationController
 		puts params.to_yaml
 		@bin = Bin.find(params[:id])
 		po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode])[0]
-		debugger
 
 		if po.nil?
 			flash[:notice] = "<b class='warning'>No Physical Object with barcode #{params[:mdpi_barcode]} was found.</b>".html_safe
