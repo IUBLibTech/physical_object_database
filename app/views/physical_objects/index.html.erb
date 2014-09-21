@@ -3,6 +3,9 @@
       <%= link_to("Create New Physical Object", controller: 'physical_objects', action: 'new') %>
     </div>
     <div class="contextMenuItem">
+      <%= link_to "View Group Keys", group_keys_path  %>
+    </div>
+    <div class="contextMenuItem">
       <%= link_to("View Imported Spreadsheets", spreadsheets_path) %>
     </div>
     <div class="contextMenuItem">
@@ -12,5 +15,3 @@
   <h2>Physical Objects</h2>
   <%# special case: need to specify full path because of inclusion in search result %>
   <%= render 'physical_objects/physical_objects_table' %>
-
-

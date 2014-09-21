@@ -84,6 +84,10 @@
 	    <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id)) %>
 	  <% else %>
 	    Not assigned
+            <% if @edit_mode %>
+              <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
+              <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
+            <% end %>
 	  <% end %>
 	</td>
       </tr>

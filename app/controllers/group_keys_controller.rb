@@ -15,10 +15,16 @@ class GroupKeysController < ApplicationController
   # GET /group_keys/new
   def new
     @group_key = GroupKey.new
+    @edit_mode = true
+    @action = "create"
+    @submit_text = "Create Group Key"
   end
 
   # GET /group_keys/1/edit
   def edit
+    @edit_mode = true
+    @action = "update"
+    @submit_text = "Update Group Key"
   end
 
   # POST /group_keys
@@ -31,7 +37,12 @@ class GroupKeysController < ApplicationController
         format.html { redirect_to @group_key, notice: 'Group key was successfully created.' }
         format.json { render action: 'show', status: :created, location: @group_key }
       else
-        format.html { render action: 'new' }
+        format.html do
+	  @edit_mode = true
+	  @action = "create"
+	  @submit_text = "Create Group Key"
+	  render 'new'
+	end
         format.json { render json: @group_key.errors, status: :unprocessable_entity }
       end
     end
@@ -45,7 +56,12 @@ class GroupKeysController < ApplicationController
         format.html { redirect_to @group_key, notice: 'Group key was successfully updated.' }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
+        format.html do
+	  @edit_mode = true
+	  @action = "update"
+	  @submit_text = "Update Group Key"
+	  render action: 'edit'
+	end
         format.json { render json: @group_key.errors, status: :unprocessable_entity }
       end
     end
@@ -70,6 +86,6 @@ class GroupKeysController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def group_key_params
-      params.require(:group_key).permit(:identifier)
+      params.require(:group_key).permit(:group_total)
     end
 end

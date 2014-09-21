@@ -10,6 +10,8 @@ class PhysicalObject < ActiveRecord::Base
   after_initialize :default_values
   after_initialize :assign_default_workflow_status
   before_validation :ensure_tm
+  before_validation :ensure_group_key
+  after_save :resolve_group_position
 
   belongs_to :box
   belongs_to :bin
@@ -51,6 +53,7 @@ class PhysicalObject < ActiveRecord::Base
   validates :group_position, presence: true
   validates :mdpi_barcode, mdpi_barcode: true
   validates :unit, presence: true
+  validates :group_key, presence: true
   validates :technical_metadatum, presence: true
   validates_with PhysicalObjectValidator
 
@@ -76,19 +79,20 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def group_identifier
-    "GR" + id.to_s.rjust(8, "0") 
+    return "MISSING" if self.group_key.nil?
+    self.group_key.group_identifier
   end
 
   def group_total
     return 1 if self.group_key.nil?
-    return self.group_key.physical_objects_count
+    self.group_key.group_total
   end
 
   def carrier_stream_index
     if self.group_key.nil?
       group_identifier + "_1_1"
     else
-      self.group_key.group_identifier + "_" + self.group_position.to_s + "_" + self.group_key.physical_objects_count.to_s
+      self.group_key.group_identifier + "_" + self.group_position.to_s + "_" + self.group_key.group_total.to_s
     end
   end
 
@@ -222,6 +226,27 @@ class PhysicalObject < ActiveRecord::Base
         @tm = create_tm(self.format, physical_object: self)
       else
         @tm = self.technical_metadatum.as_technical_metadatum
+      end
+    end
+  end
+
+  def ensure_group_key
+    self.group_key = GroupKey.new if self.group_key.nil?
+    self.group_key
+  end
+
+  def resolve_group_position
+    unless self.group_key.nil?
+      collisions = PhysicalObject.where(group_key_id: self.group_key_id, group_position: self.group_position).where.not(id: self.id).order(id: :asc)
+      unless collisions.empty?
+        #only resolve first collision, as cascade will fix others
+        collisions[0].group_position += 1
+	collisions[0].save
+      end
+
+      if self.group_position > self.group_key.group_total
+        self.group_key.group_total = self.group_position
+	self.group_key.save
       end
     end
   end
