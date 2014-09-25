@@ -1,5 +1,5 @@
 class GroupKeysController < ApplicationController
-  before_action :set_group_key, only: [:show, :edit, :update, :destroy]
+  before_action :set_group_key, only: [:show, :edit, :update, :destroy, :reorder]
 
   # GET /group_keys
   # GET /group_keys.json
@@ -75,6 +75,35 @@ class GroupKeysController < ApplicationController
       format.html { redirect_to group_keys_url }
       format.json { head :no_content }
     end
+  end
+
+  # PATCH reorder
+  def reorder
+    reorder_param = params[:reorder_submission]
+    if reorder_param.nil? || reorder_param.blank?
+      flash[:notice] = "No changes submitted."
+    else
+      reorder_ids = reorder_param.split(",")
+      objects = []
+      errors = false
+      reorder_ids.each_with_index do |object_id, index|
+        physical_object = PhysicalObject.where(id: object_id, group_key_id: @group_key.id)[0]
+	unless physical_object.nil? 
+	  physical_object.group_position = index + 1
+	  objects << physical_object
+	end
+      end
+      #loop in reverse order to minimize resolve_group_position effects
+      objects.reverse_each do |physical_object|
+        errors = true unless physical_object.save
+      end
+      if errors
+        flash[:notice] = "Errors encountered reordering objects."
+      else
+        flash[:notice] = "Objects were successfully reordered."
+      end
+    end
+    redirect_to :back
   end
 
   private

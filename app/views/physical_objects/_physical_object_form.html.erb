@@ -76,7 +76,6 @@
           <% end %>
         </td>
       </tr>
-      <%= f.hidden_field(:group_key_id) %>
       <tr>
         <th>Group key</th>
 	<td>
@@ -84,17 +83,17 @@
 	    <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id)) %>
 	  <% else %>
 	    Not assigned
-            <% if @edit_mode %>
-              <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
-              <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
-            <% end %>
 	  <% end %>
+          <% if @edit_mode %>
+            <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
+            <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
+          <% end %>
 	</td>
       </tr>
       <tr>
         <th>Group position</th>
 	<td>
-	  <%= f.number_field(:group_position, readonly: !@edit_mode, min: 1, max: @group_key.nil? ? 1 : @group_key.physical_objects_count + 1) %>
+	  <%= f.number_field(:group_position, readonly: !@edit_mode, min: 1, max: @group_key.nil? ? 1 : @group_key.group_total + 1) %>
 	</td>
       </tr>
       <tr>

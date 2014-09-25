@@ -23,6 +23,8 @@ Pod::Application.routes.draw do
   resources :condition_status_templates
 
   resources :group_keys do
+    patch :reorder, on: :member
+
     resources :physical_objects, only: [:new]
   end
 

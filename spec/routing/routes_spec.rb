@@ -82,6 +82,9 @@ describe "group keys" do
   it "routes to destroy" do
     expect(delete("/group_keys/:id")).to route_to action: "destroy", controller: "group_keys", id: ":id"
   end
+  it "routes to reorder" do
+    expect(patch("/group_keys/:id/reorder")).to route_to action: "reorder", controller: "group_keys", id: ":id"
+  end
 
   it "routes to physical_object new through group_keys" do
     expect(get("/group_keys/:group_key_id/physical_objects/new")).to be_routable

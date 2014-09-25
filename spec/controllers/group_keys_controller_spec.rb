@@ -105,7 +105,6 @@ describe GroupKeysController do
       end
       it "re-renders the :new template" do
         creation
-	puts GroupKey.last.inspect
         expect(response).to render_template(:new)
       end
     end
@@ -159,6 +158,44 @@ describe GroupKeysController do
       group_keyed_object
       expect{ deletion }.to change(PhysicalObject, :count).by(-1)
       expect { group_keyed_object.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
+  describe "PATCH reorder" do
+    before(:each) { request.env["HTTP_REFERER"] = "source_page" }
+    it "flashes inaction message if no ids are passed" do
+      patch :reorder, id: group_key.id
+      expect(flash[:notice]).to match /no change/i
+    end
+    it "reorders the objects" do
+      group_keyed_object
+      second_object = group_keyed_object.dup
+      second_object.group_position = 2
+      second_object.save
+      reorder_submission = "#{second_object.id},#{group_keyed_object.id}"
+      patch :reorder, id: group_key.id, reorder_submission: reorder_submission
+      group_keyed_object.reload
+      second_object.reload
+      expect(flash[:notice]).to match /success/i
+      expect(second_object.group_position).to eq 1
+      expect(group_keyed_object.group_position).to eq 2
+    end
+    it "retains gaps" do
+      group_keyed_object
+      second_object = group_keyed_object.dup
+      second_object.group_position = 3
+      second_object.save
+      reorder_submission = "#{second_object.id},,#{group_keyed_object.id}"
+      patch :reorder, id: group_key.id, reorder_submission: reorder_submission
+      group_keyed_object.reload
+      second_object.reload
+      expect(flash[:notice]).to match /success/i
+      expect(second_object.group_position).to eq 1
+      expect(group_keyed_object.group_position).to eq 3
+    end
+    it "redirects to :back" do
+      patch :reorder, id: group_key.id
+      expect(response).to redirect_to "source_page"
     end
   end
   

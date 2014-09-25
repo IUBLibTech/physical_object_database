@@ -10,6 +10,7 @@
  *
  *= require_self
  *= require physical_objects
+ *= require jquery-ui/sortable
  *= require jquery.qtip.min.css
  *= require_tree ./custom-theme
  */
@@ -230,3 +231,21 @@ tr.packed {
   margin-left: auto;
   margin-right: auto;
 }
+
+#sortable {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#sortable li {
+  margin: 0 3px 3px 3px;
+  padding: 0.4em;
+  padding-left: 1.5em;
+}
+
+#sortable li span {
+  position: absolute;
+  margin-left: -1.3em;
+}
+
