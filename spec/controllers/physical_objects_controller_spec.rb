@@ -6,6 +6,7 @@ describe PhysicalObjectsController do
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
   let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
   let(:invalid_physical_object) { FactoryGirl.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
+  let(:group_key) { FactoryGirl.create(:group_key) }
 
   describe "GET index" do
     before(:each) do
@@ -39,6 +40,15 @@ describe PhysicalObjectsController do
     end
     it "renders the :new template" do
       expect(response).to render_template(:new)
+    end
+    context "specifying a group_key" do
+      before(:each) { get :new, group_key_id: group_key.id }
+      it "assigns @group_key" do
+        expect(assigns(:group_key)).to eq group_key
+      end
+      it "assigns a group_key to @physical_object" do
+        expect(assigns(:physical_object).group_key).to eq group_key
+      end
     end
   end
 
@@ -369,6 +379,27 @@ describe PhysicalObjectsController do
         include_examples "flashes successful removal message"
         include_examples "unpicks the object"
       end
+    end
+  end
+
+  describe "POST ungroup" do
+    let(:ungroup) {
+      request.env["HTTP_REFERER"] = "source_page"
+      post :ungroup, id: physical_object.id
+    }
+    it "removes the existing group key association" do
+      original_group = physical_object.group_key
+      ungroup
+      physical_object.reload
+      expect(physical_object.group_key).not_to eq original_group
+    end
+    it "indirectly adds a new group key association" do
+      ungroup
+      expect(physical_object.group_key).not_to be_nil
+    end
+    it "redirects to :back" do
+      ungroup
+      expect(response).to redirect_to "source_page"
     end
   end
 

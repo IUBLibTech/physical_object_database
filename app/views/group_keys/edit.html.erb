@@ -1,6 +1,9 @@
-<h1>Editing group_key</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Show', @group_key %> |
-<%= link_to 'Back', group_keys_path %>
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to 'Cancel', @group_key %>
+  </div>
+<% end %>
+<div>
+  <h2>Edit Group Key</h2>
+  <%= render 'group_key' %>
+</div>

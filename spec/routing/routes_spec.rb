@@ -61,19 +61,29 @@ describe "boxes" do
 end
 
 describe "group keys" do
-  it "does not route to create" do
-    expect(post("/group_keys")).not_to be_routable
+  it "routes to index" do
+    expect(get "/group_keys").to route_to action: "index", controller: "group_keys"
+  end
+  it "routes to show" do
+    expect(get "/group_keys/:id").to route_to action: "show", controller: "group_keys", id: ":id"
+  end
+  it "routes to new" do
+    expect(get "/group_keys/new").to route_to action: "new", controller: "group_keys"
+  end
+  it "routes to edit" do
+    expect(get("/group_keys/:id/edit")).to be_routable
+  end
+  it "routes to create" do
+    expect(post("/group_keys")).to route_to action: "create", controller: "group_keys"
   end 
-  it "does not route to edit" do
-    expect(get("/group_keys/:id/edit")).not_to be_routable
+  it "routes to update" do
+    expect(patch("/group_keys/:id")).to route_to action: "update", controller: "group_keys", id: ":id"
   end
-  it "does not route to new" do
-    expect(get("/group_keys/new")).to route_to(
-      action: "show", controller: "group_keys", id:"new"
-      )
+  it "routes to destroy" do
+    expect(delete("/group_keys/:id")).to route_to action: "destroy", controller: "group_keys", id: ":id"
   end
-  it "does not route to update" do
-    expect(patch("/group_keys/:id/update")).not_to be_routable
+  it "routes to reorder" do
+    expect(patch("/group_keys/:id/reorder")).to route_to action: "reorder", controller: "group_keys", id: ":id"
   end
 
   it "routes to physical_object new through group_keys" do
@@ -119,8 +129,13 @@ describe "physical_objects" do
     expect(post("/physical_objects/:id/unbox")).to be_routable
   end
 
+
   it "routes to unpick" do
     expect(post("/physical_objects/:id/unpick")).to be_routable
+  end
+
+  it "routes to ungroup" do
+    expect(post("/physical_objects/:id/ungroup")).to be_routable
   end
 
 end

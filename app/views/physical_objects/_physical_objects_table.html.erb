@@ -1,5 +1,6 @@
 <table class="po list">
   <tr class="header">
+    <% unless @group_key.nil? %><th>Position</th><% end %>
     <th>Current Status</th>
     <th>MDPI barcode</th>
     <th>Call number</th>
@@ -14,13 +15,16 @@
         <%else%>
         <tr class='even'>
       <%end%>
+      <% unless @group_key.nil? %>
+        <td><%= po.group_position %></td>
+      <% end %>
       <td><%= po.current_workflow_status.name %></td>
       <td><%= po.mdpi_barcode %></td>
       <td><%= po.call_number %></td>
       <td><%= po.format %></td>
       <td>
         <%= link_to("Show", po, class: 'action show') %>
-        <% if @bin.nil? && @box.nil? && @picklist.nil? %>
+        <% if @bin.nil? && @box.nil? && @picklist.nil? && @group_key.nil? %>
           <%= link_to("Edit", edit_physical_object_path(po), :class => 'action edit') %>
           <%= link_to("Split", split_show_physical_object_path(po), :class => 'action split')%>
           <%= link_to("Delete", physical_object_path(po.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Physical Object?'})%>
@@ -30,6 +34,9 @@
           <%= link_to("Remove", unbox_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Box?'}) %>
         <% elsif !@picklist.nil? %>
           <%= link_to("Remove", unpick_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Picklist?'})%>
+	<% elsif !@group_key.nil? %>
+          <%= link_to("Remove", ungroup_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Group Key?'})%>
+	
         <% end %>
         </td>
       </tr>
