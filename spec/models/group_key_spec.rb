@@ -42,9 +42,16 @@ describe GroupKey do
       #PhysicalObject.counter_culture_fix_counts
       #expect(group_key.physical_objects_count).to eq 1
     end
-    it "destroys physical objects when destroyed" do
+    it "retains physical objects when destroyed" do
       grouped_physical_object
-      expect{ group_key.destroy }.to change(PhysicalObject, :count).by(-1)
+      expect{ group_key.destroy }.not_to change(PhysicalObject, :count)
+    end
+    specify "orphaned physical objects get new group key automatically" do
+      original_id = grouped_physical_object.group_key_id
+      group_key.destroy
+      grouped_physical_object.reload
+      expect(grouped_physical_object.group_key).not_to be_nil
+      expect(grouped_physical_object.group_key_id).not_to eq original_id
     end
   end
 

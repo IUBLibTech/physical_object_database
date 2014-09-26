@@ -1,6 +1,7 @@
 class GroupKey < ActiveRecord::Base
-  has_many :physical_objects, dependent: :destroy
+  has_many :physical_objects
   after_initialize :set_defaults
+  before_destroy :ungroup_objects
 
   validates :group_total, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
@@ -12,11 +13,17 @@ class GroupKey < ActiveRecord::Base
     group_identifier
   end
 
-  #delete if no associated objects?
-
   private
   def set_defaults
     self.group_total ||= 1
+  end
+
+  #necessary to call because the default update to child objects does skips the before_validation check that runs ensure_group_key on a physical object to restore the group key
+  def ungroup_objects
+    self.physical_objects.each do |object|
+      object.group_key = nil
+      object.save
+    end
   end
 
 end

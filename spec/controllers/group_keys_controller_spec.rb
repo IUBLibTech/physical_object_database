@@ -154,10 +154,12 @@ describe GroupKeysController do
       deletion
       expect(response).to redirect_to group_keys_path
     end
-    it "disassociates remaining physical objects" do
-      group_keyed_object
-      expect{ deletion }.to change(PhysicalObject, :count).by(-1)
-      expect { group_keyed_object.reload }.to raise_error ActiveRecord::RecordNotFound
+    it "retains and disassociates remaining physical objects" do
+      original_id = group_keyed_object.group_key_id
+      expect{ deletion }.not_to change(PhysicalObject, :count)
+      group_keyed_object.reload
+      expect(group_keyed_object.group_key).not_to be_nil
+      expect(group_keyed_object.group_key_id).not_to eq original_id
     end
   end
 
