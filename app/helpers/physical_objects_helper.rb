@@ -4,7 +4,8 @@ module PhysicalObjectsHelper
   #returns array of invalid headers
   def PhysicalObjectsHelper.invalid_csv_headers(file)
     #FIXME: get valid headers list more elegantly?
-    valid_headers = ['Bin barcode', 'Bin identifier', 'Box barcode', 'Unit', 'Group key', 'Copies']
+    #start with list of headers not corresponding to fields in physical object or any tm
+    valid_headers = ['Bin barcode', 'Bin identifier', 'Box barcode', 'Unit', 'Group key', 'Copies', 'Group total']
     valid_headers += PhysicalObject.valid_headers
     TechnicalMetadatumModule::TM_CLASS_FORMATS.keys.each do |tm_class|
       valid_headers += tm_class.valid_headers
@@ -69,15 +70,17 @@ module PhysicalObjectsHelper
           bin_id = nil if !box_id.nil?
     
           current_group_key = r["Group key"]
+	  group_total = r["Group total"].to_i
+	  group_total = 1 if group_total.zero?
           if current_group_key.blank?
             group_key_id = nil
-          else
-            if current_group_key != previous_group_key
-              group_key = GroupKey.new
-              group_key.save
-              group_key_id = group_key.id
-              previous_group_key = current_group_key
-	    end
+          elsif
+            current_group_key != previous_group_key
+            group_key = GroupKey.new
+	    group_key.group_total = group_total
+	    group_key.save
+            group_key_id = group_key.id
+            previous_group_key = current_group_key
           end
     
           group_position = r[PhysicalObject.human_attribute_name("group_position")].to_i
@@ -113,7 +116,8 @@ module PhysicalObjectsHelper
             failed << [index, bin]
           elsif box_id.nil? && r["Box barcode"].to_i > 0
             failed << [index, box]
-          #FIXME: add check for group_key?
+	  elsif group_key_id.nil? && !current_group_key.blank?
+	    failed << [index, group_key] unless group_key.nil?
 	  elsif !po.valid?
 	    failed << [index, po]
           else

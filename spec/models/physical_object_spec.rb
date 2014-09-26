@@ -43,6 +43,23 @@ describe PhysicalObject do
       valid_po.group_position = nil
       expect(valid_po).to be_invalid
     end
+    it "automatically resolves group_position collisions by advancing other object's position" do
+      po.save
+      dup_po = po.dup
+      expect(dup_po.group_position).to eq 1
+      dup_po.save
+      dup_po.reload
+      po.reload
+      expect(dup_po.group_position).to eq 1
+      expect(po.group_position).to eq 2
+    end
+    it "automatically extends group_key.group_total" do
+      expect(po.group_key.group_total).to eq 1
+      po.group_position = 2
+      po.save
+      po.reload
+      expect(po.group_key.group_total).to eq 2
+    end
 
     #technical_metadatum: separate section
 
@@ -53,9 +70,6 @@ describe PhysicalObject do
   end
  
   describe "has optional attributes:" do
-    it "can have a group_key" do
-      expect(valid_po.group_key).to be_nil
-    end
     
     it "generates a carrier_stream_index" do
       expect(valid_po.carrier_stream_index).to_not be_blank
@@ -78,9 +92,6 @@ describe PhysicalObject do
     specify "can belong to a bin" do
       expect(valid_po.bin).to be_nil
     end
-    specify "can belong to a group_key" do
-      expect(valid_po.group_key).to be_nil
-    end
     specify "can belong to a picklist" do
       expect(valid_po.picklist).to be_nil
     end
@@ -92,6 +103,11 @@ describe PhysicalObject do
     end
     specify "must belong to a unit" do
       expect(valid_po.unit).not_to be_nil
+      valid_po.unit = nil
+      expect(valid_po).not_to be_valid
+    end
+    specify "must belong to a group key" do
+      expect(valid_po.group_key).not_to be_nil
     end
   end
   
@@ -199,13 +215,15 @@ describe PhysicalObject do
       expect(valid_po.file_iarl).to eq "Indiana University Bloomington. #{valid_po.unit.name}."
     end
     it "#group_identifier" do
-      expect(valid_po.group_identifier).to eq "GR" + valid_po.id.to_s.rjust(8, "0")
+      expect(valid_po.group_identifier).to eq valid_po.group_key.group_identifier
     end
     it "#group_identifier for object in group" do
       skip "TODO"
     end
     it "#group_total" do
-      expect(valid_po.group_total).to eq 1
+      valid_po.group_key.group_total = 42
+      valid_po.group_key.save
+      expect(valid_po.group_total).to eq valid_po.group_key.group_total
     end
     it "#group_total for object in group" do
       skip "TODO"
@@ -231,6 +249,22 @@ describe PhysicalObject do
 
   include_examples "ensure_tm examples" do
     let(:test_object) { po }
+  end
+
+  describe "#ensure_group_key" do
+    it "returns an existing group_key if present" do
+      expect(valid_po.ensure_group_key).to equal valid_po.group_key
+    end
+    it "returns a new, valid group_key if absent" do
+      valid_po.group_key = nil
+      expect(valid_po.ensure_group_key.id).to be_nil
+      expect(valid_po.ensure_group_key).to be_valid
+    end
+    it "runs before validation" do
+      valid_po.group_key = nil
+      valid_po.valid?
+      expect(valid_po.group_key).not_to be_nil
+    end
   end
 
   describe "includes ConditionStatusModule:" do

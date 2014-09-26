@@ -11,6 +11,7 @@
 // about supported directives.
 //= require_self
 //= require jquery
+//= require jquery-ui/sortable
 //= require jquery_ujs
 //= require jquery_nested_form
 //= require picklist_specification

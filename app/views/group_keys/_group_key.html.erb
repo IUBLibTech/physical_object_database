@@ -1,0 +1,28 @@
+<%= error_messages_for(@group_key) %>
+<%= form_for(@group_key) do |f| %>
+  <table>
+    <tr>
+      <th>Group Identifier</th>
+      <td><%= @group_key.group_identifier %></td>
+    </tr>
+    <tr>
+      <th>Group Total</th>
+      <td>
+        <% if @edit_mode %>
+	  <%= f.number_field(:group_total) %>
+	<% else %>
+          <%= @group_key.group_total %>
+	<% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Physical Objects in Group</th>
+      <td><%= @group_key.physical_objects_count %></td>
+    </tr>
+  </table>
+  <% if @edit_mode %>
+    <div class="clear">
+      <%= f.submit %>
+    </div>
+  <% end %>
+<% end %>

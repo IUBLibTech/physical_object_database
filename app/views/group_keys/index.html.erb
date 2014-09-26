@@ -1,27 +1,37 @@
-<h1>Listing group_keys</h1>
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to "Create New Group Key", new_group_key_path %>
+  </div>
+<% end %>
 
-<table>
+<h2>Group Keys</h2>
+<table class="list">
   <thead>
-    <tr>
+    <tr class="header">
       <th>Group Identifier</th>
+      <th>Group Total</th>
       <th>Physical Objects Count</th>
-      <th></th>
-      <th></th>
+      <th>Actions</th>
     </tr>
   </thead>
 
   <tbody>
+    <% count = 1 %>
     <% @group_keys.each do |group_key| %>
-      <tr>
+      <% row_class = (count.odd? ? 'odd' : 'even') %>
+      <% count += 1 %>
+      <tr class='<%= row_class %>'>
         <td><%= group_key.group_identifier %></td>
+        <td><%= group_key.group_total %></td>
         <td><%= group_key.physical_objects_count %></td>
-        <td><%= link_to 'Show', group_key %></td>
-        <td><%= link_to 'Destroy', group_key, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td>
+	  <%= link_to 'Show', group_key %>
+	  <%= link_to 'Edit', edit_group_key_path(group_key) %>
+          <%= link_to("Delete", @group_key, method: :delete, data: {:confirm=>'Are you sure you want to delete this Group Key?  This will also delete all associated Physical Objects.'})%>
+	</td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
-
-<%= link_to 'New Group key', new_group_key_path %>

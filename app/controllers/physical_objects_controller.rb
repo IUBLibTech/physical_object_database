@@ -1,5 +1,5 @@
 class PhysicalObjectsController < ApplicationController
-  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :split_show, :unbin, :unbox, :unpick]  
+  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :split_show, :unbin, :unbox, :unpick, :ungroup]  
   before_action :set_picklists, only: [:edit]
   helper :all
 
@@ -196,6 +196,16 @@ class PhysicalObjectsController < ApplicationController
     #FIXME: comment or change redirect?
     #render :json {}
     redirect_to action: "edit"
+  end
+
+  def ungroup
+    @physical_object.group_key = nil
+    if @physical_object.save
+      flash[:notice] = "The Physical Object was removed from this Group Key."
+    else
+      flash[:notice] = "An error occurred.  Physical Object was NOT removed from this Group Key."
+    end
+    redirect_to :back
   end
 
   # ajax method to determine if a physical object has emphemera - returns plain text true/false

@@ -22,7 +22,9 @@ Pod::Application.routes.draw do
 
   resources :condition_status_templates
 
-  resources :group_keys, except: [:create, :edit, :new, :update] do
+  resources :group_keys do
+    patch :reorder, on: :member
+
     resources :physical_objects, only: [:new]
   end
 
@@ -37,6 +39,7 @@ Pod::Application.routes.draw do
     post :upload_update, on: :collection
     post :unbin, on: :member
     post :unbox, on: :member
+    post :ungroup, on: :member
     post :unpick, on: :member
 
     #resources :digital_files

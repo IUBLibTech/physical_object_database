@@ -1,0 +1,28 @@
+<%= form_for(@group_key, url: { action: :reorder }) do |f| %>
+  <ul id="sortable">
+  <% expected_position = 1 %>
+  <% @physical_objects.each do |object| %>
+    <% if object.group_position > expected_position %>
+      <% (expected_position...object.group_position).each do |position| %>
+        <li id="_missing_<%= position %>" class="ui-state-default ui-sortable-handle">
+          <%= "#{position}. --" %>
+        </li>
+      <% end %>
+    <% end %>
+    <li id="<%= object.id %>" class="ui-state-default ui-sortable-handle">
+      <%= "#{object.group_position}. #{object.mdpi_barcode} (#{object.id})" %>
+    </li>
+    <% expected_position = object.group_position + 1 %>
+  <% end %>
+  <% if expected_position <= @group_key.group_total %>
+    <% (expected_position..@group_key.group_total).each do |position| %>
+      <li id="_missing_<%= position %>" class="ui-state-default ui-sortable-handle">
+        <%= "#{position}. --" %>
+      </li>
+    <% end %>
+  <% end %>
+  </ul>
+  <input id="reorder_submission" name="reorder_submission" type="hidden" value="">
+  <%= f.submit "Reorder objects" %>
+<% end %>
+

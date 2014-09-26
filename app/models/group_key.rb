@@ -1,16 +1,29 @@
 class GroupKey < ActiveRecord::Base
   has_many :physical_objects
+  after_initialize :set_defaults
+  before_destroy :ungroup_objects
 
-  #FIXME: handle case of no associated objects?
+  validates :group_total, presence: true, numericality: { greater_than_or_equal_to: 0 }
+
   def group_identifier
-    return "ERROR_NO_OBJECTS_IN_GROUP" if physical_objects.empty?
-    first_object = physical_objects.where(group_position: 1).first
-    return "ERROR_NO_OBJECT_IN_FIRST_POSITION" if first_object.nil?
-    return first_object.group_identifier
+    "GR" + id.to_s.rjust(8, "0")
   end
 
   def spreadsheet_descriptor
     group_identifier
+  end
+
+  private
+  def set_defaults
+    self.group_total ||= 1
+  end
+
+  #necessary to call because the default update to child objects does skips the before_validation check that runs ensure_group_key on a physical object to restore the group key
+  def ungroup_objects
+    self.physical_objects.each do |object|
+      object.group_key = nil
+      object.save
+    end
   end
 
 end
