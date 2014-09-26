@@ -17,11 +17,18 @@ module TechnicalMetadatumClassModule
     end
 
     self.const_get(:MULTIVALUED_FIELDSETS).each_pair do |key, value|
-      row_values = row[key]
-      unless row_values.nil? || row_values.blank?
-        self.const_get(value).each do |fieldname|
+      row_values = row[key].to_s.split(/\s*,\s*/)
+      fieldset = self.const_get(value)
+      valid_imports = fieldset.map { |x| self.human_attribute_name(x) }
+      unless row_values.empty?
+        fieldset.each do |fieldname|
           tm.send((fieldname + "=").to_sym, row_values.include?(self.human_attribute_name(fieldname)))
         end
+      end
+      row_values.each do |import_field|
+        if !valid_imports.include? import_field
+	  tm.errors.add :base, "\"#{import_field}\" is not a valid value for #{key}.  Valid values are: #{valid_imports.join(', ')}"
+	end
       end
     end
   end

@@ -154,13 +154,13 @@
       <tr>
 	<th>Created</th>
         <td>
-          <%= f.text_field(:created_at, readonly: true) %>
+	  <%= @physical_object.created_at.in_time_zone %>
         </td>
       </tr>
       <tr>
         <th>Updated</th>
         <td>
-          <%= f.text_field(:updated_at, readonly: true) %>
+	  <%= @physical_object.updated_at.in_time_zone %>
         </td>
       </tr>
       <%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @physical_object %>
