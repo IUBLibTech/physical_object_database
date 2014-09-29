@@ -72,7 +72,7 @@ FactoryGirl.define do
 
   factory :open_reel_tm, class: OpenReelTm do
     pack_deformation "None"
-    reel_size ""
+    reel_size "Unknown"
     tape_stock_brand ""
     vinegar_syndrome 0
     fungus 0

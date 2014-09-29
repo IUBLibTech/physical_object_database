@@ -227,6 +227,14 @@ describe PhysicalObjectsController do
         it "creates records" do
           expect{ upload_update }.to change(PhysicalObject, :count).by(2)
         end
+	it "creates records no older than spreadsheet" do
+	  upload_update
+	  spreadsheet = Spreadsheet.last
+	  objects = PhysicalObject.where(spreadsheet_id: spreadsheet.id)
+	  objects.each do |object|
+	    expect(object.updated_at).to be <= spreadsheet.created_at
+	  end
+	end
         it "fails if repeated, due to duplicate filename" do
           upload_update
           expect{ upload_update }.not_to change(Spreadsheet, :count)

@@ -1,6 +1,9 @@
 module PhysicalObjectsHelper
   require 'csv'
 
+  #sets limit on spreadsheet rows
+  ROW_LIMIT = 5000
+
   #returns array of invalid headers
   def PhysicalObjectsHelper.invalid_csv_headers(file)
     #FIXME: get valid headers list more elegantly?
@@ -10,12 +13,7 @@ module PhysicalObjectsHelper
     TechnicalMetadatumModule::TM_CLASS_FORMATS.keys.each do |tm_class|
       valid_headers += tm_class.valid_headers
     end
-    #FIXME: get CSV headers more more elegantly
-    csv_headers = []
-    CSV.foreach(file, headers: false) do |row|
-      csv_headers = row.to_a
-      break
-    end
+    csv_headers = CSV.read(file, headers: false)[0]
     invalid_headers_array = csv_headers.select { |x| !valid_headers.include?(x) }
     return invalid_headers_array
   end
@@ -28,9 +26,13 @@ module PhysicalObjectsHelper
     previous_group_key = ""
     group_key_id = nil
     spreadsheet = Spreadsheet.new(filename: filename)
+    records_count = CSV.read(file, headers: true).length
     invalid_headers_array = (header_validation ? invalid_csv_headers(file) : [])
     if invalid_headers_array.any?
-      spreadsheet.errors[:base] << "The following headers are invalid: #{invalid_headers_array.inspect}.  Correct the file, or turn off header validation in upload submission."
+      spreadsheet.errors.add :base, "The following headers are invalid: #{invalid_headers_array.inspect}.  Correct the file, or turn off header validation in upload submission."
+      failed << [0, spreadsheet]
+    elsif records_count > ROW_LIMIT
+      spreadsheet.errors.add :base, "The spreadsheet contains #{records_count} records, which exceeds the limit of #{ROW_LIMIT}."
       failed << [0, spreadsheet]
     elsif !spreadsheet.save
       failed << [0, spreadsheet]
@@ -39,7 +41,7 @@ module PhysicalObjectsHelper
         index += 1
         if r.fields.all? { |cell| cell.nil? || cell.blank? }
 	  #silently skip blank rows; commented blank row reporting below
-	  #spreadsheet.errors[:base] << "Blank row; skipped" unless spreadsheet.errors[:base].any?
+	  #spreadsheet.errors.add :base, "Blank row; skipped" unless spreadsheet.errors[:base].any?
 	  #failed << [index, spreadsheet]
 	else
           #FIXME: probably can refactor this to be called once for the spreadsheet
@@ -125,6 +127,8 @@ module PhysicalObjectsHelper
             tm.class.parse_tm(tm, r) unless tm.nil?
             if tm.nil?
               #error
+	    elsif tm.errors.any?
+	      failed << [index, tm]
             elsif !tm.save
               failed << [index, tm]
             elsif po.save
@@ -149,6 +153,8 @@ module PhysicalObjectsHelper
           end
 	end
       end
+      spreadsheet.created_at = spreadsheet.updated_at = Time.now
+      spreadsheet.save
     end
     {"succeeded" => succeeded, "failed" => failed, spreadsheet: spreadsheet}
   end

@@ -1,15 +1,21 @@
 class SpreadsheetsController < ApplicationController
   before_action :set_spreadsheet, only: [:show, :edit, :update, :destroy]
   before_action :set_associated_objects, only: [:show]
+  before_action :set_modified_objects, only: [:show, :destroy]
 
   def index
     @spreadsheets = Spreadsheet.all
   end
 
   def show
+    respond_to do |format|
+      format.html
+      format.xls do
+        @modified_only = (params[:modified] == "true")
+        @physical_objects = @modified_objects if @modified_only
+      end
+    end
   end
-
-  #new disabled
 
   def edit
   end
@@ -26,25 +32,34 @@ class SpreadsheetsController < ApplicationController
     end
   end
 
-  #FIXME: add checks on destroying physical objects, bins, boxes
   def destroy
-    @spreadsheet.destroy
-    respond_to do |format|
-      format.html { redirect_to spreadsheets_url }
-      format.json { head :no_content }
+    if @modified_objects.empty? || params[:confirmed] == "true"
+      @spreadsheet.destroy
+      respond_to do |format|
+        format.html { redirect_to spreadsheets_url }
+        format.json { head :no_content }
+      end
+    else
+      @physical_objects = @modified_objects
+      render 'confirm_delete'
     end
   end
 
   private
     def set_spreadsheet
-      @spreadsheet = Spreadsheet.find(params[:id])
-      #@physical_objects = @spreadsheet.physical_objects unless @spreadsheet.nil?
+      #remove spreadsheet_ prefix for XLS generation
+      id = params[:id].to_s.sub(/^spreadsheet_/, '')
+      @spreadsheet = Spreadsheet.find(id)
     end
 
     def set_associated_objects
       @bins = @spreadsheet.bins
       @boxes = @spreadsheet.boxes
       @physical_objects = @spreadsheet.physical_objects
+    end
+
+    def set_modified_objects
+      @modified_objects = @spreadsheet.physical_objects.where('updated_at > ?', @spreadsheet.created_at)
     end
 
     def spreadsheet_params

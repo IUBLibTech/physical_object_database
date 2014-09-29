@@ -37,6 +37,9 @@ describe SpreadsheetsController do
     it "renders the :show template" do
       expect(response).to render_template :show
     end
+    it "provides XLS export" do
+      skip "XLS rendering broken?"
+    end
   end
 
   #new disabled
@@ -96,14 +99,42 @@ describe SpreadsheetsController do
 
   describe "DELETE destroy" do
     let(:deletion) { delete :destroy, id: spreadsheet.id }
-    it "destroys the requested spreadsheet" do
-      spreadsheet
-      expect{ deletion }.to change(Spreadsheet, :count).by(-1)
+    context "with no updated objects" do
+      it "destroys the requested spreadsheet" do
+        spreadsheet
+        expect{ deletion }.to change(Spreadsheet, :count).by(-1)
+      end
+      it "redirects to the spreadsheets list" do
+        deletion
+        expect(response).to redirect_to spreadsheets_url 
+      end
     end
-
-    it "redirects to the spreadsheets list" do
-      deletion
-      expect(response).to redirect_to spreadsheets_url 
+    context "with updated objects" do
+      let(:physical_object) { FactoryGirl.create :physical_object, :cdr, spreadsheet: spreadsheet }
+      before(:each) do
+        physical_object.updated_at = Time.now() + 10
+        physical_object.save
+      end
+      context "without confirmation" do
+        it "does not delete the spreadsheet" do
+	  expect{ deletion }.not_to change(Spreadsheet, :count)
+	end
+        it "renders the deletion confirmation page" do
+          deletion
+	  expect(response).to render_template "confirm_delete"
+        end
+      end
+      context "with confirmation" do
+        let(:confirmed_deletion) { delete :destroy, id: spreadsheet.id, confirmed: "true" }
+        it "destroys the requested spreadsheet" do
+          spreadsheet
+          expect{ confirmed_deletion }.to change(Spreadsheet, :count).by(-1)
+	end
+	it "redirects to the spreadsheets list" do
+	  confirmed_deletion
+          expect(response).to redirect_to spreadsheets_url
+	end
+      end
     end
   end
 

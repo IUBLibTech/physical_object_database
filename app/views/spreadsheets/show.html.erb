@@ -20,6 +20,8 @@
 <div id="associated_div" class="left">
   <div>
     <h2>Physical Objects uploaded via this spreadsheet: <%= @physical_objects.size %></h2>
+    Download all objects as: <%= link_to "Excel file", spreadsheet_path(id: 'spreadsheet_' + @spreadsheet.id.to_s, format: :xls, modified: false)%><br/>
+    Download only objects modified since import (<%= @modified_objects.size %>) as: <%= link_to "Excel file", spreadsheet_path(id: 'spreadsheet_' + @spreadsheet.id.to_s, format: :xls, modified: true)%><br/>
     <%= render 'physical_objects/physical_objects_table' %>
   </div>
   <div>
