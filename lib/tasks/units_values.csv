@@ -1,77 +1,78 @@
-Abbreviation,Name
-B-AAAMC,Archives of African American Music and Culture
-B-ALF,Auxiliary Library Facility
-B-ARCHIVES,University Archives (IUBL)
-B-ATM,Archives of Traditional Music
-B-BCC,Neal-Marshall Black Culture Center Library (IUBL)
-B-BUSSPEA,Business/SPEA Information Commons (IUBL)
-B-CEDIR,Center for Disability Information and Referral
-B-CHEM,Chemistry Library (IUBL)
-B-EDUC,Education Library (IUBL)
-B-FINEARTS,Fine Arts Library (IUBL)
-B-GEOLOGY,Geology Library (IUBL)
-B-HPER,"Health, Physical Education, and Recreation (HPER) Library (IUBL)"
-B-KINSEY,"Kinsey Institute for Research in Sex, Gender, and Reproduction"
-B-LAW,Law Library
-B-LIFESCI,Life Sciences Library (IUBL)
-B-LILLY,Lilly Library (IUBL)
-B-MUSIC,"Music Library, William and Gayle Cook"
-B-OPTOMTRY,Optometry Library (IUBL)
-B-SWAIN,Swain Hall Library (IUBL)
-B-WELLS,Herman B Wells Library (IUBL)
-B-AAAI,African American Arts Institute
-B-ANTH,"Anthropology, Department of"
-B-ASTR,"Astronomy, Department of"
-B-BFCA,Black Film Center Archive
-B-CSHM,Center for the Study of History and Memory
-B-CEUS,Central Eurasian Studies
-B-SAGE,Elizabeth Sage Historic Costume Collection
-B-IUAM,Art Museum
-B-MATHERS,Mathers Museum of World Cultures
-B-MDP,Media Design and Production
-B-JOURSCHL,School of Journalism
-B-RTVS,Radio and Television Services
-B-GBL,"Archaeology, Glenn Black Laboratory of"
-B-AFRIST,African Studies Program
-B-MUSBANDS,"Bands, Department of (Jacobs School of Music)"
-B-ATHBASKM,"Basketball, Men's (Athletics Dept.)"
-B-ATHBASKW,"Basketball, Women's (Athletics Dept.)"
-B-CELTIE,Center for Language Technology and Instructional Enrichment
-B-CELCAR,Center for Languages of the Central Asian Region
-B-CLACS,Center for Latin American and Caribbean Studies
-B-CDEL,Center for the Documentation of Endangered Languages
-B-CISAB,Center for the Integrative Study of Animal Behavior
-B-GLOBAL,Center for the Study of Global change
-B-CAC,Center on Aging and Community
-B-CMCL,"Communication and Culture, Department of"
-B-CREOLE,Creole Institute
-B-EASC,East Asian Studies Center
-B-EPPLEY,Eppley Institute for Parks and Public Lands
-B-ATHFHOCKEY,Field Hockey (Athletics Dept.)
-B-FOLKETHNO,"Folklore and Ethnomusicology, Department of"
-B-ATHFTBL,Football (Athletics Dept.)
-B-GLBTSSSL,"Gay, Lesbian, Bisexual and Transgender Student Support Services Library"
-B-IPRC,Indiana Prevention Resource Center
-B-IAUNRC,Inner Asian and Uralic National Resource Center
-B-IAS,Institute for Advanced Study
-B-LACASA,Latino Cultural Center (La Casa)
-B-LIBERIA,Liberian Collections Project
-B-LING,Linguistics Club
-B-OPTMSCHL,"Optometry, School of"
-B-POLISH,Polish Studies Center
-B-PSYCH,"Psychological and Brain Sciences, Department of"
-B-MUSREC,"Recording Arts, Department of (Jacobs School of Music)"
-B-ATHROWING,Rowing (Athletics Dept.)
-B-REEI,Russian and East European Institute
-B-ATHSOCCM,"Soccer, Men's (Athletics Dept.)"
-B-ATHSOFTB,Softball (Athletics Dept.)
-B-SAVAIL,Sound and Video Analysis & Instruction Laboratory
-B-ATHTENNM,"Tennis, Men's (Athletics Dept.)"
-B-THTR,"Theatre and Drama, Department of"
-B-TAI,Traditional Arts Indiana
-B-GLEIM,Unclaimed Collection #1 [Chester Gleim]
-B-FRANKLIN,Unclaimed Collection #2 [Franklin Hall Attic]
-B-UNIVCOMM,"University Communications, Office of"
-B-ATHVIDEO,Video Production (Athletics Dept.)
-B-ATHVOLLW,"Volleyball, Women's (Athletics Dept.)"
-B-WEST,West European Studies Film Library
+Abbreviation,Name,Institution,Campus
+B-AAAI,African American Arts Institute,Indiana University,Bloomington
+B-AAAMC,Archives of African American Music and Culture,Indiana University,Bloomington
+B-AFRIST,African Studies Program,Indiana University,Bloomington
+B-ALF,Auxiliary Library Facility,Indiana University,Bloomington
+B-ANTH,Department of Anthropology,Indiana University,Bloomington
+B-ARCHIVES,Office of University Archives and Records Management,Indiana University,Bloomington
+B-ASTR,Department of Astronomy,Indiana University,Bloomington
+B-ATHBASKM,Department of Intercollegiate Athletics. Men's Basketball,Indiana University,Bloomington
+B-ATHBASKW,Department of Intercollegiate Athletics. Women's Basketball,Indiana University,Bloomington
+B-ATHFHOCKEY,Department of Intercollegiate Athletics. Field Hockey,Indiana University,Bloomington
+B-ATHFTBL,Department of Intercollegiate Athletics. Football,Indiana University,Bloomington
+B-ATHROWING,Department of Intercollegiate Athletics. Rowing,Indiana University,Bloomington
+B-ATHSOCCM,Department of Intercollegiate Athletics. Men's Soccer,Indiana University,Bloomington
+B-ATHSOFTB,Department of Intercollegiate Athletics. Softball,Indiana University,Bloomington
+B-ATHTENNM,Department of Intercollegiate Athletics. Men's Tennis,Indiana University,Bloomington
+B-ATHVIDEO,Department of Intercollegiate Athletics. Video Production,Indiana University,Bloomington
+B-ATHVOLLW,Department of Intercollegiate Athletics. Women's Volleyball,Indiana University,Bloomington
+B-ATM,Archives of Traditional Music,Indiana University,Bloomington
+B-BCC,Neal-Marshall Black Culture Center,Indiana University,Bloomington
+B-BFCA,Black Film Center/Archives,Indiana University,Bloomington
+B-BUSSPEA,Business/SPEA Library,Indiana University,Bloomington
+B-CAC,Center on Aging and Community,Indiana University,Bloomington
+B-CDEL,Center for the Documentation of Endangered Languages,Indiana University,Bloomington
+B-CEDIR,Indiana Institute on Disability and Community. Center for Disability Information & Referral,Indiana University,Bloomington
+B-CELCAR,Center for Languages of the Central Asian Region,Indiana University,Bloomington
+B-CELTIE,Center for Language Technology and Instructional Enrichment,Indiana University,Bloomington
+B-CEUS,Department of Central Eurasian Studies,Indiana University,Bloomington
+B-CHEM,Chemistry Library,Indiana University,Bloomington
+B-CISAB,Center for the Integrative Study of Animal Behavior,Indiana University,Bloomington
+B-CLACS,Center for Latin American and Caribbean Studies,Indiana University,Bloomington
+B-CMCL,Department of Communication and Culture,Indiana University,Bloomington
+B-CREOLE,Creole Institute,Indiana University,Bloomington
+B-CSHM,Center for the Study of History and Memory,Indiana University,Bloomington
+B-CYCLOTRN,Cyclotron Facility,Indiana University,Bloomington
+B-EASC,East Asian Studies Center,Indiana University,Bloomington
+B-EDUC,Education Library,Indiana University,Bloomington
+B-EPPLEY,Eppley Institute for Parks and Public Lands,Indiana University,Bloomington
+B-FINEARTS,Fine Arts Library,Indiana University,Bloomington
+B-FOLKETHNO,Department of Folklore and Ethnomusicology,Indiana University,Bloomington
+B-FRANKLIN,Unclaimed Collection #2. Franklin Hall Attic,Indiana University,Bloomington
+B-GBL,Glenn A. Black Laboratory of Archaeology,Indiana University,Bloomington
+B-GEOLOGY,Geology Library,Indiana University,Bloomington
+B-GLBTSSSL,"Gay, Lesbian, Bisexual, Transgender Student Support Services Office",Indiana University,Bloomington
+B-GLEIM,Unclaimed Collection #1. Chester Gleim,Indiana University,Bloomington
+B-GLOBAL,Center for the Study of Global Change,Indiana University,Bloomington
+B-HPER,Public Health Library,Indiana University,Bloomington
+B-IAS,Institute for Advanced Study,Indiana University,Bloomington
+B-IAUNRC,Inner Asian & Uralic National Resource Center,Indiana University,Bloomington
+B-IPRC,Indiana Prevention Resource Center,Indiana University,Bloomington
+B-IUAM,Art Museum,Indiana University,Bloomington
+B-JOURSCHL,School of Journalism,Indiana University,Bloomington
+B-KINSEY,"Kinsey Institute for Research in Sex, Gender, and Reproduction",Indiana University,Bloomington
+B-LACASA,Latino Cultural Center,Indiana University,Bloomington
+B-LAW,Law Library,Indiana University,Bloomington
+B-LIBERIA,Liberian Collections,Indiana University,Bloomington
+B-LIFESCI,Life Sciences Library,Indiana University,Bloomington
+B-LILLY,Lilly Library,Indiana University,Bloomington
+B-LING,Linguistics Club,Indiana University,Bloomington
+B-MATHERS,William Hammond Mathers Museum,Indiana University,Bloomington
+B-MDP,Media Design and Production,Indiana University,Bloomington
+B-MUSBANDS,Bands,Indiana University,Bloomington
+B-MUSIC,William and Gayle Cook Music Library,Indiana University,Bloomington
+B-MUSREC,School of Music,Indiana University,Bloomington
+B-OPTMSCHL,School of Optometry,Indiana University,Bloomington
+B-OPTOMTRY,Optometry Library,Indiana University,Bloomington
+B-POLISH,Polish Studies Center,Indiana University,Bloomington
+B-PSYCH,Department of Psychological and Brain Sciences,Indiana University,Bloomington
+B-REEI,Russian and East European Institute,Indiana University,Bloomington
+B-RTVS,Radio and Television Services,Indiana University,Bloomington
+B-SAGE,Elizabeth Sage Historic Costume Collection,Indiana University,Bloomington
+B-SAVAIL,Sound and Video Analysis & Instruction Laboratory,Indiana University,Bloomington
+B-SWAIN,Swain Hall Library,Indiana University,Bloomington
+B-TAI,Traditional Arts Indiana,Indiana University,Bloomington
+B-THTR,Department of Theatre and Drama,Indiana University,Bloomington
+B-UNIVCOMM,Office of Communications and Marketing,Indiana University,Bloomington
+B-WELLS,Herman B Wells Library,Indiana University,Bloomington
+B-WEST,West European Studies Film Library,Indiana University,Bloomington

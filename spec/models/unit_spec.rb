@@ -34,6 +34,16 @@ describe Unit do
     expect(duplicate).to be_invalid
   end
 
+  it "can have an institution" do
+    unit.institution = ""
+    expect(unit).to be_valid
+  end
+
+  it "can have a campus" do
+    unit.campus = ""
+    expect(unit).to be_valid
+  end
+
   it "can have physical_objects" do
     expect(unit.physical_objects).to be_empty
     physical_object

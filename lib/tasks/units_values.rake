@@ -8,7 +8,7 @@ namespace :db do
     	begin
 	      units_csv = CSV.parse(File.read('lib/tasks/units_values.csv'), headers: true)
 	      units_csv.each do |unit|
-	        Unit.create!(abbreviation: unit["Abbreviation"], name: unit["Name"])
+	        Unit.create!(abbreviation: unit["Abbreviation"], name: unit["Name"], institution: unit["Institution"], campus: unit["Campus"])
 	      end
 	      puts "Database has been seeded with unit data"
 	    rescue

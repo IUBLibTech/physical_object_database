@@ -181,9 +181,6 @@ describe PhysicalObject do
     it "#carrier_stream_index" do
       expect(valid_po.carrier_stream_index).to eq valid_po.group_identifier + "_1_1"
     end
-    it "#carrier_stream_index for object in group" do
-      skip "TODO"
-    end
     describe "#container_id" do
       it "returns nil if uncontained" do
         expect(valid_po.container_id).to be_nil
@@ -202,7 +199,8 @@ describe PhysicalObject do
       expect(valid_po.file_prefix).to eq "MDPI_" + valid_po.mdpi_barcode.to_s
     end
     it "#file_bext" do
-      expect(valid_po.file_bext).to eq "Indiana University Bloomington. " +
+      expect(valid_po.unit).not_to be_nil
+      expect(valid_po.file_bext).to eq "Indiana University, Bloomington. " +
 	valid_po.unit.name + ". " +
 	(valid_po.collection_identifier.nil? ? "" : valid_po.collection_identifier + ". ") +
 	(valid_po.call_number.nil? ? "" : valid_po.call_number + ". ") +
@@ -212,21 +210,15 @@ describe PhysicalObject do
       expect(valid_po.file_icmt).to eq valid_po.file_bext
     end
     it "#file_iarl" do
-      expect(valid_po.file_iarl).to eq "Indiana University Bloomington. #{valid_po.unit.name}."
+      expect(valid_po.file_iarl).to eq "Indiana University, Bloomington. #{valid_po.unit.name}."
     end
     it "#group_identifier" do
       expect(valid_po.group_identifier).to eq valid_po.group_key.group_identifier
-    end
-    it "#group_identifier for object in group" do
-      skip "TODO"
     end
     it "#group_total" do
       valid_po.group_key.group_total = 42
       valid_po.group_key.save
       expect(valid_po.group_total).to eq valid_po.group_key.group_total
-    end
-    it "#group_total for object in group" do
-      skip "TODO"
     end
   end
 

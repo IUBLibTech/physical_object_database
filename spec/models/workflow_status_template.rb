@@ -5,14 +5,11 @@ describe WorkflowStatusTemplate do
   let(:valid_workflow_status_template) { FactoryGirl.build(:workflow_status_template) }
 
   describe "should be seeded with data:" do
-    it "7 batch status_templatees" do
-      expect(WorkflowStatusTemplate.where(object_type: "Batch").size).to eq 7
-    end
-    it "9 bin status_templatees" do
-      expect(WorkflowStatusTemplate.where(object_type: "Bin").size).to eq 9
-    end
-    it "8 physical object status_templatees" do
-      expect(WorkflowStatusTemplate.where(object_type: "Physical Object").size).to eq 8
+    seeded_values = { "Batch" => 7, "Bin" => 9, "Physical Object" => 8 }
+    seeded_values.each do |object_type, count|
+      it "#{count} #{object_type} status_templatees" do
+        expect(WorkflowStatusTemplate.where(object_type: object_type).size).to eq count
+      end
     end
   end
 
@@ -52,14 +49,10 @@ describe WorkflowStatusTemplate do
 
   describe "supports object types:" do
     let(:object_types) { valid_workflow_status_template.object_types }
-    it "Physical Object" do
-      expect(object_types["Physical Object"]).not_to be_nil
-    end
-    it "Bin" do
-      expect(object_types["Bin"]).not_to be_nil
-    end
-    it "Batch" do
-      expect(object_types["Batch"]).not_to be_nil
+    ["Batch", "Bin", "Physical Object"].each do |object_type|
+      specify "#{object_type}" do
+        expect(object_types[object_type]).not_to be_nil
+      end
     end
     it "3 total" do
       expect(object_types.size).to eq 3

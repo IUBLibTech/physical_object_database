@@ -4,6 +4,11 @@ class Unit < ActiveRecord::Base
 
   has_many :physical_objects
 
+  def home
+    institution + 
+    (campus.blank? ? "" : (institution.blank? ? "" : ", ") + campus)
+  end
+
   def spreadsheet_descriptor
     abbreviation
   end
