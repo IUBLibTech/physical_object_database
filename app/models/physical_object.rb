@@ -124,8 +124,7 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def file_bext
-    "Indiana University Bloomington. " +
-    (unit.nil? ? "" : unit.name + ". ") +
+    file_iarl + " " +
     (collection_identifier.nil? ? "" : collection_identifier + ". ") +
     (call_number.nil? ? "" : call_number + ". ") +
     "File use: "
@@ -136,7 +135,8 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def file_iarl
-    "Indiana University Bloomington. " + (unit.nil? ? "" : unit.name + ".")
+    return "" if unit.nil?
+    unit.home + ". " + unit.name + "."
   end
 
   def format_class

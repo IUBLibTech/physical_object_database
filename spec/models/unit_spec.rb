@@ -6,8 +6,8 @@ describe Unit do
   let(:duplicate) { FactoryGirl.build :unit }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, unit: unit }
   describe "should be seeded with data:" do
-    it "76 values" do
-      expect(Unit.all.size).to eq 76
+    it "77 values" do
+      expect(Unit.all.size).to eq 77
     end
   end
   it "requires an abbreviation" do
@@ -32,6 +32,16 @@ describe Unit do
     expect(duplicate).to be_valid
     unit
     expect(duplicate).to be_invalid
+  end
+
+  it "can have an institution" do
+    unit.institution = ""
+    expect(unit).to be_valid
+  end
+
+  it "can have a campus" do
+    unit.campus = ""
+    expect(unit).to be_valid
   end
 
   it "can have physical_objects" do
