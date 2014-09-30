@@ -30,7 +30,7 @@ class OpenReelTm < ActiveRecord::Base
 	TAPE_BASE_FIELDS = ["acetate_base","polyester_base","pvc_base","paper_base"]
 	DIRECTIONS_RECORDED_FIELDS = ["one_direction","two_directions","unknown_direction"]
 
-	REEL_SIZE_VALUES = hashify ["Unknown", "3 in.", "4 in.", "5 in.", "6 in.", "7 in.", "10 in.", "10.5 in."] 
+	REEL_SIZE_VALUES = hashify ["", "3 in.", "4 in.", "5 in.", "6 in.", "7 in.", "10 in.", "10.5 in."] 
 	PACK_DEFORMATION_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
 	SIMPLE_FIELDS = ["pack_deformation", "reel_size", "tape_stock_brand"]
 	MULTIVALUED_FIELDSETS = {

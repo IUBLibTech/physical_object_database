@@ -8,7 +8,7 @@ class CdrTm < ActiveRecord::Base
 	HUMANIZED_COLUMNS = {}
 	PRESERVATION_PROBLEM_FIELDS = ["breakdown_of_materials", "fungus", "other_contaminants"]
 	DAMAGE_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
-	FORMAT_DURATION_VALUES = hashify ["Unknown", "74 min", "80 min", "90 min", "99 min"]
+	FORMAT_DURATION_VALUES = hashify ["", "74 min", "80 min", "90 min", "99 min", "Unknown"]
 	SIMPLE_FIELDS = ["damage", "format_duration"]
 	MULTIVALUED_FIELDSETS = {
 		"Preservation problems" => :PRESERVATION_PROBLEM_FIELDS

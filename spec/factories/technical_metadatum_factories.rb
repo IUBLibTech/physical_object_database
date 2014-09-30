@@ -55,7 +55,7 @@ FactoryGirl.define do
     breakdown_of_materials 0
     fungus 0
     other_contaminants 0
-    format_duration "Unknown"
+    format_duration ""
   end
 
   factory :dat_tm, class: DatTm do
@@ -72,7 +72,7 @@ FactoryGirl.define do
 
   factory :open_reel_tm, class: OpenReelTm do
     pack_deformation "None"
-    reel_size "Unknown"
+    reel_size ""
     tape_stock_brand ""
     vinegar_syndrome 0
     fungus 0

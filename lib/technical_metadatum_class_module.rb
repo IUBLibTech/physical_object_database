@@ -13,7 +13,7 @@ module TechnicalMetadatumClassModule
 
   def parse_tm(tm, row)
     self.const_get(:SIMPLE_FIELDS).each do |fieldname|
-      tm.send((fieldname + "=").to_sym, row[self.human_attribute_name(fieldname)])
+      tm.send((fieldname + "=").to_sym, row[self.human_attribute_name(fieldname)].to_s)
     end
 
     self.const_get(:MULTIVALUED_FIELDSETS).each_pair do |key, value|
