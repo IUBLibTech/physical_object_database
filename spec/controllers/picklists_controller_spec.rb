@@ -170,6 +170,7 @@ describe PicklistsController do
       assign_to_container
       physical_object.reload
       expect(physical_object.bin).to eq bin
+      expect(physical_object.current_workflow_status.name).to eq "Binned"
     end
     it "assigns a physical object to a bin by bin_barcode" do
       bin.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
@@ -178,6 +179,7 @@ describe PicklistsController do
       assign_to_container
       physical_object.reload
       expect(physical_object.bin).to eq bin
+      expect(physical_object.current_workflow_status.name).to eq "Binned"
     end
     it "rejects a 0 for bin_barcode" do
       bin.mdpi_barcode = "0"
@@ -192,12 +194,14 @@ describe PicklistsController do
       assign_to_container
       physical_object.reload
       expect(physical_object.box).to eq box
+      expect(physical_object.current_workflow_status.name).to eq "Boxed"
     end
     it "assigns a physical object to a box by box_barcode" do
       assign_arguments[:box_barcode] = box.mdpi_barcode
       assign_to_container
       physical_object.reload
       expect(physical_object.box).to eq box
+      expect(physical_object.current_workflow_status.name).to eq "Boxed"
     end
     it "rejects a 0 for box_barcode" do
       box.mdpi_barcode = "0"
@@ -214,6 +218,7 @@ describe PicklistsController do
       physical_object.reload
       expect(physical_object.box).not_to be_nil
       expect(physical_object.bin).to be_nil
+      expect(physical_object.current_workflow_status.name).to eq "Boxed"
     end
   end
 
@@ -227,6 +232,7 @@ describe PicklistsController do
       remove_from_container
       physical_object.reload
       expect(physical_object.bin).to be_nil
+      expect(physical_object.current_workflow_status.name).to eq "Barcoded"
     end
     it "removes the physical object from a box" do
       physical_object.box = box
@@ -236,6 +242,7 @@ describe PicklistsController do
       remove_from_container
       physical_object.reload
       expect(physical_object.box).to be_nil
+      expect(physical_object.current_workflow_status.name).to eq "Barcoded"
     end
   end
 

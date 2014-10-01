@@ -20,6 +20,7 @@ module WorkflowStatusModule
     return self.workflow_statuses.last
   end
 
+  #requires object save afterwards to take effect
   def current_workflow_status=(workflow_status_name)
     return if workflow_status_name.nil? || workflow_status_name.blank?
     workflow_status_template = WorkflowStatusTemplate.find_by(name: workflow_status_name, object_type: self.class_title)
