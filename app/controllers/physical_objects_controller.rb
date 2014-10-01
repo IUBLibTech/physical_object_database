@@ -1,5 +1,5 @@
 class PhysicalObjectsController < ApplicationController
-  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :split_show, :unbin, :unbox, :unpick, :ungroup]  
+  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup]  
   before_action :set_picklists, only: [:edit]
   helper :all
 
@@ -93,27 +93,34 @@ class PhysicalObjectsController < ApplicationController
   end
   
   def split_update
-    if  params[:count].to_i > 1
-      container = Container.new
-      container.save
-      template = PhysicalObject.find(params[:id])
-      template.group_position = 1
-      template.container_id = container.id
-      template.save
+    split_count = params[:count].to_i
+    if split_count > 1
+      @physical_object.container = Container.create
+      @physical_object.save
 
-      (params[:count].to_i - 1).times do |i|
-        po = template.dup
+      (1...split_count).each do |i|
+        po = @physical_object.dup
+	po.assign_default_workflow_status
         po.mdpi_barcode = 0
-        po.group_position = i + 2
-        po.container_id = container.id
-        tm = template.technical_metadatum.as_technical_metadatum.dup
+        po.group_position = @physical_object.group_position + i
+        tm = @physical_object.technical_metadatum.as_technical_metadatum.dup
         tm.physical_object = po
         tm.save
-        po.save
+	#po is automatically saved by association
       end
-      flash[:notice] = "<i>#{template.title}</i> was successfully split into #{params[:count]} records.".html_safe
+      # stopgap fix for physical object count cache
+      gk = @physical_object.group_key
+      gk.reload
+      gk.physical_objects.reload
+      gk.physical_objects_count = gk.physical_objects.size
+      gk.save
+
+      flash[:notice] = "<i>#{@physical_object.title}</i> was successfully split into #{split_count} records.".html_safe
+      redirect_to action: :index#group key?
+    else
+      flash[:notice] = "<i>#{@physical_object.title}</i> was NOT split.".html_safe
+      redirect_to :back
     end
-    redirect_to({:action => 'index'})
   end
   
   def upload_show
