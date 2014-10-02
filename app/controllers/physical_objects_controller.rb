@@ -181,11 +181,21 @@ class PhysicalObjectsController < ApplicationController
     end
   end
 
+  #called as both AJAX call, from packing screen, and regular call from picklist screen
   def unpick
-    #FIXME: this currently is being used in an ajax call and the rendered result is not used by the calling page
     # SEE - views/picklists/provess_list.html.erb "$("[id^=remove_]").click(function(event) {" javascript
-    @physical_object.picklist = nil
-    @physical_object.save
+    if @physical_object.group_key.nil?
+      @physical_object.picklist = nil
+      @physical_object.save
+    else
+      picklist_id = @physical_object.picklist_id
+      @physical_object.group_key.physical_objects.each do |object|
+        if object.picklist_id == picklist_id
+          object.picklist = nil
+          object.save
+        end
+      end
+    end
     new_bc = Integer(params[:mdpi_barcode]) if params[:mdpi_barcode]
     update = (!new_bc.nil? and @physical_object.mdpi_barcode != new_bc)
     if (update)
@@ -193,12 +203,11 @@ class PhysicalObjectsController < ApplicationController
       update = @physical_object.save
     end
     flash[:notice] = "The Physical Object was removed from the Pick List" + (update ? " and its barcode updated." : ".")
-    #FIXME: comment or change redirect?
-    #render :json {}
     redirect_to action: "edit"
   end
 
   def ungroup
+    @physical_object.group_position = 1
     @physical_object.group_key = nil
     if @physical_object.save
       flash[:notice] = "The Physical Object was removed from this Group Key."
