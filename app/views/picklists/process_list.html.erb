@@ -59,13 +59,13 @@
 
 
 		$("[id^=remove_]").click(function(event) {
-			var oref = $(this).attr("href");
 			var id = $(this).attr("id").substring("remove_".length);
+			var oref = window.location.protocol + "//" + window.location.host + "/physical_objects/" + id + "/unpick";
+			var href = oref;
 			var mdpi = $('#po_mdpi_barcode_'+id).val();
 			if (mdpi > 0) {
 				var params = {mdpi_barcode: mdpi}
-				var href = $(this).attr("href")+"?"+jQuery.param(params);
-				$(this).attr("href", href);
+				href = oref+"?"+jQuery.param(params);
 			}
 			if (confirm("This will remove the Physical Object from the Pick List. Do you wish to continue?") == true) {
 				var xhr = $.ajax($(this).attr("href", href)).
