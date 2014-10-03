@@ -72,11 +72,21 @@ class PicklistsController < ApplicationController
 
 	#packing page
 	def process_list
-		@picklist = Picklist.find(params[:picklist][:id])
-		# box_id or bin_id will be present if the form is "auto" populating - in which case the view will create a
-		# hidden field for the box/bin and its id attribute
-		@box = (params[:box_id] and params[:box_id].length > 0) ? Box.find(params[:box_id]) : nil
-		@bin = (params[:bin_id] and params[:bin_id].length > 0) ? Bin.find(params[:bin_id]) : nil
+		if params and params[:picklist] and params[:picklist][:id]
+			begin
+			@picklist = Picklist.find(params[:picklist][:id])
+			# box_id or bin_id will be present if the form is "auto" populating - in which case the view will create a
+			# hidden field for the box/bin and its id attribute
+			@box = (params[:box_id] and params[:box_id].length > 0) ? Box.find(params[:box_id]) : nil
+			@bin = (params[:bin_id] and params[:bin_id].length > 0) ? Bin.find(params[:bin_id]) : nil
+			rescue
+				flash[:notice] = "Error: #{$!}"
+		 		redirect_to(controller: 'picklist_specifications', action: 'index')
+			end
+		else
+		  flash[:notice] = "No picklist specified for processing"
+		  redirect_to(controller: 'picklist_specifications', action: 'index')
+		end
 	end
 
 	#Pack action

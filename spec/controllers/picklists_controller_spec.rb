@@ -143,6 +143,10 @@ describe PicklistsController do
   end
 
   describe "GET process_list on collection" do
+    it "redirects to index if no picklist set" do
+      get :process_list
+      expect(response).to redirect_to controller: 'picklist_specifications', action: 'index'
+    end
     it "assigns @picklist" do
       get :process_list, picklist: { id: picklist.id }
       expect(assigns(:picklist)).to eq picklist
