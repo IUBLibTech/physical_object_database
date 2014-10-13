@@ -6,9 +6,8 @@ describe GroupKeysController do
   let(:valid_group_key) { FactoryGirl.build(:group_key) }
   let(:invalid_group_key) { FactoryGirl.build(:invalid_group_key) }
   let(:group_key) { FactoryGirl.create(:group_key) }
-  let(:unit) { FactoryGirl.create(:unit) }
-  let(:group_keyed_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit, group_key: group_key) }
-  let(:ungrouped_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit, group_key: nil) }
+  let(:group_keyed_object) { FactoryGirl.create(:physical_object, :cdr, group_key: group_key) }
+  let(:ungrouped_object) { FactoryGirl.create(:physical_object, :cdr, group_key: nil) }
 
   describe "FactoryGirl creation" do
     specify "makes a valid group key" do

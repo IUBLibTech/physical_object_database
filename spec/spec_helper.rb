@@ -4,7 +4,6 @@ require 'spork'
 #require 'spork/ext/ruby-debug'
 
 Spork.prefork do
-  puts "IN SPORK PREFORK OF SPEC_HELPER"
   # Loading more in this block will cause your tests to run faster. However,
   # if you change any configuration or code from libraries loaded here, you'll
   # need to restart spork for it take effect.
@@ -86,31 +85,23 @@ Spork.prefork do
     # examples within a transaction, remove the following line or assign false
     # instead of true.
     config.use_transactional_fixtures = false
-    # configure seed data tables
-    # does not include units table as that is modified in tests
+    # tables containing seed data need to be exempted from cleaning
     config.add_setting(:seed_tables)
-    config.seed_tables = %w[ workflow_status_templates ]
-    # 
+    config.seed_tables = %w[ units workflow_status_templates ]
     config.before(:suite) do
       DatabaseCleaner.clean_with(:truncation, except: config.seed_tables)
-      require "#{Rails.root}/lib/tasks/units_values"
+      require "#{Rails.root}/lib/tasks/seed_data"
       seed_units("add")
-      #load seed data?
+      seed_wst("add")
     end
     config.around(:each) do |example|
-      # use transactions when workable, for non-js testing
-      if example.metadata[:js]
-        puts "TRUNCATIONS"
-        DatabaseCleaner.strategy = :truncation, {except: config.seed_tables}
-      else
-        puts "TRANSACTION"
-        DatabaseCleaner.strategy = :transaction
-      end
+      DatabaseCleaner.strategy = :truncation, {except: config.seed_tables}
       DatabaseCleaner.start
 
       example.run
 
       DatabaseCleaner.clean
+      Capybara.reset_sessions!
     end
 
     # If true, the base class of anonymous controllers will be inferred

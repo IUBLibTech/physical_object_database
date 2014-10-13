@@ -6,11 +6,10 @@ describe BinsController do
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:box) { FactoryGirl.create(:box, bin: bin) }
-  let(:unit) { FactoryGirl.create(:unit) }
-  let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit, box: box) }
-  let(:other_boxed_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit, box: unassigned_box) }
-  let(:binned_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit, bin: bin) }
-  let(:unassigned_object) { FactoryGirl.create(:physical_object, :cdr, unit: unit) }
+  let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: box) }
+  let(:other_boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: unassigned_box) }
+  let(:binned_object) { FactoryGirl.create(:physical_object, :cdr, bin: bin) }
+  let(:unassigned_object) { FactoryGirl.create(:physical_object, :cdr) }
   let(:unassigned_box) { FactoryGirl.create(:box) }
   let(:picklist) { FactoryGirl.create(:picklist) }
   let(:valid_bin) { FactoryGirl.build(:bin) }

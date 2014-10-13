@@ -1,3 +1,6 @@
+# seed_data.rb
+# Methods for seeding data; distinct from rake task
+# 
 # Argument options:
 # rake db:seed_data || rake db:seed_data[] || rake db:seed_data[default]
 #   Attempts to add seed values; aborts on first error
