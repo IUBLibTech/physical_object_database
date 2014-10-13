@@ -26,7 +26,7 @@
 				  <%# NOTE: No destination for link because set by javascript %>
 				  <%= link_to("Remove", "", {method: :post, id: "remove_#{p.id}", target: "_blank", remote: true})%><br/>
 				<% else %>
-				  In group
+				  <strike><%= link_to "Remove", "#", onclick: 'alert("This physical object is part of a Group Key.  You must remove this object from the Group Key to remove it from the picklist individually, or go to Group Key page and remove the entire set of items from the picklist."); return true;' %></strike>
 				<% end %>
 				<%= f.submit(((packed) ? "Unpack" : "Pack"), class: "pl_button") %>
 			</td>

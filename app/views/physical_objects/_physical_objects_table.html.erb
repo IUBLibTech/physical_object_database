@@ -1,6 +1,9 @@
 <table class="po list">
   <tr class="header">
-    <% unless @group_key.nil? %><th>Position</th><% end %>
+    <% unless @group_key.nil? %>
+      <th>Position</th>
+      <th>Picklist</th>
+    <% end %>
     <th>Current Status</th>
     <th>MDPI barcode</th>
     <th>Call number</th>
@@ -17,6 +20,12 @@
       <%end%>
       <% unless @group_key.nil? %>
         <td><%= po.group_position %></td>
+        <td>
+	  <% unless po.picklist.nil? %>
+	    <%= po.picklist.name %>
+	    <%= link_to "Remove", unpick_physical_object_path(po.id), method: :post, data: { confirm: "This will remove the physical object, and all other physical objects in the same Group Key, from the picklist.  Are you sure?"} %>
+	  <% end %>
+	</td>
       <% end %>
       <td><%= po.current_workflow_status.name %></td>
       <td><%= po.mdpi_barcode %></td>
