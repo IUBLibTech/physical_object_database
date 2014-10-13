@@ -4,6 +4,7 @@ describe PhysicalObjectsController do
   render_views
   before(:each) { sign_in }
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
+  let(:second_object) { FactoryGirl.create(:physical_object, :cdr, unit: physical_object.unit, group_key: physical_object.group_key, group_position: 2) }
   let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
   let(:invalid_physical_object) { FactoryGirl.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
   let(:group_key) { FactoryGirl.create(:group_key) }
@@ -350,6 +351,12 @@ describe PhysicalObjectsController do
         physical_object.reload
         expect(physical_object.picklist).to be_nil
       end
+      it "disassociates other objects in the same group from the picklist" do
+        physical_object.reload
+	physical_object.group_key.physical_objects.each do |object|
+	  expect(object.picklist).to be_nil if object.id != physical_object.id
+	end
+      end
     end
 
     context "when not in a picklist" do
@@ -366,6 +373,8 @@ describe PhysicalObjectsController do
       before(:each) do
         physical_object.picklist = picklist
         physical_object.save
+	second_object.picklist = picklist
+	second_object.save
       end
       context "setting the same barcode" do
         before(:each) { post_unpick_with_same_barcode }
@@ -404,6 +413,13 @@ describe PhysicalObjectsController do
     it "indirectly adds a new group key association" do
       ungroup
       expect(physical_object.group_key).not_to be_nil
+    end
+    it "resets the group_position to 1" do
+      physical_object.group_position = 2
+      physical_object.save
+      ungroup
+      physical_object.reload
+      expect(physical_object.group_position).to eq 1
     end
     it "redirects to :back" do
       ungroup

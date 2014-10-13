@@ -2,8 +2,10 @@ FactoryGirl.define do
 
   #specify a format type as a trait when creating a physical object
   factory :physical_object, class: PhysicalObject do
-    #required fields
-    association :unit
+    # required fields
+    # association :unit
+    # select an existing unit since we are seeding unit data
+    unit_id { Unit.all[rand(Unit.all.size)].id }
 
     trait :cdr do
       format "CD-R"

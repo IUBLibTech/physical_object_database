@@ -82,6 +82,8 @@ group :test do
   gem 'capybara'
   #for capybara javascript access
   gem 'capybara-webkit'
+  gem 'launchy' # for viewing capybara pages
+  gem 'connection_pool' # for sharing client/server session in capybara tests with js: true
   gem 'factory_girl_rails'
   #gem 'cucumber', '1.2.5' # Spork not supported as of Cucumber 1.3.0, need to use 1.2.5
   gem 'cucumber-rails', :require => false

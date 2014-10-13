@@ -1,4 +1,4 @@
-<%= form_for(p, url: {controller: 'picklists', action: ((p.bin or p.box) ? "remove_from_container" : "assign_to_container"), id: p.picklist.id}, remote: true) do |f| %>
+<%= form_for(p, url: {controller: 'picklists', action: ((p.bin or p.box) ? "remove_from_container" : "assign_to_container"), id: (p.picklist ? p.picklist.id : nil)}, remote: true) do |f| %>
 	<% 
 		 # this is hackish but the ajax call to add/remove a bin/box passes references to bin/box in the render() call through 
 		 # locals: {box: box, bin: bin}. I don't quite understand the differences between declaring @bin vs bin, so these lines 
@@ -20,9 +20,14 @@
 		<% css_class = (index.odd? ? 'odd' : 'even') + ((p.bin or p.box) ? ' packed' : '') %>
 		<tr class="<%= css_class %>">
 			<td rowspan="5">
-				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, {target: 'blank'}) %><br/>
-				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: 'blank'}) %><br/>
-				<%= link_to("Remove", unpick_physical_object_path(p), {method: :post, id: "remove_#{p.id}", target: "blank", remote: true})%><br/>
+				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, {target: '_blank'}) %><br/>
+				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: '_blank'}) %><br/>
+				<% if p.group_key.physical_objects_count <= 1 %>
+				  <%# NOTE: No destination for link because set by javascript %>
+				  <%= link_to("Remove", "", {method: :post, id: "remove_#{p.id}", target: "_blank", remote: true})%><br/>
+				<% else %>
+				  <strike><%= link_to "Remove", "#", onclick: 'alert("This physical object is part of a Group Key.  You must remove this object from the Group Key to remove it from the picklist individually, or go to Group Key page and remove the entire set of items from the picklist."); return true;' %></strike>
+				<% end %>
 				<%= f.submit(((packed) ? "Unpack" : "Pack"), class: "pl_button") %>
 			</td>
 			<td class="column">

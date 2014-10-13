@@ -23,7 +23,13 @@ Spork.prefork do
   end
 
   # Requires supporting ruby files with custom matchers and macros, etc,
-  # in spec/support/ and its subdirectories.
+  # in spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb`
+  # are run as spec files by default. This means that files in spec/support
+  # that end in _spec.rb will both be required and run as specs, causing the
+  # specs to be run twice. It is recommended that you do not name files
+  # matching this glob to end with _spec.rb. You can configure this pattern
+  # with with the --pattern option on the command line or in ~/.rspec, .rspec
+  # or `.rspec-local`.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
   # Checks for pending migrations before tests are run.
@@ -78,7 +84,25 @@ Spork.prefork do
     # If you're not using ActiveRecord, or you'd prefer not to run each of your
     # examples within a transaction, remove the following line or assign false
     # instead of true.
-    config.use_transactional_fixtures = true
+    config.use_transactional_fixtures = false
+    # tables containing seed data need to be exempted from cleaning
+    config.add_setting(:seed_tables)
+    config.seed_tables = %w[ units workflow_status_templates ]
+    config.before(:suite) do
+      DatabaseCleaner.clean_with(:truncation, except: config.seed_tables)
+      require "#{Rails.root}/lib/tasks/seed_data"
+      seed_units("add")
+      seed_wst("add")
+    end
+    config.around(:each) do |example|
+      DatabaseCleaner.strategy = :truncation, {except: config.seed_tables}
+      DatabaseCleaner.start
+
+      example.run
+
+      DatabaseCleaner.clean
+      Capybara.reset_sessions!
+    end
 
     # If true, the base class of anonymous controllers will be inferred
     # automatically. This will be the default behavior in future versions of
