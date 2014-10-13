@@ -4,6 +4,7 @@ require 'spork'
 #require 'spork/ext/ruby-debug'
 
 Spork.prefork do
+  puts "IN SPORK PREFORK OF SPEC_HELPER"
   # Loading more in this block will cause your tests to run faster. However,
   # if you change any configuration or code from libraries loaded here, you'll
   # need to restart spork for it take effect.
@@ -23,7 +24,13 @@ Spork.prefork do
   end
 
   # Requires supporting ruby files with custom matchers and macros, etc,
-  # in spec/support/ and its subdirectories.
+  # in spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb`
+  # are run as spec files by default. This means that files in spec/support
+  # that end in _spec.rb will both be required and run as specs, causing the
+  # specs to be run twice. It is recommended that you do not name files
+  # matching this glob to end with _spec.rb. You can configure this pattern
+  # with with the --pattern option on the command line or in ~/.rspec, .rspec
+  # or `.rspec-local`.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
   # Checks for pending migrations before tests are run.
@@ -79,17 +86,30 @@ Spork.prefork do
     # examples within a transaction, remove the following line or assign false
     # instead of true.
     config.use_transactional_fixtures = false
-    #config.add_setting(:seed_tables)
-    #config.seed_tables = %w( units workflow_status_templates )
-    config.before :each do
-      if Capybara.current_driver == :rack_test
-        DatabaseCleaner.strategy = :transaction
+    # configure seed data tables
+    # does not include units table as that is modified in tests
+    config.add_setting(:seed_tables)
+    config.seed_tables = %w[ workflow_status_templates ]
+    # 
+    config.before(:suite) do
+      DatabaseCleaner.clean_with(:truncation, except: config.seed_tables)
+      require "#{Rails.root}/lib/tasks/units_values"
+      seed_units("add")
+      #load seed data?
+    end
+    config.around(:each) do |example|
+      # use transactions when workable, for non-js testing
+      if example.metadata[:js]
+        puts "TRUNCATIONS"
+        DatabaseCleaner.strategy = :truncation, {except: config.seed_tables}
       else
-        DatabaseCleaner.strategy = :truncation
+        puts "TRANSACTION"
+        DatabaseCleaner.strategy = :transaction
       end
       DatabaseCleaner.start
-    end
-    config.after do
+
+      example.run
+
       DatabaseCleaner.clean
     end
 
