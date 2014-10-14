@@ -31,6 +31,7 @@ Pod::Application.routes.draw do
     get :split_show, on: :member
     get :upload_show, on: :collection
     get :has_ephemera, on: :collection
+    get :create_multiple, on: :collection
 
     patch :split_update, on: :member
     post :upload_update, on: :collection

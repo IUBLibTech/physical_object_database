@@ -1,0 +1,16 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Create New Physical Object", controller: 'physical_objects', action: 'new') %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("View Imported Spreadsheets", spreadsheets_path) %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) %>
+  </div>
+<% end %>
+<div>
+  <h2>Physical Object Creation Template</h2>
+    <% @submit_text = "Create Physical Object" %>
+    <%= render(:partial => "physical_object_form", display_assigned: false) %>
+</div>
