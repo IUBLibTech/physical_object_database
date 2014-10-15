@@ -56,13 +56,9 @@
 					<span class="mdpi_red">Ephemera</span>
 					<%= f.check_box(:has_ephemera) %>
 				</td>
-				<td class="column">
-					<span class="mdpi_red">Call #</span>
-					<%= p.call_number %>
-				</td>
-				<td colspan="2">
+				<td colspan="3">
 					<div id="title<%= p.id%>" title="<%= p.title %>">
-						<span class="mdpi_red">Title:</span> <i><%= p.title ? p.title[0..45] : "" %><%= (p.title and p.title.length > 45) ? "..." : "" %></i>
+						<span class="mdpi_red">Title:</span> <i><%= p.title ? p.title[0..65] : "" %><%= (p.title and p.title.length > 65) ? "..." : "" %></i>
 					</div>
 				</td>
 			</tr>
