@@ -93,7 +93,7 @@
       <tr>
         <th>Group position</th>
 	<td>
-	  <%= f.number_field(:group_position, readonly: !@edit_mode, min: 1, max: @group_key.nil? ? 1 : @group_key.group_total + 1) %>
+	  <%= f.number_field(:group_position, readonly: !@edit_mode, min: 1) %>
 	</td>
       </tr>
       <tr>
