@@ -31,13 +31,23 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def create
+    # catch whether this was from a "create multiple physical objects" link
+    if params[:repeat] == "true"
+      @repeat = true
+    end
     @physical_object = PhysicalObject.new(physical_object_params)
     @tm = @physical_object.ensure_tm
-    if @physical_object.save and @tm.update_attributes(tm_params)
+    saved = @physical_object.save and @tm.update_attributes(tm_params)
+    if saved
       flash[:notice] = "Physical Object was successfully created.".html_safe
+    end
+    if @repeat != true and saved
       redirect_to(:action => 'index')
     else
       @edit_mode = true
+      @physical_object = PhysicalObject.new(physical_object_params)
+      @tm = @physical_object.ensure_tm
+      @tm.assign_attributes(tm_params)
       render('new')
     end
   end
@@ -47,6 +57,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def show
+    @action = "show"
     @edit_mode = false;
     @display_assigned = true
   end
@@ -149,6 +160,21 @@ class PhysicalObjectsController < ApplicationController
         @failed = upload_results['failed']
       end
     end
+  end
+
+  def create_multiple
+    @physical_object = PhysicalObject.new
+    #default format for now
+    format = PhysicalObject.formats["CD-R"]
+    @physical_object.format = format
+    @tm = @physical_object.ensure_tm
+    @digital_files = []
+    @formats = PhysicalObject.formats
+    @edit_mode = true
+    @action = "create"
+    @submit_text = "Create Physical Object"
+    @repeat = true
+    @display_assigned = false
   end
     
   def unbin
