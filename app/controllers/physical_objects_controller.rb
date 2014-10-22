@@ -127,10 +127,10 @@ class PhysicalObjectsController < ApplicationController
       gk.save
 
       flash[:notice] = "<i>#{@physical_object.title}</i> was successfully split into #{split_count} records.".html_safe
-      redirect_to action: :index#group key?
+      redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
     else
       flash[:notice] = "<i>#{@physical_object.title}</i> was NOT split.".html_safe
-      redirect_to :back
+      redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
     end
   end
   
