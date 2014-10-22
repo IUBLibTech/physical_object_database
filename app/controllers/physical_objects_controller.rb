@@ -111,13 +111,13 @@ class PhysicalObjectsController < ApplicationController
 
       (1...split_count).each do |i|
         po = @physical_object.dup
-	po.assign_default_workflow_status
+	      po.assign_default_workflow_status
         po.mdpi_barcode = 0
         po.group_position = @physical_object.group_position + i
         tm = @physical_object.technical_metadatum.as_technical_metadatum.dup
         tm.physical_object = po
         tm.save
-	#po is automatically saved by association
+	      #po is automatically saved by association
       end
       # stopgap fix for physical object count cache
       gk = @physical_object.group_key
