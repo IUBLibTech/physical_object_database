@@ -1,0 +1,1 @@
+All files in this directory have been moved to app/assets/images - the assets pipeline requires images to reside there.

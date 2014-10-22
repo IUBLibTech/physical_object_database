@@ -103,6 +103,7 @@ class PhysicalObjectsController < ApplicationController
   end
   
   def split_update
+    puts "\n\n\n\ncalling split_update..."
     if  params[:count].to_i > 1
       container = Container.new
       container.save
@@ -112,18 +113,23 @@ class PhysicalObjectsController < ApplicationController
       template.save
 
       (params[:count].to_i - 1).times do |i|
+        puts "creating a split record..."
         po = template.dup
         po.mdpi_barcode = 0
         po.group_position = i + 2
         po.container_id = container.id
         tm = template.technical_metadatum.as_technical_metadatum.dup
+        debugger
         tm.physical_object = po
         tm.save
+        debugger
         po.save
+        debugger
+        puts
       end
       flash[:notice] = "<i>#{template.title}</i> was successfully split into #{params[:count]} records.".html_safe
     end
-    redirect_to({:action => 'index'})
+    redirect_to(controller: 'group_keys', action: 'show', id: template.group_key_id)
   end
   
   def upload_show
