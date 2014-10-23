@@ -45,9 +45,11 @@ class PhysicalObjectsController < ApplicationController
       redirect_to(:action => 'index')
     else
       @edit_mode = true
-      @physical_object = PhysicalObject.new(physical_object_params)
-      @tm = @physical_object.ensure_tm
-      @tm.assign_attributes(tm_params)
+      if @repeat and saved
+        @physical_object = PhysicalObject.new(physical_object_params)
+        @tm = @physical_object.ensure_tm
+        @tm.assign_attributes(tm_params)
+      end
       render('new')
     end
   end

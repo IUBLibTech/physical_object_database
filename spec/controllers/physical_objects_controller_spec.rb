@@ -169,9 +169,9 @@ describe PhysicalObjectsController do
       expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
 
     end
-    it "redirects to the index" do
+    it "redirects to the group_key of the split object" do
       split_update
-      expect(response).to redirect_to(action: :index)
+      expect(response).to redirect_to(controller: "group_keys", action: :show, id: physical_object.group_key.id)
     end
   end
 

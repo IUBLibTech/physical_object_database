@@ -31,7 +31,7 @@
 				<%= f.submit(((packed) ? "Unpack" : "Pack"), class: "pl_button") %>
 			</td>
 			<td class="column">
-				<img alt="mdpi barcode" src="<%= packed ? '/gs_mdpi_barcode.png' : '/mdpi_barcode.png' %>" />
+				<%= image_tag (packed ? "gs_mdpi_barcode.png" : "mdpi_barcode.png"), {alt: "mdpi barcode"} %>
 				<%= f.text_field(:mdpi_barcode, readonly: (p.bin or p.box), maxlength: "14", size: "14", class: "mdpi", id: "po_mdpi_barcode_#{p.id}") %>
 			</td>
 			<td class="column">
@@ -39,12 +39,12 @@
 				<%= f.text_field(:call_number, readonly: true, maxlength: "14", size: "14") %>
 			</td>
 			<td class="column">
-				<img alt="box barcode" src="<%= (packed or !manual) ? '/gs_box_barcode.png' : '/box_barcode.png' %>" />
+				<%= image_tag ( (packed or !manual) ? "gs_box_barcode.png" : "box_barcode.png"), {alt: "box barcode"} %>
 				<% bc = p.box.nil? ? (@box.nil? ? "" : @box.mdpi_barcode) : p.box.mdpi_barcode %>
 				<%= text_field_tag(:box_barcode, bc, readonly: (packed or !manual), maxlength: "14", size: "14", class: "mdpi") %>
 			</td>
 			<td class="column">
-				<img alt="bin barcode" src="<%= (packed or !manual) ? '/gs_bin_barcode.png' : '/bin_barcode.png' %>" />
+				<%= image_tag ( (packed or !manual) ? "gs_bin_barcode.png" : "bin_barcode.png"), {alt: "bin barcode"} %>
 				<% bc = p.bin.nil? ? (@bin.nil? ? "" : @bin.mdpi_barcode) : p.bin.mdpi_barcode %>
 				<%= text_field_tag(:bin_barcode, bc, readonly: (packed or !manual), maxlength: "14", size: "14", class: "mdpi") %> 
 			</td>
