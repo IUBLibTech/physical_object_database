@@ -101,25 +101,33 @@ class PhysicalObjectsController < ApplicationController
   end
   
   def split_show
-    @count = 0;
-    @display_assigned = true
+    if @physical_object.bin or @physical_object.box
+      flash[:notice] = "This physical object must be removed from its container (bin or box) before it can be split."
+      redirect_to action: :show
+    else
+      @count = 0;
+      @display_assigned = true
+    end
   end
   
   def split_update
     split_count = params[:count].to_i
-    if split_count > 1
+    if @physical_object.bin or @physical_object.box
+      flash[:notice] = "This physical object must be removed from its container (bin or box) before it can be split."
+      redirect_to action: :show
+    elsif split_count > 1
       @physical_object.container = Container.create
       @physical_object.save
 
       (1...split_count).each do |i|
         po = @physical_object.dup
-	      po.assign_default_workflow_status
+        po.assign_default_workflow_status
         po.mdpi_barcode = 0
         po.group_position = @physical_object.group_position + i
         tm = @physical_object.technical_metadatum.as_technical_metadatum.dup
         tm.physical_object = po
         tm.save
-	      #po is automatically saved by association
+        #po is automatically saved by association
       end
       # stopgap fix for physical object count cache
       gk = @physical_object.group_key

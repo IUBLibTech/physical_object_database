@@ -148,30 +148,87 @@ describe PhysicalObjectsController do
   end
 
   describe "GET split_show" do
-    before(:each) { get :split_show, id: physical_object.id }
-    it "assigns the physical_object" do
-      expect(assigns(:physical_object)).to eq physical_object
+    let(:split_show) { get :split_show, id: physical_object.id }
+    context "on an uncontained object" do
+      before(:each) { split_show }
+      it "assigns the physical_object" do
+        expect(assigns(:physical_object)).to eq physical_object
+      end
+      it "renders the split_show template" do
+        expect(response).to render_template(:split_show)
+      end
     end
-    it "renders the split_show template" do
-      expect(response).to render_template(:split_show)
+    shared_examples "rejects action" do
+      it "flashes a failure notice" do
+        expect(flash[:notice]).to match /must be removed/
+      end
+      it "redirects to the object" do
+        expect(response).to redirect_to(controller: "physical_objects", action: :show, id: physical_object.id)
+      end
+    end
+    context "on a boxed object" do
+      before(:each) do
+        physical_object.box = FactoryGirl.create(:box)
+        physical_object.save
+	split_show
+      end
+      include_examples "rejects action"
+    end
+    context "on a binned object" do
+      before(:each) do
+        physical_object.box = FactoryGirl.create(:box)
+        physical_object.save
+	split_show
+      end
+      include_examples "rejects action"
     end
   end
   
   describe "PATCH split_update" do
     let(:count) { 3 }
     let(:split_update) { patch :split_update, id: physical_object.id, count: count }
-    it "creates additional records" do
-      physical_object
-      expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+    context "on an unboxed/unbinned item" do
+      it "creates additional records" do
+        physical_object
+        expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+      end
+      it "flashes a success notice" do
+        split_update
+        expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+  
+      end
+      it "redirects to the group_key of the split object" do
+        split_update
+        expect(response).to redirect_to(controller: "group_keys", action: :show, id: physical_object.group_key.id)
+      end
     end
-    it "flashes a success notice" do
-      split_update
-      expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
-
+    shared_examples "prevents split" do
+      it "does not create additional records" do
+        physical_object
+        expect{ split_update }.not_to change(PhysicalObject, :count)
+      end
+      it "flashes a failure notice" do
+        split_update
+        expect(flash[:notice]).to match /must be removed/
+      end
+      it "redirects to the object" do
+        split_update
+        expect(response).to redirect_to(controller: "physical_objects", action: "show", id: physical_object.id)
+      end
     end
-    it "redirects to the group_key of the split object" do
-      split_update
-      expect(response).to redirect_to(controller: "group_keys", action: :show, id: physical_object.group_key.id)
+    context "on a boxed item" do
+      before(:each) do
+        physical_object.box = FactoryGirl.create(:box)
+        physical_object.save
+      end
+      include_examples "prevents split"
+    end
+    context "on a binned item" do
+      before(:each) do
+        physical_object.bin = FactoryGirl.create(:bin)
+        physical_object.save
+      end
+      include_examples "prevents split"
     end
   end
 
@@ -228,14 +285,14 @@ describe PhysicalObjectsController do
         it "creates records" do
           expect{ upload_update }.to change(PhysicalObject, :count).by(2)
         end
-	it "creates records no older than spreadsheet" do
-	  upload_update
-	  spreadsheet = Spreadsheet.last
-	  objects = PhysicalObject.where(spreadsheet_id: spreadsheet.id)
-	  objects.each do |object|
-	    expect(object.updated_at).to be <= spreadsheet.created_at
-	  end
-	end
+        it "creates records no older than spreadsheet" do
+          upload_update
+          spreadsheet = Spreadsheet.last
+          objects = PhysicalObject.where(spreadsheet_id: spreadsheet.id)
+          objects.each do |object|
+            expect(object.updated_at).to be <= spreadsheet.created_at
+          end
+        end
         it "fails if repeated, due to duplicate filename" do
           upload_update
           expect{ upload_update }.not_to change(Spreadsheet, :count)
@@ -353,9 +410,9 @@ describe PhysicalObjectsController do
       end
       it "disassociates other objects in the same group from the picklist" do
         physical_object.reload
-	physical_object.group_key.physical_objects.each do |object|
-	  expect(object.picklist).to be_nil if object.id != physical_object.id
-	end
+        physical_object.group_key.physical_objects.each do |object|
+          expect(object.picklist).to be_nil if object.id != physical_object.id
+        end
       end
     end
 
@@ -373,23 +430,23 @@ describe PhysicalObjectsController do
       before(:each) do
         physical_object.picklist = picklist
         physical_object.save
-	second_object.picklist = picklist
-	second_object.save
+        second_object.picklist = picklist
+        second_object.save
       end
       context "setting the same barcode" do
         before(:each) { post_unpick_with_same_barcode }
-	include_examples "flashes successful removal message"
-	include_examples "unpicks the object"
+        include_examples "flashes successful removal message"
+        include_examples "unpicks the object"
       end
       context "not sending a barcode parameter" do
         before(:each) { post_unpick_missing_barcode }
-	include_examples "flashes successful removal message"
-	include_examples "unpicks the object"
+        include_examples "flashes successful removal message"
+        include_examples "unpicks the object"
       end
       context "sending an updated valid barcode" do
         before(:each) { post_unpick_with_valid_barcode }
-	include_examples "flashes successful update message"
-	include_examples "unpicks the object"
+        include_examples "flashes successful update message"
+        include_examples "unpicks the object"
       end
       context "sending an invalid barcode" do
         before(:each) { post_unpick_with_invalid_barcode }
