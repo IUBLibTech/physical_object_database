@@ -3,10 +3,12 @@
 		<table class="picklistTable">
 				<tr class="odd packed">
 					<td class='ephemera'>
-						<%= p.has_ephemera ? "<img alt='had ephemera' src='/folder.png' />".html_safe : "" %>
+						<% if p.has_ephemera %>
+							<%= image_tag "folder.png", {alt: 'had ephemera'} %>
+						<% end %>
 					</td>
 					<td>
-							<img alt="mdpi barcode" src="/gs_mdpi_barcode.png" />
+							<%= image_tag "gs_mdpi_barcode.png", {alt: "mdpi barcode"} %>
 							<%= f.text_field(:mdpi_barcode, readonly: true, maxlength: "14", size: "14", class: "mdpi") %>
 					</td>
 					<td>
