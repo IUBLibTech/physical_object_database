@@ -1,12 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Create New Physical Object", controller: 'physical_objects', action: 'new') %>
-  </div>
-  <div class="contextMenuItem">
-    <%= link_to("View Imported Spreadsheets", spreadsheets_path) %>
-  </div>
-  <div class="contextMenuItem">
-    <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) %>
+    <%= link_to("Cancel", controller: 'physical_objects', action: 'index') %>
   </div>
 <% end %>
 <div>
