@@ -55,7 +55,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def index
-    @physical_objects = PhysicalObject.select("mdpi_barcode, call_number, format, generation, group_position").includes("group_key, workflow_statuses")
+    @physical_objects = PhysicalObject.all
   end
 
   def show
