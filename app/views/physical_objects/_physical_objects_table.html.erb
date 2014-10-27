@@ -1,3 +1,12 @@
+<%# add pagination links only if @physical_objects has been paginated %>
+<% if @physical_objects.respond_to?(:total_pages) %>
+  <div class="pagination">
+    <div class="page_info">
+      <%= page_entries_info @physical_objects, model: "records" %> 
+    </div>
+    <%= will_paginate @physical_objects, container: false %>
+  </div>
+<% end %>
 <table class="po list">
   <tr class="header">
     <% unless @group_key.nil? %>
@@ -57,4 +66,4 @@
     <% end %>
   <% end %>
 </table>
-
+<%= will_paginate @physical_objects if @physical_objects.respond_to?(:total_pages) %>

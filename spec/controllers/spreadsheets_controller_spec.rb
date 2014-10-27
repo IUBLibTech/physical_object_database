@@ -34,6 +34,7 @@ describe SpreadsheetsController do
     it "assigns associated physical objects as @physical_objects" do
       expect(assigns(:physical_objects)).to eq []
     end
+    include_examples "provides pagination", :physical_objects
     it "renders the :show template" do
       expect(response).to render_template :show
     end

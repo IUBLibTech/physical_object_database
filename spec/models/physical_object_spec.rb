@@ -164,6 +164,11 @@ describe PhysicalObject do
   end
 
   #class methods
+  describe "::per_page" do
+    it "should be 30" do
+      expect(PhysicalObject.per_page).to eq 30
+    end
+  end
   describe "::to_csv" do
     it "lists the picklist, if present" do
       expect(PhysicalObject.to_csv([], picklist)).to eq "Picklist:,FactoryGirl picklist\n"

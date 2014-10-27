@@ -1,9 +1,10 @@
 class BinsController < ApplicationController
   before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :show_boxes, :assign_boxes]
+  before_action :set_assigned_boxes, only: [:show]
+  before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
 	def index
 		@bins = Bin.all
-		@boxes = Box.where(bin_id: [nil, 0])
 	end
 
 	def new
@@ -43,17 +44,16 @@ class BinsController < ApplicationController
 	end
 
 	def show
-		@boxes = @bin.boxes
-		if @boxes.size > 0
-			@physical_objects = Array.new
-			@boxes.each do |b| 
-				@physical_objects.concat(b.physical_objects)
-			end
+		if @boxes.any?
+		  @physical_objects = PhysicalObject.where(box_id: @boxes.map { |box| box.id })
 		else
-			@physical_objects = @bin.physical_objects
+		  @physical_objects = @bin.physical_objects
 		end
 		@picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
 		@edit_mode = false
+		if request.format.html?
+		  @physical_objects = @physical_objects.paginate(page: params[:page])
+		end
 	end
 
 	def destroy
@@ -116,7 +116,6 @@ class BinsController < ApplicationController
 	end
 
 	def show_boxes
-		@boxes = Box.where(bin_id: nil)
 		if @bin.packed_status?
 		  flash[:notice] = Box.packed_status_message
 		  redirect_to action: :show
@@ -141,6 +140,14 @@ class BinsController < ApplicationController
 	def set_bin
 		@bin = Bin.find(params[:id])
 		@batch = @bin.batch
+	end
+
+	def set_assigned_boxes
+		@boxes = @bin.boxes
+	end
+
+	def set_unassigned_boxes
+		@boxes = Box.where(bin_id: [0, nil])
 	end
 
 	def bin_index(bins, bin_id)

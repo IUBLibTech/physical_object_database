@@ -31,6 +31,9 @@ class PhysicalObject < ActiveRecord::Base
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
   accepts_nested_attributes_for :notes, allow_destroy: true
 
+  # default per_page value can be overriden in a request
+  self.per_page = 30
+
   # needs to be declared before the validation that uses it
   def self.formats
     TM_FORMATS

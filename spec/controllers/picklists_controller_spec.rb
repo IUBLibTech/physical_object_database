@@ -21,6 +21,7 @@ describe PicklistsController do
       it "renders the :show template" do
         expect(response).to render_template(:show)
       end
+      include_examples "provides pagination", :physical_objects
     end
     context "csv format" do
       let(:show_csv) { get :show, id: picklist.id, format: :csv }
@@ -28,6 +29,7 @@ describe PicklistsController do
         expect(controller).to receive(:send_data).with(PhysicalObject.to_csv(picklist.physical_objects, picklist)) { controller.render nothing: true }
         show_csv
       end
+      include_examples "does not provide pagination", :physical_objects
     end
     context "xls format" do
       let(:show_xls) { get :show, id: picklist.id, format: :xls }
@@ -38,6 +40,7 @@ describe PicklistsController do
       it "contains the correct Excel file content" do
         skip "TODO: test Excel file content"
       end
+      include_examples "does not provide pagination", :physical_objects
     end
   end
 

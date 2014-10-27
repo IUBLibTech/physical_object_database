@@ -71,6 +71,7 @@ describe BoxesController do
     it "assigns boxed @physical_objects" do
       expect(assigns(:physical_objects)).to eq [boxed_object]
     end
+    include_examples "provides pagination", :physical_objects
     it "builds @picklist select array" do
       expect(assigns(:picklists)).to eq [[picklist.name,picklist.id]]
     end

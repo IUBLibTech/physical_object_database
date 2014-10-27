@@ -26,7 +26,9 @@ class PicklistsController < ApplicationController
 		#@action = 'show'
 
 		respond_to do |format|
-			format.html
+			format.html do
+				@physical_objects = @physical_objects.paginate(page: params[:page])
+		    	end
 			format.csv { send_data PhysicalObject.to_csv(@physical_objects, @picklist) }
 			format.xls
 		end
@@ -204,12 +206,13 @@ class PicklistsController < ApplicationController
 
 	private
 		def set_picklist
-		  #special case: picklist_ is spoofed into id value for nice CSV/XLS filenames
 		  if request.format.csv? || request.format.xls?
+		    # special case: picklist_ is spoofed into id value for nice CSV/XLS filenames
 	 	    params[:id] = params[:id].sub(/picklist_/, '')
 		  end
 		  @picklist = Picklist.find(params[:id])
 		  @physical_objects = @picklist.physical_objects
+
 		end
 
 		def picklist_params

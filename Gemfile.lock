@@ -244,6 +244,7 @@ GEM
       execjs (>= 0.3.0)
       json (>= 1.8.0)
     websocket (1.0.7)
+    will_paginate (3.0.7)
     xpath (2.0.0)
       nokogiri (~> 1.3)
 
@@ -281,3 +282,4 @@ DEPENDENCIES
   spring
   thin (= 1.6.2)
   uglifier (>= 1.3.0)
+  will_paginate (~> 3.0)
