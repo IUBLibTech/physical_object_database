@@ -56,6 +56,9 @@ class PhysicalObjectsController < ApplicationController
 
   def index
     @physical_objects = PhysicalObject.all
+    if request.format.html?
+      @physical_objects = @physical_objects.paginate(page: params[:page])
+    end
   end
 
   def show

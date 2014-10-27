@@ -10,6 +10,9 @@ class GroupKeysController < ApplicationController
   # GET /group_keys/1
   # GET /group_keys/1.json
   def show
+    if request.format.html? 
+      @physical_objects = @physical_objects.paginate(page: params[:page])
+    end
   end
 
   # GET /group_keys/new

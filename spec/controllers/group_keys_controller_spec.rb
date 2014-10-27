@@ -43,6 +43,7 @@ describe GroupKeysController do
     it "assigns group_keyed @physical_objects" do
       expect(assigns(:physical_objects)).to eq [group_keyed_object]
     end
+    include_examples "provides pagination", :physical_objects
     it "renders the :show template" do
       expect(response).to render_template(:show)
     end

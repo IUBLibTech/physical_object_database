@@ -16,10 +16,12 @@ describe PhysicalObjectsController do
     end
     it "populates an array of physical objects" do
       expect(assigns(:physical_objects)).to eq [physical_object]
+      expect(assigns(:physical_objects)).to respond_to :total_pages
     end
     it "renders the :index view" do
       expect(response).to render_template(:index)
     end
+    include_examples "provides pagination", :physical_objects
   end
 
   describe "GET show" do

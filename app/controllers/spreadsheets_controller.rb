@@ -9,7 +9,9 @@ class SpreadsheetsController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html
+      format.html do
+        @physical_objects = @physical_objects.paginate(page: params[:page])
+      end
       format.xls do
         @modified_only = (params[:modified] == "true")
         @physical_objects = @modified_objects if @modified_only

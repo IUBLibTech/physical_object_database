@@ -51,6 +51,7 @@ describe BinsController do
       other_boxed_object
       boxed_object
       unassigned_object
+      picklist
       get :show, id: bin.id
     end
     it "assigns the requested object to @bin" do
@@ -63,9 +64,10 @@ describe BinsController do
       it "assigns boxed objects (only)" do
         expect(assigns(:physical_objects)).to eq [boxed_object]
       end
+      include_examples "provides pagination", :physical_objects
     end
     it "assigns @picklists to picklists dropdown values" do
-      
+      expect(assigns(:picklists)).to eq [[picklist.name, picklist.id]]
     end
     it "renders the :show template" do
       expect(response).to render_template(:show)

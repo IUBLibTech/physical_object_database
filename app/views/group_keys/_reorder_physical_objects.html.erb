@@ -1,7 +1,7 @@
 <%= form_for(@group_key, url: { action: :reorder }) do |f| %>
   <ul id="sortable">
   <% expected_position = 1 %>
-  <% @physical_objects.each do |object| %>
+  <% @group_key.physical_objects.order(:group_position).each do |object| %>
     <% if object.group_position > expected_position %>
       <% (expected_position...object.group_position).each do |position| %>
         <li id="_missing_<%= position %>" class="ui-state-default ui-sortable-handle">

@@ -43,6 +43,7 @@ class SearchController < ApplicationController
       end
     end
     @physical_objects = PhysicalObject.advanced_search(po)
+    #FIXME: employ pagination?
     flash[:notice] = "Your search returns these results"
     render('physical_objects/index')
   end
