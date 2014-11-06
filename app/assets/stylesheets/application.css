@@ -44,6 +44,15 @@ td.no-border {
   height: 100px;
 }
 
+#environment {
+  background: rgba(125, 18, 12, 0.45);
+  font-family: 'Tahoma';
+  font-size: 16px;
+  font-weight: bold;
+  padding: 5px 0px;
+  text-align: center;
+}
+
 #menu {
   height: 42px;
   background: #7D110C;
