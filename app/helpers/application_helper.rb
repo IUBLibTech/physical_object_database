@@ -52,4 +52,12 @@ module ApplicationHelper
 		render(partial: 'application/error_messages', locals: {object: object})		
 	end
 
+	def environment_notice
+		if Rails.env.production?
+			return ""
+		else
+			return "<div id='environment'>#{Rails.env.capitalize} Environment</div>".html_safe
+		end
+	end
+
 end
