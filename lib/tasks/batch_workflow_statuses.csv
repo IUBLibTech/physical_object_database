@@ -1,1 +1,6 @@
-Name,Description,IndexCreated,A Batch has been created in the POD. The default status for Batches.,1Packed,Enough packed Bins to make up a Batch have been assigned to this Batch.,2Shipped,The Batch has been shipped to the digitization facility in its entirety.,3Returned,The Batch has been returned from the digitization facility. Bins have not been checked to determine if all originally shipped Bins are present on return.,4Returned Incomplete,The Batch was returned missing Bins originally shipped with the Batch,5Returned Complete,The Batch was returned with all originally shipped Bins.,6Unpacked,All Bins have had their status set to Unpacked. The total status of the Batch is determined by the aggregate of Bin statuses.,7
+Name,Description,Index
+Created,"The batch has been created, and assigned a name and specs.",1
+Assigned,The batch is has had all the appropriate bins assigned and is ready to go.,2
+Shipped,The batch has been shipped to the digitization facility.,3
+Returned,The batch has been returned from the digitization facility.,4
+Complete,"All bins have been all checked in, and physical objects returned.",5

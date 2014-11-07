@@ -74,8 +74,8 @@ describe Batch do
   it_behaves_like "includes Workflow Status Module" do
     let(:object) { valid_batch }
     let(:default_status) { "Created" }
-    let(:new_status) { "Shipped" }
-    let(:valid_status_values) { ["Created", "Packed", "Returned", "Returned Complete", "Returned Incomplete", "Shipped", "Unpacked"] }
+    let(:new_status) { "Assigned" }
+    let(:valid_status_values) { ["Created", "Assigned", "Shipped", "Returned", "Complete"] }
     let(:class_title) { "Batch" }
   end
 

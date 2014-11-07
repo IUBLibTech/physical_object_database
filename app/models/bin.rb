@@ -22,11 +22,11 @@ class Bin < ActiveRecord::Base
 	}
 
         def packed_status?
-          ["Packed"].include? self.current_workflow_status.name
+          ["Sealed", "Batched"].include? self.current_workflow_status.name
         end
 
 	def Bin.packed_status_message
-	  "This bin has been marked as packed. To enable packing and assigning boxes, please change the workflow status."
+	  "This bin has been marked as sealed. To enable packing physical objects and assigning boxes, unseal the bin."
 	end
 
 	def physical_objects_count

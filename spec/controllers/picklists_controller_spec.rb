@@ -280,21 +280,21 @@ describe PicklistsController do
       skip "TODO: no effect when packing box"
     end
     context "with bin_id argument" do
-      it "sets bin status to Packed" do
-        expect(bin.current_workflow_status.name).not_to eq "Packed"
+      it "sets bin status to Sealed" do
+        expect(bin.current_workflow_status.name).not_to eq "Sealed"
 	patch_arguments[:bin_id] = bin.id
 	container_full
 	bin.reload
-        expect(bin.current_workflow_status.name).to eq "Packed"
+        expect(bin.current_workflow_status.name).to eq "Sealed"
       end
     end
     context "with bin_barcode argument" do
-      it "sets bin status to Packed" do
-        expect(bin.current_workflow_status.name).not_to eq "Packed"
+      it "sets bin status to Sealed" do
+        expect(bin.current_workflow_status.name).not_to eq "Sealed"
 	patch_arguments[:bin_barcode] = bin.mdpi_barcode
 	container_full
 	bin.reload
-        expect(bin.current_workflow_status.name).to eq "Packed"
+        expect(bin.current_workflow_status.name).to eq "Sealed"
       end
     end
     context "with no box or bin" do

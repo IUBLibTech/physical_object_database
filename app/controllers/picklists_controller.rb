@@ -182,7 +182,7 @@ class PicklistsController < ApplicationController
 		# use cases - box without a bin/box with bin/no box, just bin
 		Picklist.transaction do
 			if bin and !box
-				bin.current_workflow_status = "Packed"
+				bin.current_workflow_status = "Sealed"
 				bin.save
 			elsif box and bin
 				box.bin = bin

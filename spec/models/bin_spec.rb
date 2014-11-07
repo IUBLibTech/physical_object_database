@@ -76,20 +76,20 @@ describe Bin do
       expect(bin.physical_objects_count).to eq 0 
     end
     describe "#packed_status?" do
-      it "returns true if in Packed status" do
-	bin.current_workflow_status = "Packed"
+      it "returns true if in Sealed status" do
+	bin.current_workflow_status = "Sealed"
         expect(bin.packed_status?).to eq true
       end
-      it "returns false if not in Packed status" do
-        expect(bin.current_workflow_status.name).not_to eq "Packed"
+      it "returns false if not in Sealed status" do
+        expect(bin.current_workflow_status.name).not_to eq "Sealed"
         expect(bin.packed_status?).to eq false
       end
     end
   end
 
   describe "::packed_status_message" do
-    it "returns a message that the Bin is in Packed status" do
-      expect(Bin.packed_status_message).to match /This bin has been marked as packed/
+    it "returns a message that the Bin is in Sealed status" do
+      expect(Bin.packed_status_message).to match /This bin has been marked as sealed/
     end
   end
   
@@ -112,9 +112,9 @@ describe Bin do
 
   it_behaves_like "includes Workflow Status Module" do
     let(:object) { valid_bin }
-    let(:default_status) { "Labelled" }
-    let(:new_status) { "Shipped" }
-    let(:valid_status_values) { ["Barcoded", "Batched", "Labelled", "Packed", "Returned", "Returned Complete", "Returned Incomplete", "Shipped", "Unpacked"] }
+    let(:default_status) { "Created" }
+    let(:new_status) { "Sealed" }
+    let(:valid_status_values) { ["Created", "Sealed", "Batched", "Returned to Staging Area", "Unpacked"] }
     let(:class_title) { "Bin" }
   end
 

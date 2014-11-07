@@ -282,9 +282,9 @@ describe PhysicalObject do
 
   it_behaves_like "includes Workflow Status Module" do
     let(:object) { valid_po }
-    let(:default_status) { "Created" }
-    let(:new_status) { "Shipped" }
-    let(:valid_status_values) { ["Created", "Verified", "Barcoded", "Boxed", "Binned", "Shipped", "Returned", "Reshelved"] }
+    let(:default_status) { "Unassigned" }
+    let(:new_status) { "Barcoded" }
+    let(:valid_status_values) { ["Unassigned", "On Pick List", "Barcoded", "Boxed", "Binned", "Unpacked", "Returned to Unit"] }
     let(:class_title) { "Physical Object" }
   end
 

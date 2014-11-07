@@ -30,7 +30,7 @@ module WorkflowStatusModule
   end
 
   def default_workflow_status
-    self.is_a?(Bin) ? "Labelled" : "Created"
+    self.is_a?(PhysicalObject) ? "Unassigned" : "Created"
   end
 
   def workflow_status_options
