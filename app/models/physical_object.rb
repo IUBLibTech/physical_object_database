@@ -58,6 +58,7 @@ class PhysicalObject < ActiveRecord::Base
   validates :unit, presence: true
   validates :group_key, presence: true
   validates :technical_metadatum, presence: true
+  validates :workflow_status, presence: true
   validates_with PhysicalObjectValidator
 
   accepts_nested_attributes_for :technical_metadatum

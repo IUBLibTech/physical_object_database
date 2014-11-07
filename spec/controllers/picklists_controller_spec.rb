@@ -177,7 +177,7 @@ describe PicklistsController do
       assign_to_container
       physical_object.reload
       expect(physical_object.bin).to eq bin
-      expect(physical_object.current_workflow_status.name).to eq "Binned"
+      expect(physical_object.current_workflow_status).to eq "Binned"
     end
     it "assigns a physical object to a bin by bin_barcode" do
       bin.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
@@ -186,7 +186,7 @@ describe PicklistsController do
       assign_to_container
       physical_object.reload
       expect(physical_object.bin).to eq bin
-      expect(physical_object.current_workflow_status.name).to eq "Binned"
+      expect(physical_object.current_workflow_status).to eq "Binned"
     end
     it "rejects a 0 for bin_barcode" do
       bin.mdpi_barcode = "0"
@@ -201,14 +201,14 @@ describe PicklistsController do
       assign_to_container
       physical_object.reload
       expect(physical_object.box).to eq box
-      expect(physical_object.current_workflow_status.name).to eq "Boxed"
+      expect(physical_object.current_workflow_status).to eq "Boxed"
     end
     it "assigns a physical object to a box by box_barcode" do
       assign_arguments[:box_barcode] = box.mdpi_barcode
       assign_to_container
       physical_object.reload
       expect(physical_object.box).to eq box
-      expect(physical_object.current_workflow_status.name).to eq "Boxed"
+      expect(physical_object.current_workflow_status).to eq "Boxed"
     end
     it "rejects a 0 for box_barcode" do
       box.mdpi_barcode = "0"
@@ -225,7 +225,7 @@ describe PicklistsController do
       physical_object.reload
       expect(physical_object.box).not_to be_nil
       expect(physical_object.bin).to be_nil
-      expect(physical_object.current_workflow_status.name).to eq "Boxed"
+      expect(physical_object.current_workflow_status).to eq "Boxed"
     end
   end
 
@@ -239,7 +239,7 @@ describe PicklistsController do
       remove_from_container
       physical_object.reload
       expect(physical_object.bin).to be_nil
-      expect(physical_object.current_workflow_status.name).to eq "Barcoded"
+      expect(physical_object.current_workflow_status).to eq "Barcoded"
     end
     it "removes the physical object from a box" do
       physical_object.box = box
@@ -249,7 +249,7 @@ describe PicklistsController do
       remove_from_container
       physical_object.reload
       expect(physical_object.box).to be_nil
-      expect(physical_object.current_workflow_status.name).to eq "Barcoded"
+      expect(physical_object.current_workflow_status).to eq "Barcoded"
     end
   end
 
@@ -281,20 +281,20 @@ describe PicklistsController do
     end
     context "with bin_id argument" do
       it "sets bin status to Sealed" do
-        expect(bin.current_workflow_status.name).not_to eq "Sealed"
+        expect(bin.current_workflow_status).not_to eq "Sealed"
 	patch_arguments[:bin_id] = bin.id
 	container_full
 	bin.reload
-        expect(bin.current_workflow_status.name).to eq "Sealed"
+        expect(bin.current_workflow_status).to eq "Sealed"
       end
     end
     context "with bin_barcode argument" do
       it "sets bin status to Sealed" do
-        expect(bin.current_workflow_status.name).not_to eq "Sealed"
+        expect(bin.current_workflow_status).not_to eq "Sealed"
 	patch_arguments[:bin_barcode] = bin.mdpi_barcode
 	container_full
 	bin.reload
-        expect(bin.current_workflow_status.name).to eq "Sealed"
+        expect(bin.current_workflow_status).to eq "Sealed"
       end
     end
     context "with no box or bin" do

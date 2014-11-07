@@ -1,6 +1,6 @@
 class WorkflowStatusTemplate < ActiveRecord::Base
 	
-	has_many :workflow_statuses
+	has_many :workflow_statuses, dependent: :destroy
 	validates :name, presence: true, uniqueness: {scope: :object_type}
 	validates :sequence_index, presence: true
 

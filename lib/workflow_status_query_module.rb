@@ -13,6 +13,7 @@ module WorkflowStatusQueryModule
 		PhysicalObject.find_by_sql(new_sql)
 	end
 
+  # FIXME: deprecated
   def WorkflowStatusQueryModule.new_status(object, status_name)
     wst_id = template_id(object.class, status_name)
     ws = WorkflowStatus.new(workflow_status_template_id: wst_id)

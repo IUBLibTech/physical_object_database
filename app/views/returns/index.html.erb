@@ -13,7 +13,7 @@
 			<% @batches.each_with_index do |b, index| %>
 				<tr class=<%= index.odd? ? "odd" : "even" %>>
 					<td><%= b.identifier %></td>
-					<td><%= b.current_workflow_status ? b.current_workflow_status.name : ""%></td>
+					<td><%= b.current_workflow_status %></td>
 					<td>
 						<%= link_to "Show", batch_path(b) %>
 						<%= link_to "Return Bins", return_bins_return_path(b.id) %>

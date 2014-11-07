@@ -16,13 +16,14 @@ class Bin < ActiveRecord::Base
 
 	validates :identifier, presence: true, uniqueness: true
 	validates :mdpi_barcode, mdpi_barcode: true
+	validates :workflow_status, presence: true
 
 	scope :available_bins, -> {
 		where(['batch_id = 0 OR batch_id is null'])
 	}
 
         def packed_status?
-          ["Sealed", "Batched"].include? self.current_workflow_status.name
+          ["Sealed", "Batched"].include? self.current_workflow_status
         end
 
 	def Bin.packed_status_message

@@ -9,23 +9,20 @@
 module WorkflowStatusModule
 
   def assign_default_workflow_status
-    if self.current_workflow_status.nil?
-      self.current_workflow_status = default_workflow_status
-    end
+    self.workflow_status ||= default_workflow_status if self.new_record?
   end
 
   #return highest-ranking workflow status
   def current_workflow_status
-    return nil if self.workflow_statuses.nil? || self.workflow_statuses.size.zero?
-    return self.workflow_statuses.last
+    self.workflow_status
   end
 
   #requires object save afterwards to take effect
   def current_workflow_status=(workflow_status_name)
-    return if workflow_status_name.nil? || workflow_status_name.blank?
+    return if workflow_status_name.nil? || workflow_status_name.blank? || workflow_status_name == self.current_workflow_status
     workflow_status_template = WorkflowStatusTemplate.find_by(name: workflow_status_name, object_type: self.class_title)
     return if workflow_status_template.nil?
-    return if !self.current_workflow_status.nil? and workflow_status_template.id == self.current_workflow_status.workflow_status_template.id
+    self.workflow_status = workflow_status_name
     self.workflow_statuses.new(workflow_status_template_id: workflow_status_template.id)
   end
 

@@ -137,9 +137,9 @@ describe BatchesController do
       expect(bin.batch_id).to eq batch.id
     end
     it "sets added bins with a workflow status of Batched" do
-      expect(bin.current_workflow_status.name).not_to eq "Batched"
+      expect(bin.current_workflow_status).not_to eq "Batched"
       add_bin
-      expect(bin.current_workflow_status.name).to eq "Batched"
+      expect(bin.current_workflow_status).to eq "Batched"
     end
   end
 

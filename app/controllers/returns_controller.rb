@@ -29,6 +29,7 @@ class ReturnsController < ApplicationController
 		elsif po.bin.nil? or po.bin != @bin
 			flash[:notice] = "<b class='warning'>Physical Object with barcode <a href='#{physical_object_path(po.id)}' target='_blank'>#{po.mdpi_barcode}</a> was not originally shipped with this bin!</b>".html_safe
 		else
+			# FIXME: update status logic
 			po.update_attributes(current_workflow_status: "Returned", ephemera_returned: params[:ephemera_returned][:ephemera_returned])
 			msg = "Physical Object with barcode #{po.mdpi_barcode} was successfully returned. ".html_safe +
 			(po.has_ephemera ? (po.ephemera_returned ? "Its ephemera was also returned." : "<b class='warning'>Its ephemera was NOT returned.</b>".html_safe) : "")
@@ -43,6 +44,7 @@ class ReturnsController < ApplicationController
 		# returned must have a condition status of "Not Returned"
 		returned = WorkflowStatusQueryModule.in_bin_where_current_status_is(@bin, "Returned")
 		if (returned == @bin.physical_objects)
+			# FIXME: update status logic
 			@bin.update_attributes(current_workflow_status: 'Returned Complete')
 			redirect_to return_bins_return_path(@bin.batch)
 		else
@@ -59,6 +61,7 @@ class ReturnsController < ApplicationController
 				" or are missing. All missing items must have a condition status of <i>Not Returned</i> before a Bin can be marked as <i>Unpacked</i></b>").html_safe
 				redirect_to return_bin_return_path(@bin)
 			else
+				# FIXME: update status logic
 				@bin.update_attributes(current_workflow_status: 'Returned Incomplete')
 				redirect_to return_bins_return_path(@bin.batch)
 			end

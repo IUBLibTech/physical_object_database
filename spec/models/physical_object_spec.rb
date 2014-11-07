@@ -109,6 +109,12 @@ describe PhysicalObject do
     specify "must belong to a group key" do
       expect(valid_po.group_key).not_to be_nil
     end
+    specify "can have workflow statuses" do
+      expect(valid_po.workflow_statuses.size).to be >= 0
+    end
+    specify "can have condition statuses" do
+      expect(valid_po.condition_statuses.size).to be >= 0
+    end
   end
   
   describe "#generation_values" do
