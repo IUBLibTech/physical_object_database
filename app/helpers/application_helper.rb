@@ -30,6 +30,10 @@ module ApplicationHelper
 		((sum - check_digit) * 9) % 10 == check_digit
 	end
 
+	def ApplicationHelper.real_barcode?(barcode)
+	  ApplicationHelper.valid_barcode?(barcode) && barcode.to_s != "0"
+	end
+
 	# this method checks to see whether any barcodable item (physical object, box, bin) 
 	# has been assigned the specified barcode. returning the object if it does exist, otherwise
 	# false

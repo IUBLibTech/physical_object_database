@@ -239,18 +239,35 @@ class PhysicalObject < ActiveRecord::Base
     self.group_key
   end
 
+  def infer_workflow_status
+    if !self.bin.nil?
+      return "Binned"
+    elsif !self.box.nil?
+      return "Boxed"
+    # picklist assignment does not require a valid barcode, hence this extra check
+    elsif !self.picklist.nil?
+      if ApplicationHelper.real_barcode?(self.mdpi_barcode)
+        return "Barcoded"
+      else
+        return "On Pick List"
+      end  
+    else
+      return "Unassigned"
+    end
+  end
+
   def resolve_group_position
     unless self.group_key.nil?
       collisions = PhysicalObject.where(group_key_id: self.group_key_id, group_position: self.group_position).where.not(id: self.id).order(id: :asc)
       unless collisions.empty?
         #only resolve first collision, as cascade will fix others
         collisions[0].group_position += 1
-	collisions[0].save
+        collisions[0].save
       end
 
       if self.group_position > self.group_key.group_total
         self.group_key.group_total = self.group_position
-	self.group_key.save
+        self.group_key.save
       end
     end
   end

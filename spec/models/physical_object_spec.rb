@@ -129,6 +129,34 @@ describe PhysicalObject do
     end
   end
 
+  describe "#infer_workflow_status" do
+    it "returns Binned if binned" do
+      valid_po.bin = bin
+      expect(valid_po.infer_workflow_status).to eq "Binned"
+    end
+    it "returns Boxed if boxed" do
+      valid_po.box = box
+      expect(valid_po.infer_workflow_status).to eq "Boxed"
+    end
+    it "returns Barcoded if barcoded, AND on pick list" do
+      valid_po.mdpi_barcode = valid_mdpi_barcode
+      valid_po.picklist = picklist
+      expect(valid_po.infer_workflow_status).to eq "Barcoded"
+    end
+    it "returns On Pick List if on pick list" do
+      valid_po.picklist = picklist
+      expect(valid_po.infer_workflow_status).to eq "On Pick List"
+    end
+    it "returns Unassigned if unassigned, and barcoded" do
+      valid_po.mdpi_barcode = valid_mdpi_barcode
+      expect(valid_po.infer_workflow_status).to eq "Unassigned"
+    end
+    it "returns Unassigned if unassigned, and not barcoded" do
+      valid_po.mdpi_barcode = "0"
+      expect(valid_po.infer_workflow_status).to eq "Unassigned"
+    end
+  end
+
   describe "mdpi_barcode" do
     it "accepts 0 values" do
       valid_po.mdpi_barcode = 0
