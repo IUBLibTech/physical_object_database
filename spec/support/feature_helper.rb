@@ -19,7 +19,9 @@ module FeatureHelpers
   end
 
   def conclude_jquery
-    loop until page.evaluate_script('jQuery.active').zero?
+    Timeout.timeout(Capybara.default_wait_time) do
+      loop until page.evaluate_script('jQuery.active').zero?
+    end
   end
 
 end
