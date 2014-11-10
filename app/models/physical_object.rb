@@ -240,6 +240,17 @@ class PhysicalObject < ActiveRecord::Base
     self.group_key
   end
 
+  def display_workflow_status
+    if self.bin
+      bin_status = self.bin.display_workflow_status
+    elsif self.box and self.box.bin
+      bin_status = self.box.bin.display_workflow_status
+    end
+    bin_status = "" if bin_status.in? [nil, "Created"]
+    addendum = ( bin_status.blank? ? "" : " >> #{bin_status}" )
+    self.current_workflow_status + addendum
+  end
+
   def inferred_workflow_status
     if self.current_workflow_status.in? ["Unpacked", "Returned to Unit"]
       return self.current_workflow_status

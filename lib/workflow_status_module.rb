@@ -43,6 +43,10 @@ module WorkflowStatusModule
     return ""
   end
 
+  def display_workflow_status
+    return self.current_workflow_status
+  end
+
   def workflow_status_options
     return WorkflowStatusTemplate.select_options(self.class_title)
   end
