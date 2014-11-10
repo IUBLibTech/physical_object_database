@@ -17,7 +17,7 @@
       <td><%= bin.identifier %></td>
       <td><%= bin.description %></td>
       <% if @batch.nil? %>
-      <td><%= bin.batch.nil? ? "" : bin.batch.name %></td>
+      <td><%= bin.batch.nil? ? "" : bin.batch.identifier %></td>
       <% end %>
       <td><%= bin.physical_objects_count %></td>
       <td><%= bin.current_workflow_status %></td>

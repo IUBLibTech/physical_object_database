@@ -198,8 +198,14 @@ describe BinsController do
       post :unbatch, id: bin.id
     end
     it "removes the batch association from the bin" do
+      expect(bin.batch).not_to be_nil
       bin.reload
       expect(bin.batch).to be_nil
+    end
+    it "updates the bin workflow status" do
+      expect(bin.current_workflow_status).to eq "Batched"
+      bin.reload
+      expect(bin.current_workflow_status).not_to eq "Batched"
     end
     it "redirects to :back" do
       expect(response).to redirect_to "source_page"

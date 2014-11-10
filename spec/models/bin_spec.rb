@@ -76,13 +76,53 @@ describe Bin do
       expect(bin.physical_objects_count).to eq 0 
     end
     describe "#packed_status?" do
-      it "returns true if in Sealed status" do
-	bin.current_workflow_status = "Sealed"
-        expect(bin.packed_status?).to eq true
+      ["Sealed", "Batched"].each do |status|
+        it "returns true if in #{status} status" do
+	  bin.current_workflow_status = status
+          expect(bin.packed_status?).to eq true
+        end
       end
       it "returns false if not in Sealed status" do
-        expect(bin.current_workflow_status).not_to eq "Sealed"
+        bin.current_workflow_status = "Created"
         expect(bin.packed_status?).to eq false
+      end
+    end
+    describe "#display_workflow_status" do
+      it "returns current_workflow_status" do
+        expect(bin.display_workflow_status).to match /^#{bin.current_workflow_status}/
+      end
+      specify "when Batched, also display Batch status (if not Created)" do
+        batch.current_workflow_status = "Shipped"
+        bin.batch = batch
+	expect(bin.display_workflow_status).to match />>/
+	expect(bin.display_workflow_status).to match /Shipped$/
+      end
+      specify "when Batched, surpress Batch status if Created" do
+        batch.current_workflow_status = "Created"
+	bin.batch = batch
+	expect(bin.display_workflow_status).not_to match />>/
+	expect(bin.display_workflow_status).not_to match /Created$/
+      end
+    end
+    describe "#inferred_workflow_status" do
+      ["Created", "Sealed"].each do |status|
+        it "returns Batched if #{status}, and associated to a Batch" do
+          bin.current_workflow_status = status
+	  bin.batch = batch
+	  expect(bin.inferred_workflow_status).to eq "Batched"
+        end
+      end
+      it "returns Sealed if Batched, and not associated to a Batch" do
+        bin.current_workflow_status = "Batched"
+	bin.batch = nil
+	expect(bin.inferred_workflow_status).to eq "Sealed"
+      end
+      ["Created", "Returned to Staging Area", "Unpacked"].each do |status|
+        it "returns #{status} unchanged" do
+	  bin.batch = nil
+	  bin.current_workflow_status = status
+	  expect(bin.inferred_workflow_status).to eq status
+	end
       end
     end
   end

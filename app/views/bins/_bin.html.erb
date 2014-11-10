@@ -44,7 +44,7 @@
 				<% if @edit_mode %>
 					<%= select('batch', 'id', @batches, {:include_blank => 'Not Assigned'}) %>
 				<% elsif ! @bin.batch.nil? %>
-					<%= @bin.batch.identifier %> 
+					<%= link_to @bin.batch.identifier, batch_path(@bin.batch.id) %> 
 				<% end %>
 			</td>
 		</tr>

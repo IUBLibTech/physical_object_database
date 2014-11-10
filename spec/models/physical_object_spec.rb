@@ -279,6 +279,7 @@ describe PhysicalObject do
         valid_po.bin = bin
         valid_po.assign_inferred_workflow_status
         expect(valid_po.current_workflow_status).to eq "Binned"
+        expect(valid_po.display_workflow_status).to match />>/
         expect(valid_po.display_workflow_status).to match /#{valid_po.bin.display_workflow_status}$/
       end
       specify "when Boxed (into a bin), also displays bin status (if not Created)" do
@@ -287,6 +288,7 @@ describe PhysicalObject do
         valid_po.box = box
         valid_po.assign_inferred_workflow_status
         expect(valid_po.current_workflow_status).to eq "Boxed"
+        expect(valid_po.display_workflow_status).to match />>/
         expect(valid_po.display_workflow_status).to match /#{valid_po.box.bin.display_workflow_status}$/
       end
       specify "when Binned, also display bin status (if not Created)" do

@@ -43,6 +43,7 @@ feature "Physical Object management" do
 	  skip "FIXME: get session username to populate, rather than default UNAVAILABLE"
 	  # expect(page).to have_selector("input[value='user@example.com']")
 	end
+	SessionInfoModule.session = nil
       end
     end
   

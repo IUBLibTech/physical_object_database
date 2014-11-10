@@ -66,11 +66,16 @@ class BatchesController < ApplicationController
 
   def add_bin
     @batch = Batch.find(params[:id])
-    Batch.transaction do
-      params[:bin_ids].each do |b|
-        bin = Bin.find(b)
-        bin.update_attributes(batch_id: @batch.id, current_workflow_status: "Batched")
+    if params[:bin_ids].nil? or params[:bin_ids].empty?
+      flash[:notice] = "No bins were selected to add."
+    else
+      Batch.transaction do
+        params[:bin_ids].each do |b|
+          bin = Bin.find(b)
+          bin.update_attributes(batch_id: @batch.id, current_workflow_status: "Batched")
+        end
       end
+      flash[:notice] = "The selected bins were added."
     end
     redirect_to(action: 'show', id: @batch.id)
   end
