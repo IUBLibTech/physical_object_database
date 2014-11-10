@@ -9,19 +9,27 @@
 module WorkflowStatusModule
 
   def assign_default_workflow_status
-    self.workflow_status ||= default_workflow_status if self.new_record?
+    self.current_workflow_status ||= default_workflow_status if self.new_record?
+  end
+
+  def assign_inferred_workflow_status
+    self.current_workflow_status = self.inferred_workflow_status
   end
 
   #return highest-ranking workflow status
   def current_workflow_status
-    self.workflow_status
+    return self.workflow_status
   end
 
-  #requires object save afterwards to take effect
+  # requires object save afterwards to take effect
+  # return blank string for no assignment, status text for assignment, raise error for invalid assignment
   def current_workflow_status=(workflow_status_name)
-    return if workflow_status_name.nil? || workflow_status_name.blank? || workflow_status_name == self.current_workflow_status
+    return if workflow_status_name == self.current_workflow_status
     workflow_status_template = WorkflowStatusTemplate.find_by(name: workflow_status_name, object_type: self.class_title)
-    return if workflow_status_template.nil?
+    if workflow_status_template.nil?
+      raise RuntimeError, "Status value of \"#{workflow_status_name}\" cannot be assigned to a #{self.class_title}"
+      return nil
+    end
     self.workflow_status = workflow_status_name
     self.workflow_statuses.new(workflow_status_template_id: workflow_status_template.id)
   end
@@ -30,12 +38,17 @@ module WorkflowStatusModule
     self.is_a?(PhysicalObject) ? "Unassigned" : "Created"
   end
 
+  # override in an implementation
+  def inferred_workflow_status
+    return ""
+  end
+
   def workflow_status_options
     return WorkflowStatusTemplate.select_options(self.class_title)
   end
 
   def class_title
-    self.class.to_s.gsub(/([a-z])([A-Z])/, '\1 \2')
+    self.class.name.underscore.humanize.titleize
   end
 
 end

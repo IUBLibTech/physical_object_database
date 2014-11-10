@@ -239,7 +239,7 @@ class PhysicalObject < ActiveRecord::Base
     self.group_key
   end
 
-  def infer_workflow_status
+  def inferred_workflow_status
     if !self.bin.nil?
       return "Binned"
     elsif !self.box.nil?
