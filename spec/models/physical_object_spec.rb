@@ -155,6 +155,12 @@ describe PhysicalObject do
       valid_po.mdpi_barcode = "0"
       expect(valid_po.inferred_workflow_status).to eq "Unassigned"
     end
+    ["Unpacked", "Returned to Unit"].each do |set_status|
+      it "returns #{set_status} if already in that status" do
+        valid_po.current_workflow_status = set_status
+        expect(valid_po.inferred_workflow_status).to eq set_status
+      end
+    end
   end
 
   describe "mdpi_barcode" do

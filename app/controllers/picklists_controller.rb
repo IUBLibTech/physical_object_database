@@ -159,7 +159,7 @@ class PicklistsController < ApplicationController
 			if physical_object.box or physical_object.bin
 				physical_object.box = nil
 				physical_object.bin = nil
-				physical_object.current_workflow_status = "Barcoded"
+				# workflow status automatically set on save
 			end			
 			if physical_object.save
 				render(partial: "picklist_physical_object_form", locals: {p: physical_object, box: box, bin: bin, index: 0})
@@ -223,8 +223,7 @@ class PicklistsController < ApplicationController
 			if (box or bin)
 				PhysicalObject.transaction do
 					physical_object.update_attributes(bin_id: (bin.nil? ? 0 : bin.id), box_id: (box.nil? ? 0 : box.id))
-					physical_object.current_workflow_status = (bin ? "Binned" : "Boxed")
-					physical_object.save
+					# workflow status automatically updated
 				end
 			else
 				return false

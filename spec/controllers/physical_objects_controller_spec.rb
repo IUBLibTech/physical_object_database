@@ -8,6 +8,7 @@ describe PhysicalObjectsController do
   let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
   let(:invalid_physical_object) { FactoryGirl.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
   let(:group_key) { FactoryGirl.create(:group_key) }
+  let(:picklist) { FactoryGirl.create(:picklist) }
 
   describe "GET index" do
     before(:each) do
@@ -126,7 +127,34 @@ describe PhysicalObjectsController do
       it "re-renders the :edit template" do
         expect(response).to render_template(:edit)
       end
+    end
+    describe "sets correct automatic status values:" do
+      let(:unassigned_params) { { picklist_id: nil, mdpi_barcode: 0 } }
+      let(:on_pick_list_params) { { picklist_id: picklist.id, mdpi_barcode: 0} }
+      let(:barcoded_params) { { picklist_id: picklist.id, mdpi_barcode: valid_mdpi_barcode } }
 
+      specify "Unassigned for empty params" do
+        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        physical_object.reload
+        expect(physical_object.current_workflow_status).to eq "Unassigned"
+      end
+      specify "On Pick List for picklist assignment" do
+        put :update, id: physical_object.id, physical_object: on_pick_list_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        physical_object.reload
+        expect(physical_object.current_workflow_status).to eq "On Pick List"
+      end
+      specify "Barcoded for picklist + barcode" do
+        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        physical_object.reload
+        expect(physical_object.current_workflow_status).to eq "Barcoded"
+      end
+      specify "Reverts to Unassigned after Barcoded" do
+        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        physical_object.reload
+        expect(physical_object.current_workflow_status).to eq "Unassigned"
+        expect(physical_object.workflow_statuses.size).to be >= 3 # Unassigned, Barcoded, Unassigned
+      end
     end
   end
 
@@ -172,7 +200,7 @@ describe PhysicalObjectsController do
       before(:each) do
         physical_object.box = FactoryGirl.create(:box)
         physical_object.save
-	split_show
+        split_show
       end
       include_examples "rejects action"
     end
@@ -180,7 +208,7 @@ describe PhysicalObjectsController do
       before(:each) do
         physical_object.box = FactoryGirl.create(:box)
         physical_object.save
-	split_show
+        split_show
       end
       include_examples "rejects action"
     end
@@ -284,8 +312,11 @@ describe PhysicalObjectsController do
           upload_update
           expect(flash[:notice]).to eq "Spreadsheet uploaded.<br/>2 records were successfully imported.".html_safe
         end
-        it "creates records" do
+        it "creates physical object records" do
           expect{ upload_update }.to change(PhysicalObject, :count).by(2)
+        end
+        it "creates technical metadatum records" do
+          expect{ upload_update }.to change(TechnicalMetadatum, :count).by(2)
         end
         it "creates records no older than spreadsheet" do
           upload_update
@@ -345,6 +376,11 @@ describe PhysicalObjectsController do
         physical_object.reload
         expect(physical_object.bin).to be_nil
       end
+      it "removes the Binned status" do
+	expect(physical_object.current_workflow_status).to eq "Binned"
+        physical_object.reload
+	expect(physical_object.current_workflow_status).not_to eq "Binned"
+      end
       it "redirects to the bin" do
         expect(response).to redirect_to bin
       end
@@ -381,6 +417,11 @@ describe PhysicalObjectsController do
         physical_object.reload
         expect(physical_object.box).to be_nil
       end
+      it "removes the Boxed status" do
+	expect(physical_object.current_workflow_status).to eq "Boxed"
+        physical_object.reload
+	expect(physical_object.current_workflow_status).not_to eq "Boxed"
+      end
       it "redirects to the box" do
         expect(response).to redirect_to box
       end
@@ -407,8 +448,14 @@ describe PhysicalObjectsController do
     end
     shared_examples "unpicks the object" do
       it "disassociates the object from the picklist" do
+        # not necessarily associated to a pick list to start with, under these tests
         physical_object.reload
         expect(physical_object.picklist).to be_nil
+      end
+      it "removes the On Pick List status" do
+        # not necessarily "On Pick List" to start with, under these tests
+        physical_object.reload
+	expect(physical_object.current_workflow_status).not_to eq "On Pick List"
       end
       it "disassociates other objects in the same group from the picklist" do
         physical_object.reload

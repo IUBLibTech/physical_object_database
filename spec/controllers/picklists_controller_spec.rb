@@ -195,6 +195,7 @@ describe PicklistsController do
       assign_to_container
       physical_object.reload
       expect(physical_object.bin).to be_nil
+      expect(physical_object.current_workflow_status).not_to eq "Binned"
     end
     it "assigns a physical object to a box by box_id" do
       assign_arguments[:box_id] = box.id 
@@ -217,6 +218,7 @@ describe PicklistsController do
       assign_to_container
       physical_object.reload
       expect(physical_object.box).to be_nil
+      expect(physical_object.current_workflow_status).not_to eq "Boxed"
     end
     it "sets only box when assigning both a bin and box simultaneously" do
       assign_arguments[:bin_id] = bin.id

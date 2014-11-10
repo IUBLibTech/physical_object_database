@@ -11,6 +11,7 @@ class PhysicalObject < ActiveRecord::Base
   after_initialize :assign_default_workflow_status
   before_validation :ensure_tm
   before_validation :ensure_group_key
+  before_save :assign_inferred_workflow_status
   after_save :resolve_group_position
 
   belongs_to :box
@@ -240,7 +241,9 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def inferred_workflow_status
-    if !self.bin.nil?
+    if self.current_workflow_status.in? ["Unpacked", "Returned to Unit"]
+      return self.current_workflow_status
+    elsif !self.bin.nil?
       return "Binned"
     elsif !self.box.nil?
       return "Boxed"
