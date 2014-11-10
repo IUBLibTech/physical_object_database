@@ -31,11 +31,11 @@ describe Batch do
   end
 
   it "has a default workflow status of Created" do
-    expect(duplicate.current_workflow_status.name).to eq "Created"
+    expect(duplicate.current_workflow_status).to eq "Created"
   end
 
   it "can have workflow statuses" do
-    expect(batch.workflow_statuses.size).to eq 1
+    expect(batch.workflow_statuses.size).to be >= 0
   end
 
   describe "#media_format" do
@@ -74,8 +74,8 @@ describe Batch do
   it_behaves_like "includes Workflow Status Module" do
     let(:object) { valid_batch }
     let(:default_status) { "Created" }
-    let(:new_status) { "Shipped" }
-    let(:valid_status_values) { ["Created", "Packed", "Returned", "Returned Complete", "Returned Incomplete", "Shipped", "Unpacked"] }
+    let(:new_status) { "Assigned" }
+    let(:valid_status_values) { ["Created", "Assigned", "Shipped", "Returned", "Complete"] }
     let(:class_title) { "Batch" }
   end
 

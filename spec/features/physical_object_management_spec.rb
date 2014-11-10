@@ -14,12 +14,37 @@ feature "Physical Object management" do
 
   context "signed-in user" do  
     before(:each) { sign_in }
-    scenario "tries to create a new physical object without specifying a unit" do
-      visit new_physical_object_path
-      fill_in "physical_object_title", with: "Test Title"
-      click_button "Create Physical Object"
+    context "tries to create a new physical object" do
+      scenario "without specifying a unit" do
+        visit new_physical_object_path
+        fill_in "physical_object_title", with: "Test Title"
+        click_button "Create Physical Object"
   
-      within('#error_div'){expect(page).to have_text("Unit can't be blank")}
+        within('#error_div'){expect(page).to have_text("Unit can't be blank")}
+      end
+      scenario "specifying minimal required fields" do
+        visit new_physical_object_path
+        fill_in "physical_object_title", with: "Test Title"
+        find("#physical_object_unit_id").find(:xpath, 'option[2]').select_option
+        click_button "Create Physical Object"
+  
+        within('//body/div[@class="notice"]'){expect(page).to have_text "Physical Object was successfully created."}
+      end
+      scenario "specifying a note populates signed-in username", js: true do
+        SessionInfoModule.session = { username: "user@example.com" }
+        visit new_physical_object_path
+        fill_in "physical_object_title", with: "Test Title"
+        find("#physical_object_unit_id").find(:xpath, 'option[2]').select_option
+	click_link "Add a note"
+	conclude_jquery
+	within('#notes_div') do
+	  expect(page).to have_text "Creator"
+	  expect(page).to have_selector("input[value='UNAVAILABLE']")
+	  skip "FIXME: get session username to populate, rather than default UNAVAILABLE"
+	  # expect(page).to have_selector("input[value='user@example.com']")
+	end
+	SessionInfoModule.session = nil
+      end
     end
   
     scenario "sees standard header links" do

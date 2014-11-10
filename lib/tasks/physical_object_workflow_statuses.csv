@@ -1,1 +1,8 @@
-Name,Description,IndexCreated,Record Created in the POD but no other status yet set. The default state for all physical objects.,1Verified,Physical Object general and technical metadata have been verified to be correct. This status may be skipped over depending on workflow.,2Barcoded,"An MDPI barcode has been applied. This status assumes that the object has gone through the ""verified"" status that preceeds it even though the workflow status history may not include the ""verified"" status.",3Boxed,"The item has been placed inside a Box. The physical object is not yet in a Bin. When the box is assigned its Bin, the physical object status will update to Binned.",4Binned,"The physical object has been placed in a Bin, or the Box in which the physical object is packed has been placed in the Bin.",5Shipped,The bin in which the physical object has been pack has shipped to the digitization facility.,6Returned,The Physical Object has been scanned to mark that is has come back from the digitization facility,7Reshelved,The physical object has been reshelved or returned to its storage.,8
+Name,Description,Index
+Unassigned,"The default status when new objects are created, either directly in the POD or when imported via spreadsheet WITHOUT specifying a pick list.",1
+On Pick List,The item has been added to a picklist.,2
+Barcoded,The item has been supplied with an MDPI barcode.,3
+Boxed,The item has been placed in a box.,4
+Binned,The item has been placed in a bin.,5
+Unpacked,The item has gone through the returns process.,6
+Returned to Unit,The item has been returned to the home unit.,7

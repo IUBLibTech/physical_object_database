@@ -6,8 +6,8 @@ class Batch < ActiveRecord::Base
 	#FIXME: resolve issue with FactoryGirl and after_initialize callbacks
 	after_initialize :assign_default_workflow_status
 
-
 	validates :identifier, presence: true, uniqueness: true
+	validates :workflow_status, presence: true
 
 	def physical_objects_count
 	  return bins.inject(0) { |sum, bin| sum + bin.physical_objects_count }

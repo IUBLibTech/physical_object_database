@@ -109,6 +109,12 @@ describe PhysicalObject do
     specify "must belong to a group key" do
       expect(valid_po.group_key).not_to be_nil
     end
+    specify "can have workflow statuses" do
+      expect(valid_po.workflow_statuses.size).to be >= 0
+    end
+    specify "can have condition statuses" do
+      expect(valid_po.condition_statuses.size).to be >= 0
+    end
   end
   
   describe "#generation_values" do
@@ -120,6 +126,40 @@ describe PhysicalObject do
     end
     it "includes: (blank), Original, Copy, Unknown" do
       expect(values.keys.sort).to eq ["", "Original", "Copy", "Unknown"].sort
+    end
+  end
+
+  describe "#inferred_workflow_status" do
+    it "returns Binned if binned" do
+      valid_po.bin = bin
+      expect(valid_po.inferred_workflow_status).to eq "Binned"
+    end
+    it "returns Boxed if boxed" do
+      valid_po.box = box
+      expect(valid_po.inferred_workflow_status).to eq "Boxed"
+    end
+    it "returns Barcoded if barcoded, AND on pick list" do
+      valid_po.mdpi_barcode = valid_mdpi_barcode
+      valid_po.picklist = picklist
+      expect(valid_po.inferred_workflow_status).to eq "Barcoded"
+    end
+    it "returns On Pick List if on pick list" do
+      valid_po.picklist = picklist
+      expect(valid_po.inferred_workflow_status).to eq "On Pick List"
+    end
+    it "returns Unassigned if unassigned, and barcoded" do
+      valid_po.mdpi_barcode = valid_mdpi_barcode
+      expect(valid_po.inferred_workflow_status).to eq "Unassigned"
+    end
+    it "returns Unassigned if unassigned, and not barcoded" do
+      valid_po.mdpi_barcode = "0"
+      expect(valid_po.inferred_workflow_status).to eq "Unassigned"
+    end
+    ["Unpacked", "Returned to Unit"].each do |set_status|
+      it "returns #{set_status} if already in that status" do
+        valid_po.current_workflow_status = set_status
+        expect(valid_po.inferred_workflow_status).to eq set_status
+      end
     end
   end
 
@@ -192,12 +232,12 @@ describe PhysicalObject do
       end
       it "returns box id if boxed" do
         valid_po.box = box
-	valid_po.bin = bin
-	expect(valid_po.container_id).to eq box.id
+        valid_po.bin = bin
+        expect(valid_po.container_id).to eq box.id
       end
       it "returns bin id if binned" do
         valid_po.bin = bin
-	expect(valid_po.container_id).to eq bin.id
+        expect(valid_po.container_id).to eq bin.id
       end
     end
     it "#file_prefix" do
@@ -206,10 +246,10 @@ describe PhysicalObject do
     it "#file_bext" do
       expect(valid_po.unit).not_to be_nil
       expect(valid_po.file_bext).to eq "Indiana University, Bloomington. " +
-	valid_po.unit.name + ". " +
-	(valid_po.collection_identifier.nil? ? "" : valid_po.collection_identifier + ". ") +
-	(valid_po.call_number.nil? ? "" : valid_po.call_number + ". ") +
-	"File use: "
+        valid_po.unit.name + ". " +
+        (valid_po.collection_identifier.nil? ? "" : valid_po.collection_identifier + ". ") +
+        (valid_po.call_number.nil? ? "" : valid_po.call_number + ". ") +
+        "File use: "
     end
     it "#file_icmt" do
       expect(valid_po.file_icmt).to eq valid_po.file_bext
@@ -224,6 +264,48 @@ describe PhysicalObject do
       valid_po.group_key.group_total = 42
       valid_po.group_key.save
       expect(valid_po.group_total).to eq valid_po.group_key.group_total
+    end
+    describe "#display_workflow_status" do
+      # set precursors to Binned/Boxed status
+      before(:each) do
+        valid_po.mdpi_barcode = valid_mdpi_barcode
+        valid_po.picklist = picklist
+      end
+      it "displays physical object workflow status" do
+        expect(valid_po.display_workflow_status).to match /^#{valid_po.current_workflow_status}/
+      end
+      specify "when Binned, also display bin status (if not Created)" do
+        bin.current_workflow_status = "Sealed"
+        valid_po.bin = bin
+        valid_po.assign_inferred_workflow_status
+        expect(valid_po.current_workflow_status).to eq "Binned"
+        expect(valid_po.display_workflow_status).to match />>/
+        expect(valid_po.display_workflow_status).to match /#{valid_po.bin.display_workflow_status}$/
+      end
+      specify "when Boxed (into a bin), also displays bin status (if not Created)" do
+        bin.current_workflow_status = "Sealed"
+        box.bin = bin
+        valid_po.box = box
+        valid_po.assign_inferred_workflow_status
+        expect(valid_po.current_workflow_status).to eq "Boxed"
+        expect(valid_po.display_workflow_status).to match />>/
+        expect(valid_po.display_workflow_status).to match /#{valid_po.box.bin.display_workflow_status}$/
+      end
+      specify "when Binned, also display bin status (if not Created)" do
+        bin.current_workflow_status = "Created"
+        valid_po.bin = bin
+        valid_po.assign_inferred_workflow_status
+        expect(valid_po.current_workflow_status).to eq "Binned"
+        expect(valid_po.display_workflow_status).not_to match /#{valid_po.bin.display_workflow_status}$/
+      end
+      specify "when Boxed (into a bin), supresses Bin status if Created" do
+        bin.current_workflow_status = "Created"
+        box.bin = bin
+        valid_po.box = box
+        valid_po.assign_inferred_workflow_status
+        expect(valid_po.current_workflow_status).to eq "Boxed"
+        expect(valid_po.display_workflow_status).not_to match /#{valid_po.box.bin.display_workflow_status}$/
+      end
     end
   end
 
@@ -282,9 +364,9 @@ describe PhysicalObject do
 
   it_behaves_like "includes Workflow Status Module" do
     let(:object) { valid_po }
-    let(:default_status) { "Created" }
-    let(:new_status) { "Shipped" }
-    let(:valid_status_values) { ["Created", "Verified", "Barcoded", "Boxed", "Binned", "Shipped", "Returned", "Reshelved"] }
+    let(:default_status) { "Unassigned" }
+    let(:new_status) { "Barcoded" }
+    let(:valid_status_values) { ["Unassigned", "On Pick List", "Barcoded", "Boxed", "Binned", "Unpacked", "Returned to Unit"] }
     let(:class_title) { "Physical Object" }
   end
 

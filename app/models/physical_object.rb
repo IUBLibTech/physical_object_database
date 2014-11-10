@@ -11,6 +11,7 @@ class PhysicalObject < ActiveRecord::Base
   after_initialize :assign_default_workflow_status
   before_validation :ensure_tm
   before_validation :ensure_group_key
+  before_save :assign_inferred_workflow_status
   after_save :resolve_group_position
 
   belongs_to :box
@@ -58,6 +59,7 @@ class PhysicalObject < ActiveRecord::Base
   validates :unit, presence: true
   validates :group_key, presence: true
   validates :technical_metadatum, presence: true
+  validates :workflow_status, presence: true
   validates_with PhysicalObjectValidator
 
   accepts_nested_attributes_for :technical_metadatum
@@ -238,18 +240,52 @@ class PhysicalObject < ActiveRecord::Base
     self.group_key
   end
 
+  def display_workflow_status
+    if self.current_workflow_status.in? ["Binned", "Boxed"]
+      if self.bin
+        bin_status = self.bin.display_workflow_status
+      elsif self.box and self.box.bin
+        bin_status = self.box.bin.display_workflow_status
+      else
+        bin_status = "(No bin or box assigned!)"
+      end
+    end
+    bin_status = "" if bin_status.in? [nil, "Created"]
+    addendum = ( bin_status.blank? ? "" : " >> #{bin_status}" )
+    self.current_workflow_status + addendum
+  end
+
+  def inferred_workflow_status
+    if self.current_workflow_status.in? ["Unpacked", "Returned to Unit"]
+      return self.current_workflow_status
+    elsif !self.bin.nil?
+      return "Binned"
+    elsif !self.box.nil?
+      return "Boxed"
+    # picklist assignment does not require a valid barcode, hence this extra check
+    elsif !self.picklist.nil?
+      if ApplicationHelper.real_barcode?(self.mdpi_barcode)
+        return "Barcoded"
+      else
+        return "On Pick List"
+      end  
+    else
+      return "Unassigned"
+    end
+  end
+
   def resolve_group_position
     unless self.group_key.nil?
       collisions = PhysicalObject.where(group_key_id: self.group_key_id, group_position: self.group_position).where.not(id: self.id).order(id: :asc)
       unless collisions.empty?
         #only resolve first collision, as cascade will fix others
         collisions[0].group_position += 1
-	collisions[0].save
+        collisions[0].save
       end
 
       if self.group_position > self.group_key.group_total
         self.group_key.group_total = self.group_position
-	self.group_key.save
+        self.group_key.save
       end
     end
   end

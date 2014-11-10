@@ -130,16 +130,25 @@ describe BatchesController do
   end
 
   describe "PATCH add_bin" do
-    let(:add_bin) { patch :add_bin, id: batch.id, bin_ids: [bin.id]; bin.reload }
-    it "adds bins to batch" do
-      expect(bin.batch_id).to be_nil
-      add_bin
-      expect(bin.batch_id).to eq batch.id
+    context "specifying one or more bin_ids" do
+      let(:add_bin) { patch :add_bin, id: batch.id, bin_ids: [bin.id]; bin.reload }
+      it "adds bins to batch" do
+        expect(bin.batch_id).to be_nil
+        add_bin
+        expect(bin.batch_id).to eq batch.id
+      end
+      it "sets added bins with a workflow status of Batched" do
+        expect(bin.current_workflow_status).not_to eq "Batched"
+        add_bin
+        expect(bin.current_workflow_status).to eq "Batched"
+      end
     end
-    it "sets added bins with a workflow status of Batched" do
-      expect(bin.current_workflow_status.name).not_to eq "Batched"
-      add_bin
-      expect(bin.current_workflow_status.name).to eq "Batched"
+    context "without selecting any bins" do
+      let(:add_bin) { patch :add_bin, id: batch.id }
+      it "flashes an inaction message" do
+        add_bin
+        expect(flash[:notice]).to match /No bins were selected/
+      end
     end
   end
 

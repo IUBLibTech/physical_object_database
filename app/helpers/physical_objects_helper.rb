@@ -40,10 +40,10 @@ module PhysicalObjectsHelper
       CSV.foreach(file, headers: true) do |r|
         index += 1
         if r.fields.all? { |cell| cell.nil? || cell.blank? }
-	  #silently skip blank rows; commented blank row reporting below
-	  #spreadsheet.errors.add :base, "Blank row; skipped" unless spreadsheet.errors[:base].any?
-	  #failed << [index, spreadsheet]
-	else
+          #silently skip blank rows; commented blank row reporting below
+          #spreadsheet.errors.add :base, "Blank row; skipped" unless spreadsheet.errors[:base].any?
+          #failed << [index, spreadsheet]
+        else
           #FIXME: probably can refactor this to be called once for the spreadsheet
           unit_id = nil
           unit = Unit.find_by(abbreviation: r["Unit"])
@@ -72,15 +72,15 @@ module PhysicalObjectsHelper
           bin_id = nil if !box_id.nil?
     
           current_group_key = r["Group key"]
-	  group_total = r["Group total"].to_i
-	  group_total = 1 if group_total.zero?
+          group_total = r["Group total"].to_i
+          group_total = 1 if group_total.zero?
           if current_group_key.blank?
             group_key_id = nil
           elsif
             current_group_key != previous_group_key
             group_key = GroupKey.new
-	    group_key.group_total = group_total
-	    group_key.save
+            group_key.group_total = group_total
+            group_key.save
             group_key_id = group_key.id
             previous_group_key = current_group_key
           end
@@ -99,7 +99,7 @@ module PhysicalObjectsHelper
               collection_name: r[PhysicalObject.human_attribute_name("collection_name")],
               format: r[PhysicalObject.human_attribute_name("format")],
               generation: r[PhysicalObject.human_attribute_name("generation")],
-	      group_key_id: group_key_id,
+              group_key_id: group_key_id,
               group_position: group_position,
               home_location: r[PhysicalObject.human_attribute_name("home_location")],
               iucat_barcode: r[PhysicalObject.human_attribute_name("iucat_barcode")] ? r[PhysicalObject.human_attribute_name("iucat_barcode")] : "0",
@@ -113,22 +113,23 @@ module PhysicalObjectsHelper
               year: r[PhysicalObject.human_attribute_name("year")]
             )
           po.picklist = picklist unless picklist.nil?
+          po.assign_inferred_workflow_status
           #Need extra check on box_id as we nullify bin_id for non-nil box_id
           if bin_id.nil? && r["Bin barcode"].to_i > 0 && box_id.nil?
             failed << [index, bin]
           elsif box_id.nil? && r["Box barcode"].to_i > 0
             failed << [index, box]
-	  elsif group_key_id.nil? && !current_group_key.blank?
-	    failed << [index, group_key] unless group_key.nil?
-	  elsif !po.valid?
-	    failed << [index, po]
+          elsif group_key_id.nil? && !current_group_key.blank?
+            failed << [index, group_key] unless group_key.nil?
+          elsif !po.valid?
+            failed << [index, po]
           else
             tm = po.ensure_tm
             tm.class.parse_tm(tm, r) unless tm.nil?
             if tm.nil?
               #error
-	    elsif tm.errors.any?
-	      failed << [index, tm]
+            elsif tm.errors.any?
+              failed << [index, tm]
             elsif !tm.save
               failed << [index, tm]
             elsif po.save
@@ -151,7 +152,7 @@ module PhysicalObjectsHelper
               failed << [index, po]
             end
           end
-	end
+        end
       end
       spreadsheet.created_at = spreadsheet.updated_at = Time.now
       spreadsheet.save

@@ -14,7 +14,7 @@
 			<td><%= b.name %></td>
 			<td><%= b.description %></td>
 			<td><%= b.physical_objects_count %></td>
-			<td><%= b.current_workflow_status ? b.current_workflow_status.name : "" %></td>
+			<td><%= b.current_workflow_status %></td>
 			<td>
 				<%= link_to("Show", {controller: 'batches',:action => 'show', :id => b.id}, :class => 'action show') %>
 		    <%= link_to("Edit", {controller: 'batches', :action => 'edit', :id => b.id}, :class => 'action edit') %>

@@ -1,11 +1,12 @@
 require 'rails_helper'
 
 describe WorkflowStatusTemplate do
+  # need to manually destroy after each creation, as this is a seed data table
   let(:workflow_status_template) { FactoryGirl.create(:workflow_status_template) }
   let(:valid_workflow_status_template) { FactoryGirl.build(:workflow_status_template) }
 
   describe "should be seeded with data:" do
-    seeded_values = { "Batch" => 7, "Bin" => 9, "Physical Object" => 8 }
+    seeded_values = { "Batch" => 5, "Bin" => 5, "Physical Object" => 7 }
     seeded_values.each do |object_type, count|
       it "#{count} #{object_type} status_templatees" do
         expect(WorkflowStatusTemplate.where(object_type: object_type).size).to eq count
@@ -26,12 +27,14 @@ describe WorkflowStatusTemplate do
     it "unique name (for scope of same object type)" do
       workflow_status_template
       expect(valid_workflow_status_template).not_to be_valid
+      workflow_status_template.destroy
     end
   
     it "allows duplicate names (for different object types)" do
       workflow_status_template
       valid_workflow_status_template.object_type = "Bin"
       expect(valid_workflow_status_template).to be_valid
+      workflow_status_template.destroy
     end
 
     it "requires a sequence index" do
@@ -69,6 +72,7 @@ describe WorkflowStatusTemplate do
     let(:select_options) { WorkflowStatusTemplate.select_options(workflow_status_template.object_type) }
     it "returns name/name hash" do
       expect(select_options[workflow_status_template.name]).to eq workflow_status_template.name
+      workflow_status_template.destroy
     end
   end
 

@@ -1,8 +1,4 @@
 <tr>
 	<th>Workflow Status</th>
-	<td>
-		<%= f.select :current_workflow_status, target_object.workflow_status_options, 
-				{selected: target_object.current_workflow_status.nil? ? "" : target_object.current_workflow_status.name, 
-					prompt: 'Select a workflow status...'}, disabled: !@edit_mode %>
-	</td>
+	<td><%= target_object.display_workflow_status %></td>
 </tr>

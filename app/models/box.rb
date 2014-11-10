@@ -12,7 +12,7 @@ class Box < ActiveRecord::Base
         end
 
 	def Box.packed_status_message
-          "This box has been associated to a bin. To enable packing, please remove it from the bin."
+          "This box has been associated to a bin. To enable packing, remove it from the bin."
         end
 
 	def spreadsheet_descriptor

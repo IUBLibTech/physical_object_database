@@ -1,1 +1,6 @@
-Name,Description,IndexLabelled,A label containing the unique identifier for the Bin has been attached,1Barcoded,An MDPI barcode has been affixed to the  Bin,2Packed,The Bin is full of physical objects and ready to be associated with a Batch,3Batched,The Bin has been associated with a Batch,4Shipped,The Batch to which a Bin is associated has been shipped.,5Returned,The Bin has been marked as returned from the digitization facility. This status does not indicate whether the original contents are complete.,6Returned Incomplete,The Bin was returned from the digitization facility missing original physical objects that were shipped to the facility.,7Returned Complete,The Bin was returned from the digitization facility containing all originally shipped physical objects.,8Unpacked,The Bin is empty and can be relabelled and/or re-barcoded for another shipment.,9
+Name,Description,Index
+Created,"The bin has been created, and assigned barcode, name, and label.",1
+Sealed,"The bin is full, and has been closed with a zip tie.  No more items may be added or removed from the bin.",2
+Batched,The bin has been assigned to a batch.,3
+Returned to Staging Area,The bin has been returned to the staging area for unpacking.,4
+Unpacked,The bin has been emptied of all physical objects and the physical objects were either all returned or declared not returned.,5

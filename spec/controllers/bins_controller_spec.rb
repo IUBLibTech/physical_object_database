@@ -198,8 +198,14 @@ describe BinsController do
       post :unbatch, id: bin.id
     end
     it "removes the batch association from the bin" do
+      expect(bin.batch).not_to be_nil
       bin.reload
       expect(bin.batch).to be_nil
+    end
+    it "updates the bin workflow status" do
+      expect(bin.current_workflow_status).to eq "Batched"
+      bin.reload
+      expect(bin.current_workflow_status).not_to eq "Batched"
     end
     it "redirects to :back" do
       expect(response).to redirect_to "source_page"
@@ -207,7 +213,7 @@ describe BinsController do
   end
   
   describe "GET show_boxes" do
-    context "for an unpacked bin" do
+    context "for an unsealed bin" do
       before(:each) do 
         box.bin = nil
         box.save
@@ -220,9 +226,9 @@ describe BinsController do
         expect(response).to render_template :show_boxes
       end
     end
-    context "for a packed bin" do
+    context "for a sealed bin" do
       before(:each) do
-        bin.current_workflow_status = "Packed"
+        bin.current_workflow_status = "Sealed"
         bin.save
         get :show_boxes, id: bin.id
       end
@@ -236,7 +242,7 @@ describe BinsController do
   end
  
   describe "PATCH assign_boxes" do
-    context "for an unpacked bin" do
+    context "for an unsealed bin" do
       before(:each) do
         patch :assign_boxes, id: bin.id, box_ids: [unassigned_box.id]
       end
@@ -245,9 +251,9 @@ describe BinsController do
         expect(unassigned_box.bin).to eq bin
       end
     end
-    context "for a packed bin" do
+    context "for a sealed bin" do
       before(:each) do 
-        bin.current_workflow_status = "Packed"
+        bin.current_workflow_status = "Sealed"
         bin.save
         patch :assign_boxes, id: bin.id, box_ids: [unassigned_box.id]
       end
