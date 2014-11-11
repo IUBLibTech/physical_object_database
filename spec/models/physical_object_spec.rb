@@ -306,6 +306,21 @@ describe PhysicalObject do
         expect(valid_po.current_workflow_status).to eq "Boxed"
         expect(valid_po.display_workflow_status).not_to match /#{valid_po.box.bin.display_workflow_status}$/
       end
+      specify "when Boxed (but not yet binned), only displays physical object status" do
+        bin.current_workflow_status = "Created"
+        valid_po.box = box
+        valid_po.assign_inferred_workflow_status
+        expect(valid_po.current_workflow_status).to eq "Boxed"
+        expect(valid_po.display_workflow_status).to eq "Boxed"
+      end
+      specify "when Boxed, but no box assigned, adds warning to output" do
+        valid_po.current_workflow_status = "Boxed"
+        expect(valid_po.display_workflow_status).to match /No bin or box assigned/
+      end
+      specify "when Binned, but no bin assigned, adds warning to output" do
+        valid_po.current_workflow_status = "Binned"
+        expect(valid_po.display_workflow_status).to match /No bin or box assigned/
+      end
     end
   end
 
