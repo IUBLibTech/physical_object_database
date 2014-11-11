@@ -246,7 +246,7 @@ class PhysicalObject < ActiveRecord::Base
         bin_status = self.bin.display_workflow_status
       elsif self.box and self.box.bin
         bin_status = self.box.bin.display_workflow_status
-      else
+      elsif !self.box and !self.bin
         bin_status = "(No bin or box assigned!)"
       end
     end
