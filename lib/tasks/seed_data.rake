@@ -23,6 +23,7 @@ namespace :db do
       end
       Rake::Task["db:unit_data"].invoke(type)
       Rake::Task["db:workflow_status_data"].invoke(type)
+      Rake::Task["db:condition_status_data"].invoke(type)
     end
 
   desc "Populate Unit records into database"
@@ -64,6 +65,26 @@ namespace :db do
         seed_wst(type)
       else
         puts "Invalid type argument: #{type}"
+      end
+    end
+
+  desc "Populate Condition Status Template records into database"
+    task :condition_status_data, [:type] => :environment do |task, args|
+      type = args.type || "default"
+      if type == "reseed"
+        ConditionStatusTemplate.destroy_all
+        puts "Existing Condition Status Template entries destroyed."
+      end
+      case type
+      when "default"
+        if ConditionStatusTemplate.any?
+          puts "Condition Status Template table already has values.  Skipping."
+        else
+          seed_cst(type)
+        end
+      when "add", "reseed"
+        seed_cst(type)
+      else
       end
     end
 

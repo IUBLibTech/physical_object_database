@@ -93,6 +93,7 @@ Spork.prefork do
       require "#{Rails.root}/lib/tasks/seed_data"
       seed_units("add")
       seed_wst("add")
+      seed_cst("add")
     end
     config.around(:each) do |example|
       DatabaseCleaner.strategy = :truncation, {except: config.seed_tables}

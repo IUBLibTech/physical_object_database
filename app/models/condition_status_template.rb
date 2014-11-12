@@ -7,7 +7,7 @@ class ConditionStatusTemplate < ActiveRecord::Base
         attr_accessor :object_types
         def object_types
                 {"Physical Object" => "Physical Object",
-		 "Bin" => "Bin"}
+		 "Bin" => "Bin", "Batch" => "Batch"}
         end
 	#FIXME: why is this a name/id hash, while Workflow statuses have name/name?
         def self.select_options(object_type)

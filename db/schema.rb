@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140929185527) do
+ActiveRecord::Schema.define(version: 20141111184701) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -110,6 +110,7 @@ ActiveRecord::Schema.define(version: 20140929185527) do
     t.datetime "updated_at"
     t.integer  "bin_id"
     t.string   "user"
+    t.boolean  "active"
   end
 
   add_index "condition_statuses", ["bin_id", "condition_status_template_id"], name: "index_cs_on_bin_and_cst", using: :btree

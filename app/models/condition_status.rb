@@ -22,6 +22,7 @@ class ConditionStatus < ActiveRecord::Base
 
   def default_values
     self.user ||= SessionInfoModule.session.nil? ? "UNAVAILABLE" : SessionInfoModule.session[:username]
+    self.active ||= true if self.new_record?
   end
 
 end

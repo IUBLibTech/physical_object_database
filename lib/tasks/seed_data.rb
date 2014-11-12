@@ -57,3 +57,27 @@ def seed_wst(type = "default")
     puts "#{added_count} WST record(s) added for object type: #{object_type}, #{skipped_count} skipped.\n"
   end
 end
+
+def seed_cst(type = "default")
+  seed_files = {
+    "Physical Object" => "lib/tasks/physical_object_condition_statuses.csv"
+  }
+  seed_files.each do |object_type, file|
+    cst_csv = CSV.parse(File.read(file), headers: true)
+    added_count = 0
+    skipped_count = 0
+    cst_csv.each do |status|
+      begin
+        result = ConditionStatusTemplate.create!(name: status["Name"], description: status["Description"], object_type: object_type)
+        puts "CST \##{result.id} created: #{result.name}, #{result.object_type}"
+        added_count += 1
+      rescue
+        puts "Error on CST create (#{status["Name"]}, #{object_type}): #{$!}" unless type =="add"
+        skipped_count += 1
+      ensure
+        #no op
+      end
+      puts "#{added_count} CST record(s) added for object type: #{object_type}, #{skipped_count} skipped.\n"
+    end
+  end
+end
