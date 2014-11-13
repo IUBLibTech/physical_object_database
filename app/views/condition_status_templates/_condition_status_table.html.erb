@@ -12,7 +12,7 @@
     <tr class='even'>
     <%end%>
       <td><%= row.name %></td>
-      <td><%= row.description[0, 20] %><% if row.description.length > 20 %><%= '...' %><% end %></td>
+      <td title="<%= row.name %>: <%= row.description %>"><%= row.description[0, 20] %><% if row.description.length > 20 %><%= '...' %><% end %></td>
       <td>
         <%= link_to("Show", {controller: :condition_status_templates, action: 'show', id: row.id}) %>
         <%= link_to("Edit", {controller: :condition_status_templates, action: 'edit', id: row.id}) %>
