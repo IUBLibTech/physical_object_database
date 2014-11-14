@@ -87,7 +87,7 @@ Spork.prefork do
     config.use_transactional_fixtures = false
     # tables containing seed data need to be exempted from cleaning
     config.add_setting(:seed_tables)
-    config.seed_tables = %w[ units workflow_status_templates ]
+    config.seed_tables = %w[ units workflow_status_templates condition_status_templates ]
     config.before(:suite) do
       DatabaseCleaner.clean_with(:truncation, except: config.seed_tables)
       require "#{Rails.root}/lib/tasks/seed_data"

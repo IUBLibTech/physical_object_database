@@ -361,6 +361,8 @@ describe PhysicalObject do
     end
   end
 
+  #FIXME: rewrite as shared example
+  #FIXME: rewrite status factory to select template valid for object type
   describe "includes ConditionStatusModule:" do
     let(:condition_status) { FactoryGirl.create(:condition_status, physical_object: po) }
     it "#class_title returns 'Physical Object'" do
@@ -372,6 +374,7 @@ describe PhysicalObject do
       expect(po.condition_status_options.size).to eq 1
     end
     it "#has_condition(object, status_name) returns true/false for object, status_name" do
+      condition_status
       expect(ConditionStatusModule.has_condition?(po, condition_status.name)).to be true
       expect(ConditionStatusModule.has_condition?(po, "foo")).to be false
     end

@@ -1,9 +1,8 @@
 require 'rails_helper'
 
 describe ConditionStatus do
-  let(:condition_status_template) { FactoryGirl.create(:condition_status_template) }
-  let(:condition_status) { FactoryGirl.create(:condition_status, condition_status_template: condition_status_template) }
-  let(:valid_condition_status) { FactoryGirl.build(:condition_status, condition_status_template: condition_status_template) }
+  let(:condition_status) { FactoryGirl.create(:condition_status) }
+  let(:valid_condition_status) { FactoryGirl.build(:condition_status) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
 
@@ -23,6 +22,7 @@ describe ConditionStatus do
       condition_status.save
       condition_status.reload
       valid_condition_status.physical_object = physical_object
+      valid_condition_status.condition_status_template = condition_status.condition_status_template
       expect(valid_condition_status).not_to be_valid
     end
 

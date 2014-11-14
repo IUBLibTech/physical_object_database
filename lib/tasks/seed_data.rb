@@ -12,17 +12,17 @@
 require 'csv'
 
 def seed_units(type = "default")
-  puts "Seeding Unit data."
+  puts "=== Seeding Unit data ==="
   units_csv = CSV.parse(File.read('lib/tasks/units_values.csv'), headers: true)
   added_count = 0
   skipped_count = 0
   units_csv.each do |unit|
     begin
       result = Unit.create!(abbreviation: unit["Abbreviation"], name: unit["Name"], institution: unit["Institution"], campus: unit["Campus"])
-      puts "Unit \##{result.id} created: #{result.abbreviation}, #{result.name}"
+      puts "\tUnit \##{result.id} created: #{result.abbreviation}, #{result.name}"
       added_count += 1
     rescue
-      puts "Error on Unit create (#{unit["Abbreviation"]}, #{unit["Name"]}): #{$!}" unless type == "add"
+      puts "\tError on Unit create (#{unit["Abbreviation"]}, #{unit["Name"]}): #{$!}" unless type == "add"
       skipped_count += 1
     ensure
       #no op
@@ -32,52 +32,55 @@ def seed_units(type = "default")
 end
 
 def seed_wst(type = "default")
+  puts "=== Seeding Workflow Status Template data ==="
   seed_files = {
     "Batch" => 'lib/tasks/batch_workflow_statuses.csv',
     "Bin" => 'lib/tasks/bin_workflow_statuses.csv',
     "Physical Object" => 'lib/tasks/physical_object_workflow_statuses.csv'
   }
   seed_files.each do |object_type, file|
-    puts "Seeding Workflow Status Templates for object type: #{object_type}"
+    puts "\tObject type: #{object_type}"
     wst_csv = CSV.parse(File.read(file), headers: true) 
     added_count = 0
     skipped_count = 0
     wst_csv.each do |status|
       begin
         result = WorkflowStatusTemplate.create!(name: status["Name"], description: status["Description"], sequence_index: status["Index"], object_type: object_type)
-        puts "WST \##{result.id} created: #{result.name}, #{result.object_type}"
+        puts "\t\tWST \##{result.id} created: #{result.name}, #{result.object_type}"
         added_count += 1
       rescue
-        puts "Error on WST create (#{status["Name"]}, #{object_type}): #{$!}" unless type =="add"
+        puts "\t\tError on WST create (#{status["Name"]}, #{object_type}): #{$!}" unless type =="add"
         skipped_count += 1
       ensure
         #no op
       end
     end
-    puts "#{added_count} WST record(s) added for object type: #{object_type}, #{skipped_count} skipped.\n"
+    puts "\t#{added_count} WST record(s) added for object type: #{object_type}, #{skipped_count} skipped.\n"
   end
 end
 
 def seed_cst(type = "default")
+  puts "=== Seeding Condition Status Template data ==="
   seed_files = {
     "Physical Object" => "lib/tasks/physical_object_condition_statuses.csv"
   }
   seed_files.each do |object_type, file|
+    puts "\tObject type: #{object_type}"
     cst_csv = CSV.parse(File.read(file), headers: true)
     added_count = 0
     skipped_count = 0
     cst_csv.each do |status|
       begin
         result = ConditionStatusTemplate.create!(name: status["Name"], description: status["Description"], object_type: object_type)
-        puts "CST \##{result.id} created: #{result.name}, #{result.object_type}"
+        puts "\t\tCST \##{result.id} created: #{result.name}, #{result.object_type}"
         added_count += 1
       rescue
-        puts "Error on CST create (#{status["Name"]}, #{object_type}): #{$!}" unless type =="add"
+        puts "\t\tError on CST create (#{status["Name"]}, #{object_type}): #{$!}" unless type =="add"
         skipped_count += 1
       ensure
         #no op
       end
-      puts "#{added_count} CST record(s) added for object type: #{object_type}, #{skipped_count} skipped.\n"
     end
+    puts "\t#{added_count} CST record(s) added for object type: #{object_type}, #{skipped_count} skipped.\n"
   end
 end

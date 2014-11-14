@@ -8,7 +8,7 @@ describe WorkflowStatusTemplate do
   describe "should be seeded with data:" do
     seeded_values = { "Batch" => 5, "Bin" => 5, "Physical Object" => 7 }
     seeded_values.each do |object_type, count|
-      it "#{count} #{object_type} status_templatees" do
+      it "#{count} #{object_type} status_templates" do
         expect(WorkflowStatusTemplate.where(object_type: object_type).size).to eq count
       end
     end
@@ -37,7 +37,12 @@ describe WorkflowStatusTemplate do
       workflow_status_template.destroy
     end
 
-    it "requires a sequence index" do
+    it "object type" do
+      valid_workflow_status_template.object_type = nil
+      expect(valid_workflow_status_template).not_to be_valid
+    end
+
+    it "sequence index" do
       valid_workflow_status_template.sequence_index = nil
       expect(valid_workflow_status_template).not_to be_valid
     end

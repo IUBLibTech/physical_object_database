@@ -1,1 +1,8 @@
-Name,DescriptionNot on Shelf,It was not found on shelf as expected.Missing,Item has been misplaced within the workflow.Unplayable,Item is so badly damaged that it cannot be sent to Memnon or IUCannot go to Memnon,Item cannot be shipped to Memnon. Can possibly go to IU though.Send to IU,Item should be digitized by the IU facility.Catalog Problem,Indicates that there is a problem with the catalog record for this item.Problem,A problem with the item that cannot be described by any other condition status.
+Name,Description
+Not on Shelf,It was not found on shelf as expected.
+Missing,Item has been misplaced within the workflow.
+Unplayable,Item is so badly damaged that it cannot be sent to Memnon or IU
+Cannot go to Memnon,Item cannot be shipped to Memnon. Can possibly go to IU though.
+Send to IU,Item should be digitized by the IU facility.
+Catalog Problem,Indicates that there is a problem with the catalog record for this item.
+Problem,A problem with the item that cannot be described by any other condition status.

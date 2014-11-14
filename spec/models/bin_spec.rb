@@ -132,10 +132,12 @@ describe Bin do
       expect(Bin.packed_status_message).to match /This bin has been marked as sealed/
     end
   end
-  
+ 
+  #FIXME: no bin statuses seeded
+  #FIXME: rewrite as shared example
+  #FIXME: rewrite status factory to select template valid for object type
   describe "includes ConditionStatusModule:" do
-    let(:condition_status_template) { FactoryGirl.create(:condition_status_template, object_type: "Bin") }
-    let(:condition_status) { FactoryGirl.create(:condition_status, bin: bin, condition_status_template: condition_status_template) }
+    let(:condition_status) { FactoryGirl.create(:condition_status, bin: bin) }
     it "#class_title returns 'Bin'" do
       expect(valid_bin.class_title).to eq "Bin"
     end
@@ -145,6 +147,7 @@ describe Bin do
       expect(bin.condition_status_options.size).to eq 1
     end
     it "#has_condition(object, status_name) returns true/false for object, status_name" do
+      condition_status
       expect(ConditionStatusModule.has_condition?(bin, condition_status.name)).to be true
       expect(ConditionStatusModule.has_condition?(bin, "foo")).to be false
     end
