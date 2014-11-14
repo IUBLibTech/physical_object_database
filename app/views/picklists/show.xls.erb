@@ -7,8 +7,8 @@
   <Worksheet ss:Name="Sheet1">
     <Table>
       <Row>
-        <Cell><Data ss:type="String">Picklist:</Data></Cell>
-        <Cell><Data ss:type="String"><%= @picklist.name %></Data></Cell>
+        <Cell><Data ss:Type="String">Picklist:</Data></Cell>
+        <Cell><Data ss:Type="String"><%= @picklist.name %></Data></Cell>
       </Row>
       <Row>
       <% @column_names = ['call_number', 'iucat_barcode'] %>
@@ -17,11 +17,11 @@
       <% end %>
       </Row>
       <% @physical_objects.each do |po| %>
-        <Row>
+      <Row>
           <% po.attributes.values_at(*@column_names).each do |cell_value| %>
-            <Cell><Data ss:Type="String"><%= cell_value %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= cell_value %></Data></Cell>
 	  <% end %>
-        </Row>
+      </Row>
       <% end %>
     </Table>
   </Worksheet>
