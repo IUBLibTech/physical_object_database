@@ -31,12 +31,12 @@ namespace :db do
       type = args.type || "default"
       if type == "reseed"
         Unit.destroy_all
-        puts "Existing Unit entries destroyed."
+        puts "*** Existing Unit entries destroyed. ***"
       end
       case type
       when "default"
         if Unit.any?
-          puts "Unit table already has values.  Skipping."
+          puts "--- Unit table already has values.  Skipping. ---"
         else
           seed_units(type)
         end
@@ -52,12 +52,12 @@ namespace :db do
       type = args.type || "default"
       if type == "reseed"
         WorkflowStatusTemplate.destroy_all
-        puts "Existing Workflow Status Template entries destroyed."
+        puts "*** Existing Workflow Status Template entries destroyed. ***"
       end
       case type
       when "default"
         if WorkflowStatusTemplate.any?
-          puts "Workflow Status Template table already has values.  Skipping."
+          puts "--- Workflow Status Template table already has values.  Skipping. ---"
         else
           seed_wst(type)
         end
@@ -73,18 +73,19 @@ namespace :db do
       type = args.type || "default"
       if type == "reseed"
         ConditionStatusTemplate.destroy_all
-        puts "Existing Condition Status Template entries destroyed."
+        puts "*** Existing Condition Status Template entries destroyed. ***"
       end
       case type
       when "default"
         if ConditionStatusTemplate.any?
-          puts "Condition Status Template table already has values.  Skipping."
+          puts "--- Condition Status Template table already has values.  Skipping. ---"
         else
           seed_cst(type)
         end
       when "add", "reseed"
         seed_cst(type)
       else
+        puts "Invalid type argument: #{type}"
       end
     end
 

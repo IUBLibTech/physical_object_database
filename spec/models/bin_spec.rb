@@ -132,22 +132,14 @@ describe Bin do
       expect(Bin.packed_status_message).to match /This bin has been marked as sealed/
     end
   end
-  
+
+  # it_behaves_like "includes ConditionStatusModule:"
   describe "includes ConditionStatusModule:" do
-    let(:condition_status_template) { FactoryGirl.create(:condition_status_template, object_type: "Bin") }
-    let(:condition_status) { FactoryGirl.create(:condition_status, bin: bin, condition_status_template: condition_status_template) }
-    it "#class_title returns 'Bin'" do
-      expect(valid_bin.class_title).to eq "Bin"
-    end
-    it "#condition_status_options returns status options" do
-      condition_status
-      expect(bin.condition_status_options.first.first).to eq condition_status.name
-      expect(bin.condition_status_options.size).to eq 1
-    end
-    it "#has_condition(object, status_name) returns true/false for object, status_name" do
-      expect(ConditionStatusModule.has_condition?(bin, condition_status.name)).to be true
-      expect(ConditionStatusModule.has_condition?(bin, "foo")).to be false
-    end
+    let(:condition_status) { FactoryGirl.create(:condition_status, :bin, bin: bin) }
+    let(:target_object) { bin }
+    let(:class_title) { "Bin" }
+
+    skip "No Condition Statues have been defined for Bins"
   end
 
   it_behaves_like "includes Workflow Status Module" do

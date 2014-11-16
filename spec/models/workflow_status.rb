@@ -1,11 +1,8 @@
 require 'rails_helper'
 
 describe WorkflowStatus do
-  let(:workflow_status) { FactoryGirl.create(:workflow_status) }
-  let(:valid_workflow_status) { FactoryGirl.build(:workflow_status) }
-  let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
-  let(:batch) { FactoryGirl.create(:batch) }
-  let(:bin) { FactoryGirl.create(:bin) }
+  let(:workflow_status) { FactoryGirl.create(:workflow_status, :physical_object) }
+  let(:valid_workflow_status) { FactoryGirl.build(:workflow_status, :physical_object) }
 
   it "gets a valid workflow status from FactoryGirl" do
     expect(valid_workflow_status).to be_valid
