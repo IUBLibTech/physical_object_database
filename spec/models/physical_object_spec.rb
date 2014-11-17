@@ -205,8 +205,8 @@ describe PhysicalObject do
 
   #class methods
   describe "::per_page" do
-    it "should be 30" do
-      expect(PhysicalObject.per_page).to eq 30
+    it "should be 50" do
+      expect(PhysicalObject.per_page).to eq 50
     end
   end
   describe "::to_csv" do
