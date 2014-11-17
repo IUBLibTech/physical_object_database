@@ -19,6 +19,18 @@ body {
   width: 1000px;
   margin: 0 auto;
   text-align: left;
+  height: 100%;
+}
+
+#header {
+  height: 195px;
+  position: fixed;
+  top: 0px;
+}
+
+#content {
+  margin: 200px 0 0 0;
+  width: 1000px;
 }
 
 h2 {
@@ -45,7 +57,7 @@ td.no-border {
 }
 
 #environment {
-  background: rgba(125, 18, 12, 0.45);
+  background: #C49491;
   font-family: 'Tahoma';
   font-size: 16px;
   font-weight: bold;
@@ -182,7 +194,7 @@ b.warning {
 div.notice {
     color: #1919C8;
     font-weight: bolder;
-    margin: 20px 0;
+    margin: 0px;
 }
 
 p {
@@ -211,7 +223,7 @@ img {
 }
 
 .scrollingDiv {
-  height: 400px;
+  /*height: 400px;*/
   overflow-y: scroll;
 }
 

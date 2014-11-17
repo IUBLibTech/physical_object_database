@@ -1,8 +1,21 @@
-<div class="headerDiv">
-
-</div>
 <div class="scrollingDiv">
 	<% @picklist.physical_objects.each_with_index do |p, index| %>
 		<%= render(partial: 'picklist_physical_object_form', locals: {p: p, index: index, box: box, bin: bin}) %>
 	<% end %>
 </div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		set_height();
+		$(window).resize(function(){
+    	set_height();
+		});
+	});
+	function set_height() {
+		var w = $(window).height();
+		var h = $("#header").height();
+		var n = $(".notice").height();
+		var c = $("#pl_container_div").height();
+		var scroll = w - h - n - c;
+		$(".scrollingDiv").height(scroll - 10);
+	}
+</script>

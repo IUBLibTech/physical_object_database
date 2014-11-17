@@ -10,43 +10,46 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-  <div id="branding">
-    <%= image_tag "branding.png", {alt:"POD - Physical Object Database"} %>
+  <div id="header">
+    <div id="branding">
+      <%= image_tag "branding.png", {alt:"POD - Physical Object Database"} %>
+    </div>
+    <%= environment_notice %>
+    <div id="menu">
+      <div class="menuItem">
+        <%= link_to("Physical Objects", :controller => 'physical_objects', :action => 'index') %>
+      </div>
+      <div class="menuItem">
+        <%= link_to("Batches", controller: :batches, action: :index) %>
+      </div>
+      <div class="menuItem">
+        <%= link_to 'Bins', bins_path %>
+      </div>
+      <div class="menuItem">
+        <%= link_to("Pick Lists", controller: 'picklist_specifications', action: 'index') %>
+      </div>
+      <div class="menuItem">
+        <%= link_to("Statuses", :controller => 'status_templates', :action => 'index') %>
+      </div>
+      <div class="menuItem">
+        <%= link_to("Returns", returns_path) %>
+      </div>
+      <div class="menuItem">
+        <%= link_to("Advanced Search", :controller => 'search', :action => 'index') %>
+      </div>
+      <div class="left">
+        <%= form_tag "/search/search_results", id: "basic_search_form" do %>
+          <%= label_tag :barcode, nil, class: 'white' %>
+          <%= text_field_tag :identifier, params[:identifier] %>
+          <input type="submit" value="Search" style="position: absolute; left: -999px; height: 0px; width: 0px; border: none; padding: 0px;" hidefocus="true" tabindex="-1"/>
+        <%end%>
+      </div>
+    </div>
+    <div id="contextMenu">
+      <%= yield :context_menu %>
+    </div>
   </div>
-  <%= environment_notice %>
-  <div id="menu">
-    <div class="menuItem">
-      <%= link_to("Physical Objects", :controller => 'physical_objects', :action => 'index') %>
-    </div>
-    <div class="menuItem">
-      <%= link_to("Batches", controller: :batches, action: :index) %>
-    </div>
-    <div class="menuItem">
-      <%= link_to 'Bins', bins_path %>
-    </div>
-    <div class="menuItem">
-      <%= link_to("Pick Lists", controller: 'picklist_specifications', action: 'index') %>
-    </div>
-    <div class="menuItem">
-      <%= link_to("Statuses", :controller => 'status_templates', :action => 'index') %>
-    </div>
-    <div class="menuItem">
-      <%= link_to("Returns", returns_path) %>
-    </div>
-    <div class="menuItem">
-      <%= link_to("Advanced Search", :controller => 'search', :action => 'index') %>
-    </div>
-    <div class="left">
-      <%= form_tag "/search/search_results", id: "basic_search_form" do %>
-        <%= label_tag :barcode, nil, class: 'white' %>
-        <%= text_field_tag :identifier, params[:identifier] %>
-        <input type="submit" value="Search" style="position: absolute; left: -999px; height: 0px; width: 0px; border: none; padding: 0px;" hidefocus="true" tabindex="-1"/>
-      <%end%>
-    </div>
-  </div>
-  <div id="contextMenu">
-    <%= yield :context_menu %>
-  </div>
+  <div id="content">
   <div class="notice">
     <% unless flash[:notice].blank? %>
       <%= flash[:notice]%>
@@ -54,7 +57,7 @@
   </div>
   
   <%= yield %>
-
+  </div>
 </body>
 <%# hook in all the mdpi barcode fields with their validators %>
 <script type="text/javascript">
