@@ -5,12 +5,19 @@ class GroupKey < ActiveRecord::Base
 
   validates :group_total, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
+  # default per_page value can be overriden in a request
+  self.per_page = 50
+
   def group_identifier
     "GR" + id.to_s.rjust(8, "0")
   end
 
   def spreadsheet_descriptor
     group_identifier
+  end
+
+  def physical_objects_count
+    physical_objects.size
   end
 
   private

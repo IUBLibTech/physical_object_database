@@ -6,7 +6,6 @@ class PhysicalObject < ActiveRecord::Base
   include TechnicalMetadatumModule
   extend TechnicalMetadatumClassModule
 
-
   after_initialize :default_values
   after_initialize :assign_default_workflow_status
   before_validation :ensure_tm
@@ -17,7 +16,6 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :box
   belongs_to :bin
   belongs_to :group_key
-  counter_culture :group_key
   belongs_to :picklist
   belongs_to :container
   belongs_to :spreadsheet
@@ -33,7 +31,7 @@ class PhysicalObject < ActiveRecord::Base
   accepts_nested_attributes_for :notes, allow_destroy: true
 
   # default per_page value can be overriden in a request
-  self.per_page = 30
+  self.per_page = 50
 
   # needs to be declared before the validation that uses it
   def self.formats

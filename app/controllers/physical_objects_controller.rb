@@ -132,12 +132,6 @@ class PhysicalObjectsController < ApplicationController
         tm.save
         #po is automatically saved by association
       end
-      # stopgap fix for physical object count cache
-      gk = @physical_object.group_key
-      gk.reload
-      gk.physical_objects.reload
-      gk.physical_objects_count = gk.physical_objects.size
-      gk.save
 
       flash[:notice] = "<i>#{@physical_object.title}</i> was successfully split into #{split_count} records.".html_safe
       redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)

@@ -32,15 +32,8 @@ describe GroupKey do
       grouped_physical_object
       expect(group_key.physical_objects).not_to be_empty
     end
-    it "caches physical objects count" do
+    it "provides physical objects count" do
       expect(group_key.physical_objects_count).to eq 0
-      skip "counter_culture does not seem to work with FactoryGirl"
-      #grouped_physical_object
-      #group_key.reload
-      #expect(grouped_physical_object.group_key).to eq group_key
-      #expect(group_key.physical_objects).not_to be_empty
-      #PhysicalObject.counter_culture_fix_counts
-      #expect(group_key.physical_objects_count).to eq 1
     end
     it "retains physical objects when destroyed" do
       grouped_physical_object
@@ -64,6 +57,15 @@ describe GroupKey do
     describe "spreadsheet_descriptor" do
       it "returns the group_identifier value" do
         expect(group_key.spreadsheet_descriptor).to eq group_key.group_identifier
+      end
+    end
+  end
+
+  #class methods
+  describe "has class methods:" do
+    describe "::per_page" do
+      it "should be 50" do
+        expect(GroupKey.per_page).to eq 50
       end
     end
   end

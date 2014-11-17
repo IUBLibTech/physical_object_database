@@ -5,6 +5,9 @@ class GroupKeysController < ApplicationController
   # GET /group_keys.json
   def index
     @group_keys = GroupKey.all
+    if request.format.html?
+      @group_keys = @group_keys.paginate(page: params[:page])
+    end
   end
 
   # GET /group_keys/1
