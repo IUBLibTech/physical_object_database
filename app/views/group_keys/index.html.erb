@@ -4,6 +4,15 @@
   </div>
 <% end %>
 
+<%# add pagination links only if @group_keys has been paginated %>
+<% if @group_keys.respond_to?(:total_pages) %>
+  <div class="pagination">
+    <div class="page_info">
+      <%= page_entries_info @group_keys, model: "records" %>
+    </div>
+    <%= will_paginate @group_keys, container: false %>
+  </div>
+<% end %>
 <h2>Group Keys</h2>
 <table class="list">
   <thead>

@@ -50,6 +50,7 @@
 	<%= render 'boxes/boxes_table' %>
 </div>
 <div class="left">
-	<h2>Physical Objects packed directly into this Bin: <%= @bin.physical_objects.size %></h2>
+	<h2>Physical Objects packed in this Bin</h2>
+	<span>(via boxes, or directly)</span>
 	<%= render 'physical_objects/physical_objects_table' %>
 </div>
