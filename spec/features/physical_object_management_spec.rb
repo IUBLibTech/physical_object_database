@@ -28,7 +28,7 @@ feature "Physical Object management" do
         find("#physical_object_unit_id").find(:xpath, 'option[2]').select_option
         click_button "Create Physical Object"
   
-        within('//body/div[@class="notice"]'){expect(page).to have_text "Physical Object was successfully created."}
+        within('//body/div#content/div[@class="notice"]'){expect(page).to have_text "Physical Object was successfully created."}
       end
       scenario "specifying a note populates signed-in username", js: true do
         SessionInfoModule.session = { username: "user@example.com" }
