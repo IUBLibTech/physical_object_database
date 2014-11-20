@@ -51,7 +51,7 @@ class Bin < ActiveRecord::Base
         end
 
         def Bin.packed_status_message
-          "This bin has been marked as sealed. To enable packing physical objects and assigning boxes, unseal the bin."
+          "This bin has been marked as sealed. To enable packing physical objects or assigning boxes, a bin must be unbatched and unsealed."
         end
 
         def physical_objects_count
