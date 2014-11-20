@@ -76,7 +76,7 @@ class PicklistsController < ApplicationController
 	def process_list
 		if params and params[:picklist] and params[:picklist][:id]
 			begin
-			@picklist = Picklist.find(params[:picklist][:id])
+			@picklist = Picklist.find(params[:picklist][:id]).order(:call_number)
 			# box_id or bin_id will be present if the form is "auto" populating - in which case the view will create a
 			# hidden field for the box/bin and its id attribute
 			@box = (params[:box_id] and params[:box_id].length > 0) ? Box.find(params[:box_id]) : nil
