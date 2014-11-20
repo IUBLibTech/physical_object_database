@@ -10,6 +10,7 @@ Pod::Application.routes.draw do
   resources :bins do
     post :add_barcode_item, on: :member
     post :unbatch, on: :member
+    post :unseal, on: :member
     get :show_boxes, on: :member
     patch :assign_boxes, on: :member
     resources :boxes, only: [:index, :new, :create]
