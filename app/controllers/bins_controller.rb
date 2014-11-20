@@ -1,5 +1,5 @@
 class BinsController < ApplicationController
-  before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :show_boxes, :assign_boxes]
+  before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :unseal, :show_boxes, :assign_boxes]
   before_action :set_assigned_boxes, only: [:show]
   before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
@@ -113,6 +113,26 @@ class BinsController < ApplicationController
 		  flash[:notice] = "<b class='warning'>Failed to remove this Bin from Batch.</b>".html_safe
 		end
                 redirect_to :back
+	end
+
+	def unseal
+	  case @bin.current_workflow_status
+	  when "Created"
+	    flash[:notice] = "Bin was already unsealed.  No action taken."
+	  when "Sealed"
+	    @bin.current_workflow_status = "Created"
+	    if @bin.save and @bin.current_workflow_status == "Created"
+	      flash[:notice] = "Bin workflow status has been successfully reset to Created."
+	    else
+	      flash[:notice] = "<b class='warning'>There was a problem unsealing the Bin.</b>".html_safe
+	    end
+	  when "Batched"
+	    flash[:notice] = "<b class='warning'>The Bin must be unbatched before it can be unsealed.</b>".html_safe
+	  else # Returned, Complete
+	    flash[:notice] = "<b class='warning'>Unsealing the bin is not applicable to this workflow status.</b>".html_safe
+	  end
+	  
+	  redirect_to :back
 	end
 
 	def show_boxes

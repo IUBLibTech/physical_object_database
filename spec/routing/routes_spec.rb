@@ -25,6 +25,10 @@ describe "bins" do
     expect(post("/bins/:id/unbatch")).to be_routable
   end
 
+  it "routes to unseal" do
+    expect(post("/bins/:id/unseal")).to be_routable
+  end
+
   it "routes to show_boxes" do
     expect(get("/bins/:id/show_boxes")).to be_routable
   end

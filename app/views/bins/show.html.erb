@@ -18,7 +18,11 @@
   <%= render 'bin' %>
     <% packed_status = @bin.packed_status? %>
     <% if packed_status %>
-      <div><%= Bin.packed_status_message %></div>
+      <div>
+        <h2>Sealed Bin</h2>
+        <%= Bin.packed_status_message %>
+	<%= button_to "Unseal", unseal_bin_path(@bin), disabled: (@bin.current_workflow_status != "Sealed") %>
+      </div>
     <% end %>
 	<div>
 	    <h2>Pack From Picklist</h2>
