@@ -1,6 +1,7 @@
 class PhysicalObject < ActiveRecord::Base
 
   include WorkflowStatusModule
+  extend WorkflowStatusQueryModule
   include ConditionStatusModule
   include ActiveModel::Validations
   include TechnicalMetadatumModule

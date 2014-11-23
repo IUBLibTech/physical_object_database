@@ -11,6 +11,7 @@ class Bin < ActiveRecord::Base
         after_initialize :assign_default_workflow_status
 	before_save :assign_inferred_workflow_status
         include WorkflowStatusModule
+        extend WorkflowStatusQueryModule
         has_many :condition_statuses, :dependent => :destroy
         accepts_nested_attributes_for :condition_statuses, allow_destroy: true
         include ConditionStatusModule
