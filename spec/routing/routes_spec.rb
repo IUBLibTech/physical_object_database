@@ -187,6 +187,9 @@ describe "picklists" do
 end
 
 describe "returns" do
+  it "routes to index" do
+    expect(get("/returns")).to be_routable
+  end
   it "routes to returns_bins" do
     expect(get("/returns/:id/return_bins")).to be_routable
   end

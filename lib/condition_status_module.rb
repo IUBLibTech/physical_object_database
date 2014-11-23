@@ -1,5 +1,5 @@
 # for use in objects that track condition status history
-# current list: physical objects
+# current list: physical objects, bin (but no statuses defined)
 # Requirements:
 # Object including should have has_many :condition_statuses in model
 # Object controller should permit :condition_statuses param array as a param
@@ -12,20 +12,15 @@ module ConditionStatusModule
   end
 
   def class_title
-    self.class.to_s.gsub(/([a-z])([A-Z])/, '\1 \2')
+    self.class.name.gsub(/([a-z])([A-Z])/, '\1 \2')
   end
 
-  def ConditionStatusModule.has_condition?(object, status_name)
-  	# TODO: optimize this with either a query or better ruby code
-  	cst_list = ConditionStatusTemplate.where(name: status_name, object_type: object.class.name.titleize)
-	found_flag = false
-	# TODO: rewrite to distinguish case of status_name not valid?
-	if cst_list.any?
-		cst_id = cst_list.first.id
-  		object.condition_statuses.each do |s|
-  			found_flag = true if s.condition_status_template_id == cst_id
-  		end
+  def has_condition?(status_name)
+  	cst = ConditionStatusTemplate.find_by(name: status_name, object_type: self.class_title)
+	if cst.nil?
+		return false
+	else
+		self.condition_statuses.any? { |cs| cs.condition_status_template_id == cst.id and cs.active? }
 	end
-  	found_flag
   end
 end

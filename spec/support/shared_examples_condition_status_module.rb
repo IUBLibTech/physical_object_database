@@ -10,7 +10,7 @@ shared_examples "includes ConditionStatusModule:" do
       expect(target_object.condition_status_options).to include(condition_status.name => condition_status.condition_status_template_id)
     end
     it "#has_condition(object, status_name) returns true/false for object, status_name" do
-      expect(ConditionStatusModule.has_condition?(target_object, condition_status.name)).to be true
-      expect(ConditionStatusModule.has_condition?(target_object, "Invalid Condition Status")).to be false
+      expect(target_object.has_condition?(condition_status.name)).to be true
+      expect(target_object.has_condition?("Invalid Condition Status")).to be false
     end
 end
