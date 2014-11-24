@@ -1,5 +1,5 @@
 class ReturnsController < ApplicationController
-	before_action :set_bin, only: [:return_bin, :physical_object_returned, :bin_unpacked]
+	before_action :set_bin, only: [:return_bin, :physical_object_returned, :bin_unpacked, :unload_bin]
 
 	def index
 		@batches = Batch.where(workflow_status: "Returned")
@@ -37,16 +37,45 @@ class ReturnsController < ApplicationController
 		redirect_to(action: 'return_bin', id: @bin.id)
 	end
 
-	def bin_unpacked
-		# FIXME: handle boxes, boxed objects?
-		unprocessed_objects = @bin.physical_objects.select { |po| !po.current_workflow_status.in?(["Unpacked", "Returned to Unit"]) and !po.has_condition?("Missing") }
-		if unprocessed_objects.empty?
-			@bin.update_attributes(current_workflow_status: 'Unpacked')
-			redirect_to return_bins_return_path(@bin.batch)
+	def unload_bin
+		if @bin.batch.nil?
+			flash[:notice] = "<b class='warning'>This bin is not associated to a batch.</b>".html_safe
+		elsif @bin.current_workflow_status == "Batched"
+			@bin.current_workflow_status = "Returned to Staging Area"
+			if @bin.save
+				flash[:notice] = "Bin has been successfully Returned to Staging Area."
+			else
+				flash[:notice] = "<b class='warning'>Error updating Bin workflow status.</b>".html_safe
+
+			end
+		elsif @bin.current_workflow_status.in? ["Returned to Staging Area", "Unpacked"]
+			flash[:notice] = "This Bin has already been unloaded from the Batch.  No action taken.".html_safe
 		else
-			flash[:notice] = ("<b class='warning'>There are #{unprocessed_objects.size} Physical Objects from this Bin that have either not been scanned for return or are missing. All missing items must have a condition status of <i>Missing</i> before a Bin can be marked as <i>Unpacked</i></b>").html_safe
-			redirect_to return_bin_return_path(@bin)
+			flash[:notice] = "<b class='warning'>This Bin has an unknown workflow status of #{@bin.current_workflow_status}.</b>".html_safe
+
 		end
+		redirect_to :back
+	end
+
+	# FIXME: handle boxes, boxed objects?
+	def bin_unpacked
+	  case @bin.current_workflow_status
+	  when "Unpacked"
+	    flash[:notice] = "Bin has already been marked Unpacked.  No action taken."
+	    redirect_to return_bins_return_path(@bin.batch)
+	  when "Returned to Staging Area"
+	    unprocessed_objects = @bin.physical_objects.select { |po| !po.current_workflow_status.in?(["Unpacked", "Returned to Unit"]) and !po.has_condition?("Missing") }
+	    if unprocessed_objects.empty?
+	      @bin.update_attributes(current_workflow_status: 'Unpacked')
+	      redirect_to return_bins_return_path(@bin.batch)
+	    else
+	      flash[:notice] = ("<b class='warning'>There are #{unprocessed_objects.size} Physical Objects from this Bin that have either not been scanned for return or are missing. All missing items must have a condition status of <i>Missing</i> before a Bin can be marked as <i>Unpacked</i></b>").html_safe
+	      redirect_to return_bin_return_path(@bin)
+	    end
+	  else
+	    flash[:notice] = "<b class='warning>A Bin cannot be marked Unpacked with a workflow status of #{@bin.current_workflow_status}</b>".html_safe
+	    redirect_to return_bins_return_path(@bin.batch)
+	  end
 	end
 
 	private
