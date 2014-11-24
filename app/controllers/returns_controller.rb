@@ -1,4 +1,5 @@
 class ReturnsController < ApplicationController
+	before_action :set_batch, only: [:return_bins, :batch_complete]
 	before_action :set_bin, only: [:return_bin, :physical_object_returned, :bin_unpacked, :unload_bin]
 
 	def index
@@ -6,8 +7,7 @@ class ReturnsController < ApplicationController
 	end
 
 	def return_bins
-		@batch = Batch.find(params[:id])
-		@bins = @batch.bins
+		# renders template
 	end
 
 	def return_bin
@@ -57,6 +57,28 @@ class ReturnsController < ApplicationController
 		redirect_to :back
 	end
 
+	def batch_complete
+	  if @batch.current_workflow_status == "Complete" 
+	    flash[:notice] = "The batch is already in a status of Complete.  No action taken."
+	    success = true
+	  elsif @batch.current_workflow_status == "Returned" and @batch.bins.all? { |bin| bin.current_workflow_status == "Unpacked" }
+	    @batch.current_workflow_status = "Complete"
+	    if @batch.save
+              flash[:notice] = "The Batch workflow status was successfully updated to Complete."
+	      success = true
+            else
+              flash[:notice] = "<b class='warning'>There was an error updating the status of the Batch</b>".html_safe
+            end
+	  else
+	    flash[:notice] = "<b class='warning'>The batch cannot be marked Complete unless it is in a status of Returned and all associated bins have a status of Unpacked.</b>".html_safe
+	  end
+	  if success
+            redirect_to returns_path
+	  else
+	    redirect_to return_bins_return_path(@batch)
+          end
+	end
+
 	# FIXME: handle boxes, boxed objects?
 	def bin_unpacked
 	  case @bin.current_workflow_status
@@ -79,6 +101,11 @@ class ReturnsController < ApplicationController
 	end
 
 	private
+	def set_batch
+		@batch = Batch.find(params[:id])
+		@bins = @batch.bins
+	end
+
 	def set_bin
 		@bin = Bin.find(params[:id])
 	end

@@ -251,6 +251,57 @@ describe ReturnsController do
     end
   end
 
+  describe "PATCH batch_complete (on member)" do
+    let(:patch_action) { patch :batch_complete, id: batch.id }
+    context "on a batch already Complete" do
+      before(:each) do
+        batch.current_workflow_status = "Complete"
+        batch.save
+        patch_action
+      end
+      it "flashes 'No action taken' notice" do
+        expect(flash[:notice]).to match /No action taken/
+      end
+      it "redirects to returns_path" do
+        expect(response).to redirect_to returns_path
+      end
+    end
+    context "with all bins Unpacked" do
+      before(:each) do
+        bin.current_workflow_status = "Unpacked"
+        bin.save
+        batch.current_workflow_status = "Returned"
+        batch.save
+        patch_action
+      end
+      it "updates the batch status to Complete" do
+        expect(batch.current_workflow_status).not_to eq "Complete"
+        batch.reload
+        expect(batch.current_workflow_status).to eq "Complete"
+      end
+      it "flashes a success notice" do
+        expect(flash[:notice]).to match /success/
+      end
+      it "redirects to returns_path" do
+        expect(response).to redirect_to returns_path
+      end
+    end
+    context "with NOT all bins Unpacked" do
+      before(:each) do
+        bin.save
+        batch.current_workflow_status = "Returned"
+        batch.save
+        patch_action
+      end
+      it "flashes a failure warning" do
+        expect(flash[:notice]).to match /cannot be.*Complete/
+      end
+      it "redirects to return_bins action" do
+        expect(response).to redirect_to return_bins_return_path(batch.id)
+      end
+    end
+  end
+
   describe "PATCH bin_unpacked (on member)" do
     let(:patch_action) { patch :bin_unpacked, id: bin.id }
     context "on a Bin not yet Returned to Staging Area" do

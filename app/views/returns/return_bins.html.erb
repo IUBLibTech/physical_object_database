@@ -1,4 +1,10 @@
 <h2>Returning Bins For Batch <i><%= @batch.identifier%></i></h2>
+<div>
+<p>
+The batch can be given a status of Complete after all bins have been unpacked.
+<%= button_to "Mark Bin Complete", batch_complete_return_path(@batch.id), method: :patch, disabled: @batch.bins.where("workflow_status != ?", "Unpacked").any? %>
+</p>
+</div>
 <div class="left">
 	<table>
 		<thead>
