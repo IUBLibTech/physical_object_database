@@ -46,22 +46,80 @@ describe ReturnsController do
   end
 
   describe "GET return_bin (on member)" do
+    let(:unpacked_object) { FactoryGirl.create :physical_object, :cdr, bin: bin }
+    let(:returned_object) { FactoryGirl.create :physical_object, :cdr, bin: bin }
     before(:each) do
       batch.save
       bin.save
+      physical_object.save
+      unpacked_object.current_workflow_status = "Unpacked"
+      unpacked_object.save
+      returned_object.current_workflow_status = "Returned to Unit"
+      returned_object.save
       get :return_bin, id: bin.id
     end
     it "assigns @bin" do
       expect(assigns(:bin)).to eq bin
     end
-    it "assigns @returned as Returned objects in bin" do
-      skip "Returned status is deprecated"
+    it "assigns @returned as Unpacked, Returned to Unit objects in bin" do
+      expect(assigns(:returned).sort).to eq [unpacked_object, returned_object].sort
     end
-    it "assigns @shipped as Shipped objects in bin" do
-      skip "Shipped status is deprecated"
+    it "assigns @shipped as Binned objects in bin" do
+      expect(assigns(:shipped)).to eq [physical_object]
     end
     it "renders the :return_bin view" do
       expect(response).to render_template(:return_bin)
+    end
+  end
+
+  describe "PATCH unload_bin (on member)" do
+    let(:patch_action) { patch :unload_bin, id: bin.id }
+    before(:each) { request.env["HTTP_REFERER"] = "source_page" }
+    context "on an unbatched bin" do
+      before(:each) do
+        bin.batch = nil
+        bin.save
+        patch_action
+      end
+      it "flashes an inaction message" do
+        expect(flash[:notice]).to match /not associated.*batch/
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to "source_page"
+      end
+    end
+    context "on an unloaded bin" do
+      ["Returned to Staging Area", "Unpacked"].each do |status|
+        context "in #{status} status" do
+          before(:each) do
+            bin.current_workflow_status = status
+            bin.save
+            patch_action
+          end
+          it "flashes an inaction message" do
+            expect(flash[:notice]).to match /already.*unloaded/
+          end
+          it "redirects to :back" do
+            expect(response).to redirect_to "source_page"
+          end
+        end
+      end
+    end
+    context "on a loaded bin" do
+      before(:each) do
+        patch_action
+      end
+      it "sets the bin workflow status to Returned to Staging Area" do
+        expect(bin.current_workflow_status).to eq "Batched"
+        bin.reload
+        expect(bin.current_workflow_status).to eq "Returned to Staging Area"
+      end
+      it "flashes a success message" do
+        expect(flash[:notice]).to match /success/
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to "source_page"
+      end
     end
   end
 
@@ -195,55 +253,100 @@ describe ReturnsController do
 
   describe "PATCH bin_unpacked (on member)" do
     let(:patch_action) { patch :bin_unpacked, id: bin.id }
-    context "all objects Unpacked" do
+    context "on a Bin not yet Returned to Staging Area" do
       before(:each) do
-        physical_object.current_workflow_status = "Unpacked"
-        physical_object.save
         patch_action
       end
-      it "assigns @bin" do
-        expect(assigns(:bin)).to eq bin
-      end
-      it "updates bin workflow status to Unpacked" do
-        bin.reload
-        expect(bin.current_workflow_status).to eq "Unpacked"
+      it "flashes inaction warning" do
+        expect(flash[:notice]).to match /cannot be/
       end
       it "redirects to return_bins action for batch" do
         expect(response).to redirect_to return_bins_return_path(bin.batch.id)
       end
     end
-    context "not all objects Unpacked" do
-      context "remainder unprocessed" do
+    context "on a Bin Unpacked (already)" do
+      before(:each) do
+        bin.current_workflow_status = "Unpacked"
+        bin.save
+        patch_action
+      end
+      it "flashes inaction message" do
+        expect(flash[:notice]).to match /No action taken/
+      end
+      it "redirects to return_bins action for batch" do
+        expect(response).to redirect_to return_bins_return_path(bin.batch.id)
+      end
+    end
+    context "on a Bin Returned to Staging Area" do
+      before(:each) do
+        bin.current_workflow_status = "Returned to Staging Area"
+        bin.save
+      end
+      context "all objects Unpacked" do
         before(:each) do
+          physical_object.current_workflow_status = "Unpacked"
           physical_object.save
           patch_action
         end
         it "assigns @bin" do
           expect(assigns(:bin)).to eq bin
         end
-        it "flashes a warning" do
-          expect(flash[:notice]).to match /warning/
-        end
-        it "redirects to return_bin action for bin" do
-          expect(response).to redirect_to return_bin_return_path(bin.id)
-        end
-      end
-      context "remainder marked Missing" do
-        before(:each) do
-          FactoryGirl.create :condition_status, physical_object: physical_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id
-          patch_action
-        end
-        it "assigns @bin" do
-          expect(assigns(:bin)).to eq bin
-        end
-        # FIXME: add Bin condition?
         it "updates bin workflow status to Unpacked" do
-          expect(bin.current_workflow_status).not_to eq "Unpacked"
           bin.reload
           expect(bin.current_workflow_status).to eq "Unpacked"
         end
         it "redirects to return_bins action for batch" do
           expect(response).to redirect_to return_bins_return_path(bin.batch.id)
+        end
+      end
+      context "not all objects Unpacked" do
+        context "remainder unprocessed" do
+          before(:each) do
+            physical_object.save
+            patch_action
+          end
+          it "assigns @bin" do
+            expect(assigns(:bin)).to eq bin
+          end
+          it "flashes a warning" do
+            expect(flash[:notice]).to match /warning/
+          end
+          it "redirects to return_bin action for bin" do
+            expect(response).to redirect_to return_bin_return_path(bin.id)
+          end
+        end
+        context "remainder marked Missing (inactive)" do
+          before(:each) do
+            FactoryGirl.create :condition_status, physical_object: physical_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id, active: false
+            patch_action
+          end
+          it "assigns @bin" do
+            expect(assigns(:bin)).to eq bin
+          end
+          it "flashes a warning" do
+            expect(flash[:notice]).to match /warning/
+          end
+          it "redirects to return_bin action for bin" do
+            expect(response).to redirect_to return_bin_return_path(bin.id)
+          end
+        end
+        context "remainder marked Missing (active)" do
+          before(:each) do
+            FactoryGirl.create :condition_status, physical_object: physical_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id
+            patch_action
+          end
+          it "assigns @bin" do
+            expect(assigns(:bin)).to eq bin
+          end
+          # FIXME: add Bin condition?
+          it "updates bin workflow status to Unpacked" do
+            expect(bin.current_workflow_status).not_to eq "Unpacked"
+            bin.reload
+            expect(bin.current_workflow_status).to eq "Unpacked"
+          end
+          it "redirects to return_bins action for batch" do
+            expect(response).to redirect_to return_bins_return_path(bin.batch.id)
+          end
         end
       end
     end

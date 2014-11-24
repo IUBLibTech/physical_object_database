@@ -193,6 +193,9 @@ describe "returns" do
   it "routes to returns_bins" do
     expect(get("/returns/:id/return_bins")).to be_routable
   end
+  it "routes to unload_bin" do
+    expect(patch("/returns/:id/unload_bin")).to be_routable
+  end
   it "routes to return_bin" do
     expect(get("/returns/:id/return_bin")).to be_routable
   end
