@@ -208,6 +208,9 @@ describe "returns" do
   it "routes to bin_unpacked" do
     expect(patch("/returns/:id/bin_unpacked")).to be_routable
   end
+  it "routes to batch_complete" do
+    expect(patch("/returns/:id/batch_complete")).to be_routable
+  end
 end
 
 describe "search" do
