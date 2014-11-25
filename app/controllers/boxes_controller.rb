@@ -18,15 +18,16 @@ class BoxesController < ApplicationController
   end
 
   def new
+    @bins = Bin.all
     if @bin
       @box = @bin.boxes.new(mdpi_barcode: 0)
-      #render(partial: 'minimal_new', box: @box)
     else
       @box = Box.new
     end
   end
 
   def create
+    @bins = Bin.all
     if @bin
       @box = @bin.boxes.new(box_params)
     else
@@ -44,7 +45,11 @@ class BoxesController < ApplicationController
     end
   end
 
-  #edit disabled
+  def edit
+    if request.format.html?
+      @physical_objects = @physical_objects.paginate(page: params[:page])
+    end
+  end
 
   def update
     respond_to do |format|
@@ -52,7 +57,7 @@ class BoxesController < ApplicationController
         format.html { redirect_to @box, notice: 'Box was successfully updated.' }
         format.json { render action: 'show', status: :created, location: @box }
       else
-        format.html { redirect_to @box, notice: 'Box was NOT successfully updated.' }
+        format.html { @edit_mode = true; render action: :edit }
         format.json { render json: @box.errors, status: :unprocessable_entity }
       end
     end
@@ -129,10 +134,11 @@ class BoxesController < ApplicationController
     end
     def set_box
       @box = Box.find(params[:id])
+      @bins = Bin.all
       @physical_objects = @box.physical_objects
     end
     def box_params
-      params.require(:box).permit(:mdpi_barcode, :spreadsheet, :spreadsheet_id)
+      params.require(:box).permit(:mdpi_barcode, :spreadsheet, :spreadsheet_id, :bin, :bin_id, :full, :description)
     end
 
 end

@@ -1,13 +1,12 @@
-<%= error_messages_for(@box) %>
-<h2>New Box</h2>
-<%= form_for(@box) do |f| %>
-  <table>
-    <tr>
-      <th>MDPI barcode</th>
-      <td>
-        <%= f.text_field(:mdpi_barcode, class: "mdpi") %>
-      </td>
-    </tr>
-  </table>
-  <%= f.submit('Create New Box') %>
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+          <%= link_to("Cancel", bins_path) %>
+        </div>
 <% end %>
+<div>
+  <h2>Create Box</h2>
+  <% @edit_mode = true %>
+  <% @action = "create" %>
+  <% @submit_text = "Create Box" %>
+  <%= render partial:  'box' %>
+</div>

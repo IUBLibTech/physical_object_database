@@ -104,7 +104,26 @@ describe BoxesController do
     end
   end
 
-  #edit disabled
+  describe "GET edit" do
+    before(:each) do 
+      boxed_object
+      box
+      bin
+      get :edit, id: box.id
+    end
+    it "assigns @box" do
+      expect(assigns(:box)).to eq box
+    end
+    it "assigns @bins" do
+      expect(assigns(:bins)).to eq [bin]
+    end
+    it "assigns @physical_objects" do
+      expect(assigns(:physical_objects)).to eq [boxed_object]
+    end
+    it "renders the edit template" do
+      expect(response).to render_template :edit
+    end 
+  end
 
   describe "POST create" do
     context "with valid attributes" do
@@ -154,8 +173,8 @@ describe BoxesController do
         expect(assigns(:box)).to eq box
       end
       it "does not change the object's attributes"
-      it "redirects to the object" do
-        expect(response).to redirect_to action: :show
+      it "renders the :edit template" do
+        expect(response).to render_template :edit
       end
     end
   end

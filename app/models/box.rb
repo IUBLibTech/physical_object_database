@@ -6,6 +6,7 @@ class Box < ActiveRecord::Base
 	has_many :physical_objects
 
 	validates :mdpi_barcode, mdpi_barcode: true, numericality: { greater_than: 0 }
+	before_save :default_values
 
         def packed_status?
           !self.bin.nil?
@@ -21,6 +22,11 @@ class Box < ActiveRecord::Base
 
 	def physical_objects_count
 		physical_objects.size
+	end
+
+	def default_values
+	  self.full ||= false
+	  self.description ||= ""
 	end
 
 end

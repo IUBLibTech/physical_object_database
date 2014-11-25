@@ -6,6 +6,9 @@
 			<th>
 				<%= image_tag "mdpi_barcode.png", {alt: "mdpi barcode"} %>
 			</th>
+			<th>Description</th>
+			<th>Full?</th>
+			<th>Format</th>
 			<th>Item Count</th>
 			<th>Add To Bin</th>
 		</tr>
@@ -13,6 +16,16 @@
 			<tr>
 				<td>
 					<%= b.mdpi_barcode %>
+				</td>
+				<td title="<%= b.description %>">
+					<%= b.description[0,20] %>
+					<%= '...' if b.description.length > 20 %>
+				</td>
+				<td>
+					<%= "Yes" if b.full? %>
+				</td>
+				<td>
+				        <%= b.physical_objects.any? ? b.physical_objects.first.format : "" %>
 				</td>
 				<td>
 					<%= b.physical_objects.size %>

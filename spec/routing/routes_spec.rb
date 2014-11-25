@@ -39,8 +39,8 @@ describe "bins" do
 end
 
 describe "boxes" do
-  it "does not route for box/{id}/edit" do
-    expect(get("/boxes/1/edit")).not_to be_routable
+  it "routes to edit" do
+    expect(get("/boxes/:id/edit")).to be_routable
   end
 
   it "routes to add_barcode_item" do
