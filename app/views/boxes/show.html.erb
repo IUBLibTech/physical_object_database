@@ -10,22 +10,19 @@
 <div id="box_div" class="left">
   <h2>Box</h2>
   <%= render partial: "box" %>
-  <% packed_status = @box.packed_status? %>
-  <% if packed_status %>
-    <div><%= Box.packed_status_message %></div>
-  <% end %>
   <div>
     <h2>Pack This Box</h2>
+    <%= Box.packed_status_message if @box.full? %>
     <%= form_for(@box, url: {controller: 'picklists', action: 'process_list', box_id: @box.id}) do |f| %>
       <table>
         <tr>
           <th>Select the picklist to pack this box from</th>
           <td>
-            <%= select('picklist', 'id', @picklists, {}, disabled: packed_status) %>
+            <%= select('picklist', 'id', @picklists, {}, disabled: @box.full?) %>
           </td>
         </tr>
       </table>
-      <%= f.submit("Pack Box", { disabled: packed_status }) %>
+      <%= f.submit("Pack Box", { disabled: @box.full? }) %>
     <% end %>
   </div>
 </div>

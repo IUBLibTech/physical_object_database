@@ -233,7 +233,7 @@ describe BinsController do
         get :show_boxes, id: bin.id
       end
       it "flashes packed_status_message" do
-        expect(flash[:notice]).to eq Box.packed_status_message
+        expect(flash[:notice]).to eq Bin.packed_status_message
       end
       it "redirect to :show" do
         expect(response).to redirect_to action: :show
@@ -309,7 +309,7 @@ describe BinsController do
         patch :assign_boxes, id: bin.id, box_ids: [unassigned_box.id]
       end
       it "flashes packed_status_message" do
-        expect(flash[:notice]).to eq Box.packed_status_message
+        expect(flash[:notice]).to eq Bin.packed_status_message
       end
       it "redirects to :show" do
         expect(response).to redirect_to action: :show

@@ -85,6 +85,13 @@ class PicklistsController < ApplicationController
 				flash[:notice] = "Error: #{$!}"
 		 		redirect_to(controller: 'picklist_specifications', action: 'index')
 			end
+			if @box and @box.full?
+                                flash[:notice] = "<b class='warning'>The specified box is full, and so items cannot be packed into it.</b>".html_safe
+                                redirect_to(controller: 'picklist_specifications', action: 'index')
+			elsif @bin and @bin.packed_status?
+                                flash[:notice] = "<b class='warning'>The specified bin is sealed, and so items cannot be packed into it.</b>".html_safe
+                                redirect_to(controller: 'picklist_specifications', action: 'index')
+			end
 		else
 		  flash[:notice] = "No picklist specified for processing"
 		  redirect_to(controller: 'picklist_specifications', action: 'index')

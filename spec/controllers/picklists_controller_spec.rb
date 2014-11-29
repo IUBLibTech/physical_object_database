@@ -166,6 +166,32 @@ describe PicklistsController do
       get :process_list, picklist: { id: picklist.id }
       expect(response).to render_template :process_list
     end
+    describe "rejects a full @box" do
+      before(:each) do
+        box.full = true
+        box.save
+        get :process_list, picklist: { id: picklist.id }, box_id: box.id
+      end
+      it "flashes a notice" do
+        expect(flash[:notice]).to match /cannot be packed/
+      end
+      it "redirects to the index" do
+        expect(response).to redirect_to controller: 'picklist_specifications', action: 'index'
+      end
+    end
+    describe "rejects a sealed @bin" do
+      before(:each) do
+        bin.current_workflow_status = "Sealed"
+        bin.save
+        get :process_list, picklist: { id: picklist.id }, bin_id: bin.id
+      end
+      it "flashes a notice" do
+        expect(flash[:notice]).to match /cannot be packed/
+      end
+      it "redirects to the index" do
+        expect(response).to redirect_to controller: 'picklist_specifications', action: 'index'
+      end
+    end
   end
 
   #FIXME: allow assigning to box and bin, together?

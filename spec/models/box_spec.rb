@@ -77,8 +77,8 @@ describe Box do
   end
 
   describe "::packed_status_message" do
-    it "returns a message that the Box is associated to a bin" do
-      expect(Box.packed_status_message).to match /This box has been associated to a bin/
+    it "returns a message that the Box is full" do
+      expect(Box.packed_status_message).to match /This box.*full/
     end
   end
 
