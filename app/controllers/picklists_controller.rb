@@ -176,28 +176,31 @@ class PicklistsController < ApplicationController
 		
 		# it's also possible for the form to submit a bin barcode when marking a box as packed
 		if !bin and params[:bin_barcode] and params[:bin_barcode].length > 0
-			bin = Bin.where(mdpi_barcode: params[:bin_barcode])[0]
+			bin = Bin.find_by(mdpi_barcode: params[:bin_barcode])
 		end
 
 		# use cases - box without a bin/box with bin/no box, just bin
 		Picklist.transaction do
 			if bin and !box
 				bin.current_workflow_status = "Sealed"
-				bin.save
-			elsif box and bin
-				box.bin = bin
-				box.save
-				#FIXME: update physical objects with bin?  that's not what we've been doing for bin/box associations
-				#PhysicalObject.where(box_id: box.id).update_all(bin_id: bin.id)
-				#TODO: there is no workflow status currently for boxes so in this case there is nothing to do... yet
+				if !bin.save
+					flash[:notice] = "<b class='warning'>Could not update Bin status.</b>".html_safe
+				end
 			elsif box
-				#TODO: there is no workflow status currently for boxes so in this case there is nothing to do... yet
+				box.bin = bin if bin
+				box.full = true
+				if !box.save
+					flash[:notice] = "<b class='warning'>Could not update Box status.</b>".html_safe
+				end
 			else
 				flash[:notice] = "<b class='warning'>Could not find a Bin with barcode: '<i>#{params[:bin_barcode]}</i>'</b>".html_safe
-				redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: (box ? box.id : nil))
-				return	
+
 			end
-			redirect_to(bins_path)
+		end
+		if flash[:notice]
+			redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: (box ? box.id : nil))
+		else
+			redirect_to bins_path		
 		end
 	end
 

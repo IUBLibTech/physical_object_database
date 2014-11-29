@@ -259,41 +259,63 @@ describe PicklistsController do
     let(:patch_arguments) { {bin_id: nil, box_id: nil, bin_barcode: nil} }
     let(:container_full) { patch :container_full, **patch_arguments }
     context "with box_id and bin_id argument" do
-      it "associates bin to box" do
-        expect(box.bin).to be_nil
+      before(:each) do
         patch_arguments[:bin_id] = bin.id
         patch_arguments[:box_id] = box.id
+      end
+      it "associates bin to box" do
+        expect(box.bin).to be_nil
         container_full
         box.reload
         expect(box.bin).to eq bin
       end
     end
     context "with box_id and bin_barcode argument" do
-      it "associates bin to box" do
-        expect(box.bin).to be_nil
+      before(:each) do
         patch_arguments[:bin_barcode] = bin.mdpi_barcode
         patch_arguments[:box_id] = box.id
+      end
+      it "associates bin to box" do
+        expect(box.bin).to be_nil
         container_full
         box.reload
         expect(box.bin).to eq bin
       end
+      it "sets the box as full" do
+        expect(box.full?).to be false
+        container_full
+        box.reload
+        expect(box.full?).to be true
+      end
     end
     context "with box_id argument" do
-      skip "TODO: no effect when packing box"
+      before(:each) do
+        patch_arguments[:box_id] = box.id
+      end
+      it "sets the box as full" do
+        expect(box.full?).to be false
+        container_full
+        box.reload
+        expect(box.full?).to be true
+      end
     end
     context "with bin_id argument" do
+      before(:each) do 
+	patch_arguments[:bin_id] = bin.id
+      end
       it "sets bin status to Sealed" do
         expect(bin.current_workflow_status).not_to eq "Sealed"
-	patch_arguments[:bin_id] = bin.id
 	container_full
 	bin.reload
         expect(bin.current_workflow_status).to eq "Sealed"
       end
     end
     context "with bin_barcode argument" do
+      before(:each) do
+	patch_arguments[:bin_barcode] = bin.mdpi_barcode
+      end
       it "sets bin status to Sealed" do
         expect(bin.current_workflow_status).not_to eq "Sealed"
-	patch_arguments[:bin_barcode] = bin.mdpi_barcode
 	container_full
 	bin.reload
         expect(bin.current_workflow_status).to eq "Sealed"
