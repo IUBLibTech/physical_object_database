@@ -1,11 +1,14 @@
 <h2>Assign Boxes</h2>
-<p>Select Boxes to assign to <b><i><%= @bin.identifier%></i></b></p>
+<p>Select full Boxes to assign to <b><i><%= @bin.identifier%></i></b></p>
 <%= form_for(@bin, url: {action: 'assign_boxes', id: @bin.id}) do |f| %>
 	<table>
 		<tr>
 			<th>
 				<%= image_tag "mdpi_barcode.png", {alt: "mdpi barcode"} %>
 			</th>
+			<th>Description</th>
+			<th>Full?</th>
+			<th>Format</th>
 			<th>Item Count</th>
 			<th>Add To Bin</th>
 		</tr>
@@ -14,11 +17,23 @@
 				<td>
 					<%= b.mdpi_barcode %>
 				</td>
+				<td title="<%= b.description %>">
+					<%= b.description[0,20] %>
+					<%= '...' if b.description.length > 20 %>
+				</td>
+				<td>
+					<%= "Yes" if b.full? %>
+				</td>
+				<td>
+				        <%= b.physical_objects.any? ? b.physical_objects.first.format : "" %>
+				</td>
 				<td>
 					<%= b.physical_objects.size %>
 				</td>
 				<td>
+					<% if b.full? %>
 					<%= check_box_tag 'box_ids[]', b.id, false %>
+					<% end %>
 				</td>
 			</tr>
 		<% end %>

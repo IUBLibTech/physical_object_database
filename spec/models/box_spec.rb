@@ -4,24 +4,36 @@ describe Box do
 
   let(:bin) { FactoryGirl.create :bin}
   let(:box) { FactoryGirl.create :box, bin: bin }
+  let(:valid_box) { FactoryGirl.build :box }
   let(:po) { FactoryGirl.create :physical_object, :cdr, box: box}
 
   it "gets a valid object from FactoryGirl" do
-    expect(box).to be_valid
+    expect(valid_box).to be_valid
   end
 
   describe "has required attributes" do
     it "requires a barcode" do
-      box.mdpi_barcode = nil
-      expect(box).not_to be_valid
+      valid_box.mdpi_barcode = nil
+      expect(valid_box).not_to be_valid
     end
     it "requires a valid barcode" do
-      box.mdpi_barcode = invalid_mdpi_barcode
-      expect(box).not_to be_valid
+      valid_box.mdpi_barcode = invalid_mdpi_barcode
+      expect(valid_box).not_to be_valid
     end
     it "requires a non-zero barcode" do
-      box.mdpi_barcode = 0
-      expect(box).not_to be_valid
+      valid_box.mdpi_barcode = 0
+      expect(valid_box).not_to be_valid
+    end
+  end
+
+  describe "has optional attributes:" do
+    specify "Full boolean" do
+      valid_box.full = false
+      expect(valid_box).to be_valid
+    end
+    specify "description text" do
+      valid_box.description = nil
+      expect(valid_box).to be_valid
     end
   end
 
@@ -65,8 +77,8 @@ describe Box do
   end
 
   describe "::packed_status_message" do
-    it "returns a message that the Box is associated to a bin" do
-      expect(Box.packed_status_message).to match /This box has been associated to a bin/
+    it "returns a message that the Box is full" do
+      expect(Box.packed_status_message).to match /This box.*full/
     end
   end
 

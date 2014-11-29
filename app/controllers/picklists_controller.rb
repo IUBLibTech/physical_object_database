@@ -85,6 +85,13 @@ class PicklistsController < ApplicationController
 				flash[:notice] = "Error: #{$!}"
 		 		redirect_to(controller: 'picklist_specifications', action: 'index')
 			end
+			if @box and @box.full?
+                                flash[:notice] = "<b class='warning'>The specified box is full, and so items cannot be packed into it.</b>".html_safe
+                                redirect_to(controller: 'picklist_specifications', action: 'index')
+			elsif @bin and @bin.packed_status?
+                                flash[:notice] = "<b class='warning'>The specified bin is sealed, and so items cannot be packed into it.</b>".html_safe
+                                redirect_to(controller: 'picklist_specifications', action: 'index')
+			end
 		else
 		  flash[:notice] = "No picklist specified for processing"
 		  redirect_to(controller: 'picklist_specifications', action: 'index')
@@ -128,6 +135,12 @@ class PicklistsController < ApplicationController
 		# packing a bin but the hidden bin id and the form provided bin barcode do not match up
 		elsif !@bin.nil? and bin_barcode > 0 and bin_barcode != @bin.mdpi_barcode
 			error_msg = "<b class='warning'>Attempt to assign a different bin barcode from the packing bin. Physical Object has not been packed!</b>".html_safe
+		# packing into a full box
+		elsif (@box and @box.full?) or (box and box.full?)
+			error_msg = "<b class='warning'>The specified box is full, and so items cannot be packed into it.</b>".html_safe
+		# packing into a sealed bin
+		elsif (@bin and @bin.packed_status?) or (bin and bin.packed_status?)
+			error_msg = "<b class='warning'>The specified bin is sealed, and so items cannot be packed into it.</b>".html_safe
 		#elsif (@bin or bin) and (@box or box)
 			#error_msg = "<b class='warning'>Attempt to assign to both a bin and a box.  Please select only one container type for packing.  Physical object has not been packed!</b>".html_safe
 		end
@@ -176,28 +189,31 @@ class PicklistsController < ApplicationController
 		
 		# it's also possible for the form to submit a bin barcode when marking a box as packed
 		if !bin and params[:bin_barcode] and params[:bin_barcode].length > 0
-			bin = Bin.where(mdpi_barcode: params[:bin_barcode])[0]
+			bin = Bin.find_by(mdpi_barcode: params[:bin_barcode])
 		end
 
 		# use cases - box without a bin/box with bin/no box, just bin
 		Picklist.transaction do
 			if bin and !box
 				bin.current_workflow_status = "Sealed"
-				bin.save
-			elsif box and bin
-				box.bin = bin
-				box.save
-				#FIXME: update physical objects with bin?  that's not what we've been doing for bin/box associations
-				#PhysicalObject.where(box_id: box.id).update_all(bin_id: bin.id)
-				#TODO: there is no workflow status currently for boxes so in this case there is nothing to do... yet
+				if !bin.save
+					flash[:notice] = "<b class='warning'>Could not update Bin status.</b>".html_safe
+				end
 			elsif box
-				#TODO: there is no workflow status currently for boxes so in this case there is nothing to do... yet
+				box.bin = bin if bin
+				box.full = true
+				if !box.save
+					flash[:notice] = "<b class='warning'>Could not update Box status.</b>".html_safe
+				end
 			else
 				flash[:notice] = "<b class='warning'>Could not find a Bin with barcode: '<i>#{params[:bin_barcode]}</i>'</b>".html_safe
-				redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: (box ? box.id : nil))
-				return	
+
 			end
-			redirect_to(bins_path)
+		end
+		if flash[:notice]
+			redirect_to(action: 'process_list', picklist: {id: params[:id]}, box_id: (box ? box.id : nil))
+		else
+			redirect_to bins_path		
 		end
 	end
 

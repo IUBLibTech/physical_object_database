@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141117213031) do
+ActiveRecord::Schema.define(version: 20141125154844) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -73,6 +73,8 @@ ActiveRecord::Schema.define(version: 20141117213031) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "spreadsheet_id"
+    t.boolean  "full",                     default: false
+    t.text     "description"
   end
 
   add_index "boxes", ["spreadsheet_id"], name: "index_boxes_on_spreadsheet_id", using: :btree

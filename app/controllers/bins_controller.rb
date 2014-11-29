@@ -137,14 +137,14 @@ class BinsController < ApplicationController
 
 	def show_boxes
 		if @bin.packed_status?
-		  flash[:notice] = Box.packed_status_message
+		  flash[:notice] = Bin.packed_status_message
 		  redirect_to action: :show
 		end
 	end
 
 	def assign_boxes
                 if @bin.packed_status?
-                  flash[:notice] = Box.packed_status_message
+                  flash[:notice] = Bin.packed_status_message
                   redirect_to action: :show
 		  return
                 end
@@ -167,7 +167,7 @@ class BinsController < ApplicationController
 	end
 
 	def set_unassigned_boxes
-		@boxes = Box.where(bin_id: [0, nil])
+		@boxes = Box.where(bin_id: [0, nil]).order(full: :desc)
 	end
 
 	def bin_index(bins, bin_id)

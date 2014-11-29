@@ -16,7 +16,7 @@ Pod::Application.routes.draw do
     resources :boxes, only: [:index, :new, :create]
   end
 
-  resources :boxes, except: [:edit] do
+  resources :boxes  do
     post :add_barcode_item, on: :member
     post :unbin, on: :member
   end
