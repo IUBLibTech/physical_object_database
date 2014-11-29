@@ -135,6 +135,12 @@ class PicklistsController < ApplicationController
 		# packing a bin but the hidden bin id and the form provided bin barcode do not match up
 		elsif !@bin.nil? and bin_barcode > 0 and bin_barcode != @bin.mdpi_barcode
 			error_msg = "<b class='warning'>Attempt to assign a different bin barcode from the packing bin. Physical Object has not been packed!</b>".html_safe
+		# packing into a full box
+		elsif (@box and @box.full?) or (box and box.full?)
+			error_msg = "<b class='warning'>The specified box is full, and so items cannot be packed into it.</b>".html_safe
+		# packing into a sealed bin
+		elsif (@bin and @bin.packed_status?) or (bin and bin.packed_status?)
+			error_msg = "<b class='warning'>The specified bin is sealed, and so items cannot be packed into it.</b>".html_safe
 		#elsif (@bin or bin) and (@box or box)
 			#error_msg = "<b class='warning'>Attempt to assign to both a bin and a box.  Please select only one container type for packing.  Physical object has not been packed!</b>".html_safe
 		end

@@ -194,7 +194,6 @@ describe PicklistsController do
     end
   end
 
-  #FIXME: allow assigning to box and bin, together?
   describe "PATCH assign_to_container on collection" do
     let(:assign_arguments) { {po_id: physical_object.id, physical_object: { mdpi_barcode: physical_object.mdpi_barcode, has_ephemera: physical_object.has_ephemera }, bin_id: nil, box_id: nil, bin_barcode: nil, box_barcode: nil} }
     let(:assign_to_container) { patch :assign_to_container, **assign_arguments }
@@ -245,6 +244,44 @@ describe PicklistsController do
       physical_object.reload
       expect(physical_object.box).to be_nil
       expect(physical_object.current_workflow_status).not_to eq "Boxed"
+    end
+    describe "rejects a full box" do
+      before(:each) do
+        box.full = true
+        box.save
+      end
+      after(:each) do
+        assign_to_container
+        physical_object.reload
+        expect(physical_object.box).to be_nil
+        expect(physical_object.current_workflow_status).not_to eq "Boxed"
+        expect(assigns(:error_msg)).to match /cannot be packed/
+      end
+      specify "by box_id" do
+        assign_arguments[:box_id] = box.id
+      end
+      specify "by box_barcode" do
+        assign_arguments[:box_barcode] = box.mdpi_barcode
+      end
+    end
+    describe "rejects a sealed bin" do
+      before(:each) do
+        bin.current_workflow_status = "Sealed"
+        bin.save
+      end
+      after(:each) do
+        assign_to_container
+        physical_object.reload
+        expect(physical_object.bin).to be_nil
+        expect(physical_object.current_workflow_status).not_to eq "Binned"
+        expect(assigns(:error_msg)).to match /cannot be packed/
+      end
+      specify "by bin_id" do
+        assign_arguments[:bin_id] = bin.id
+      end
+      specify "by bin_barcode" do
+        assign_arguments[:bin_barcode] = bin.mdpi_barcode
+      end
     end
     it "sets only box when assigning both a bin and box simultaneously" do
       assign_arguments[:bin_id] = bin.id
@@ -327,30 +364,30 @@ describe PicklistsController do
     end
     context "with bin_id argument" do
       before(:each) do 
-	patch_arguments[:bin_id] = bin.id
+        patch_arguments[:bin_id] = bin.id
       end
       it "sets bin status to Sealed" do
         expect(bin.current_workflow_status).not_to eq "Sealed"
-	container_full
-	bin.reload
+        container_full
+        bin.reload
         expect(bin.current_workflow_status).to eq "Sealed"
       end
     end
     context "with bin_barcode argument" do
       before(:each) do
-	patch_arguments[:bin_barcode] = bin.mdpi_barcode
+        patch_arguments[:bin_barcode] = bin.mdpi_barcode
       end
       it "sets bin status to Sealed" do
         expect(bin.current_workflow_status).not_to eq "Sealed"
-	container_full
-	bin.reload
+        container_full
+        bin.reload
         expect(bin.current_workflow_status).to eq "Sealed"
       end
     end
     context "with no box or bin" do
       it "flashes an error" do
         container_full
-	expect(flash[:notice]).to match /Could not find a Bin/
+        expect(flash[:notice]).to match /Could not find a Bin/
       end
     end
   end
