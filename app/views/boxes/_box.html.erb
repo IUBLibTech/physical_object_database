@@ -50,10 +50,10 @@
     <tr>
       <th>Assigned to Bin</th>
       <td>
-        <% if @edit_mode %>
+        <% if @edit_mode and @box.full? %>
           <%= select(:box, :bin_id, @bins.any? ? @bins.collect{|b| [b.identifier, b.id]} : [], include_blank: 'Not Assigned') %>
         <% else %>
-          <%= @box.bin.nil? ? 'Not Assigned' : link_to(@box.bin.identifier, action: 'show', id: @box.bin.id) %>
+          <%= @box.bin.nil? ? 'Not Assigned' : link_to(@box.bin.identifier, @box.bin ) %>
         <% end %>
       </td>
     </tr>

@@ -1,5 +1,5 @@
 <h2>Assign Boxes</h2>
-<p>Select Boxes to assign to <b><i><%= @bin.identifier%></i></b></p>
+<p>Select full Boxes to assign to <b><i><%= @bin.identifier%></i></b></p>
 <%= form_for(@bin, url: {action: 'assign_boxes', id: @bin.id}) do |f| %>
 	<table>
 		<tr>
@@ -31,7 +31,9 @@
 					<%= b.physical_objects.size %>
 				</td>
 				<td>
+					<% if b.full? %>
 					<%= check_box_tag 'box_ids[]', b.id, false %>
+					<% end %>
 				</td>
 			</tr>
 		<% end %>

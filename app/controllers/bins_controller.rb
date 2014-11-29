@@ -167,7 +167,7 @@ class BinsController < ApplicationController
 	end
 
 	def set_unassigned_boxes
-		@boxes = Box.where(bin_id: [0, nil])
+		@boxes = Box.where(bin_id: [0, nil]).order(full: :desc)
 	end
 
 	def bin_index(bins, bin_id)
