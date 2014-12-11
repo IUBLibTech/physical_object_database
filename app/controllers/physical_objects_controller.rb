@@ -115,18 +115,22 @@ class PhysicalObjectsController < ApplicationController
   
   def split_update
     split_count = params[:count].to_i
+    split_grouped = params[:grouped]
     if @physical_object.bin or @physical_object.box
       flash[:notice] = "This physical object must be removed from its container (bin or box) before it can be split."
       redirect_to action: :show
     elsif split_count > 1
-      @physical_object.container = Container.create
-      @physical_object.save
 
       (1...split_count).each do |i|
         po = @physical_object.dup
         po.assign_default_workflow_status
         po.mdpi_barcode = 0
-        po.group_position = @physical_object.group_position + i
+	if split_grouped
+          po.group_position = @physical_object.group_position + i
+	else
+	  po.group_position = 1
+	  po.group_key = nil
+	end
         tm = @physical_object.technical_metadatum.as_technical_metadatum.dup
         tm.physical_object = po
         tm.save
@@ -134,7 +138,11 @@ class PhysicalObjectsController < ApplicationController
       end
 
       flash[:notice] = "<i>#{@physical_object.title}</i> was successfully split into #{split_count} records.".html_safe
-      redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
+      if split_grouped
+        redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
+      else
+        redirect_to @physical_object
+      end
     else
       flash[:notice] = "<i>#{@physical_object.title}</i> was NOT split.".html_safe
       redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
