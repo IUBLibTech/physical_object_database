@@ -216,20 +216,58 @@ describe PhysicalObjectsController do
   
   describe "PATCH split_update" do
     let(:count) { 3 }
-    let(:split_update) { patch :split_update, id: physical_object.id, count: count }
+    # params[:grouped] = "on" keeps objects in same group
+    let(:split_args) { { id: physical_object.id, count: count } }
+    let(:split_update) { patch :split_update, **split_args }
     context "on an unboxed/unbinned item" do
-      it "creates additional records" do
-        physical_object
-        expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+      context "keeping the same group key" do
+        before(:each) { split_args[:grouped] = "on" }
+        it "creates additional objects" do
+          physical_object
+          expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+        end
+        it "does not create additional group keys" do
+          physical_object
+          expect{ split_update }.not_to change(GroupKey, :count)
+        end
+        it "updates group position on objects" do
+	  physical_object
+	  split_update
+	  expect(PhysicalObject.last.group_position).to eq count
+        end
+        it "flashes a success notice" do
+          split_update
+          expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+    
+        end
+        it "redirects to the group_key of the split object" do
+          split_update
+          expect(response).to redirect_to(controller: "group_keys", action: :show, id: physical_object.group_key.id)
+        end
       end
-      it "flashes a success notice" do
-        split_update
-        expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
-  
-      end
-      it "redirects to the group_key of the split object" do
-        split_update
-        expect(response).to redirect_to(controller: "group_keys", action: :show, id: physical_object.group_key.id)
+      context "changing the group key" do
+        it "creates additional objects" do
+          physical_object
+          expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+        end
+        it "creates additional group keys" do
+          physical_object
+          expect{ split_update }.to change(GroupKey, :count).by(count - 1)
+        end
+        it "does not update group position on objects" do
+          physical_object
+          split_update
+          expect(PhysicalObject.last.group_position).to eq 1
+        end
+        it "flashes a success notice" do
+          split_update
+          expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+
+        end
+        it "redirects to the split object" do
+          split_update
+          expect(response).to redirect_to physical_object
+        end
       end
     end
     shared_examples "prevents split" do
@@ -377,9 +415,9 @@ describe PhysicalObjectsController do
         expect(physical_object.bin).to be_nil
       end
       it "removes the Binned status" do
-	expect(physical_object.current_workflow_status).to eq "Binned"
+        expect(physical_object.current_workflow_status).to eq "Binned"
         physical_object.reload
-	expect(physical_object.current_workflow_status).not_to eq "Binned"
+        expect(physical_object.current_workflow_status).not_to eq "Binned"
       end
       it "redirects to the bin" do
         expect(response).to redirect_to bin
@@ -418,9 +456,9 @@ describe PhysicalObjectsController do
         expect(physical_object.box).to be_nil
       end
       it "removes the Boxed status" do
-	expect(physical_object.current_workflow_status).to eq "Boxed"
+        expect(physical_object.current_workflow_status).to eq "Boxed"
         physical_object.reload
-	expect(physical_object.current_workflow_status).not_to eq "Boxed"
+        expect(physical_object.current_workflow_status).not_to eq "Boxed"
       end
       it "redirects to the box" do
         expect(response).to redirect_to box
@@ -455,7 +493,7 @@ describe PhysicalObjectsController do
       it "removes the On Pick List status" do
         # not necessarily "On Pick List" to start with, under these tests
         physical_object.reload
-	expect(physical_object.current_workflow_status).not_to eq "On Pick List"
+        expect(physical_object.current_workflow_status).not_to eq "On Pick List"
       end
       it "disassociates other objects in the same group from the picklist" do
         physical_object.reload
