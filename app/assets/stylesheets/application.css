@@ -197,6 +197,12 @@ div.notice {
     margin: 0px;
 }
 
+div.warning {
+    color: red;
+    font-weight: bolder;
+    margin: 0px;
+}
+
 p {
   margin: 0;
 }

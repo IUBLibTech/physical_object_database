@@ -155,29 +155,27 @@ class PhysicalObjectsController < ApplicationController
   
   def upload_update
     if params[:type].nil?
-      flash[:notice] = "Please explicitly choose a picklist association (or lack thereof)"
+      flash[:notice] = "Please explicitly choose a picklist association (or lack thereof)."
     elsif params[:type].in? ["new", "existing"] and params[:picklist].nil?
-      flash[:notice] = "Please provide information on the desired picklist"
-    elsif params[:type] == "existing" and (params[:picklist][:id].nil? or params[:picklist][:id].to_i.zero?)
-      flash[:notice] = "Please select an existing picklist"
-    elsif params[:type] == "new" and (params[:picklist][:name].nil? or params[:picklist][:name].to_s.blank?)
-      flash[:notice] = "Please provide a picklist name"
+      flash[:warning] = "SYSTEM ERROR: Picklist hash not passed."
+    elsif params[:type] == "existing" and params[:picklist][:id].to_i.zero?
+      flash[:notice] = "Please select an existing picklist."
+    elsif params[:type] == "new" and params[:picklist][:name].to_s.blank?
+      flash[:notice] = "Please provide a picklist name."
     elsif params[:physical_object].nil?
-      flash[:notice] = "Please specify a file to upload"
+      flash[:notice] = "Please specify a file to upload."
     else
       @picklist = nil
-      if params[:type].in? ["new", "existing"]
-        if params[:type] == "existing"
-          @picklist = Picklist.find_by(id: params[:picklist][:id].to_i)
-          flash[:notice] = "Selected picklist not found!" if @picklist.nil?
-        elsif params[:type] == "new"
-          @picklist = Picklist.new(name: params[:picklist][:name], description: params[:picklist][:description])
-          @picklist.save
-          flash[:notice] = "Errors creating picklist:<ul>#{@picklist.errors.full_messages.each.inject('') { |output, error| output += ('<li>' + error + '</li>') }}</ul>Spreadsheet NOT uploaded.".html_safe if @picklist.errors.any?
-        end
+      if params[:type] == "existing"
+        @picklist = Picklist.find_by(id: params[:picklist][:id].to_i)
+        flash[:warning] = "SYSTEM ERROR: Selected picklist not found!<br/>Spreadsheet NOT uploaded.".html_safe if @picklist.nil?
+      elsif params[:type] == "new"
+        @picklist = Picklist.new(name: params[:picklist][:name], description: params[:picklist][:description])
+        @picklist.save
+        flash[:warning] = "Errors creating picklist:<ul>#{@picklist.errors.full_messages.each.inject('') { |output, error| output += ('<li>' + error + '</li>') }}</ul>Spreadsheet NOT uploaded.".html_safe if @picklist.errors.any?
       end
     end
-    if flash[:notice].nil? or flash[:notice].blank?
+    if flash[:notice].to_s.blank? and flash[:warning].to_s.blank?
       path = params[:physical_object][:csv_file].path
       filename = params[:physical_object][:csv_file].original_filename
       header_validation = true unless params[:header_validation] == "false"

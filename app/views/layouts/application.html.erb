@@ -51,8 +51,13 @@
   </div>
   <div id="content">
   <div class="notice">
-    <% unless flash[:notice].blank? %>
-      <%= flash[:notice]%>
+    <% unless flash[:notice].to_s.blank? %>
+      <%= flash[:notice] %>
+    <% end %>
+  </div>
+  <div class="warning">
+    <% unless flash[:warning].to_s.blank? %>
+      <%= flash[:warning] %>
     <% end %>
   </div>
   

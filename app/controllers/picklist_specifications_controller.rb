@@ -83,7 +83,7 @@ class PicklistSpecificationsController < ApplicationController
     elsif params[:po_ids].nil? or params[:po_ids].empty?
       flash[:notice] = "No objects selected, so no action taken."
     elsif params[:picklist].nil?
-      flash[:notice] = "SYSTEM ERROR: Picklist hash not passed."
+      flash[:warning] = "SYSTEM ERROR: Picklist hash not passed."
     elsif params[:type] == "existing" and params[:picklist][:id].to_i.zero?
       flash[:notice] = "No picklist selected, so no action taken."
     elsif params[:type] == "new" and params[:picklist][:name].blank?
@@ -92,15 +92,15 @@ class PicklistSpecificationsController < ApplicationController
       @picklist = nil
       if params[:type] == "existing"
         @picklist = Picklist.find_by(id: params[:picklist][:id])
-	flash[:notice] = "SYSTEM ERROR: Selected picklist not found!" if @picklist.nil?
+	flash[:warning] = "SYSTEM ERROR: Selected picklist not found!" if @picklist.nil?
       elsif params[:type] == "new"
         @picklist = Picklist.new(name: params[:picklist][:name], description: params[:picklist][:description])
         @picklist.save
-        flash[:notice] = "Errors creating picklist:<ul>#{@picklist.errors.full_messages.each.inject('') { |output, error| output += ('<li>' + error + '</li>') }}</ul>.".html_safe if @picklist.errors.any?
+        flash[:warning] = "Errors creating picklist:<ul>#{@picklist.errors.full_messages.each.inject('') { |output, error| output += ('<li>' + error + '</li>') }}</ul>.".html_safe if @picklist.errors.any?
       end
     end
     
-    if flash[:notice].nil? or flash[:notice].blank?
+    if flash[:notice].to_s.blank? and flash[:warning].to_s.blank?
       unless params[:po_ids].nil? or @picklist.nil?
         PhysicalObject.where(id: params[:po_ids]).update_all(picklist_id: @picklist.id)
 	flash[:notice] = "#{params[:po_ids].count} selected object(s) successfully added to picklist: #{@picklist.name}"

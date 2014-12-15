@@ -211,9 +211,9 @@ describe PicklistSpecificationsController do
       end
       context "providing a duplicate name" do
         let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'new', picklist: { name: picklist.name }, po_ids: [physical_object.id] }
-        it "flashes failure" do
+        it "flashes failure warning" do
           query_add
-          expect(flash[:notice]).to match /error/i
+          expect(flash[:warning]).to match /error/i
         end
       end
       context "providing a valid name" do
