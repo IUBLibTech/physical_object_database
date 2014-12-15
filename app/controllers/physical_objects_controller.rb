@@ -154,26 +154,43 @@ class PhysicalObjectsController < ApplicationController
   end
   
   def upload_update
-    if params[:physical_object].nil?
-      flash[:notice] = "Please specify a file to upload"
-      redirect_to(action: 'upload_show')
+    if params[:type].nil?
+      flash[:notice] = "Please explicitly choose a picklist association (or lack thereof)."
+    elsif params[:type].in? ["new", "existing"] and params[:picklist].nil?
+      flash[:warning] = "SYSTEM ERROR: Picklist hash not passed."
+    elsif params[:type] == "existing" and params[:picklist][:id].to_i.zero?
+      flash[:notice] = "Please select an existing picklist."
+    elsif params[:type] == "new" and params[:picklist][:name].to_s.blank?
+      flash[:notice] = "Please provide a picklist name."
+    elsif params[:physical_object].nil?
+      flash[:notice] = "Please specify a file to upload."
     else
-      @pl = nil
-      unless params[:pl][:name].length == 0
-        @pl = Picklist.new(name: params[:pl][:name], description: params[:pl][:description])
-        @pl.save
+      @picklist = nil
+      if params[:type] == "existing"
+        @picklist = Picklist.find_by(id: params[:picklist][:id].to_i)
+        flash[:warning] = "SYSTEM ERROR: Selected picklist not found!<br/>Spreadsheet NOT uploaded.".html_safe if @picklist.nil?
+      elsif params[:type] == "new"
+        @picklist = Picklist.new(name: params[:picklist][:name], description: params[:picklist][:description])
+        @picklist.save
+        flash[:warning] = "Errors creating picklist:<ul>#{@picklist.errors.full_messages.each.inject('') { |output, error| output += ('<li>' + error + '</li>') }}</ul>Spreadsheet NOT uploaded.".html_safe if @picklist.errors.any?
       end
+    end
+    if flash[:notice].to_s.blank? and flash[:warning].to_s.blank?
       path = params[:physical_object][:csv_file].path
       filename = params[:physical_object][:csv_file].original_filename
       header_validation = true unless params[:header_validation] == "false"
-      upload_results = PhysicalObjectsHelper.parse_csv(path, header_validation, @pl, filename)
+      upload_results = PhysicalObjectsHelper.parse_csv(path, header_validation, @picklist, filename)
       @spreadsheet = upload_results[:spreadsheet]
-      flash[:notice] = ("Spreadsheet " + ((@spreadsheet.nil? || @spreadsheet.id.nil?) ? "NOT " : "")  + "uploaded.<br/>").html_safe
+      flash[:notice] = "".html_safe
+      flash[:notice] = "Created picklist: #{params[:picklist][:name]}.</br>".html_safe if @picklist and params[:type] == "new"
+      flash[:notice] += ("Spreadsheet " + ((@spreadsheet.nil? || @spreadsheet.id.nil?) ? "NOT " : "")  + "uploaded.<br/>").html_safe
       flash[:notice] += "CSV headers NOT checked for validation.</br>".html_safe unless header_validation
       flash[:notice] += "#{upload_results['succeeded'].size} record" + (upload_results['succeeded'].size == 1 ? " was" : "s were") + " successfully imported.".html_safe
       if upload_results['failed'].size > 0
         @failed = upload_results['failed']
       end
+    else
+      redirect_to(action: 'upload_show')
     end
   end
 

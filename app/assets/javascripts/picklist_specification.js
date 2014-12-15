@@ -20,7 +20,7 @@ function add_to_picklist(el) {
     success: function(data) {
       jQuery("#picklist_add_div").html(data);
     }});
-	} else {
+	} else if (el == $("#new_radio")[0])  {
 		jQuery.ajax({
     url: "/picklist_specifications/new_picklist/",
     type: "GET",
@@ -29,6 +29,8 @@ function add_to_picklist(el) {
     success: function(data) {
       jQuery("#picklist_add_div").html(data);
     }});
+	} else {
+	  jQuery("#picklist_add_div").html("");
 	}
 }
 
