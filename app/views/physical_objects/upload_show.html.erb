@@ -6,68 +6,75 @@
 <%# special case where the action does not have a physical object so must be :physical_object not @physical_object %>
 <div>
 <h2>Upload Spread Sheet (CSV)</h2>
-	<p>
-		Upload a CSV file with the first row containing header names and subsequent rows containing
-		Physical Object metadata. The file must be saved in UTF-8 encoding (see below for your version of Excel).
-		See 
-		<%= link_to("this Excel spreadsheet", download_spreadsheet_example_physical_objects_path)%> 
-		for more details on file format.
-	</p>
+  <p>
+    Upload a CSV file with the first row containing header names and subsequent rows containing
+    Physical Object metadata. The file must be saved in UTF-8 encoding (see below for your version of Excel).
+    See 
+    <%= link_to("this Excel spreadsheet", download_spreadsheet_example_physical_objects_path)%> 
+    for more details on file format.
+  </p>
 </div>
 <div>
-	<%= form_for(:physical_object, :url => {:action => 'upload_update'}) do |f| %>
-		<div class="left top5" style="width: 300px">
-			<h2>Picklist</h2>
-			<p>Create a new picklist to associate imported physical objects. Otherwise leave these fields blank.</p>
-			<%= fields_for(:pl) do |pl| %>
-				<table style="width: 300px">
-					<tr>
-						<th>Name</th>
-						<td>
-							<%= pl.text_field(:name) %>
-						</td>
-					</tr>
-					<tr>
-						<th>Description</th>
-						<td>
-							<%= pl.text_area(:description) %>
-						</td>
-					</tr>
-				</table>
-			<% end %>
-		</div>
-		<div class="left top5">
-			<h2>Upload File</h2>
-		  <p>
-		  Apply column header validation: <%= select_tag :header_validation, options_for_select([["Yes", "true"], ["No", "false"]], "true") %><br/>
-		  (Turn off column header validation at your own risk.)
-		  </p>
-		  <br/>
-		  <%= f.file_field :csv_file %>
-		  <br/>
-		  <%= submit_tag("Upload")%>
-		</div>
-	<% end %>
+  <%= form_for(:physical_object, :url => {:action => 'upload_update'}) do |f| %>
+    <div class="left top5" style="width: 300px">
+      <h2>Picklist Association</h2>
+      <div>
+        <table>
+          <tr>
+            <td>No picklist association</td>
+            <td>
+              <%= radio_button_tag(:type, "none", false, {onclick: "add_to_picklist(this)", id: 'none_radio', class: 'exclusive'}) %>
+            </td>
+          </tr>
+          <tr>
+            <td>Associate objects to an existing pick list</td>
+            <td>
+              <%= radio_button_tag(:type, "existing", false, {onclick: "add_to_picklist(this)", id: 'existing_radio', class: 'exclusive'}) %>
+            </td>
+          </tr>
+          <tr>
+            <td>Associate objects to a new pick list</td>
+            <td>
+              <%= radio_button_tag(:type, "new", false, {onclick: "add_to_picklist(this)", id: 'new_radio', class: 'exclusive'}) %>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="picklist_add_div">
+      </div>
+    </div>
+    <div class="left top5">
+      <h2>Upload File</h2>
+      <p>
+      Apply column header validation: <%= select_tag :header_validation, options_for_select([["Yes", "true"], ["No", "false"]], "true") %><br/>
+      (Turn off column header validation at your own risk.)
+      </p>
+      <br/>
+      <%= f.file_field :csv_file %>
+      <br/>
+      <%= submit_tag("Upload")%>
+    </div>
+  <% end %>
 </div>
 <div class="clear top15">
-	<h2>Saving Excel to UTF-8</h2>
-		<div class="left">
-			<ol>
-				<li><b>For Excel running on Windows</b></li>
-				<li>On the save dialog, choose CSV</li>
-				<li>Under <i>Tools</i>, select <i>Web Options</i></li>
-				<li>On the Encoding tab, select UTF8</li>
-			</ol>
-		</div>
-		<div class="left">
-			<ol>
-				<li>
-					<b>For Excel running on OSX</b>
-				</li>
-				<li>Excel for Mac does not support saving to UTF8... save the file as a CSV</li>
-				<li>Open the CSV file in TextEdit</li>
-				<li>Under <i>Preferences</i>, in the <i>Plain Text File Encoding</i> section, select Unicode UTF-8</li>
-				<li>Resave the file from TextEdit</li>
-			</ol>
-		</div>
+  <h2>Saving Excel to UTF-8</h2>
+    <div class="left">
+      <ol>
+        <li><b>For Excel running on Windows</b></li>
+        <li>On the save dialog, choose CSV</li>
+        <li>Under <i>Tools</i>, select <i>Web Options</i></li>
+        <li>On the Encoding tab, select UTF8</li>
+      </ol>
+    </div>
+    <div class="left">
+      <ol>
+        <li>
+          <b>For Excel running on OSX</b>
+        </li>
+        <li>Excel for Mac does not support saving to UTF8... save the file as a CSV</li>
+        <li>Open the CSV file in TextEdit</li>
+        <li>Under <i>Preferences</i>, in the <i>Plain Text File Encoding</i> section, select Unicode UTF-8</li>
+        <li>Resave the file from TextEdit</li>
+      </ol>
+    </div>
 </div>
