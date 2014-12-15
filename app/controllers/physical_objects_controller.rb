@@ -154,7 +154,6 @@ class PhysicalObjectsController < ApplicationController
   end
   
   def upload_update
-    # TODO: add "none" as default option in picklist dropdown?
     if params[:type].nil?
       flash[:notice] = "Please explicitly choose a picklist association (or lack thereof)"
     elsif params[:type].in? ["new", "existing"] and params[:picklist].nil?
