@@ -160,22 +160,78 @@ describe PicklistSpecificationsController do
   end
 
   describe "PATCH query_add" do
+    context "with no action specified" do
+      let(:query_add) { patch :query_add, id: picklist_specification.id, type: nil, picklist: { id: picklist.id }, po_ids: [physical_object.id] }
+      it "flashes inaction" do
+        query_add
+        expect(flash[:notice]).to match /no action selected/i
+      end
+    end
+    context "with no objects selected" do
+      let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'existing', picklist: { id: picklist.id } }
+      it "flashes inaction" do
+        query_add
+        expect(flash[:notice]).to match /no objects selected/i
+      end
+    end
+    # picklist, but not found - DEV ERROR
     context "adding to an existing picklist" do
-      let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'existing', picklist: { id: picklist.id }, po_ids: [physical_object.id] }
-      it "assigns the physical object to the existing picklist" do
-        expect(physical_object.picklist).to be_nil
-	query_add
-	physical_object.reload
-	expect(physical_object.picklist).to eq picklist
+      context "NOT selecting a picklist" do
+        let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'existing', picklist: { id: "" }, po_ids: [physical_object.id] }
+        it "flashes inaction" do
+          query_add
+          expect(flash[:notice]).to match /no picklist selected/i
+        end
+      end
+      context "selecting a picklist" do
+        let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'existing', picklist: { id: picklist.id }, po_ids: [physical_object.id] }
+        it "assigns the physical object to the existing picklist" do
+          expect(physical_object.picklist).to be_nil
+          query_add
+          physical_object.reload
+          expect(physical_object.picklist).to eq picklist
+        end
+        it "flashes success" do
+          query_add
+          expect(flash[:notice]).to match /success/
+        end
+        it "redirects to query results" do
+          query_add
+          expect(response).to redirect_to(action: 'query', id: picklist_specification.id)
+        end
       end
     end
     context "adding to a new picklist" do
-      let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'new', picklist: { name: "query_add picklist" }, po_ids: [physical_object.id] }
-      it "assigns the physical object to the new picklist" do
-        expect(physical_object.picklist).to be_nil
-        query_add
-        physical_object.reload
-        expect(physical_object.picklist).not_to be_nil
+      context "not providing a name" do
+        let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'new', picklist: { name: "" }, po_ids: [physical_object.id] }
+        it "flashes inaction" do
+          query_add
+          expect(flash[:notice]).to match /no name/i
+        end
+      end
+      context "providing a duplicate name" do
+        let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'new', picklist: { name: picklist.name }, po_ids: [physical_object.id] }
+        it "flashes failure" do
+          query_add
+          expect(flash[:notice]).to match /error/i
+        end
+      end
+      context "providing a valid name" do
+        let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'new', picklist: { name: "query_add picklist" }, po_ids: [physical_object.id] }
+        it "assigns the physical object to the new picklist" do
+          expect(physical_object.picklist).to be_nil
+          query_add
+          physical_object.reload
+          expect(physical_object.picklist).not_to be_nil
+        end
+        it "flashes success" do
+          query_add
+          expect(flash[:notice]).to match /success/
+        end
+	it "redirects to query results" do
+	  query_add
+	  expect(response).to redirect_to(action: 'query', id: picklist_specification.id)
+	end
       end
     end
   end

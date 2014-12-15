@@ -1,110 +1,121 @@
 class PicklistSpecificationsController < ApplicationController
-	before_action :set_picklist_specification, only: [:show, :edit, :update, :destroy, :query]
-	before_action :set_picklist_dropdown, only: [:query, :picklist_list]
+  before_action :set_picklist_specification, only: [:show, :edit, :update, :destroy, :query]
+  before_action :set_picklist_dropdown, only: [:query, :picklist_list]
 
-	def index
-		@picklist_specs = PicklistSpecification.all
-		@picklists = Picklist.all
-	end
+  def index
+    @picklist_specs = PicklistSpecification.all
+    @picklists = Picklist.all
+  end
 
-	def new
-		@formats = PhysicalObject.formats
-		@edit_mode = true
-		@ps = PicklistSpecification.new(id: 0, format: "CD-R")
-		@tm = @ps.ensure_tm
-		@action = 'create'
-		@submit_text = "Create New Picklist Specification"
-	end
+  def new
+    @formats = PhysicalObject.formats
+    @edit_mode = true
+    @ps = PicklistSpecification.new(id: 0, format: "CD-R")
+    @tm = @ps.ensure_tm
+    @action = 'create'
+    @submit_text = "Create New Picklist Specification"
+  end
 
-	def create
-		@ps = PicklistSpecification.new(picklist_specification_params)
-		@tm = @ps.ensure_tm
-		if @ps.save and @tm.update_attributes(tm_params)
-			flash[:notice] = "Picklist Specification was successfully created".html_safe
-			redirect_to action: :index
-		else
-			@edit_mode = true
-			render :new
-		end
-	end
+  def create
+    @ps = PicklistSpecification.new(picklist_specification_params)
+    @tm = @ps.ensure_tm
+    if @ps.save and @tm.update_attributes(tm_params)
+      flash[:notice] = "Picklist Specification was successfully created".html_safe
+      redirect_to action: :index
+    else
+      @edit_mode = true
+      render :new
+    end
+  end
 
-	def edit
-		@edit_mode = true
-		@action = 'update'
-		@submit_text = "Update Picklist Specification"
-	end
+  def edit
+    @edit_mode = true
+    @action = 'update'
+    @submit_text = "Update Picklist Specification"
+  end
 
-	def update
-		PicklistSpecification.transaction do 
-		  if ! @ps.update_attributes(picklist_specification_params)
-		    @edit_mode = true
-		    flash[:notice] = "Failed to update #{@ps.name}."
-		    render :edit
+  def update
+    PicklistSpecification.transaction do 
+      if ! @ps.update_attributes(picklist_specification_params)
+        @edit_mode = true
+        flash[:notice] = "Failed to update #{@ps.name}."
+        render :edit
                   else
-		    @tm = @ps.ensure_tm
-		    if @tm.update_attributes(tm_params)
-		      flash[:notice] = "#{@ps.name} successfully updated."
-		      redirect_to action: :index
-		    else
+        @tm = @ps.ensure_tm
+        if @tm.update_attributes(tm_params)
+          flash[:notice] = "#{@ps.name} successfully updated."
+          redirect_to action: :index
+        else
                       @edit_mode = true
-		      flash[:notice] = "Failed to update #{@ps.name}."
+          flash[:notice] = "Failed to update #{@ps.name}."
                       render :edit
-		    end
+        end
                   end
-		end
-	end
+    end
+  end
 
-	def show
-		@edit_mode = false
-	end
+  def show
+    @edit_mode = false
+  end
 
-	def destroy
-		if @ps.destroy
-			flash[:notice] = "#{@ps.name} was successfully deleted."
-		else
-			flash[:warning] = "#{@ps.name} could not be deleted."
-		end
-		redirect_to action: :index
-	end
+  def destroy
+    if @ps.destroy
+      flash[:notice] = "#{@ps.name} was successfully deleted."
+    else
+      flash[:warning] = "#{@ps.name} could not be deleted."
+    end
+    redirect_to action: :index
+  end
 
-	def query
-		po = PhysicalObject.new(format: @ps.format)
-		po.technical_metadatum = @ps.technical_metadatum
-		@physical_objects = po.physical_object_query(true)
-		flash[:notice] = "Results for #{@ps.name}"
-	
-		@edit_mode = true
-		@action = 'query_add'
-		@submit_text = "Add Selected Objects to Picklist"
-	end
+  def query
+    po = PhysicalObject.new(format: @ps.format)
+    po.technical_metadatum = @ps.technical_metadatum
+    @physical_objects = po.physical_object_query(true)
+  
+    @edit_mode = true
+    @action = 'query_add'
+    @submit_text = "Add Selected Objects to Picklist"
+  end
 
-	def query_add
+  def query_add
+    if params[:type].nil?
+      flash[:notice] = 'No action selected, so no action taken.'
+    elsif params[:po_ids].nil? or params[:po_ids].empty?
+      flash[:notice] = "No objects selected, so no action taken."
+    elsif params[:picklist].nil?
+      flash[:notice] = "SYSTEM ERROR: Picklist hash not passed."
+    elsif params[:type] == "existing" and params[:picklist][:id].to_i.zero?
+      flash[:notice] = "No picklist selected, so no action taken."
+    elsif params[:type] == "new" and params[:picklist][:name].blank?
+      flash[:notice] = "No name specified for new picklist, so no action taken."
+    else
+      @picklist = nil
+      if params[:type] == "existing"
+        @picklist = Picklist.find_by(id: params[:picklist][:id])
+	flash[:notice] = "SYSTEM ERROR: Selected picklist not found!" if @picklist.nil?
+      elsif params[:type] == "new"
+        @picklist = Picklist.new(name: params[:picklist][:name], description: params[:picklist][:description])
+        @picklist.save
+        flash[:notice] = "Errors creating picklist:<ul>#{@picklist.errors.full_messages.each.inject('') { |output, error| output += ('<li>' + error + '</li>') }}</ul>.".html_safe if @picklist.errors.any?
+      end
+    end
+    
+    if flash[:notice].nil? or flash[:notice].blank?
+      unless params[:po_ids].nil? or @picklist.nil?
+        PhysicalObject.where(id: params[:po_ids]).update_all(picklist_id: @picklist.id)
+	flash[:notice] = "#{params[:po_ids].count} selected object(s) successfully added to picklist: #{@picklist.name}"
+      end
+    end
+    redirect_to(action: 'query', id: params[:id])
+  end
 
-		# three checks here; no mode (new/existing) selected, or existing selected but no picklist selected, or
-		# a new picklist without a name specified
-		unless params[:type].nil? or params[:picklist].nil? or (params[:type] == "new" and params[:picklist][:name].nil?)
-			@picklist = params[:type] == "existing" ? 
-				Picklist.find(params[:picklist][:id]) : 
-				Picklist.new(name: params[:picklist][:name], description: params[:picklist][:description])
-			unless params[:type] == "existing"
-				@picklist.save
-			end
-			unless params[:po_ids].nil?
-					params[:po_ids].each do |po|
-						PhysicalObject.find(po).update_attributes(picklist_id: @picklist.id)
-					end
-			end
-		end
-		redirect_to(action: 'query', id: params[:id])
-	end
+  def picklist_list
+    render(partial: "picklists/picklist_list")
+  end
 
-	def picklist_list
-		render(partial: "picklists/picklist_list")
-	end
-
-	def new_picklist
-		render(partial: "picklists/new_picklist")
-	end
+  def new_picklist
+    render(partial: "picklists/new_picklist")
+  end
 
   private
     def set_picklist_specification
@@ -121,19 +132,19 @@ class PicklistSpecificationsController < ApplicationController
       params.require(:ps).permit(:format, :name, :description)
     end
 
-	def format_tm_where(tm)
-		q = ""
-		stm = tm.as_technical_metadatum
-		stm.attributes.each do |name, value|
-			if name == 'id' or name == 'created_at' or name == 'updated_at'
-				next
-			else
-				if !value.nil? and value.length > 0
-					q << " AND open_reel_tms.#{name}='#{value}'"
-				end
-			end
-		end
-		q
-	end
-	
+  def format_tm_where(tm)
+    q = ""
+    stm = tm.as_technical_metadatum
+    stm.attributes.each do |name, value|
+      if name == 'id' or name == 'created_at' or name == 'updated_at'
+        next
+      else
+        if !value.nil? and value.length > 0
+          q << " AND open_reel_tms.#{name}='#{value}'"
+        end
+      end
+    end
+    q
+  end
+  
 end
