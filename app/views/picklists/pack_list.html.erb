@@ -1,0 +1,8 @@
+<div id="pl_container_div">
+	<% if (@box or @bin) %>
+		<h2>Packing <%= @box ? "Box" : "Bin" %> <i><%= @box ? @box.mdpi_barcode : @bin.identifier %></i> From Picklist <i><%= @picklist.name %></i></h2>
+	<% else %>
+		<h2>Manually Associating Items From Pick List <i><%= @picklist.name %></i></h2>
+	<% end %>
+</div>
+<%= render 'physical_objects/physical_object_form' %>

@@ -86,12 +86,70 @@ class PicklistsController < ApplicationController
 		 		redirect_to(controller: 'picklist_specifications', action: 'index')
 			end
 			if @box and @box.full?
-                                flash[:notice] = "<b class='warning'>The specified box is full, and so items cannot be packed into it.</b>".html_safe
-                                redirect_to(controller: 'picklist_specifications', action: 'index')
+        flash[:notice] = "<b class='warning'>The specified box is full, and so items cannot be packed into it.</b>".html_safe
+        redirect_to(controller: 'picklist_specifications', action: 'index')
 			elsif @bin and @bin.packed_status?
-                                flash[:notice] = "<b class='warning'>The specified bin is sealed, and so items cannot be packed into it.</b>".html_safe
-                                redirect_to(controller: 'picklist_specifications', action: 'index')
+        flash[:notice] = "<b class='warning'>The specified bin is sealed, and so items cannot be packed into it.</b>".html_safe
+				redirect_to(controller: 'picklist_specifications', action: 'index')
 			end
+		else
+		  flash[:notice] = "No picklist specified for processing"
+		  redirect_to(controller: 'picklist_specifications', action: 'index')
+		end
+	end
+
+	# pack list can be reached in the following ways
+	# 1) Packing from a specific bin/box without specifying a physical object
+	# 	 params will hold the pick list id and the container id
+	# 2) Packing from a specific bin/box specifying a physical object to pack with (find specific item on the pick list)
+	# 	 params will hold pick list id, container id, and physical object id
+	# 3) Manually packing without specifying a physical object (find first unpacked item on the pick list) 
+	# 	 params will hold only pick list id
+	# 4) Manually packing specifying a physical object (look up that object)
+	# 	 params will hold pick list id and physical object id
+	# 5) A return trip from packing/skipping/splitting a physical object 
+	# 	 params will hold pick list id, physical object id of whatever WAS packed/skipped/split, and packing_mode  
+	# 	 specifying what happened to that physical object
+
+	def pack_list
+		if params and params[:picklist] and params[:picklist][:id]
+			@picklist = Picklist.find(params[:picklist][:id])
+			if params[:box_id] and params[:box_id].length > 0
+				@box = Box.find(params[:box_id])
+				session[:current_packing_box] = @box.id
+			elsif session[:current_packing_box]
+				@box = Box.find(session[:current_packing_box])
+			end
+
+			if params[:bin_id] and params[:bin_id].length > 0
+				@bin = Bin.find(params[:bin_id])
+				session[:current_packing_bin] = @bin.id
+			elsif session[:current_packing_bin]
+				@bin = Bin.find(session[:current_packing_bin])
+			end
+			
+			packing_mode ||= params[:packing_mode]
+			
+			if packing_mode
+				last_po = PhysicalObject.find(params[:physical_object][:id])
+				verb = (packing_mode == "Pack" ? "Packed" : (packing_mode == "Skip" ? "Skipped" : packing_mode))
+				flash[:notice] = "Physical Object <i>#{last_po.call_number}</i> was #{verb}".html_safe
+				@physical_object = PhysicalObject.where("id > ?", params[:physical_object][:id]).where(
+					picklist_id: @picklist.id, 
+					box_id: nil, 
+					bin_id: nil, 
+					).order(:call_number).first
+			else
+				@physical_object = params[:physical_object] ? 
+					PhysicalObject.where(picklist_id: @picklist.id, id: params[:physical_object][:id]).order(:call_number).first : 
+					PhysicalObject.where(picklist_id: @picklist.id, box_id: nil, bin_id: nil).first
+			end
+			
+			@edit_mode = true
+			@picklisting = true
+			@display_assigned = true
+			@physical_object.bin = @bin
+			@physical_object.box = @box
 		else
 		  flash[:notice] = "No picklist specified for processing"
 		  redirect_to(controller: 'picklist_specifications', action: 'index')
@@ -228,7 +286,6 @@ class PicklistsController < ApplicationController
 		  end
 		  @picklist = Picklist.find(params[:id])
 		  @physical_objects = @picklist.physical_objects
-
 		end
 
 		def picklist_params
