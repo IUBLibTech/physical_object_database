@@ -115,18 +115,22 @@ class PhysicalObjectsController < ApplicationController
   
   def split_update
     split_count = params[:count].to_i
+    split_grouped = params[:grouped]
     if @physical_object.bin or @physical_object.box
       flash[:notice] = "This physical object must be removed from its container (bin or box) before it can be split."
       redirect_to action: :show
     elsif split_count > 1
-      @physical_object.container = Container.create
-      @physical_object.save
 
       (1...split_count).each do |i|
         po = @physical_object.dup
         po.assign_default_workflow_status
         po.mdpi_barcode = 0
-        po.group_position = @physical_object.group_position + i
+	if split_grouped
+          po.group_position = @physical_object.group_position + i
+	else
+	  po.group_position = 1
+	  po.group_key = nil
+	end
         tm = @physical_object.technical_metadatum.as_technical_metadatum.dup
         tm.physical_object = po
         tm.save
@@ -134,7 +138,11 @@ class PhysicalObjectsController < ApplicationController
       end
 
       flash[:notice] = "<i>#{@physical_object.title}</i> was successfully split into #{split_count} records.".html_safe
-      redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
+      if split_grouped
+        redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
+      else
+        redirect_to @physical_object
+      end
     else
       flash[:notice] = "<i>#{@physical_object.title}</i> was NOT split.".html_safe
       redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
@@ -146,26 +154,43 @@ class PhysicalObjectsController < ApplicationController
   end
   
   def upload_update
-    if params[:physical_object].nil?
-      flash[:notice] = "Please specify a file to upload"
-      redirect_to(action: 'upload_show')
+    if params[:type].nil?
+      flash[:notice] = "Please explicitly choose a picklist association (or lack thereof)."
+    elsif params[:type].in? ["new", "existing"] and params[:picklist].nil?
+      flash[:warning] = "SYSTEM ERROR: Picklist hash not passed."
+    elsif params[:type] == "existing" and params[:picklist][:id].to_i.zero?
+      flash[:notice] = "Please select an existing picklist."
+    elsif params[:type] == "new" and params[:picklist][:name].to_s.blank?
+      flash[:notice] = "Please provide a picklist name."
+    elsif params[:physical_object].nil?
+      flash[:notice] = "Please specify a file to upload."
     else
-      @pl = nil
-      unless params[:pl][:name].length == 0
-        @pl = Picklist.new(name: params[:pl][:name], description: params[:pl][:description])
-        @pl.save
+      @picklist = nil
+      if params[:type] == "existing"
+        @picklist = Picklist.find_by(id: params[:picklist][:id].to_i)
+        flash[:warning] = "SYSTEM ERROR: Selected picklist not found!<br/>Spreadsheet NOT uploaded.".html_safe if @picklist.nil?
+      elsif params[:type] == "new"
+        @picklist = Picklist.new(name: params[:picklist][:name], description: params[:picklist][:description])
+        @picklist.save
+        flash[:warning] = "Errors creating picklist:<ul>#{@picklist.errors.full_messages.each.inject('') { |output, error| output += ('<li>' + error + '</li>') }}</ul>Spreadsheet NOT uploaded.".html_safe if @picklist.errors.any?
       end
+    end
+    if flash[:notice].to_s.blank? and flash[:warning].to_s.blank?
       path = params[:physical_object][:csv_file].path
       filename = params[:physical_object][:csv_file].original_filename
       header_validation = true unless params[:header_validation] == "false"
-      upload_results = PhysicalObjectsHelper.parse_csv(path, header_validation, @pl, filename)
+      upload_results = PhysicalObjectsHelper.parse_csv(path, header_validation, @picklist, filename)
       @spreadsheet = upload_results[:spreadsheet]
-      flash[:notice] = ("Spreadsheet " + ((@spreadsheet.nil? || @spreadsheet.id.nil?) ? "NOT " : "")  + "uploaded.<br/>").html_safe
+      flash[:notice] = "".html_safe
+      flash[:notice] = "Created picklist: #{params[:picklist][:name]}.</br>".html_safe if @picklist and params[:type] == "new"
+      flash[:notice] += ("Spreadsheet " + ((@spreadsheet.nil? || @spreadsheet.id.nil?) ? "NOT " : "")  + "uploaded.<br/>").html_safe
       flash[:notice] += "CSV headers NOT checked for validation.</br>".html_safe unless header_validation
       flash[:notice] += "#{upload_results['succeeded'].size} record" + (upload_results['succeeded'].size == 1 ? " was" : "s were") + " successfully imported.".html_safe
       if upload_results['failed'].size > 0
         @failed = upload_results['failed']
       end
+    else
+      redirect_to(action: 'upload_show')
     end
   end
 

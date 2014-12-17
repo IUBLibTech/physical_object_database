@@ -216,20 +216,58 @@ describe PhysicalObjectsController do
   
   describe "PATCH split_update" do
     let(:count) { 3 }
-    let(:split_update) { patch :split_update, id: physical_object.id, count: count }
+    # params[:grouped] = "on" keeps objects in same group
+    let(:split_args) { { id: physical_object.id, count: count } }
+    let(:split_update) { patch :split_update, **split_args }
     context "on an unboxed/unbinned item" do
-      it "creates additional records" do
-        physical_object
-        expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+      context "keeping the same group key" do
+        before(:each) { split_args[:grouped] = "on" }
+        it "creates additional objects" do
+          physical_object
+          expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+        end
+        it "does not create additional group keys" do
+          physical_object
+          expect{ split_update }.not_to change(GroupKey, :count)
+        end
+        it "updates group position on objects" do
+	  physical_object
+	  split_update
+	  expect(PhysicalObject.last.group_position).to eq count
+        end
+        it "flashes a success notice" do
+          split_update
+          expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+    
+        end
+        it "redirects to the group_key of the split object" do
+          split_update
+          expect(response).to redirect_to(controller: "group_keys", action: :show, id: physical_object.group_key.id)
+        end
       end
-      it "flashes a success notice" do
-        split_update
-        expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
-  
-      end
-      it "redirects to the group_key of the split object" do
-        split_update
-        expect(response).to redirect_to(controller: "group_keys", action: :show, id: physical_object.group_key.id)
+      context "changing the group key" do
+        it "creates additional objects" do
+          physical_object
+          expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+        end
+        it "creates additional group keys" do
+          physical_object
+          expect{ split_update }.to change(GroupKey, :count).by(count - 1)
+        end
+        it "does not update group position on objects" do
+          physical_object
+          split_update
+          expect(PhysicalObject.last.group_position).to eq 1
+        end
+        it "flashes a success notice" do
+          split_update
+          expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+
+        end
+        it "redirects to the split object" do
+          split_update
+          expect(response).to redirect_to physical_object
+        end
       end
     end
     shared_examples "prevents split" do
@@ -273,62 +311,146 @@ describe PhysicalObjectsController do
   end
 
   describe "POST upload_update" do
-    context "without specifying a file" do
+    describe "without choosing a picklist association option" do
       before(:each) { post :upload_update }
       it "flashes a notice" do
-        expect(flash[:notice]).to eq "Please specify a file to upload"
+        expect(flash[:notice]).to match /choose.*picklist association/
       end
       it "redirects to upload_show" do
         expect(response).to redirect_to(action: :upload_show)
       end
     end
-
+    describe "associating to a new picklist" do
+      context "not providing a name" do
+        before(:each) { post :upload_update, type: "new", picklist: {} }
+        it "flashes a notice" do
+          expect(flash[:notice]).to match /picklist.*name/
+        end
+        it "redirects to upload_show" do
+          expect(response).to redirect_to(action: :upload_show)
+        end
+      end
+    end
+    describe "without specifying a file" do
+      before(:each) { post :upload_update, type: "none" }
+      it "flashes a notice" do
+        expect(flash[:notice]).to match /please.*specify.*file/i
+      end
+      it "redirects to upload_show" do
+        expect(response).to redirect_to(action: :upload_show)
+      end
+    end
     describe "with invalid columns headers" do
       context "running header validation" do
-        let(:upload_update) { post :upload_update, pl: {name: "", description: ""}, physical_object: { csv_file: fixture_file_upload('files/po_import_invalid_headers.csv', 'text/csv') } }
+        let(:upload_update) { post :upload_update, type: "none", physical_object: { csv_file: fixture_file_upload('files/po_import_invalid_headers.csv', 'text/csv') } }
         it "should NOT create a spreadsheet object" do
           expect{ upload_update}.not_to change(Spreadsheet, :count)
         end
       end
       context "skipping header validation" do
-        let(:upload_update) { post :upload_update, pl: {name: "", description: ""}, physical_object: { csv_file: fixture_file_upload('files/po_import_invalid_headers.csv', 'text/csv') }, header_validation: "false" }
+        let(:upload_update) { post :upload_update, type: "none", physical_object: { csv_file: fixture_file_upload('files/po_import_invalid_headers.csv', 'text/csv') }, header_validation: "false" }
         it "should create a spreadsheet object" do
           expect{ upload_update}.to change(Spreadsheet, :count).by(1)
         end
       end
     end
 
+    shared_examples "upload results" do |filename|
+      it "should create a spreadsheet object" do
+        expect{ upload_update }.to change(Spreadsheet, :count).by(1)
+        expect(Spreadsheet.last.filename).to eq filename
+      end
+      it "flashes a success notice" do
+        upload_update
+        expect(flash[:notice]).to match /Spreadsheet uploaded.<br\/>2 records were successfully imported./
+      end
+      it "creates physical object records" do
+        expect{ upload_update }.to change(PhysicalObject, :count).by(2)
+      end
+      it "creates technical metadatum records" do
+        expect{ upload_update }.to change(TechnicalMetadatum, :count).by(2)
+      end
+      it "creates records no older than spreadsheet" do
+        upload_update
+        spreadsheet = Spreadsheet.last
+        objects = PhysicalObject.where(spreadsheet_id: spreadsheet.id)
+        objects.each do |object|
+          expect(object.updated_at).to be <= spreadsheet.created_at
+        end
+      end
+      it "fails if repeated, due to duplicate filename" do
+        upload_update
+        expect{ upload_update }.not_to change(Spreadsheet, :count)
+      end
+    end
+
     ["po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv"].each do |filename|
-      context "specifying a file (#{filename}) and picklist" do
-        let(:upload_update) { post :upload_update, pl: { name: "Test picklist", description: "Test description"}, physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } }
-        it "should create a spreadsheet object" do
-          expect{ upload_update }.to change(Spreadsheet, :count).by(1)
-          expect(Spreadsheet.last.filename).to eq filename
-        end
-        it "should create a picklist" do
-          expect{ upload_update }.to change(Picklist, :count).by(1)
-        end
-        it "flashes a success notice" do
-          upload_update
-          expect(flash[:notice]).to eq "Spreadsheet uploaded.<br/>2 records were successfully imported.".html_safe
-        end
-        it "creates physical object records" do
-          expect{ upload_update }.to change(PhysicalObject, :count).by(2)
-        end
-        it "creates technical metadatum records" do
-          expect{ upload_update }.to change(TechnicalMetadatum, :count).by(2)
-        end
-        it "creates records no older than spreadsheet" do
-          upload_update
-          spreadsheet = Spreadsheet.last
-          objects = PhysicalObject.where(spreadsheet_id: spreadsheet.id)
-          objects.each do |object|
-            expect(object.updated_at).to be <= spreadsheet.created_at
+      context "specifying a file: #{filename}" do
+        let(:post_args) { { physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } } }
+        let(:upload_update) { post :upload_update, **post_args }
+        describe "and no picklist" do
+          before(:each) do
+            post_args[:type] = "none"
+          end
+          include_examples "upload results", filename
+          it "does not create a picklist" do
+            expect{ upload_update }.not_to change(Picklist, :count)
           end
         end
-        it "fails if repeated, due to duplicate filename" do
-          upload_update
-          expect{ upload_update }.not_to change(Spreadsheet, :count)
+        context "and an existing picklist" do
+	  before(:each) { post_args[:type] = "existing" }
+          describe "selected" do
+            before(:each) do
+              picklist
+              post_args[:picklist] = { id: picklist.id }
+            end
+            include_examples "upload results", filename
+            it "uses the selected picklist" do
+	      upload_update
+	      expect(assigns[:picklist]).to eq picklist
+            end
+          end
+          describe "not selected" do
+            before(:each) do
+	      post_args[:picklist] = {}
+              upload_update
+	    end
+            it "flashes inaction" do
+              expect(flash[:notice]).to match /select.*picklist/i
+            end
+            it "redirects to upload_show" do
+              expect(response).to redirect_to(action: :upload_show)
+            end
+          end
+        end
+        context "and a new picklist" do
+          before(:each) { post_args[:type] = "new" }
+          describe "with a new name" do
+            before(:each) do
+              post_args[:picklist] = { name: "Test picklist", description: "Test description" }
+            end
+            include_examples "upload results", filename
+            it "creates a picklist" do
+              expect{ upload_update }.to change(Picklist, :count).by(1)
+            end
+            it "flashes a picklist creation message" do
+              upload_update
+              expect(flash[:notice]).to match /Created picklist/
+            end
+          end 
+          describe "with a name collision" do
+	    before(:each) do
+	      picklist
+	      post_args[:picklist] = { name: picklist.name }
+              upload_update
+	    end
+            it "flashes error warning" do
+              expect(flash[:warning]).to match /error/i
+            end
+            it "redirects to upload_show" do
+              expect(response).to redirect_to(action: :upload_show)
+            end
+          end
         end
       end
     end
@@ -377,9 +499,9 @@ describe PhysicalObjectsController do
         expect(physical_object.bin).to be_nil
       end
       it "removes the Binned status" do
-	expect(physical_object.current_workflow_status).to eq "Binned"
+        expect(physical_object.current_workflow_status).to eq "Binned"
         physical_object.reload
-	expect(physical_object.current_workflow_status).not_to eq "Binned"
+        expect(physical_object.current_workflow_status).not_to eq "Binned"
       end
       it "redirects to the bin" do
         expect(response).to redirect_to bin
@@ -418,9 +540,9 @@ describe PhysicalObjectsController do
         expect(physical_object.box).to be_nil
       end
       it "removes the Boxed status" do
-	expect(physical_object.current_workflow_status).to eq "Boxed"
+        expect(physical_object.current_workflow_status).to eq "Boxed"
         physical_object.reload
-	expect(physical_object.current_workflow_status).not_to eq "Boxed"
+        expect(physical_object.current_workflow_status).not_to eq "Boxed"
       end
       it "redirects to the box" do
         expect(response).to redirect_to box
@@ -455,7 +577,7 @@ describe PhysicalObjectsController do
       it "removes the On Pick List status" do
         # not necessarily "On Pick List" to start with, under these tests
         physical_object.reload
-	expect(physical_object.current_workflow_status).not_to eq "On Pick List"
+        expect(physical_object.current_workflow_status).not_to eq "On Pick List"
       end
       it "disassociates other objects in the same group from the picklist" do
         physical_object.reload
