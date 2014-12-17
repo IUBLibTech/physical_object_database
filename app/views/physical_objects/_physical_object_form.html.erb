@@ -5,8 +5,93 @@
 <%= nested_form_for(@physical_object) do |f| %>
   <%= hidden_field_tag "repeat", @repeat %>
   <div id="physicalObject" class="left">
-    <h2>Physical Object</h2>
+    <h2>Physical Object [<%= @physical_object.id %>]</h2>
+    <% if @picklisting %>
+      <div><%= submit_tag("Pack", name: "pack_button") %><%= submit_tag("Skip", name: "skip_button") %></div>
+    <% end %>
+    <% if @display_assigned %>
+      <div id="assigned_to_div">
+        <table>
+      	  <tr>
+      	    <th colspan="2">Assignment</th>
+      	  </tr>
+          <tr>
+            <th>Picklist</th>
+            <td>
+              <% if !@physical_object.picklist.nil? %>
+                <%= link_to(@physical_object.picklist.name, controller: 'picklists', action: 'show', id: @physical_object.picklist.id ) %>
+              <% else %>
+                Not Assigned
+              <% end %>
+              <% if @edit_mode %>
+                <%= @physical_object.picklist.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
+                <%= f.collection_select :picklist_id, Picklist.order('name ASC'), :id, :name, {include_blank: 'None'} %>
+              <% end %>
+            </td>
+          </tr>
+
+
+          <tr>
+            <th>Bin</th>
+            <td>
+              <% if @edit_mode %>
+                <%= text_field_tag "bin_mdpi_barcode", (@physical_object.bin ? @physical_object.bin.mdpi_barcode : "" ) %>
+              <% elsif !@edit_mode and !@physical_object.bin.nil? %>
+                <%= link_to("Bin: #{@physical_object.bin.mdpi_barcode}", @physical_object.bin) %>
+              <% else %>
+                Not Assigned
+              <% end %>
+            </td>
+          </tr>
+
+          <tr>
+            <th>Box</th>
+            <td>
+              <% if @edit_mode %>
+                <%= text_field_tag "box_mdpi_barcode", (@physical_object.box ? @physical_object.box.mdpi_barcode : "") %>
+              <% elsif !@edit_mode and !@physical_object.box.nil? %>
+                <%= link_to("Box: #{@physical_object.box.mdpi_barcode}", @physical_object.box) %>
+              <% else %>
+                Not Assigned
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <th>Batch</th>
+            <td>
+              <% p = @physical_object %>
+              <% name = nil %>
+              <% bid = nil %>
+              <% if !p.bin.nil? and !p.bin.batch.nil? %>
+                <% name = p.bin.batch.identifier %>
+                <% bid = p.bin.batch.id %>
+              <% elsif !p.box.nil? and !p.box.bin.nil? and !p.box.bin.batch.nil?%>
+                <% name = p.box.bin.batch.identifier %>
+                <% bid = p.box.bin.batch.id %>
+              <% end %>
+              <% if !name.nil? %>
+                <%= link_to(name, controller: :batches, action: :show, id: bid) %>
+              <% else %>
+                Not Assigned
+              <% end %>
+            </td>
+          </tr>
+        </table>
+      </div>
+    <% end %>
     <table>
+      <tr>
+        <th>MDPI barcode</th>
+        <td>
+          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, class: "mdpi") %>
+        </td>
+      </tr>
+      <tr>
+        <th>IUCAT barcode</th>
+        <td>
+          <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
+        </td>
+      </tr>
       <tr>
         <th>Title</th>
         <td>
@@ -50,12 +135,6 @@
         </td>
       </tr>
       <tr>
-        <th>IUCAT barcode</th>
-        <td>
-          <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
-        </td>
-      </tr>
-      <tr>
         <th>OCLC number</th>
         <td>
           <%= f.text_field(:oclc_number, readonly: !@edit_mode) %>
@@ -64,7 +143,7 @@
       <tr>
         <th>Format</th>
         <td>
-          <%= f.select(:format, PhysicalObject.formats, {},	disabled: !@edit_mode, :onChange => "tm_div(this.value, 'PhysicalObject', #{@physical_object.id.nil? ? 0 : @physical_object.id}, #{@edit_mode})")  %>    
+          <%= f.select(:format, PhysicalObject.formats, {}, disabled: !@edit_mode, :onChange => "tm_div(this.value, 'PhysicalObject', #{@physical_object.id.nil? ? 0 : @physical_object.id}, #{@edit_mode})")  %>    
         </td>
       </tr>
       <tr>
@@ -79,23 +158,23 @@
       </tr>
       <tr>
         <th>Group key</th>
-	<td>
-	  <% if !@group_key.nil? %>
-	    <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id)) %>
-	  <% else %>
-	    Not assigned
-	  <% end %>
+  <td>
+    <% if !@group_key.nil? %>
+      <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id)) %>
+    <% else %>
+      Not assigned
+    <% end %>
           <% if @edit_mode %>
             <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
             <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
           <% end %>
-	</td>
+  </td>
       </tr>
       <tr>
         <th>Group position</th>
-	<td>
-	  <%= f.number_field(:group_position, readonly: !@edit_mode, min: 1) %>
-	</td>
+  <td>
+    <%= f.number_field(:group_position, readonly: !@edit_mode, min: 1) %>
+  </td>
       </tr>
       <tr>
         <th>Carrier stream index</th>
@@ -123,12 +202,6 @@
       </tr>
       
       <tr>
-        <th>MDPI barcode</th>
-        <td>
-          <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, class: "mdpi") %>
-        </td>
-      </tr>
-      <tr>
         <th>Generation</th>
         <td>
           <%= f.select(:generation, @physical_object.generation_values, {}, disabled:!@edit_mode) %>
@@ -153,78 +226,23 @@
         </td>
       </tr>
       <tr>
-	<th>Created</th>
+  <th>Created</th>
         <td>
-	  <% if @physical_object and @physical_object.created_at %>
-	    <%= @physical_object.created_at.in_time_zone %>
-	  <% end %>
+    <% if @physical_object and @physical_object.created_at %>
+      <%= @physical_object.created_at.in_time_zone %>
+    <% end %>
         </td>
       </tr>
       <tr>
         <th>Updated</th>
         <td>
-	  <% if @physical_object and @physical_object.updated_at %>
-	    <%= @physical_object.updated_at.in_time_zone %>
-	  <% end %>
+    <% if @physical_object and @physical_object.updated_at %>
+      <%= @physical_object.updated_at.in_time_zone %>
+    <% end %>
         </td>
       </tr>
       <%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @physical_object %>
     </table> 
-    <% if @display_assigned %>
-      <div id="assigned_to_div">
-        <table>
-	  <tr>
-	    <th colspan="2">Assignment</th>
-	  </tr>
-          <tr>
-            <th>Picklist</th>
-            <td>
-              <% if !@physical_object.picklist.nil? %>
-                <%= link_to(@physical_object.picklist.name, controller: 'picklists', action: 'show', id: @physical_object.picklist.id ) %>
-              <% else %>
-                Not Assigned
-              <% end %>
-              <% if @edit_mode %>
-                <%= @physical_object.picklist.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
-                <%= f.collection_select :picklist_id, Picklist.order('name ASC'), :id, :name, {include_blank: 'None'} %>
-              <% end %>
-            </td>
-          </tr>
-          <tr>
-            <th>Bin/Box</th>
-            <td>
-              <% if !@physical_object.bin.nil? %>
-                <%= link_to("Bin: #{@physical_object.bin.identifier}", @physical_object.bin) %>
-              <% elsif !@physical_object.box.nil? %>
-                <%= link_to("Box: #{@physical_object.box.mdpi_barcode}", @physical_object.box) %>
-              <% else %>
-                Not Assigned
-              <% end %>
-            </td>
-          </tr>
-          <tr>
-            <th>Batch</th>
-            <td>
-              <% p = @physical_object %>
-              <% name = nil %>
-              <% bid = nil %>
-              <% if !p.bin.nil? and !p.bin.batch.nil? %>
-                <% name = p.bin.batch.identifier %>
-                <% bid = p.bin.batch.id %>
-              <% elsif !p.box.nil? and !p.box.bin.nil? and !p.box.bin.batch.nil?%>
-                <% name = p.box.bin.batch.identifier %>
-                <% bid = p.box.bin.batch.id %>
-              <% end %>
-              <% if !name.nil? %>
-                <%= link_to(name, controller: :batches, action: :show, id: bid) %>
-              <% else %>
-                Not Assigned
-              <% end %>
-            </td>
-          </tr>
-        </table>
-      </div>
-    <% end %>
     <div id="condition_statuses_div">
       <%= f.fields_for :condition_statuses do |condition| %>
         <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @physical_object %>
@@ -257,7 +275,15 @@
     <% end %>
   </div>
   <%# add the submit and close off the form_for %>
-  <%if @edit_mode or @action == 'destroy' %>
+  <%if (@edit_mode or @action == 'destroy') and !@picklisting %>
     <div class="clear" ><%= submit_tag(@submit_text) %></div>
   <% end %>
+<% end %>
+<% if @picklisting %>
+<script type="text/javascript">
+  $("#physical_object_mdpi_barcode").focus(function() {
+    $(this).select();
+  });
+  $("#physical_object_mdpi_barcode").focus();
+</script>
 <% end %>

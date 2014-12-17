@@ -28,7 +28,7 @@
 	    <h2>Pack From Picklist</h2>
 
 
-	    <%= form_for(@bin, url: {controller: 'picklists', action: 'process_list', bin_id: @bin.id}) do |f| %>
+	    <%= form_for(@bin, url: {controller: 'picklists', action: 'pack_list', bin_id: @bin.id}) do |f| %>
 	      <table>
 	        <tr>
 	          <th>Select the picklist to pack this bin from</th>

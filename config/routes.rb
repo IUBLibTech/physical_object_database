@@ -61,7 +61,10 @@ Pod::Application.routes.draw do
   resources :picklists, except: [:index] do
     patch :process_list, on: :collection
     get :process_list, on: :collection
+    patch :pack_list, on: :collection
+    get :pack_list, on: :collection
     patch :assign_to_container, on: :collection
+    get :assign, on: :member
     patch :remove_from_container, on: :collection
     post :container_full, on: :collection
   end
