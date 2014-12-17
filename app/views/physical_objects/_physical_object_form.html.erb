@@ -87,9 +87,19 @@
         </td>
       </tr>
       <tr>
-        <th>IUCAT barcode</th>
+        <th>Has ephemera</th>
         <td>
-          <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
+          <% if @edit_mode %>
+            <%= f.check_box(:has_ephemera) %>
+          <% else %>
+            <input type="text" name="has_ephemera" value=<%= @physical_object.has_ephemera ? "true" : "false" %> readonly />
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th>Unit</th>
+        <td>
+          <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :abbreviation, {prompt: "Please specify a unit"}, disabled: !@edit_mode %>
         </td>
       </tr>
       <tr>
@@ -98,6 +108,73 @@
           <%= f.text_field(:title, readonly: !@edit_mode) %>
         </td> 
       </tr>
+      <tr>
+        <th>Call number</th>
+        <td>
+          <%= f.text_field(:call_number, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>IUCAT barcode</th>
+        <td>
+          <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Group key</th>
+        <td>
+          <% if !@group_key.nil? %>
+            <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id)) %>
+          <% else %>
+            Not assigned
+          <% end %>
+                <% if @edit_mode %>
+                  <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
+                  <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
+                <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th>Group position</th>
+        <td>
+          <%= f.number_field(:group_position, readonly: !@edit_mode, min: 1) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Carrier stream index</th>
+        <td>
+          <%= @physical_object.carrier_stream_index %>
+        </td>
+      </tr>
+      <tr>
+        <th>Imported from spreadsheet</th>
+        <td>
+          <% if !@physical_object.spreadsheet.nil? %>
+            <%= link_to("#{@physical_object.spreadsheet.filename}", @physical_object.spreadsheet) %>
+          <% end %>
+        </td>
+      </tr>
+      <%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @physical_object %>
+    </table>
+    <div id="condition_statuses_div">
+      <%= f.fields_for :condition_statuses do |condition| %>
+        <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @physical_object %>
+      <% end %>
+      <% if @edit_mode %>
+        <%= f.link_to_add "Add a condition status", :condition_statuses %>
+      <% end %>
+    </div>
+    <div id="notes_div">
+      <%= f.fields_for :notes do |note| %>
+        <%= render 'notes/note_fields', f: note%>
+      <% end %>
+      <% if @edit_mode %>
+        <%= f.link_to_add "Add a note", :notes %>
+      <% end %>
+    </div>
+
+    <h2>Physical Hidden Fields</h2>
+    <table>
       <tr>
         <th>Author</th>
         <td>
@@ -111,21 +188,9 @@
         </td>
       </tr>
       <tr>
-        <th>Call number</th>
-        <td>
-          <%= f.text_field(:call_number, readonly: !@edit_mode) %>
-        </td>
-      </tr>
-      <tr>
         <th>Catalog key</th>
         <td>
           <%= f.text_field(:catalog_key, readonly: !@edit_mode) %>
-        </td>
-      </tr>
-      <tr>
-        <th>Unit</th>
-        <td>
-          <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :abbreviation, {prompt: "Please specify a unit"}, disabled: !@edit_mode %>
         </td>
       </tr>
       <tr>
@@ -157,32 +222,6 @@
         </td>
       </tr>
       <tr>
-        <th>Group key</th>
-  <td>
-    <% if !@group_key.nil? %>
-      <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id)) %>
-    <% else %>
-      Not assigned
-    <% end %>
-          <% if @edit_mode %>
-            <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
-            <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
-          <% end %>
-  </td>
-      </tr>
-      <tr>
-        <th>Group position</th>
-  <td>
-    <%= f.number_field(:group_position, readonly: !@edit_mode, min: 1) %>
-  </td>
-      </tr>
-      <tr>
-        <th>Carrier stream index</th>
-        <td>
-          <%= @physical_object.carrier_stream_index %>
-        </td>
-      </tr>
-      <tr>
         <th>Collection identifier</th>
         <td>
           <%= f.text_field(:collection_identifier, readonly: !@edit_mode) %>
@@ -207,58 +246,25 @@
           <%= f.select(:generation, @physical_object.generation_values, {}, disabled:!@edit_mode) %>
         </td>
       </tr>
+      
       <tr>
-        <th>Has ephemera</th>
+        <th>Created</th>
         <td>
-          <% if @edit_mode %>
-            <%= f.check_box(:has_ephemera) %>
-          <% else %>
-            <input type="text" name="has_ephemera" value=<%= @physical_object.has_ephemera ? "true" : "false" %> readonly />
-          <% end %>
-        </td>
-      </tr>
-      <tr>
-        <th>Imported from spreadsheet</th>
-        <td>
-          <% if !@physical_object.spreadsheet.nil? %>
-            <%= link_to("#{@physical_object.spreadsheet.filename}", @physical_object.spreadsheet) %>
-          <% end %>
-        </td>
-      </tr>
-      <tr>
-  <th>Created</th>
-        <td>
-    <% if @physical_object and @physical_object.created_at %>
-      <%= @physical_object.created_at.in_time_zone %>
-    <% end %>
+        <% if @physical_object and @physical_object.created_at %>
+          <%= @physical_object.created_at.in_time_zone %>
+        <% end %>
         </td>
       </tr>
       <tr>
         <th>Updated</th>
         <td>
-    <% if @physical_object and @physical_object.updated_at %>
-      <%= @physical_object.updated_at.in_time_zone %>
-    <% end %>
+        <% if @physical_object and @physical_object.updated_at %>
+          <%= @physical_object.updated_at.in_time_zone %>
+        <% end %>
         </td>
       </tr>
-      <%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @physical_object %>
+      
     </table> 
-    <div id="condition_statuses_div">
-      <%= f.fields_for :condition_statuses do |condition| %>
-        <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @physical_object %>
-      <% end %>
-      <% if @edit_mode %>
-        <%= f.link_to_add "Add a condition status", :condition_statuses %>
-      <% end %>
-    </div>
-    <div id="notes_div">
-      <%= f.fields_for :notes do |note| %>
-        <%= render 'notes/note_fields', f: note%>
-      <% end %>
-      <% if @edit_mode %>
-        <%= f.link_to_add "Add a note", :notes %>
-      <% end %>
-    </div>
   </div>
 
   
