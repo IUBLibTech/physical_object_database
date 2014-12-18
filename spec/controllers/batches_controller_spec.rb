@@ -66,7 +66,6 @@ describe BatchesController do
     end
 
     context "with invalid attributes" do
-      #FIXME: test that invalid object is invalid?
       let(:creation) { post :create, batch: invalid_batch.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
       it "does not save the new object in the database" do
         batch
@@ -132,15 +131,50 @@ describe BatchesController do
   describe "PATCH add_bin" do
     context "specifying one or more bin_ids" do
       let(:add_bin) { patch :add_bin, id: batch.id, bin_ids: [bin.id]; bin.reload }
-      it "adds bins to batch" do
-        expect(bin.batch_id).to be_nil
-        add_bin
-        expect(bin.batch_id).to eq batch.id
+      context "on a Created bin" do
+        it "adds bins to batch" do
+          expect(bin.batch_id).to be_nil
+          add_bin
+          expect(bin.batch_id).to eq batch.id
+        end
+        it "sets added bins with a workflow status of Batched" do
+          expect(bin.current_workflow_status).not_to eq "Batched"
+          add_bin
+          expect(bin.current_workflow_status).to eq "Batched"
+        end
+	it "flashes a success notice" do
+          add_bin
+	  expect(flash[:notice]).to match /success/
+	end
+	it "redirects to show" do
+          add_bin
+	  expect(response).to redirect_to batch
+	end
       end
-      it "sets added bins with a workflow status of Batched" do
-        expect(bin.current_workflow_status).not_to eq "Batched"
-        add_bin
-        expect(bin.current_workflow_status).to eq "Batched"
+      context "on other statuses" do
+        before(:each) do
+	  batch.current_workflow_status = "Assigned"
+	  batch.save
+	  batch.reload
+        end
+        it "does NOT add bins to batch" do
+          expect(bin.batch_id).to be_nil
+          add_bin
+          expect(bin.batch_id).to be_nil
+        end
+        it "bins do NOT get a workflow status of Batched" do
+          expect(bin.current_workflow_status).not_to eq "Batched"
+          add_bin
+          expect(bin.current_workflow_status).not_to eq "Batched"
+        end
+        it "flashes a 'cannot' warning" do
+          add_bin
+          expect(flash[:warning]).to match /cannot.*assign/
+        end
+        it "redirects to show" do
+          add_bin
+          expect(response).to redirect_to batch
+        end
       end
     end
     context "without selecting any bins" do
@@ -148,6 +182,10 @@ describe BatchesController do
       it "flashes an inaction message" do
         add_bin
         expect(flash[:notice]).to match /No bins were selected/
+      end
+      it "redirects to show" do
+        add_bin
+        expect(response).to redirect_to batch
       end
     end
   end

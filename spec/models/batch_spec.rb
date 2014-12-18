@@ -70,6 +70,16 @@ describe Batch do
       expect(batch.media_format).to eq physical_object.format
     end
   end
+  
+  describe "#packed_status?" do
+    it "returns false if Created" do
+      expect(batch.packed_status?).to eq false
+    end
+    it "returns true for other status" do
+      batch.current_workflow_status = "Assigned"
+      expect(batch.packed_status?).to eq true
+    end
+  end
 
   status_list = ["Created", "Assigned", "Shipped", "Returned", "Complete"]
   # pass status_list arg here to test previous/next methods

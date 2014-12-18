@@ -39,8 +39,11 @@
       <th>Workflow Status</th>
       <td>
         <% if @edit_mode %>
-	  <%= @batch.display_workflow_status %>
-	  (modify on Show screen)
+	  <% if @batch.current_workflow_status == "Complete" %>
+	    <%= f.select :current_workflow_status, @batch.workflow_status_options, {}, disabled: @batch.current_workflow_status == "Complete" %>
+	  <% else %>
+	    <%= f.select :current_workflow_status, @batch.workflow_status_options.except("Complete") %>
+	  <% end %>
 	<% else %>
           <% previous_status = @batch.previous_workflow_status %>
 	  <% button_text = ("<button" + (previous_status.blank? ? " disabled=\"true\">" : ">") + "#{previous_status} &lt;&lt;</button>").html_safe %>
