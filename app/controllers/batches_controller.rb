@@ -66,7 +66,9 @@ class BatchesController < ApplicationController
 
   def add_bin
     @batch = Batch.find(params[:id])
-    if params[:bin_ids].nil? or params[:bin_ids].empty?
+    if !@batch.current_workflow_status.in? ["Created"]
+      flash[:warning] = "You cannot assign bins to a Batch with workflow status: #{@batch.current_workflow_status}"
+    elsif params[:bin_ids].nil? or params[:bin_ids].empty?
       flash[:notice] = "No bins were selected to add."
     else
       Batch.transaction do
@@ -75,7 +77,7 @@ class BatchesController < ApplicationController
           bin.update_attributes(batch_id: @batch.id, current_workflow_status: "Batched")
         end
       end
-      flash[:notice] = "The selected bins were added."
+      flash[:notice] = "The selected bins were successfully added."
     end
     redirect_to(action: 'show', id: @batch.id)
   end

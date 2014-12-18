@@ -1,46 +1,62 @@
 <%= error_messages_for(@batch) %>
 <%= form_for(@batch, :url => {:action => @action, :id => @batch.id}) do |f| %>
-	<table>
-		<tr>
-			<th>Identifier</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.text_field(:identifier) %>
-				<% else %>
-					<%= @batch.identifier %>
-				<% end %>
-			</td>
-		</tr>
-		<tr>
-			<th>Name</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.text_field(:name) %>
-				<% else %>
-					<%= @batch.name %>
-				<% end %>
-			</td>
-		</tr>
-		<tr>
-			<th>Description</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.text_field(:description) %>
-				<% else %>
-					<%= @batch.description %>
-				<% end %>
-			</td>
-		</tr>
-		<tr>
-			<th>Objects Count</th>
-			<td><%= @batch.physical_objects_count %></td>
-		</tr>
-
-		<%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @batch %>
-
-
-	</table>
-	<%if @edit_mode or @action == 'destroy' %>
-	  <div class="clear" ><%= submit_tag(@submit_text) %></div>
+  <table>
+    <tr>
+      <th>Identifier</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.text_field(:identifier) %>
+        <% else %>
+          <%= @batch.identifier %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.text_field(:name) %>
+        <% else %>
+          <%= @batch.name %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Description</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.text_field(:description) %>
+        <% else %>
+          <%= @batch.description %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Objects Count</th>
+      <td><%= @batch.physical_objects_count %></td>
+    </tr>
+    <tr>
+      <th>Workflow Status</th>
+      <td>
+        <% if @edit_mode %>
+	  <% if @batch.current_workflow_status == "Complete" %>
+	    <%= f.select :current_workflow_status, @batch.workflow_status_options, {}, disabled: @batch.current_workflow_status == "Complete" %>
+	  <% else %>
+	    <%= f.select :current_workflow_status, @batch.workflow_status_options.except("Complete") %>
+	  <% end %>
+	<% else %>
+          <% previous_status = @batch.previous_workflow_status %>
+	  <% button_text = ("<button" + (previous_status.blank? ? " disabled=\"true\">" : ">") + "#{previous_status} &lt;&lt;</button>").html_safe %>
+          <%= link_to button_text, batch_path(@batch, batch: { current_workflow_status: previous_status }), method: :patch %>
+          <%= @batch.display_workflow_status %>
+          <% next_status = @batch.next_workflow_status %>
+	  <% button_text = ("<button" + (next_status.in?(["", "Complete"]) ? " disabled=\"true\">" : ">") + "&gt;&gt; #{next_status}</button>").html_safe %>
+          <%= link_to button_text, batch_path(@batch, batch: { current_workflow_status: next_status }), method: :patch %>
 	<% end %>
+      </td>
+    </tr>
+  </table>
+  <%if @edit_mode or @action == 'destroy' %>
+    <div class="clear" ><%= submit_tag(@submit_text) %></div>
+  <% end %>
 <% end %>

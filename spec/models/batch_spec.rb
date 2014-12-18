@@ -70,12 +70,24 @@ describe Batch do
       expect(batch.media_format).to eq physical_object.format
     end
   end
+  
+  describe "#packed_status?" do
+    it "returns false if Created" do
+      expect(batch.packed_status?).to eq false
+    end
+    it "returns true for other status" do
+      batch.current_workflow_status = "Assigned"
+      expect(batch.packed_status?).to eq true
+    end
+  end
 
-  it_behaves_like "includes Workflow Status Module" do
+  status_list = ["Created", "Assigned", "Shipped", "Returned", "Complete"]
+  # pass status_list arg here to test previous/next methods
+  it_behaves_like "includes Workflow Status Module", status_list do
     let(:object) { valid_batch }
     let(:default_status) { "Created" }
     let(:new_status) { "Assigned" }
-    let(:valid_status_values) { ["Created", "Assigned", "Shipped", "Returned", "Complete"] }
+    let(:valid_status_values) { status_list }
     let(:class_title) { "Batch" }
   end
 

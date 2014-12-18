@@ -142,11 +142,13 @@ describe Bin do
     skip "No Condition Statues have been defined for Bins"
   end
 
+  status_list = ["Created", "Sealed", "Batched", "Returned to Staging Area", "Unpacked"]
+  # pass status_list arg here to test previous/next methods
   it_behaves_like "includes Workflow Status Module" do
     let(:object) { valid_bin }
     let(:default_status) { "Created" }
     let(:new_status) { "Sealed" }
-    let(:valid_status_values) { ["Created", "Sealed", "Batched", "Returned to Staging Area", "Unpacked"] }
+    let(:valid_status_values) { status_list } 
     let(:class_title) { "Bin" }
   end
 

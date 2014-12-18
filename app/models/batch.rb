@@ -25,4 +25,12 @@ class Batch < ActiveRecord::Base
 	  end
 	end
 
+	def packed_status?
+	  self.current_workflow_status != "Created"
+	end
+
+	def Batch.packed_status_message
+	  "This batch cannot have additional bins assigned to it.<br/>To enable bin assignment, the workflow status must be set to \"Created\".".html_safe
+	end
+
 end

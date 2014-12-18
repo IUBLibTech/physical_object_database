@@ -2,7 +2,7 @@
 #requires let statements:
 #object, default_status, new_status, valid_status_values, class_title
 #
-shared_examples "includes Workflow Status Module" do
+shared_examples "includes Workflow Status Module" do |status_list|
   describe "#assign_default_workflow_status" do
     it "assigns default status" do
       object.assign_default_workflow_status
@@ -66,6 +66,29 @@ shared_examples "includes Workflow Status Module" do
   describe "#workflow_status_options" do
     it "returns workflow status options for object type" do
       expect(object.workflow_status_options.keys.sort).to eq valid_status_values.sort
+    end
+  end
+  # previous and next workflow status are only actually used for Batch
+  unless status_list.nil?
+    describe "#previous_workflow_status" do
+      status_list.each_with_index do |status, index|
+        previous_status = index.zero? ? "" : status_list[index-1]
+        it "on #{status} returns #{previous_status}" do
+          object.current_workflow_status = status
+	  expect(object.current_workflow_status).to eq status
+          expect(object.previous_workflow_status).to eq previous_status
+        end
+      end
+    end
+    describe "#next_workflow_status" do
+      status_list.each_with_index do |status, index|
+        next_status = (index == status_list.size - 1 ? "" : status_list[index+1])
+        it "on #{status} returns #{next_status}" do
+          object.current_workflow_status = status
+	  expect(object.current_workflow_status).to eq status
+          expect(object.next_workflow_status).to eq next_status
+        end
+      end
     end
   end
 end

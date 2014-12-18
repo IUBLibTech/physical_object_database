@@ -367,11 +367,13 @@ describe PhysicalObject do
     let(:class_title) { "Physical Object" }
   end
 
+  status_list = ["Unassigned", "On Pick List", "Barcoded", "Boxed", "Binned", "Unpacked", "Returned to Unit"] 
+  # pass status_list arg here to test previous/next methods
   it_behaves_like "includes Workflow Status Module" do
     let(:object) { valid_po }
     let(:default_status) { "Unassigned" }
     let(:new_status) { "Barcoded" }
-    let(:valid_status_values) { ["Unassigned", "On Pick List", "Barcoded", "Boxed", "Binned", "Unpacked", "Returned to Unit"] }
+    let(:valid_status_values) { status_list }
     let(:class_title) { "Physical Object" }
   end
 

@@ -154,7 +154,10 @@
           <% end %>
         </td>
       </tr>
-      <%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @physical_object %>
+      <tr>
+        <th>Workflow Status</th>
+        <td><%= @physical_object.display_workflow_status %></td>
+      </tr>
     </table>
     <div id="condition_statuses_div">
       <%= f.fields_for :condition_statuses do |condition| %>

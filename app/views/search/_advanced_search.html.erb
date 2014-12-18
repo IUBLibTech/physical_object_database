@@ -133,8 +133,11 @@
           <%= f.text_field(:year, readonly: !@edit_mode) %>
         </td>
       </tr>
-
-      <%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @physical_object %>
+      <%# FIXME: remove, or change to dropdown of values to select for search? %>
+      <tr>
+        <th>Workflow Status</th>
+        <td><%= @physical_object.display_workflow_status %></td>
+      </tr>
     </table> 
   </div>
 
