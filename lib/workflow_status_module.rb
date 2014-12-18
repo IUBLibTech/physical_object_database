@@ -55,4 +55,22 @@ module WorkflowStatusModule
     self.class.name.underscore.humanize.titleize
   end
 
+  def previous_workflow_status
+    previous_hash = workflow_status_options.inject({ :previous => ""}) { |h, (k, v)| h[k] = h[:previous]; h[:previous] = v; h }
+    previous_hash[self.current_workflow_status].to_s
+  end
+
+  def next_workflow_status
+    next_hash = {}
+    status_array = workflow_status_options.to_a
+    status_array.to_a.each_with_index do |k_v, index|
+      if index == status_array.size - 1
+        next_hash[k_v.first] = ""
+      else
+        next_hash[k_v.first] = status_array[index+1].last
+      end
+    end
+    next_hash[self.current_workflow_status].to_s
+  end
+
 end

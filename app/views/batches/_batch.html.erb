@@ -37,7 +37,20 @@
     </tr>
     <tr>
       <th>Workflow Status</th>
-      <td><%= @batch.display_workflow_status %></td>
+      <td>
+        <% if @edit_mode %>
+	  <%= @batch.display_workflow_status %>
+	  (modify on Show screen)
+	<% else %>
+          <% previous_status = @batch.previous_workflow_status %>
+	  <% button_text = ("<button" + (previous_status.blank? ? " disabled=\"true\">" : ">") + "#{previous_status} &lt;&lt;</button>").html_safe %>
+          <%= link_to button_text, batch_path(@batch, batch: { current_workflow_status: previous_status }), method: :patch %>
+          <%= @batch.display_workflow_status %>
+          <% next_status = @batch.next_workflow_status %>
+	  <% button_text = ("<button" + (next_status.in?(["", "Complete"]) ? " disabled=\"true\">" : ">") + "&gt;&gt; #{next_status}</button>").html_safe %>
+          <%= link_to button_text, batch_path(@batch, batch: { current_workflow_status: next_status }), method: :patch %>
+	<% end %>
+      </td>
     </tr>
   </table>
   <%if @edit_mode or @action == 'destroy' %>

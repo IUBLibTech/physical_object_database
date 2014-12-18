@@ -71,11 +71,13 @@ describe Batch do
     end
   end
 
-  it_behaves_like "includes Workflow Status Module" do
+  status_list = ["Created", "Assigned", "Shipped", "Returned", "Complete"]
+  # pass status_list arg here to test previous/next methods
+  it_behaves_like "includes Workflow Status Module", status_list do
     let(:object) { valid_batch }
     let(:default_status) { "Created" }
     let(:new_status) { "Assigned" }
-    let(:valid_status_values) { ["Created", "Assigned", "Shipped", "Returned", "Complete"] }
+    let(:valid_status_values) { status_list }
     let(:class_title) { "Batch" }
   end
 
