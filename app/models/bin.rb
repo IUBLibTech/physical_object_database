@@ -1,4 +1,5 @@
 class Bin < ActiveRecord::Base
+	default_scope { order(:workflow_index, :identifier) }
         
         belongs_to :batch
         belongs_to :picklist_specification
