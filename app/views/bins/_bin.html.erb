@@ -52,9 +52,10 @@
 			<th>Objects Count</th>
 			<td><%= @bin.physical_objects_count %></td>
 		</tr>
-
-		<%= render 'workflow_status_templates/current_workflow_status', f: f, target_object: @bin %>
-
+		<tr>
+			<th>Workflow Status</th>
+			<td><%= @bin.display_workflow_status %></td>
+		</tr>
 	</table>
         <%= f.fields_for :condition_statuses do |condition| %>
           <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @bin %>
