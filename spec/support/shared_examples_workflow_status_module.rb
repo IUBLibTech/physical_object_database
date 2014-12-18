@@ -49,6 +49,13 @@ shared_examples "includes Workflow Status Module" do |status_list|
       it "sets a new valid status" do
         object.current_workflow_status = new_status
         expect(object.current_workflow_status).to eq new_status
+        expect(object.workflow_status).to eq new_status
+      end
+      it "sets a new workflow_index value" do
+        original_workflow_index = object.workflow_index
+        object.current_workflow_status = new_status
+	expect(object.workflow_index).not_to eq original_workflow_index
+	expect(object.workflow_index).to eq object.workflow_statuses.last.workflow_status_template.sequence_index
       end
       it "adds a valid status to the workflow status history" do
         expect{ object.current_workflow_status = new_status }.to change{object.workflow_statuses.size}.by(1)
