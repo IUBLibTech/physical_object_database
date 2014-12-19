@@ -31,6 +31,7 @@ module WorkflowStatusModule
       return nil
     end
     self.workflow_status = workflow_status_name
+    self.workflow_index = workflow_status_template.sequence_index
     self.workflow_statuses.new(workflow_status_template_id: workflow_status_template.id)
   end
 

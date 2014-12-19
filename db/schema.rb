@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141125154844) do
+ActiveRecord::Schema.define(version: 20141218213832) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(version: 20141125154844) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "workflow_status"
+    t.integer  "workflow_index"
   end
 
   add_index "batches", ["workflow_status"], name: "index_batches_on_workflow_status", using: :btree
@@ -62,9 +63,11 @@ ActiveRecord::Schema.define(version: 20141125154844) do
     t.datetime "updated_at"
     t.integer  "spreadsheet_id"
     t.string   "workflow_status"
+    t.integer  "workflow_index"
   end
 
   add_index "bins", ["spreadsheet_id"], name: "index_bins_on_spreadsheet_id", using: :btree
+  add_index "bins", ["workflow_index", "identifier"], name: "index_bins_on_workflow_index_and_identifier", using: :btree
   add_index "bins", ["workflow_status"], name: "index_bins_on_workflow_status", using: :btree
 
   create_table "boxes", force: true do |t|
@@ -239,6 +242,7 @@ ActiveRecord::Schema.define(version: 20141125154844) do
     t.boolean  "ephemera_returned"
     t.integer  "spreadsheet_id"
     t.string   "workflow_status"
+    t.integer  "workflow_index"
   end
 
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree

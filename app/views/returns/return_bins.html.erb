@@ -29,7 +29,7 @@ The batch can be given a status of Complete after all bins have been unpacked.
 						<%= link_to("Show", bin_path(bin)) %><br/>
 						<% if bin.current_workflow_status == "Batched" %>
 
-							<%= link_to("Unload bin from batch", unload_bin_return_path(bin)) %>
+							<%= link_to("Unload bin from batch", unload_bin_return_path(bin), method: :patch) %>
 						<% elsif bin.current_workflow_status == "Returned to Staging Area" %>
 							<%= link_to("Unpack bin contents", return_bin_return_path(bin)) %>
 						<% end %>
