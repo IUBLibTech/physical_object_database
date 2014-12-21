@@ -68,5 +68,11 @@ describe AnalogSoundDiscTm do
 
   it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:analog_sound_disc_tm) 
 
+  describe "#master_copies" do
+    it "returns 2" do
+      expect(analog_sound_disc_tm.master_copies).to eq 2
+    end
+  end
+
 end
 

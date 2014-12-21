@@ -25,6 +25,12 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
     end
   end
 
+  describe "#master_copies" do
+    it "provides a positive numeric value" do
+      expect(tm_object.master_copies).to be > 0
+    end
+  end
+
   describe "provides class methods" do 
     describe "::valid_headers" do
       it "returns an array of valid headers" do

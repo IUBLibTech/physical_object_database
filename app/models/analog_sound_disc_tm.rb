@@ -118,4 +118,8 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 		humanize_boolean_fieldset(:DAMAGE_FIELDS)
 	end
 
+	def master_copies
+		2
+	end
+
 end

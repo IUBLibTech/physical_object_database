@@ -6,5 +6,5 @@ class LpTm < ActiveRecord::Base
   def update_form_params(params)
     params.require(:lp_tm).permit()
   end
-
+  # FIXME: deprecated?
 end

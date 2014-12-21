@@ -89,4 +89,28 @@ class OpenReelTm < ActiveRecord::Base
           humanize_boolean_fieldset(:DIRECTIONS_RECORDED_FIELDS)
 	end
 
+	# Note that the checked traits are not mutually exclusive, so the biggest number wins
+	def master_copies
+        	if self.unknown_track
+			4
+		elsif self.quarter_track
+			if stereo and not mono and not unknown_track
+				2
+			else
+				4
+			end
+		elsif self.half_track
+			if stereo and not mono and not unknown_track
+				1
+			else
+				2
+			end
+		elsif self.full_track
+			1
+		else
+			# if no track specification selected, as per Unknown
+			4
+		end
+	end
+
 end
