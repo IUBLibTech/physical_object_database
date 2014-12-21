@@ -105,6 +105,10 @@ describe "physical_objects" do
     expect(get("/physical_objects/tm_form")).to be_routable
   end
 
+  it "routes to workflow_history" do
+    expect(get("/physical_objects/:id/workflow_history")).to be_routable
+  end
+
   it "routes to split_show" do
     expect(get("/physical_objects/:id/split_show")).to be_routable
   end

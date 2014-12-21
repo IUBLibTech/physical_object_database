@@ -1,5 +1,5 @@
 class PhysicalObjectsController < ApplicationController
-  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup]  
+  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :workflow_history,:split_show, :split_update, :unbin, :unbox, :unpick, :ungroup]  
   before_action :set_picklists, only: [:edit]
   helper :all
 
@@ -131,6 +131,10 @@ class PhysicalObjectsController < ApplicationController
       flash[:notice] = "Physical Object could not be deleted.".html_safe
     end
     redirect_to physical_objects_path
+  end
+
+  def workflow_history
+    @workflow_statuses = @physical_object.workflow_statuses
   end
   
   def split_show

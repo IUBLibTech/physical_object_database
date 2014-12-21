@@ -1,0 +1,25 @@
+<table>
+<tr>
+  <th>Status</th>
+  <th>Datestamp</th>
+  <th>User</th>
+</tr>
+
+<% row_count = 0 %>
+<% unless @workflow_statuses.nil? || @workflow_statuses.size.zero? %>
+  <% @workflow_statuses.each do |row| %>
+    <% if row_count.odd? %>
+    <tr class='odd'>
+    <%else%>
+    <tr class='even'>
+    <%end%>
+      <td><%= row.workflow_status_template.name %></td>
+      <td><%= row.updated_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S") %></td>
+      <td><%= "USERNAME PENDING" %></td>
+    </tr>
+    <% row_count += 1 %>
+  <% end %>
+<% else %>
+  <tr><td colspan="3">No entries defined</td></tr>
+<% end %>
+</table>

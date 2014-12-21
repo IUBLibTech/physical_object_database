@@ -33,6 +33,7 @@ Pod::Application.routes.draw do
     get :download_spreadsheet_example, on: :collection
     get :tm_form, on: :collection
     get :split_show, on: :member
+    get :workflow_history, on: :member
     get :upload_show, on: :collection
     get :has_ephemera, on: :collection
     get :create_multiple, on: :collection
