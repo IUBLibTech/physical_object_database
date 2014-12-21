@@ -10,6 +10,10 @@
     </tr>
   <% end %>
   <tr>
+    <th>Include in Shipping Manifest</th>
+    <td><%= f.check_box :export, disabled: !@edit_mode %></td>
+  </tr>
+  <tr>
     <th>Notes</th>
     <td><%= f.text_area :body, readonly: !@edit_mode %></td>
   </tr>

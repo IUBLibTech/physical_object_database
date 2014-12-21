@@ -1,0 +1,7 @@
+<% export_notes = po.notes.where(export: true).order(updated_at: :desc) %>
+<% export_text = "" %>
+<% export_notes.each_with_index do |note, index| %>
+  <% export_text += "#{note.body} [#{note.user}, #{note.updated_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S")}]" %>
+  <% export_text += note_delimiter unless index == export_notes.size - 1 %>
+<% end %>
+    <Cell><Data ss:Type="String"><%= export_text %></Data></Cell>

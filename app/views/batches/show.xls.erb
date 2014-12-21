@@ -25,6 +25,8 @@
       <% elsif @media_format == "Open Reel Audio Tape" %>
         <% @column_names += ["Year", "Tape base", "Reel size", "Track configuration", "Sound field", "Playback speed", "Tape thickness", "Tape stock brand", "Directions recorded"] %>
       <% end %>
+      <%# Conditions and Notes %>
+      <% @column_names += ["Condition Notes", "Other Notes"] %>
       <Row>
       <% @column_names.each do |column_name| %>
         <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>

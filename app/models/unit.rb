@@ -5,8 +5,7 @@ class Unit < ActiveRecord::Base
   has_many :physical_objects
 
   def home
-    institution + 
-    (campus.blank? ? "" : (institution.blank? ? "" : ", ") + campus)
+    institution.to_s + (institution.to_s.blank? ? "" : ", ") + campus.to_s
   end
 
   def spreadsheet_descriptor

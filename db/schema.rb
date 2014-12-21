@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141218213832) do
+ActiveRecord::Schema.define(version: 20141221155728) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -172,6 +172,7 @@ ActiveRecord::Schema.define(version: 20141218213832) do
     t.string   "user"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "export"
   end
 
   add_index "notes", ["physical_object_id"], name: "index_notes_on_physical_object_id", using: :btree
