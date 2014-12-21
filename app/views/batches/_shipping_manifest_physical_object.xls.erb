@@ -60,7 +60,11 @@
     <Cell><Data ss:Type="String"><%= tm.playback_speed %></Data></Cell>
     <Cell><Data ss:Type="String"><%= tm.tape_thickness %></Data></Cell>
     <Cell><Data ss:Type="String"><%= tm.tape_stock_brand %></Data></Cell>
-   <Cell><Data ss:Type="String"><%= tm.directions_recorded %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= tm.directions_recorded %></Data></Cell>
   <% end %>
   <%# metadata-specific: ??? %>
+  <%# Conditions and Notes %>
+    <% note_delimiter = " " %>
+    <%= render 'shipping_manifest_condition_notes', po: po, note_delimiter: note_delimiter %>
+    <%= render 'shipping_manifest_other_notes', po: po, note_delimiter: note_delimiter %>
 </Row>
