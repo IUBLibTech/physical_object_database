@@ -70,5 +70,9 @@ describe ConditionStatus do
       expect(valid_condition_status.description).to eq valid_condition_status.condition_status_template.description
     end
   end
+
+  include_examples "has user field" do
+    let(:target_object) { valid_condition_status }
+  end
  
 end

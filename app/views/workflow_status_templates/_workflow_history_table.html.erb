@@ -15,7 +15,7 @@
     <%end%>
       <td><%= row.workflow_status_template.name %></td>
       <td><%= row.updated_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S") %></td>
-      <td><%= "USERNAME PENDING" %></td>
+      <td><%= row.user %></td>
     </tr>
     <% row_count += 1 %>
   <% end %>
