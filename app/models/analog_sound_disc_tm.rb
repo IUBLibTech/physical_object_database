@@ -18,7 +18,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	MATERIAL_VALUES = hashify ['Shellac', 'Plastic', 'N/A']
 	SUBSTRATE_VALUES = hashify ["Aluminum", "Glass", "Fiber", "Steel", "Zinc", "N/A"]
 	COATING_VALUES = hashify ['None', 'Lacquer', 'N/A']
-	EQUALIZATION_VALUES = hashify ['RIAA', 'Other', 'Unknown']
+	EQUALIZATION_VALUES = hashify ['', 'RIAA', 'Other', 'Unknown']
 	SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
 	SUBTYPE_VALUES = hashify ['LP']
 	SIMPLE_FIELDS = [
@@ -54,7 +54,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 			  substrate: "N/A",
 			  coating: "N/A",
 			  material: "Plastic",
-			  equalization: "Unknown"
+			  equalization: ""
 			}
 	}
 
