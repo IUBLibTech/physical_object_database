@@ -261,13 +261,8 @@ class PhysicalObject < ActiveRecord::Base
       return "Binned"
     elsif !self.box.nil?
       return "Boxed"
-    # picklist assignment does not require a valid barcode, hence this extra check
     elsif !self.picklist.nil?
-      if ApplicationHelper.real_barcode?(self.mdpi_barcode)
-        return "Barcoded"
-      else
-        return "On Pick List"
-      end  
+      return "On Pick List"
     else
       return "Unassigned"
     end

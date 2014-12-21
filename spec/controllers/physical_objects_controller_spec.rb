@@ -143,17 +143,17 @@ describe PhysicalObjectsController do
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "On Pick List"
       end
-      specify "Barcoded for picklist + barcode" do
+      specify "On Pick List for picklist + barcode" do
         put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
         physical_object.reload
-        expect(physical_object.current_workflow_status).to eq "Barcoded"
+        expect(physical_object.current_workflow_status).to eq "On Pick List"
       end
-      specify "Reverts to Unassigned after Barcoded" do
+      specify "Reverts to Unassigned after On Pick List" do
         put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
         put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm)
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "Unassigned"
-        expect(physical_object.workflow_statuses.size).to be >= 3 # Unassigned, Barcoded, Unassigned
+        expect(physical_object.workflow_statuses.size).to be >= 3 # Unassigned, On Pick List, Unassigned
       end
     end
   end
