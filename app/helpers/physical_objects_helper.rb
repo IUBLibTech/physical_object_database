@@ -1,8 +1,8 @@
 module PhysicalObjectsHelper
   require 'csv'
 
-  #sets limit on spreadsheet rows
-  ROW_LIMIT = 5000
+  #sets limit on spreadsheet rows; 0 disables
+  ROW_LIMIT = 0
 
   #returns array of invalid headers
   def PhysicalObjectsHelper.invalid_csv_headers(file)
@@ -31,7 +31,7 @@ module PhysicalObjectsHelper
     if invalid_headers_array.any?
       spreadsheet.errors.add :base, "The following headers are invalid: #{invalid_headers_array.inspect}.  Correct the file, or turn off header validation in upload submission."
       failed << [0, spreadsheet]
-    elsif records_count > ROW_LIMIT
+    elsif !ROW_LIMIT.zero? and records_count > ROW_LIMIT
       spreadsheet.errors.add :base, "The spreadsheet contains #{records_count} records, which exceeds the limit of #{ROW_LIMIT}."
       failed << [0, spreadsheet]
     elsif !spreadsheet.save
