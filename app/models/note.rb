@@ -10,5 +10,6 @@ class Note < ActiveRecord::Base
 
   def default_values
     self.user ||= SessionInfoModule.current_username
+    self.export ||= false if self.new_record?
   end
 end

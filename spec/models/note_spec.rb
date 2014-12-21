@@ -23,6 +23,11 @@ describe Note do
     expect(valid_note).to be_valid
   end
 
+  it "allows export" do
+    valid_note.export = false
+    expect(valid_note).to be_valid
+  end
+
   describe "#default_values" do
     let(:default_values) { valid_note.user = nil; valid_note.default_values }
     it "assigns a user value" do

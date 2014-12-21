@@ -72,7 +72,7 @@ class ApplicationController < ActionController::Base
       :other_copies, :year, :bin, :bin_id, :unit, :unit_id, :current_workflow_status, :picklist_id,
       :spreadsheet, :spreadsheet_id, :box, :box_id,
       condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :active, :user, :_destroy],
-      notes_attributes: [:id, :body, :user, :_destroy])
+      notes_attributes: [:id, :body, :user, :export, :_destroy])
   end
 
   def tm_params
