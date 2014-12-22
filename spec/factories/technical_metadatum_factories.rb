@@ -32,7 +32,7 @@ FactoryGirl.define do
     material "Plastic"
     substrate "N/A"
     coating "N/A"
-    equalization "RIAA"
+    equalization ""
     country_of_origin ""
     label ""
     sound_field "Mono"
