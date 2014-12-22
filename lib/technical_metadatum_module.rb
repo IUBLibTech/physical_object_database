@@ -96,9 +96,9 @@ module TechnicalMetadatumModule
     humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS)
   end
 
-  #awaiting user story
+  #override when needed
   def master_copies
-    ""
+    1
   end
 
 end

@@ -3,6 +3,7 @@ class CompactDiscTm < ActiveRecord::Base
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
 
-  def update_form_params(params)
+	def update_form_params(params)
 	end
+	#FIXME: deprecate?
 end
