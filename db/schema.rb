@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141221155728) do
+ActiveRecord::Schema.define(version: 20141221193920) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
