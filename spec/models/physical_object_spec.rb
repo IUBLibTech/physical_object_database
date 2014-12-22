@@ -138,12 +138,12 @@ describe PhysicalObject do
       valid_po.box = box
       expect(valid_po.inferred_workflow_status).to eq "Boxed"
     end
-    it "returns Barcoded if barcoded, AND on pick list" do
-      valid_po.mdpi_barcode = valid_mdpi_barcode
-      valid_po.picklist = picklist
-      expect(valid_po.inferred_workflow_status).to eq "Barcoded"
-    end
     it "returns On Pick List if on pick list" do
+      valid_po.picklist = picklist
+      expect(valid_po.inferred_workflow_status).to eq "On Pick List"
+    end
+    it "returns On Pick List if barcoded, AND on pick list" do
+      valid_po.mdpi_barcode = valid_mdpi_barcode
       valid_po.picklist = picklist
       expect(valid_po.inferred_workflow_status).to eq "On Pick List"
     end
@@ -367,12 +367,12 @@ describe PhysicalObject do
     let(:class_title) { "Physical Object" }
   end
 
-  status_list = ["Unassigned", "On Pick List", "Barcoded", "Boxed", "Binned", "Unpacked", "Returned to Unit"] 
+  status_list = ["Unassigned", "On Pick List", "Boxed", "Binned", "Unpacked", "Returned to Unit"] 
   # pass status_list arg here to test previous/next methods
   it_behaves_like "includes Workflow Status Module" do
     let(:object) { valid_po }
     let(:default_status) { "Unassigned" }
-    let(:new_status) { "Barcoded" }
+    let(:new_status) { "On Pick List" }
     let(:valid_status_values) { status_list }
     let(:class_title) { "Physical Object" }
   end

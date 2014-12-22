@@ -23,5 +23,11 @@ describe DatTm do
 
   it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:dat_tm) 
 
+  describe "#master_copies" do
+    it "returns 1" do
+      expect(dat_tm.master_copies).to eq 1
+    end
+  end
+
 end
 

@@ -23,4 +23,6 @@ class DatTm < ActiveRecord::Base
 		humanize_boolean_fieldset(:SAMPLE_RATE_FIELDS)
 	end
 
+	# master_copies default of 1
+
 end

@@ -29,5 +29,11 @@ describe CdrTm do
 
   it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:cdr_tm) 
 
+  describe "#master_copies" do
+    it "returns 1" do
+      expect(cdr_tm.master_copies).to eq 1
+    end
+  end
+
 end
 

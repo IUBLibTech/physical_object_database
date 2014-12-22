@@ -31,4 +31,6 @@ class CdrTm < ActiveRecord::Base
 	  self.damage ||= "None"
 	  self.format_duration ||= "Unknown"
 	end
+
+	# master_copies default of 1
 end

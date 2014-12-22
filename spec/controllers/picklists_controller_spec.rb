@@ -304,7 +304,7 @@ describe PicklistsController do
       remove_from_container
       physical_object.reload
       expect(physical_object.bin).to be_nil
-      expect(physical_object.current_workflow_status).to eq "Barcoded"
+      expect(physical_object.current_workflow_status).to eq "On Pick List"
     end
     it "removes the physical object from a box" do
       physical_object.box = box
@@ -314,7 +314,7 @@ describe PicklistsController do
       remove_from_container
       physical_object.reload
       expect(physical_object.box).to be_nil
-      expect(physical_object.current_workflow_status).to eq "Barcoded"
+      expect(physical_object.current_workflow_status).to eq "On Pick List"
     end
   end
 

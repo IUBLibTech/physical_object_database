@@ -36,5 +36,23 @@ describe OpenReelTm do
 
   it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:open_reel_tm) 
 
+  describe "#master_copies" do
+    cases_hash = { { full_track: true } => 1,
+                   { half_track: true, stereo: true } => 1,
+                   { half_track: true, mono: true } => 2,
+                   { quarter_track: true, stereo: true } => 2,
+                   { quarter_track: true, mono: true } => 4,
+                   { unknown_track: true} => 4
+                 }
+    cases_hash.each do |params, result|
+      it "returns #{result} for #{params.inspect}" do
+        open_reel_tm.update_attributes(**params)
+	open_reel_tm.reload
+        expect(open_reel_tm.master_copies).to eq result
+      end
+    end
+  end
+
+
 end
 
