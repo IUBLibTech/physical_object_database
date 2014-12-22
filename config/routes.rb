@@ -5,6 +5,7 @@ Pod::Application.routes.draw do
   resources :batches do
     patch :add_bin, on: :member
     post :remove_bin, on: :member
+    get :workflow_history, on: :member
   end
 
   resources :bins do
@@ -12,6 +13,7 @@ Pod::Application.routes.draw do
     post :unbatch, on: :member
     post :unseal, on: :member
     get :show_boxes, on: :member
+    get :workflow_history, on: :member
     patch :assign_boxes, on: :member
     resources :boxes, only: [:index, :new, :create]
   end
@@ -33,6 +35,7 @@ Pod::Application.routes.draw do
     get :download_spreadsheet_example, on: :collection
     get :tm_form, on: :collection
     get :split_show, on: :member
+    get :workflow_history, on: :member
     get :upload_show, on: :collection
     get :has_ephemera, on: :collection
     get :create_multiple, on: :collection

@@ -177,6 +177,22 @@ describe PhysicalObjectsController do
     end
   end
 
+  describe "GET workflow_history" do
+    before(:each) { get :workflow_history, id: physical_object.id }
+
+    it "assigns the requested physical object to @physical_object" do
+      expect(assigns(:physical_object)).to eq physical_object
+    end
+
+    it "assigns the worfklow history to @workflow_statuses" do
+      expect(assigns(:workflow_statuses)).to eq physical_object.workflow_statuses
+    end
+
+    it "renders the :workflow_history template" do
+      expect(response).to render_template(:workflow_history)
+    end
+  end
+
   describe "GET split_show" do
     let(:split_show) { get :split_show, id: physical_object.id }
     context "on an uncontained object" do

@@ -326,6 +326,7 @@ ActiveRecord::Schema.define(version: 20141222024344) do
     t.text     "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "user"
   end
 
   add_index "workflow_statuses", ["batch_id", "workflow_status_template_id"], name: "index_ws_on_batch_and_wst", using: :btree

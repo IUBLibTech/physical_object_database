@@ -1,0 +1,29 @@
+<table>
+<tr>
+  <th>#</th>
+  <th>Status</th>
+  <th>Index #</th>
+  <th>Datestamp</th>
+  <th>User</th>
+</tr>
+
+<% row_count = 0 %>
+<% unless @workflow_statuses.nil? || @workflow_statuses.size.zero? %>
+  <% @workflow_statuses.each_with_index do |row, index| %>
+    <% if row_count.odd? %>
+    <tr class='odd'>
+    <%else%>
+    <tr class='even'>
+    <%end%>
+      <td><%= index + 1 %></td>
+      <td><%= row.workflow_status_template.name %></td>
+      <td><%= row.workflow_status_template.sequence_index %></td>
+      <td><%= row.updated_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S") %></td>
+      <td><%= row.user %></td>
+    </tr>
+    <% row_count += 1 %>
+  <% end %>
+<% else %>
+  <tr><td colspan="5">No entries defined</td></tr>
+<% end %>
+</table>

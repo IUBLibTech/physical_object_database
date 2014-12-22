@@ -15,6 +15,7 @@ FactoryGirl.define do
     end
 
     notes "Factory Girl workflow status"
+    user "test_user"
   end
 
 end

@@ -5,6 +5,9 @@
 	<div class="contextMenuItem">
 	  <%= link_to("Delete", @bin, method: :delete, data: {:confirm=>'Are you sure you want to delete this Bin?'})%>
 	</div>
+	<div class="contextMenuItem">
+	  <%= link_to "View Workflow History", workflow_history_bin_path(@bin) %>
+	</div>
 <% end %>
 
 

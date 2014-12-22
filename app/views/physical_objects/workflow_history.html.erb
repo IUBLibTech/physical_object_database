@@ -1,0 +1,8 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Return to Physical Object", {:controller => 'physical_objects', :action => 'show', :id => @physical_object.id}) %>
+  </div>
+<% end %>
+
+<h2>Workflow Status History for Physical Object [<%= @physical_object.id %>]</h2>
+<%= render(partial: "workflow_status_templates/workflow_history_table") %>

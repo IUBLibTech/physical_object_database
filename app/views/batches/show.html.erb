@@ -8,6 +8,10 @@
 	<div class="contextMenuItem">
 	  <%= link_to("Delete Batch", batch_path(@batch.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Batch?'}) %>
 	</div>
+	<div class="contextMenuItem">
+	  <%= link_to "View Workflow History", workflow_history_batch_path(@batch) %>
+	</div>
+
 <% end %>
 <div class='left'>
 	<div id="batch_div">

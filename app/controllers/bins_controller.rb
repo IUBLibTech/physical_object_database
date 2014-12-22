@@ -1,5 +1,5 @@
 class BinsController < ApplicationController
-  before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :unseal, :show_boxes, :assign_boxes]
+  before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :unseal, :show_boxes, :assign_boxes, :workflow_history]
   before_action :set_assigned_boxes, only: [:show]
   before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
@@ -70,6 +70,10 @@ class BinsController < ApplicationController
 				render('show')
 			end
 		end
+	end
+
+	def workflow_history
+		@workflow_statuses = @bin.workflow_statuses
 	end
 
 	def add_barcode_item

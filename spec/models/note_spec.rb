@@ -28,23 +28,8 @@ describe Note do
     expect(valid_note).to be_valid
   end
 
-  describe "#default_values" do
-    let(:default_values) { valid_note.user = nil; valid_note.default_values }
-    it "assigns a user value" do
-      default_values
-      expect(valid_note.user).not_to be_nil
-    end
-  
-    it "gets session[:username] as default username" do
-      sign_in("user@example.com")
-      default_values
-      expect(valid_note.user).to eq "user@example.com"
-    end
-  
-    it "gets UNAVAILABLE as default username if unavailable from session" do
-      sign_out
-      default_values
-      expect(valid_note.user).to eq "UNAVAILABLE"
-    end
+  include_examples "has user field" do
+    let(:target_object) { valid_note }
   end
+
 end

@@ -13,6 +13,18 @@ describe WorkflowStatus do
       valid_workflow_status.workflow_status_template = nil
       expect(valid_workflow_status).not_to be_valid
     end
+    specify "user" do
+      valid_workflow_status.user = nil
+      expect(valid_workflow_status).not_to be_valid
+    end
+  end
+
+  describe "has optional fields:" do
+    specify "notes" do
+      valid_workflow_status.notes = nil
+      expect(valid_workflow_status).to be_valid
+    end
+    skip "NOTES DEPRECATED HERE?"
   end
 
   describe "has relationships: " do
@@ -37,6 +49,10 @@ describe WorkflowStatus do
     it "sequence_index returns template sequence_index" do
       expect(valid_workflow_status.sequence_index).to eq valid_workflow_status.workflow_status_template.sequence_index
     end
+  end
+
+  include_examples "has user field" do
+    let(:target_object) { valid_workflow_status }
   end
 
 end

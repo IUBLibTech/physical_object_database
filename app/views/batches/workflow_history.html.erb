@@ -1,0 +1,8 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Return to Batch", {:controller => 'batches', :action => 'show', :id => @batch.id}) %>
+  </div>
+<% end %>
+
+<h2>Workflow Status History for Batch [<%= @batch.id %>]</h2>
+<%= render(partial: "workflow_status_templates/workflow_history_table") %>
