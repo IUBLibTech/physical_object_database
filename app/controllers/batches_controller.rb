@@ -1,4 +1,5 @@
 class BatchesController < ApplicationController
+  before_action :set_batch, only: [:show, :edit, :update, :destroy, :workflow_history, :add_bin]
 
   def index
     @batches = Batch.all
@@ -19,12 +20,10 @@ class BatchesController < ApplicationController
   end
 
   def edit
-    @batch = Batch.find(params[:id])
     @bins = @batch.bins
   end
 
   def update
-    @batch = Batch.find(params[:id]);
     @bins = @batch.bins
     @available_bins = Bin.available_bins
     Batch.transaction do
@@ -41,7 +40,6 @@ class BatchesController < ApplicationController
     if request.format.csv? || request.format.xls?
       params[:id] = params[:id].sub(/batch_/, '')
     end
-    @batch = Batch.find(params[:id])
     @available_bins = Bin.available_bins
     @bins = @batch.bins
     respond_to do |format|
@@ -51,7 +49,6 @@ class BatchesController < ApplicationController
   end
 
   def destroy
-    @batch = Batch.find(params[:id])
     # Rails does not clear the id field so if a batch is somehow recreated with the same id as the
     # deleted one, all of the previous bins will be incorrectly associated
     Bin.where(batch_id: @batch.id).update_all(batch_id: nil)
@@ -64,8 +61,11 @@ class BatchesController < ApplicationController
     end
   end
 
+  def workflow_history
+    @workflow_statuses = @batch.workflow_statuses
+  end
+
   def add_bin
-    @batch = Batch.find(params[:id])
     if @batch.packed_status?
       flash[:warning] = Batch.packed_status_message
     elsif params[:bin_ids].nil? or params[:bin_ids].empty?
@@ -86,6 +86,9 @@ class BatchesController < ApplicationController
     def batch_params
       params.require(:batch).permit(:identifier, :name, :description, :current_workflow_status)
     end
-  
+
+    def set_batch
+      @batch = Batch.find(params[:id])
+    end
   
 end

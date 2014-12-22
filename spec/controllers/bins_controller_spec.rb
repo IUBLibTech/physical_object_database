@@ -241,6 +241,20 @@ describe BinsController do
     end
   end
 
+  describe "GET workflow_history" do
+    before(:each) { get :workflow_history, id: bin.id }
+    it "assigns the requested bin to @bin" do
+      expect(assigns(:bin)).to eq bin
+    end
+    it "assigns the worfklow history to @workflow_statuses" do
+      expect(assigns(:workflow_statuses)).to eq bin.workflow_statuses
+    end
+    it "renders the :workflow_history template" do
+      expect(response).to render_template(:workflow_history)
+    end
+  end
+
+
   describe "POST unseal" do
     before(:each) { request.env["HTTP_REFERER"] = "source_page" }
     context "on an unsealed (Created) bin" do

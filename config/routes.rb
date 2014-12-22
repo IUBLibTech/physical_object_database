@@ -5,6 +5,7 @@ Pod::Application.routes.draw do
   resources :batches do
     patch :add_bin, on: :member
     post :remove_bin, on: :member
+    get :workflow_history, on: :member
   end
 
   resources :bins do
@@ -12,6 +13,7 @@ Pod::Application.routes.draw do
     post :unbatch, on: :member
     post :unseal, on: :member
     get :show_boxes, on: :member
+    get :workflow_history, on: :member
     patch :assign_boxes, on: :member
     resources :boxes, only: [:index, :new, :create]
   end

@@ -7,10 +7,12 @@ describe "root" do
 end
 
 describe "batches" do
+  it "routes to workflow_history" do
+    expect(get("/batches/:id/workflow_history")).to be_routable
+  end
   it "routes to add_bin" do
     expect(patch("/batches/id/add_bin")).to be_routable
   end
-
   it "routes to remove_bin" do
     expect(post("/batches/id/remove_bin")).to be_routable
   end
@@ -36,6 +38,11 @@ describe "bins" do
   it "routes to assign_boxes" do
     expect(patch("/bins/:id/assign_boxes")).to be_routable
   end
+
+  it "routes to workflow_history" do
+    expect(get("/bins/:id/workflow_history")).to be_routable
+  end
+
 end
 
 describe "boxes" do

@@ -53,6 +53,22 @@ describe BatchesController do
     end
   end
 
+  describe "GET workflow_history" do
+    before(:each) { get :workflow_history, id: batch.id }
+
+    it "assigns the requested batch to @batch" do
+      expect(assigns(:batch)).to eq batch
+    end
+
+    it "assigns the worfklow history to @workflow_statuses" do
+      expect(assigns(:workflow_statuses)).to eq batch.workflow_statuses
+    end
+
+    it "renders the :workflow_history template" do
+      expect(response).to render_template(:workflow_history)
+    end
+  end
+
   describe "POST create" do
     context "with valid attributes" do
       let(:creation) { post :create, batch: valid_batch.attributes.symbolize_keys }

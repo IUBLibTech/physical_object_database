@@ -18,6 +18,9 @@
   <div class="contextMenuItem">
     <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) %>
   </div>
+  <div class="contextMenuItem">
+    <%= link_to "View Workflow History", workflow_history_physical_object_path(@physical_object) %>
+  </div>
 <% end %>
 
 <%= render(partial: "physical_object_form", display_assigned: true) %>
