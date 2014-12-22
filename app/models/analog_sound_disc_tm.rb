@@ -54,7 +54,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 			  substrate: "N/A",
 			  coating: "N/A",
 			  material: "Plastic",
-			  equalization: "Unknown"
+			  equalization: ""
 			}
 	}
 
