@@ -11,7 +11,7 @@ class BatchesController < ApplicationController
   def create
     @batch = Batch.new(batch_params)
     if @batch.save
-      flash[:notice] = "<i>#{@batch.name}</i> was successfully created".html_safe
+      flash[:notice] = "<i>#{@batch.identifier}</i> was successfully created".html_safe
       redirect_to(:action => 'index')
     else 
       render('new')
@@ -29,7 +29,7 @@ class BatchesController < ApplicationController
     @available_bins = Bin.available_bins
     Batch.transaction do
       if @batch.update_attributes(batch_params)
-        flash[:notice] = "<i>#{@batch.name}</i> was successfully updated.".html_safe
+        flash[:notice] = "<i>#{@batch.identifier}</i> was successfully updated.".html_safe
         redirect_to(:action => 'show', :id => @batch.id)
       else
         render('show')
@@ -56,7 +56,7 @@ class BatchesController < ApplicationController
     # deleted one, all of the previous bins will be incorrectly associated
     Bin.where(batch_id: @batch.id).update_all(batch_id: nil)
     if @batch.destroy
-      flash[:notice] = "<i>#{@batch.name}</i> successfully destroyed".html_safe
+      flash[:notice] = "<i>#{@batch.identifier}</i> successfully destroyed".html_safe
       redirect_to(:action => 'index')
     else
       flash[:notice] = '<b class="warning">Unable to delete this Batch</b>'.html_safe
@@ -84,7 +84,7 @@ class BatchesController < ApplicationController
 
   private
     def batch_params
-      params.require(:batch).permit(:identifier, :name, :description, :current_workflow_status)
+      params.require(:batch).permit(:identifier, :description, :current_workflow_status)
     end
   
   

@@ -12,16 +12,6 @@
       </td>
     </tr>
     <tr>
-      <th>Name</th>
-      <td>
-        <% if @edit_mode %>
-          <%= f.text_field(:name) %>
-        <% else %>
-          <%= @batch.name %>
-        <% end %>
-      </td>
-    </tr>
-    <tr>
       <th>Description</th>
       <td>
         <% if @edit_mode %>

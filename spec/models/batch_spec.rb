@@ -4,38 +4,48 @@ describe Batch do
 
   let(:batch) { FactoryGirl.create :batch }
   let(:valid_batch) { FactoryGirl.build :batch }
+  let(:invalid_batch) { FactoryGirl.build :invalid_batch }
   let(:duplicate) { FactoryGirl.build :batch, identifier: "duplicate" }
   let(:bin) { FactoryGirl.create :bin, batch: batch }
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
 
-  it "requires an identifier" do
-    expect(batch).to be_valid
-    expect(batch.identifier).not_to be_blank
-    batch.identifier = ""
-    expect(batch).to be_invalid
+  describe "FactoryGirl" do
+    it "provides a valid batch" do
+      expect(valid_batch).to be_valid
+    end
+    it "provides an invalid batch" do
+      expect(invalid_batch).not_to be_valid
+    end
   end
 
-  it "requires a unique identifier" do
-    expect(duplicate).to be_valid
-    duplicate.identifier = batch.identifier
-    expect(duplicate).to be_invalid
+  describe "has required fields:" do
+    it "requires an identifier" do
+      expect(batch).to be_valid
+      expect(batch.identifier).not_to be_blank
+      batch.identifier = ""
+      expect(batch).to be_invalid
+    end
+    it "requires a unique identifier" do
+      expect(duplicate).to be_valid
+      duplicate.identifier = batch.identifier
+      expect(duplicate).to be_invalid
+    end
   end
 
-  it "provides a physical object count" do
-    expect(batch.physical_objects_count).to eq 0 
-  end
-
-  it "has many bins" do
-    expect(batch.bins.size).to eq 0
-  end
-
-  it "has a default workflow status of Created" do
-    expect(duplicate.current_workflow_status).to eq "Created"
-  end
-
-  it "can have workflow statuses" do
-    expect(batch.workflow_statuses.size).to be >= 0
+  describe "has relationships:" do
+    it "provides a physical object count" do
+      expect(batch.physical_objects_count).to eq 0 
+    end
+    it "has many bins" do
+      expect(batch.bins.size).to eq 0
+    end
+    it "can have workflow statuses" do
+      expect(batch.workflow_statuses.size).to be >= 0
+    end
+    it "has a default workflow status of Created" do
+      expect(duplicate.current_workflow_status).to eq "Created"
+    end
   end
 
   describe "#media_format" do
