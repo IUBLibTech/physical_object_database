@@ -35,7 +35,7 @@ class Bin < ActiveRecord::Base
 	  end
           batch_status = "" if batch_status.in? [nil, "Created"]
           addendum = ( batch_status.blank? ? "" : " >> #{batch_status}" )
-          self.current_workflow_status + addendum
+          self.current_workflow_status.to_s + addendum
         end
 
         def inferred_workflow_status

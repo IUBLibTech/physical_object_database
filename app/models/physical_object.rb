@@ -251,7 +251,7 @@ class PhysicalObject < ActiveRecord::Base
     end
     bin_status = "" if bin_status.in? [nil, "Created"]
     addendum = ( bin_status.blank? ? "" : " >> #{bin_status}" )
-    self.current_workflow_status + addendum
+    self.current_workflow_status.to_s + addendum
   end
 
   def inferred_workflow_status
