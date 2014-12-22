@@ -1,7 +1,6 @@
 <table>
 	<tr>
 		<th>Batch Identifier</th>
-		<th>Name</th>
 		<th>Description</th>
 		<th>Objects Count</th>
 		<th>Current Status</th>
@@ -11,7 +10,6 @@
 	<% @batches.each do |b| %>
 		<tr class=<%= count.odd? ? "odd" : "even" %> >
 			<td><%= b.identifier %></td>
-			<td><%= b.name %></td>
 			<td><%= b.description %></td>
 			<td><%= b.physical_objects_count %></td>
 			<td><%= b.current_workflow_status %></td>

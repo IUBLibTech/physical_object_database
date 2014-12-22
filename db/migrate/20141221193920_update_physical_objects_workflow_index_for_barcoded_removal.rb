@@ -2,10 +2,12 @@ class UpdatePhysicalObjectsWorkflowIndexForBarcodedRemoval < ActiveRecord::Migra
   def up
     barcoded_template = WorkflowStatusTemplate.find_by(object_type: "Physical Object", name: "Barcoded")
     on_picklist_template = WorkflowStatusTemplate.find_by(object_type: "Physical Object", name: "On Pick List")
-    # update physical object workflow_status_template refs
-    WorkflowStatus.where(workflow_status_template_id: barcoded_template.id).update_all(workflow_status_template_id: on_picklist_template.id)
-    # destroy Barcoded
-    barcoded_template.destroy
+    if barcoded_template and on_picklist_template
+      # update physical object workflow_status_template refs
+      WorkflowStatus.where(workflow_status_template_id: barcoded_template.id).update_all(workflow_status_template_id: on_picklist_template.id)
+      # destroy Barcoded
+      barcoded_template.destroy
+    end
     # update following
     WorkflowStatusTemplate.where(object_type: "Physical Object", name: "On Pick List").update_all(sequence_index: 2)
     WorkflowStatusTemplate.where(object_type: "Physical Object", name: "Boxed").update_all(sequence_index: 3)
