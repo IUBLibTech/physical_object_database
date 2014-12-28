@@ -1,12 +1,13 @@
+<% string_limit = 12 %>
 <table>
   <tr class="header">
     <th>Barcode</th>
     <th>Identifier</th>
-    <th>Description</th>
+    <th>Desc.</th>
     <% if @batch.nil? %>
     <th>Batch</th>
     <% end %>
-    <th>Objects Count</th>
+    <th>Obj's</th>
     <th>Workflow Status</th>
     <th>Actions</th>
   </tr>
@@ -14,13 +15,18 @@
   <% @bins.each do |bin|%>
     <tr>
       <td><%= bin.mdpi_barcode %></td>
-      <td><%= bin.identifier %></td>
-      <td><%= bin.description %></td>
+      <td title="<%= bin.identifier.length <= string_limit ? "" : bin.identifier %>"><%= bin.identifier.length <= string_limit ? bin.identifier : bin.identifier[0,string_limit - 3] + '...'%></td>
+      <td title="<%= bin.description %>"><%= bin.description.to_s.blank? ? "" : bin.description[0,1] + "..." %></td>
       <% if @batch.nil? %>
-      <td><%= bin.batch.nil? ? "" : bin.batch.identifier %></td>
+      <% batch_string = bin.batch.nil? ? "" : bin.batch.identifier %>
+      <td title="<%= batch_string.length <= string_limit ? "" : batch_string %>">
+         <% if bin.batch %>
+           <%= link_to batch_string.length <= string_limit ? batch_string : batch_string[0,string_limit - 3] + '...', bin.batch %>
+         <% end %>
+      </td>
       <% end %>
       <td><%= bin.physical_objects_count %></td>
-      <td><%= bin.current_workflow_status %></td>
+      <td><%= bin.display_workflow_status %></td>
       <td>
         <%= link_to("Show", bin_path(bin)) %>
         <% if @batch.nil? %>
