@@ -8,7 +8,7 @@ module PhysicalObjectsHelper
   def PhysicalObjectsHelper.invalid_csv_headers(file)
     #FIXME: get valid headers list more elegantly?
     #start with list of headers not corresponding to fields in physical object or any tm
-    valid_headers = ['Bin barcode', 'Bin identifier', 'Box barcode', 'Unit', 'Group key', 'Copies', 'Group total']
+    valid_headers = ['Bin barcode', 'Bin identifier', 'Box barcode', 'Unit', 'Group key', 'Copies', 'Group total', 'Notes']
     valid_headers += PhysicalObject.valid_headers
     TechnicalMetadatumModule::TM_CLASS_FORMATS.keys.each do |tm_class|
       valid_headers += tm_class.valid_headers
@@ -134,16 +134,34 @@ module PhysicalObjectsHelper
               failed << [index, tm]
             elsif po.save
               succeeded << po.id
-              #create duplicated records if there was a "Quantity" column specified
-              q = r["Quantity"]
-              unless q.nil? || q.blank? || q.to_i < 2
+
+              #import notes
+              notes = r["Notes"].to_s.split(/\s*;\s*/)
+              notes.each do |body_text|
+                note = po.notes.new(body: body_text)
+                failed << [index, note] unless note.save
+              end
+              
+              #create duplicated records if there was a "Copies" column specified
+              q = r["Copies"]
+              unless q.to_s.blank? || q.to_i < 2
                 (q.to_i - 1).times do |i|
-                  p_clone = po.dup
-                  p_clone.save
-                  succeeded << p_clone.id
+                  po_clone = po.dup
                   tm_clone = tm.dup
-                  tm_clone.physical_object = p_clone
-                  tm_clone.save
+                  tm_clone.physical_object = po_clone
+                  if !tm_clone.save
+                    failed << [index, tm]
+                  elsif !po_clone.save
+                    tm_clone.destroy
+                    failed << [index, po]
+                  else
+                    succeeded << po_clone.id
+                    po.notes.each do |note|
+                      note_clone = note.dup
+                      note_clone.physical_object = po_clone
+                      failed << [index, note_clone] unless note_clone.save
+                    end
+                  end
                 end
               end
             else

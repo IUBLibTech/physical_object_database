@@ -394,6 +394,9 @@ describe PhysicalObjectsController do
           expect(object.updated_at).to be <= spreadsheet.created_at
         end
       end
+      it "creates Note records" do
+        expect{ upload_update }.to change(Note, :count).by(2) 
+      end
       it "fails if repeated, due to duplicate filename" do
         upload_update
         expect{ upload_update }.not_to change(Spreadsheet, :count)
