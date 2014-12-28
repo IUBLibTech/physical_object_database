@@ -394,6 +394,9 @@ describe PhysicalObjectsController do
           expect(object.updated_at).to be <= spreadsheet.created_at
         end
       end
+      it "creates Condition Status records" do
+        expect{ upload_update }.to change(ConditionStatus, :count).by(2) 
+      end
       it "creates Note records" do
         expect{ upload_update }.to change(Note, :count).by(2) 
       end
