@@ -8,7 +8,7 @@ module PhysicalObjectsHelper
   def PhysicalObjectsHelper.invalid_csv_headers(file)
     #FIXME: get valid headers list more elegantly?
     #start with list of headers not corresponding to fields in physical object or any tm
-    valid_headers = ['Bin barcode', 'Bin identifier', 'Box barcode', 'Unit', 'Group key', 'Copies', 'Group total', 'Notes', 'Conditions']
+    valid_headers = ['Bin barcode', 'Bin identifier', 'Box barcode', 'Unit', 'Group key', 'Quantity', 'Group total', 'Notes', 'Conditions']
     valid_headers += PhysicalObject.valid_headers
     TechnicalMetadatumModule::TM_CLASS_FORMATS.keys.each do |tm_class|
       valid_headers += tm_class.valid_headers
@@ -160,8 +160,8 @@ module PhysicalObjectsHelper
                 failed << [index, note] unless note.save
               end
               
-              #create duplicated records if there was a "Copies" column specified
-              q = r["Copies"]
+              #create duplicated records if there was a "Quantity" column specified
+              q = r["Quantity"]
               unless q.to_s.blank? || q.to_i < 2
                 (q.to_i - 1).times do |i|
                   po_clone = po.dup
