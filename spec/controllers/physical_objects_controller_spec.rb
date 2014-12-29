@@ -394,13 +394,19 @@ describe PhysicalObjectsController do
           expect(object.updated_at).to be <= spreadsheet.created_at
         end
       end
+      it "creates Condition Status records" do
+        expect{ upload_update }.to change(ConditionStatus, :count).by(2) 
+      end
+      it "creates Note records" do
+        expect{ upload_update }.to change(Note, :count).by(2) 
+      end
       it "fails if repeated, due to duplicate filename" do
         upload_update
         expect{ upload_update }.not_to change(Spreadsheet, :count)
       end
     end
 
-    ["po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv"].each do |filename|
+    ["po_import_multiple.csv", "po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv"].each do |filename|
       context "specifying a file: #{filename}" do
         let(:post_args) { { physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } } }
         let(:upload_update) { post :upload_update, **post_args }

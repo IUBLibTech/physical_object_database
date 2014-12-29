@@ -44,7 +44,7 @@ describe Batch do
       expect(batch.workflow_statuses.size).to be >= 0
     end
     it "has a default workflow status of Created" do
-      expect(duplicate.current_workflow_status).to eq "Created"
+      expect(batch.current_workflow_status).to eq "Created"
     end
   end
 
