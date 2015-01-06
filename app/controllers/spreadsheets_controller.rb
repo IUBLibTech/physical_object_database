@@ -49,7 +49,7 @@ class SpreadsheetsController < ApplicationController
 
   private
     def set_spreadsheet
-      #remove spreadsheet_ prefix for XLS generation
+      #remove spreadsheet_ prefix for CSV/XLS generation
       id = params[:id].to_s.sub(/^spreadsheet_/, '')
       @spreadsheet = Spreadsheet.find(id)
     end

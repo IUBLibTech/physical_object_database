@@ -37,9 +37,6 @@ class BatchesController < ApplicationController
   end
 
   def show
-    if request.format.csv? || request.format.xls?
-      params[:id] = params[:id].sub(/batch_/, '')
-    end
     @available_bins = Bin.available_bins
     @bins = @batch.bins
     respond_to do |format|
@@ -88,7 +85,8 @@ class BatchesController < ApplicationController
     end
 
     def set_batch
-      @batch = Batch.find(params[:id])
+      # remove batch_ prefix, if present, for csv and xls requests
+      @batch = Batch.find(params[:id].to_s.sub(/^batch_/, ''))
     end
   
 end

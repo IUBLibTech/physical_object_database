@@ -280,11 +280,8 @@ class PicklistsController < ApplicationController
 
 	private
 		def set_picklist
-		  if request.format.csv? || request.format.xls?
-		    # special case: picklist_ is spoofed into id value for nice CSV/XLS filenames
-	 	    params[:id] = params[:id].sub(/picklist_/, '')
-		  end
-		  @picklist = Picklist.find(params[:id])
+		  # special case: picklist_ is spoofed into id value for nice CSV/XLS filenames
+		  @picklist = Picklist.find(params[:id].to_s.sub(/^picklist_/, ''))
 		  @physical_objects = @picklist.physical_objects
 		end
 
