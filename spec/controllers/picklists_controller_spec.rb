@@ -392,4 +392,80 @@ describe PicklistsController do
     end
   end
 
+  describe "PATCH pack_list on member" do
+    let(:pack_picklist) { FactoryGirl.create(:picklist, name: "Foo") }
+    let(:pack_bin) { FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier: "binbar") }
+    let(:pack_box) { FactoryGirl.create(:box, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
+    let(:args) { {picklist: {id: nil}, box_id: nil, bin_id: nil, physical_object: {id: nil} } }
+    let(:pack_list) { patch :pack_list, **args }
+    let(:po) { FactoryGirl.create(:physical_object, :cdr, picklist: picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode ) }
+    
+    before(:each) { 
+      request.env['HTTP_REFERER'] = "Foo"
+    }
+
+    after(:each) do
+      pack_picklist.reload
+      pack_bin.reload
+      pack_box.reload
+      po.reload
+    end
+    
+    context "with empty pick list and bin" do
+      before(:each) do
+        args[:picklist][:id] = pack_picklist.id
+        args[:bin_id] = pack_bin.id
+        pack_list
+      end
+      it "finds a pick list" do
+        expect(assigns(:picklist)).to eq pack_picklist
+      end
+      it "can't find a physical object to pack" do
+        expect(assigns(:physical_object)).to be_nil
+      end
+      it "creates flash hash warning" do
+        expect(flash[:warning]).to eq "<i>#{pack_picklist.name}</i> has 0 unpacked physical objects".html_safe
+      end
+    end
+
+    context "with fully packed pick list and bin" do
+      before(:each) do
+        po.picklist = pack_picklist
+        po.current_workflow_status = "On Pick List"        
+        po.bin = pack_bin
+        po.current_workflow_status = "Binned"
+        bin.current_workflow_status = "Sealed"
+        args[:picklist][:id] = pack_picklist.id
+        args[:bin_id] = pack_bin.id
+        pack_list
+      end
+      it "finds a pick list" do
+        expect(assigns(:picklist)).to eq pack_picklist
+      end
+      it "can't find a physical object to pack" do
+        expect(assigns(:physical_object)).to be_nil
+      end
+      it "creates flash hash warning" do
+        expect(flash[:warning]).to eq "<i>#{pack_picklist.name}</i> has 0 unpacked physical objects".html_safe
+      end
+    end
+
+    # context "with invalid physical object barcode and valid bin" do
+    #   before(:each) do
+    #     physical_object.mdpi_barcode = "0"
+    #     args[:picklist][:id] = pack_picklist.id
+    #     args[:bin_id] = pack_bin.id
+    #     args[:physical_object][:id] = po.id
+    #   end
+
+    #   it "finds a physical object" do
+    #     expect(assigns(:physical_object)).to eq po
+    #   end
+    #   it "cannot pack physical object with barcode '0'" do
+        
+    #   end
+    # end
+
+  end
+
 end

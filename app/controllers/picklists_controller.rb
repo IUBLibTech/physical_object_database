@@ -28,7 +28,7 @@ class PicklistsController < ApplicationController
 		respond_to do |format|
 			format.html do
 				@physical_objects = @physical_objects.paginate(page: params[:page])
-		    	end
+		  end
 			format.csv { send_data PhysicalObject.to_csv(@physical_objects, @picklist) }
 			format.xls
 		end
@@ -56,7 +56,6 @@ class PicklistsController < ApplicationController
 			@action = 'update'
 			@submit_text = "Update Picklist"
 			render(action: :edit)
-			#render('edit')
 		end
 	end
 
@@ -99,7 +98,7 @@ class PicklistsController < ApplicationController
 	end
 
 	# pack list can be reached in the following ways
-	# 1) Packing from a specific bin/box without specifying a physical object
+	# 1) Packing from a specific bin/box without specifying a physical object (start with the first available physical object on the pick list)
 	# 	 params will hold the pick list id and the container id
 	# 2) Packing from a specific bin/box specifying a physical object to pack with (find specific item on the pick list)
 	# 	 params will hold pick list id, container id, and physical object id
@@ -110,49 +109,18 @@ class PicklistsController < ApplicationController
 	# 5) A return trip from packing/skipping/splitting a physical object 
 	# 	 params will hold pick list id, physical object id of whatever WAS packed/skipped/split, and packing_mode  
 	# 	 specifying what happened to that physical object
-
 	def pack_list
-		if params and params[:picklist] and params[:picklist][:id]
-			@picklist = Picklist.find(params[:picklist][:id])
-			if params[:box_id] and params[:box_id].length > 0
-				@box = Box.find(params[:box_id])
-				session[:current_packing_box] = @box.id
-			elsif session[:current_packing_box]
-				@box = Box.find(session[:current_packing_box])
-			end
-
-			if params[:bin_id] and params[:bin_id].length > 0
-				@bin = Bin.find(params[:bin_id])
-				session[:current_packing_bin] = @bin.id
-			elsif session[:current_packing_bin]
-				@bin = Bin.find(session[:current_packing_bin])
-			end
-			
-			packing_mode ||= params[:packing_mode]
-			
-			if packing_mode
-				last_po = PhysicalObject.find(params[:physical_object][:id])
-				verb = (packing_mode == "Pack" ? "Packed" : (packing_mode == "Skip" ? "Skipped" : packing_mode))
-				flash[:notice] = "Physical Object <i>#{last_po.call_number}</i> was #{verb}".html_safe
-				@physical_object = PhysicalObject.where("id > ?", params[:physical_object][:id]).where(
-					picklist_id: @picklist.id, 
-					box_id: nil, 
-					bin_id: nil, 
-					).order(:call_number).first
-			else
-				@physical_object = params[:physical_object] ? 
-					PhysicalObject.where(picklist_id: @picklist.id, id: params[:physical_object][:id]).order(:call_number).first : 
-					PhysicalObject.where(picklist_id: @picklist.id, box_id: nil, bin_id: nil).first
-			end
-			
-			@edit_mode = true
-			@picklisting = true
-			@display_assigned = true
-			@physical_object.bin = @bin
-			@physical_object.box = @box
+		puts "\n\nPacking list\n\n"
+		if params[:pack_button]
+			pack
+		elsif params[:next_button]
+			next_po
+		elsif params[:previous_button]
+			previous_po
+		elsif params[:skip_button]
+			skip
 		else
-		  flash[:notice] = "No picklist specified for processing"
-		  redirect_to(controller: 'picklist_specifications', action: 'index')
+			start
 		end
 	end
 
@@ -276,13 +244,14 @@ class PicklistsController < ApplicationController
 	end
 
 
-	
-
 	private
 		def set_picklist
-		  # special case: picklist_ is spoofed into id value for nice CSV/XLS filenames
-		  @picklist = Picklist.find(params[:id].to_s.sub(/^picklist_/, ''))
-		  @physical_objects = @picklist.physical_objects
+		  if request.format.csv? || request.format.xls?
+		    # special case: picklist_ is spoofed into id value for nice CSV/XLS filenames
+	 	    params[:id] = params[:id].sub(/picklist_/, '')
+		  end
+		  @picklist = Picklist.find(params[:id])
+		  @physical_objects = @picklist.physical_objects.order("call_number")
 		end
 
 		def picklist_params
@@ -299,4 +268,79 @@ class PicklistsController < ApplicationController
 				return false
 			end
 		end
+
+		def next_po
+			puts "\n\nHit the next button\n\n"
+			redirect_to(:back)
+		end
+
+		def previous_po
+			puts "\n\nHit the previous button\n\n"
+			redirect_to(:back)
+		end
+
+		def pack
+			puts "\n\nHit the pack button\n\n"
+			redirect_to(:back)
+		end
+
+		def skip
+			puts "\n\nHit the skip button\n\n"
+			redirect_to(:back)
+		end
+
+		def start
+			if params and params[:picklist] and params[:picklist][:id]
+			@picklist = Picklist.find(params[:picklist][:id])
+			if params[:box_id] and params[:box_id].length > 0
+				@box = Box.find(params[:box_id])
+				session[:current_packing_box] = @box.id
+			elsif session[:current_packing_box]
+				@box = Box.find(session[:current_packing_box])
+			end
+
+			if params[:bin_id] and params[:bin_id].length > 0
+				@bin = Bin.find(params[:bin_id])
+				session[:current_packing_bin] = @bin.id
+			elsif session[:current_packing_bin]
+				@bin = Bin.find(session[:current_packing_bin])
+			end
+
+			packing_mode ||= params[:packing_mode]
+			# if there's no packing_mode specified it's not a round trip so clear the session cache
+			if packing_mode.nil?
+				session[:current_packing_bin] = nil
+				session[:current_packing_bin] = nil
+			end
+			if packing_mode
+				last_po = PhysicalObject.find(params[:physical_object][:id])
+				verb = (packing_mode == "Pack" ? "Packed" : (packing_mode == "Skip" ? "Skipped" : packing_mode))
+				flash[:notice] = "Physical Object <i>#{last_po.call_number}</i> was #{verb}".html_safe
+				@physical_object = PhysicalObject.where("id > ?", params[:physical_object][:id]).where(
+					picklist_id: @picklist.id, 
+					box_id: nil, 
+					bin_id: nil, 
+					).order(:call_number).first
+			else
+				@physical_object = params[:physical_object] ? 
+					PhysicalObject.where(picklist_id: @picklist.id, id: params[:physical_object][:id]).order(:call_number).first : 
+					PhysicalObject.where(picklist_id: @picklist.id, box_id: nil, bin_id: nil).first
+			end
+
+			# no unpacked physical object was found for the pick list - it was either completely packed, or there are no physical objects on it
+			if @physical_object.nil?
+				flash[:warning] = "<i>#{@picklist.name}</i> has 0 unpacked physical objects".html_safe
+				redirect_to(:back)
+			else
+				@edit_mode = true
+				@picklisting = true
+				@display_assigned = true
+				@physical_object.bin = @bin
+				@physical_object.box = @box
+			end
+		else
+		  flash[:notice] = "No picklist specified for processing"
+		  redirect_to(controller: 'picklist_specifications', action: 'index')
+		end	
+	end
 end

@@ -80,43 +80,36 @@ class PhysicalObjectsController < ApplicationController
         update = @tm.update_attributes(tm_params)
       end
 
+      # a new barcode may have been scanned for the bin and/or box
       @bin = params[:bin_mdpi_barcode] ? Bin.where(mdpi_barcode: params[:bin_mdpi_barcode]).first : nil
       @box = params[:box_mdpi_barcode] ? Box.where(mdpi_barcode: params[:box_mdpi_barcode]).first : nil
-      
-      @physical_object.bin = @bin ? @bin : @physical_object.bin
-      @physical_object.box = @box ? @box : @physical_object.box
-      
-      # only assign the physical object to a container if the form was NOT submitted with the "Skip" button AND the update
-      # was successful AND the physical object has a real barcode (valid and not zero)
-      debugger
-      if !params[:skip_button] and updated and ApplicationHelper.real_barcode?(@physical_object.mdpi_barcode)
-        # this will only change workflow status if the update resulted in a new assignment of either bin or box
-        if @box
+
+      #if the box (and then bin) are different then validate and save
+      unless @box == @physical_object.box
+        if @box.container_full?
+          PhysicalObject.errors[:box] = "Cannot pack this Physical Object in Box <i>#{@box.mdpi_barcode}</i>. It is full!".html_safe
+        else
+          @physical_object.box = @box
           @physical_object.current_workflow_status = "Boxed"
         end
-        if @bin
+      end
+      unless @bin == @physical_object.bin
+        if @bin.workflow_statuses.last.past_or_equal_to_status?("Sealed")
+          PhysicalObject.errors[:bin] = "Cannot assign this Physical Object to Bin <i>#{@bin.identifier}</i>. It is sealed or further in the workflow.".html_safe
+        else
+          @physical_object.bin = @bin
           @physical_object.current_workflow_status = "Binned"
         end
+      end
+
+      if updated and @physical_object.changed?
         @physical_object.save
       end
 
-      # if the update call originated from the pick list 
-      packing = params[:pack_button] || params[:skip_button] || params[:split_button]
-      if updated and packing
-        # an update may be successful but a real MDPI barcode might not have been applied.
-        if (params[:pack_button] and ApplicationHelper.real_barcode?(@physical_object.mdpi_barcode)) || params[:skip_button] or params[:split_button]
-          redirect_to  pack_list_picklists_path(packing_mode: packing, picklist: {id: @physical_object.picklist.id}, physical_object: {id: @physical_object.id})
-        else
-          @physical_object.errors.add(:mdpi_barcode, "must be valid to pack the record")
-          init_picklist_params
-          render "picklists/pack_list"
-        end
-      elsif updated and !packing
+
+      if updated 
         flash[:notice] = "Physical Object successfully updated".html_safe
         redirect_to(action: 'index')
-      elsif !updated and packing
-        init_picklist_params
-        render "picklists/pack_list"
       else
         @edit_mode = true
         render action: :edit  
