@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141228183357) do
+ActiveRecord::Schema.define(version: 20150119043409) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -48,8 +48,10 @@ ActiveRecord::Schema.define(version: 20141228183357) do
     t.datetime "updated_at"
     t.string   "workflow_status"
     t.integer  "workflow_index"
+    t.string   "destination"
   end
 
+  add_index "batches", ["destination"], name: "index_batches_on_destination", using: :btree
   add_index "batches", ["workflow_status"], name: "index_batches_on_workflow_status", using: :btree
 
   create_table "bins", force: true do |t|
@@ -63,8 +65,10 @@ ActiveRecord::Schema.define(version: 20141228183357) do
     t.integer  "spreadsheet_id"
     t.string   "workflow_status"
     t.integer  "workflow_index"
+    t.string   "destination"
   end
 
+  add_index "bins", ["destination"], name: "index_bins_on_destination", using: :btree
   add_index "bins", ["spreadsheet_id"], name: "index_bins_on_spreadsheet_id", using: :btree
   add_index "bins", ["workflow_index", "identifier"], name: "index_bins_on_workflow_index_and_identifier", using: :btree
   add_index "bins", ["workflow_status"], name: "index_bins_on_workflow_status", using: :btree
@@ -263,8 +267,10 @@ ActiveRecord::Schema.define(version: 20141228183357) do
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "destination"
   end
 
+  add_index "picklists", ["destination"], name: "index_picklists_on_destination", using: :btree
   add_index "picklists", ["name"], name: "index_picklists_on_name", unique: true, using: :btree
 
   create_table "preservation_problems", force: true do |t|

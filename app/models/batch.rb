@@ -4,6 +4,8 @@ class Batch < ActiveRecord::Base
 
 	include WorkflowStatusModule
 	extend WorkflowStatusQueryModule
+        include DestinationModule
+
 	#FIXME: resolve issue with FactoryGirl and after_initialize callbacks
 	after_initialize :assign_default_workflow_status
 

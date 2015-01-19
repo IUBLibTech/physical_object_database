@@ -11,6 +11,8 @@ describe Bin do
     expect(valid_bin).to be_valid
   end
 
+  include_examples "destination module examples", FactoryGirl.build(:bin)
+
   describe "has required fields:" do
     it "identifier" do
       valid_bin.identifier = nil

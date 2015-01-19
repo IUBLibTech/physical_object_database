@@ -16,6 +16,7 @@ class Bin < ActiveRecord::Base
         has_many :condition_statuses, :dependent => :destroy
         accepts_nested_attributes_for :condition_statuses, allow_destroy: true
         include ConditionStatusModule
+        include DestinationModule
 
         validates :identifier, presence: true, uniqueness: true
         validates :mdpi_barcode, mdpi_barcode: true

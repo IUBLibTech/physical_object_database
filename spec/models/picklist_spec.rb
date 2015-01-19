@@ -6,6 +6,8 @@ describe Picklist do
   let(:duplicate) { FactoryGirl.build :picklist }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, picklist: picklist }
 
+  include_examples "destination module examples", FactoryGirl.build(:picklist)
+
   it "requires a name" do
     expect(picklist.name).not_to be_blank
     picklist.name = ""

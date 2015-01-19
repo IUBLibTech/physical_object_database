@@ -1,4 +1,5 @@
 class Picklist < ActiveRecord::Base
+	include DestinationModule
 
 	has_many :picklist_specifications
 	has_many :physical_objects
