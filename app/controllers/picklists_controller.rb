@@ -286,7 +286,7 @@ class PicklistsController < ApplicationController
 		end
 
 		def picklist_params
-			params.require(:picklist).permit(:name, :description)
+			params.require(:picklist).permit(:name, :description, :destination)
 		end
 
 		def set_container(physical_object, box, bin)

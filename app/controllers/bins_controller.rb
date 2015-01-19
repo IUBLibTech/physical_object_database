@@ -185,7 +185,7 @@ class BinsController < ApplicationController
 	end
 
 	def bin_params
-		params.require(:bin).permit(:mdpi_barcode, :identifier, :description, :batch, :batch_id, :spreadsheet, 
+		params.require(:bin).permit(:mdpi_barcode, :identifier, :description, :destination, :batch, :batch_id, :spreadsheet, 
 			:spreadsheet_id, :current_workflow_status, 
 			condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :active, :user, :_destroy])
 

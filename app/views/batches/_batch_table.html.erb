@@ -2,6 +2,7 @@
 	<tr>
 		<th>Batch Identifier</th>
 		<th>Description</th>
+		<th>Destination</th>
 		<th>Objects Count</th>
 		<th>Current Status</th>
 		<th>Actions</th>
@@ -11,6 +12,7 @@
 		<tr class=<%= count.odd? ? "odd" : "even" %> >
 			<td><%= b.identifier %></td>
 			<td><%= b.description %></td>
+			<td><%= b.destination %></td>
 			<td><%= b.physical_objects_count %></td>
 			<td><%= b.current_workflow_status %></td>
 			<td>

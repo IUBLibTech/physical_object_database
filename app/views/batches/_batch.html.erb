@@ -22,6 +22,12 @@
       </td>
     </tr>
     <tr>
+      <th>Destination</th>
+      <td>
+        <%= f.select(:destination, Batch.DESTINATION_VALUES, {}, disabled: !@edit_mode) %>
+      </td>
+    </tr>
+    <tr>
       <th>Objects Count</th>
       <td><%= @batch.physical_objects_count %></td>
     </tr>

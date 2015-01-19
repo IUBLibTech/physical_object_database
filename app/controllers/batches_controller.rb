@@ -81,7 +81,7 @@ class BatchesController < ApplicationController
 
   private
     def batch_params
-      params.require(:batch).permit(:identifier, :description, :current_workflow_status)
+      params.require(:batch).permit(:identifier, :description, :destination, :current_workflow_status)
     end
 
     def set_batch

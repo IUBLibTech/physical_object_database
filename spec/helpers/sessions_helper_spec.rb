@@ -8,6 +8,7 @@ describe SessionsHelper do
   end
   describe "SessionInfoModule methods:" do
     describe "::current_username" do
+      # FIXME: producing non-deterministic failures
       it "returns UNAVAILABLE if session value missing" do
         expect(SessionInfoModule.current_username).to eq "UNAVAILABLE"
       end
