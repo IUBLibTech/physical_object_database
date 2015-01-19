@@ -406,7 +406,8 @@ describe PhysicalObjectsController do
       end
     end
 
-    ["po_import_multiple.csv", "po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv"].each do |filename|
+    # po_import_multiple.csv removed as Quantity is disabled
+    ["po_import_cdr.csv", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv"].each do |filename|
       context "specifying a file: #{filename}" do
         let(:post_args) { { physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } } }
         let(:upload_update) { post :upload_update, **post_args }
