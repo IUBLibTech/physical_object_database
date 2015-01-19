@@ -41,6 +41,7 @@
 		<tr>
 			<th>Name</th>
 			<th>Description</th>
+			<th>Destination</th>
 			<th>Actions</th>
 		</tr>
 		<% count = 1 %>
@@ -48,6 +49,7 @@
 			<tr>
 				<td><%= pl.name %></td>
 				<td><%= pl.description[0,20] %><%= pl.description.length > 20 ? "..." : "" %></td>
+				<td><%= pl.destination %></td>
 				<td>
 					<%= link_to("Show", {controller: 'picklists', action: 'show', id: pl.id}) %>
 		      <%= link_to("Edit", {controller: 'picklists', action: 'edit', id: pl.id}) %>

@@ -31,6 +31,13 @@
  			</td>
  		</tr>
 		<tr>
+			<th>Destination</th>
+			<td>
+				<%= f.select(:destination, Bin.DESTINATION_VALUES, {}, disabled: !@edit_mode) %>
+			</td>
+		</tr>
+
+		<tr>
 			<th>Imported from spreadsheet</th>
 			<td>
 			<% if !@bin.spreadsheet.nil? %>

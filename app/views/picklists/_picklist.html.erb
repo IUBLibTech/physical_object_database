@@ -17,6 +17,12 @@
 					<%= f.text_area(:description, readonly: !@edit_mode) %>
 				</td>
 			</tr>
+			<tr>
+				<th>Destination</th>
+				<td>
+					<%= f.select(:destination, Picklist.DESTINATION_VALUES, {}, disabled: !@edit_mode) %>
+				</td>
+			</tr>
 		</table>
                 <div class="clear">
                   <% if @edit_mode %>

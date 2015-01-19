@@ -19,12 +19,13 @@ describe Batch do
     end
   end
 
+  include_examples "destination module examples", FactoryGirl.build(:batch)
+
   describe "has required fields:" do
     it "requires an identifier" do
-      expect(batch).to be_valid
-      expect(batch.identifier).not_to be_blank
-      batch.identifier = ""
-      expect(batch).to be_invalid
+      expect(valid_batch.identifier).not_to be_blank
+      valid_batch.identifier = ""
+      expect(valid_batch).to be_invalid
     end
     it "requires a unique identifier" do
       expect(duplicate).to be_valid
