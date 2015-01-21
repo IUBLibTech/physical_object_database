@@ -5,7 +5,7 @@ module DestinationModule
   DESTINATION_VALUES = { "IU" => "IU", "Memnon" => "Memnon" }
 
   def default_destination
-    self.destination ||= "IU"
+    self.destination ||= "Memnon"
   end
 
   def self.included(base)
