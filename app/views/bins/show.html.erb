@@ -24,13 +24,11 @@
       <div>
         <h2>Sealed Bin</h2>
         <%= Bin.packed_status_message %>
-	<%= button_to "Unseal", unseal_bin_path(@bin), disabled: (@bin.current_workflow_status != "Sealed") %>
+				<%= button_to "Unseal", unseal_bin_path(@bin), disabled: (@bin.current_workflow_status != "Sealed") %>
       </div>
     <% end %>
 	<div>
 	    <h2>Pack From Picklist</h2>
-
-
 	    <%= form_for(@bin, url: {controller: 'picklists', action: 'pack_list', bin_id: @bin.id}) do |f| %>
 	      <table>
 	        <tr>
@@ -40,7 +38,7 @@
 	          </td>
 	        </tr>
 	      </table>
-	      <%= f.submit("Pack Bin", { disabled: packed_status} ) %>
+	      <%= f.submit("Pack Bin", name: "pack_bin_button", disabled: packed_status ) %>
 	    <% end %>
 	    <h2>Or</h2>
 				<table>

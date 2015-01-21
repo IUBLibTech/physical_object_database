@@ -14,12 +14,12 @@
  *= require jquery.qtip.min.css
  *= require_tree ./custom-theme
  */
-
 body {
   width: 1000px;
   margin: 0 auto;
   text-align: left;
   height: 100%;
+  font-family: sans-serif;
 }
 
 #header {
@@ -43,6 +43,10 @@ table {
   border-collapse:collapse;
 }
 
+.ui-accordion-content > table {
+  width: 100%;
+}
+
 th, td {
   font-size: 95%;
   border: 1px solid #9D7674;
@@ -50,6 +54,10 @@ th, td {
 
 td.no-border {
   border: 0px;
+}
+
+td>input {
+  width: 97%;
 }
 
 #branding {
@@ -70,7 +78,7 @@ td.no-border {
   background: #7D110C;
 }
 #contextMenu {
-  height: 18px;
+  height: 22px;
   background: #CD894E;
 }
 
@@ -137,8 +145,9 @@ tr.even {
 }
  .left > table {
   width: 485px;
-  margin-bottom: 15px
+  margin-bottom: 15px;
  }
+
 
 .dialog {
   display: none

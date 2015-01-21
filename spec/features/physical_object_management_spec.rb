@@ -8,7 +8,7 @@ feature "Physical Object management" do
     scenario "tries to access the form for a new physical object" do
       #NOTE: the rack test server cannot visit external URLs, so a redirect to CAS raises an error
       sign_in(nil)
-      expect{ visit new_physical_object_path }.to raise_error(ActionController::RoutingError, /No route matches/)
+      expect{ visit new_physical_object_path; save_and_open_page }.to raise_error(ActionController::RoutingError, /No route matches/)
     end
   end
 
@@ -55,7 +55,7 @@ feature "Physical Object management" do
       within('#menu'){expect(page).to have_link('Pick Lists')}
       within('#menu'){expect(page).to have_link('Statuses')}
       within('#menu'){expect(page).to have_link('Advanced Search')}
-      within('#menu'){expect(page).to have_text('Barcode')}
+      within('#menu'){expect(page).to have_text('Search')}
       within('#basic_search_form'){expect(page).to have_field('identifier')}
     end
   end

@@ -79,10 +79,10 @@
 					alert("An error occured while trying to remove the item from the pick. The page will be refreshed...")
 					location.reload();
 				}).
-				always(function() {
-					var nt = window.open(window.location.protocol+"//"+window.location.host+"/physical_objects/"+id+"/edit", '_blank');
-					nt.focus();
-				});
+				// always(function() {
+				// 	var nt = window.open(window.location.protocol+"//"+window.location.host+"/physical_objects/"+id+"/edit", '_blank');
+				// 	nt.focus();
+				// });
 			}
 		});
 	});

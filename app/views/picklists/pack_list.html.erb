@@ -1,3 +1,22 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+	  <%= form_for(@picklist, url: {action: 'pack_list', bin_id: @bin ? @bin.id : nil, box_id: @box ? @box.id : nil}) do |f| %>
+			<%= hidden_field_tag "picklist[id]", @picklist.id %>
+			<% if @physical_object %>
+				<%= hidden_field_tag "physical_object[id]", @physical_object.id %>
+			<% end %>
+			<% if @bin %>
+				<%= hidden_field_tag "bin_id", @bin.id %>
+			<% end %>
+			<% if @box %>
+				<%= hidden_field_tag "box_id", @box.id %>
+			<% end %>
+			Search Call Number: <%= text_field_tag('call_number') %>
+			<%= f.submit "Search", name: 'search_button' %>
+	  <% end %>
+	</div>
+<% end %>
+
 <div id="pl_container_div">
 	<% if (@box or @bin) %>
 		<h2>Packing <%= @box ? "Box" : "Bin" %> <i><%= @box ? @box.mdpi_barcode : @bin.identifier %></i> From Picklist <i><%= @picklist.name %></i></h2>
@@ -5,4 +24,52 @@
 		<h2>Manually Associating Items From Pick List <i><%= @picklist.name %></i></h2>
 	<% end %>
 </div>
-<%= render 'physical_objects/physical_object_form' %>
+<% if @physical_object %>
+	<% @tm ||= @physical_object.technical_metadatum.as_technical_metadatum %>
+	<%= error_messages_for(@physical_object) %>
+	<%= error_messages_for(@tm) %>
+	<%= nested_form_for(@physical_object, url: {controller: "picklists", action: "pack_list", bin_id: @bin ? @bin.id : nil, box_id: @box ? @box.id : nil}) do |f| %>
+		<%= hidden_field_tag "picklist[id]", @picklist.id %>
+		<% if @physical_object %>
+			<%= hidden_field_tag "physical_object[id]", @physical_object.id %>
+		<% end %>
+		<% if @bin %>
+			<%= hidden_field_tag "bin_id", @bin.id %>
+		<% end %>
+		<% if @box %>
+			<%= hidden_field_tag "box_id", @box.id %>
+		<% end %>
+		<div >
+			<%= f.submit "Previous", name: "previous_button", disabled: @previous_physical_object.nil? %>
+			<% if @physical_object.bin or @physical_object.box %>
+				<%= f.submit "Unpack", name: "unpack_button" %>
+			<% else %>
+				<%= f.submit "Pack", name: "pack_button" %>
+			<% end %>
+			<%= f.submit "Next", name: "next_button", disabled: @next_physical_object.nil? %>
+		  <%= hidden_field_tag "repeat", @repeat %>
+		</div>
+		<table>
+  	  <tr>
+  	    <th colspan="2">Assignment</th>
+  	  </tr>
+  	  <% if (@bin && !@box) or (!@bin && !@box) %>
+	      <tr>
+	        <th>Bin</th>
+	        <td>
+	          <%= text_field_tag "bin_mdpi_barcode", (@bin ? @bin.mdpi_barcode : "" ),class: "mdpi" %>
+	        </td>
+	      </tr>
+			<% end %>
+			<% if (@box && !@bin) or (!@bin && !@box) %>
+	      <tr>
+	        <th>Box</th>
+	        <td>
+	          <%= text_field_tag "box_mdpi_barcode", (@box ? @box.mdpi_barcode : ""), class: "mdpi" %>
+	        </td>
+	      </tr>
+	     <% end %>
+     </table>
+	  <%= render(partial: 'physical_objects/physical_object_metadata_fields', locals: {f: f}) %>
+	<% end %>
+<% end %>

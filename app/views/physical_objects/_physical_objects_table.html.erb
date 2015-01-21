@@ -1,3 +1,5 @@
+<% # the amount of text for the title to display in trucated mode %>
+<% title_limit=42 %>
 <%# add pagination links only if @physical_objects has been paginated %>
 <% if @physical_objects.respond_to?(:total_pages) %>
   <div class="pagination">
@@ -7,7 +9,7 @@
     <%= will_paginate @physical_objects, container: false %>
   </div>
 <% end %>
-<table class="po list">
+<table id="po_list">
   <tr class="header">
     <% unless @group_key.nil? %>
       <th>Position</th>
@@ -16,6 +18,7 @@
     <th>Current Status</th>
     <th>MDPI barcode</th>
     <th>Call number</th>
+    <th>Title</th>
     <th>Format</th>
     <th>Actions</th>
   </tr>
@@ -39,6 +42,7 @@
       <td><%= po.display_workflow_status %></td>
       <td><%= po.mdpi_barcode %></td>
       <td><%= po.call_number %></td>
+      <td title="<%= po.title.length <= title_limit ? "" : po.title %>"><%= po.title.length <= title_limit ? po.title : po.title[0,title_limit - 3] + '...'%></td>
       <td><%= po.format %></td>
       <td>
         <%= link_to("Show", po, class: 'action show') %>
