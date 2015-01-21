@@ -22,7 +22,7 @@
           </td>
         </tr>
       </table>
-      <%= f.submit("Pack Box", { disabled: @box.full? }) %>
+      <%= f.submit("Pack Box", name: "pack_box_button", disabled: @box.full? ) %>
     <% end %>
   </div>
 </div>

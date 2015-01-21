@@ -7,7 +7,7 @@
   <%if @edit_mode or @action == 'destroy' %>
     <div class="clear" ><%= submit_tag(@submit_text) %></div>
   <% end %>
-  <%= render(partial: 'physical_object_metadata_fields', locals: {f: f}) %>
+  <%= render(partial: 'physical_objects/physical_object_metadata_fields', locals: {f: f}) %>
   <div class="left">
     <h2>Digital Files</h2>
     <% unless @digital_files.nil? %>

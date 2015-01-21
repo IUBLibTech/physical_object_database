@@ -275,7 +275,7 @@ class PhysicalObjectsController < ApplicationController
 
   #called as both AJAX call, from packing screen, and regular call from picklist screen
   def unpick
-    # SEE - views/picklists/provess_list.html.erb "$("[id^=remove_]").click(function(event) {" javascript
+    # SEE - views/picklists/process_list.html.erb "$("[id^=remove_]").click(function(event) {" javascript
     if @physical_object.group_key.nil?
       @physical_object.picklist = nil
       @physical_object.save

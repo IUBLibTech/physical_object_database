@@ -20,7 +20,7 @@ class WorkflowStatusTemplate < ActiveRecord::Base
 	  return options
 	end
 
-	def template_by_status_name(object_type, name)
+	def self.template_by_status_name(object_type, name)
 		WorkflowStatusTemplate.where(object_type: object_type, name: name).first
 	end
 

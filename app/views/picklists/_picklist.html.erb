@@ -25,7 +25,7 @@
                 </div>
 	<% end %>
 	<% unless @picklist.id.nil? || @action == 'update' || @picklist.physical_objects.empty? %>
-	  <%= form_for(@picklist, url: {action: 'process_list', picklist: {id: @picklist.id}}) do |f| %>
+	  <%= form_for(@picklist, url: {action: 'pack_list', picklist: {id: @picklist.id}}) do |f| %>
 		  <%= f.submit("Pack Items") %>
 	  <% end %>
 	<% end %>

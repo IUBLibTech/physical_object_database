@@ -1,5 +1,6 @@
 class PicklistsController < ApplicationController
   before_action :set_picklist, only: [:show, :edit, :update, :destroy]
+  # before_action :set_packing_picklist, only: :pack_list
 
 	def new
 		@picklist = Picklist.new
@@ -97,32 +98,6 @@ class PicklistsController < ApplicationController
 		end
 	end
 
-	# pack list can be reached in the following ways
-	# 1) Packing from a specific bin/box without specifying a physical object (start with the first available physical object on the pick list)
-	# 	 params will hold the pick list id and the container id
-	# 2) Packing from a specific bin/box specifying a physical object to pack with (find specific item on the pick list)
-	# 	 params will hold pick list id, container id, and physical object id
-	# 3) Manually packing without specifying a physical object (find first unpacked item on the pick list) 
-	# 	 params will hold only pick list id
-	# 4) Manually packing specifying a physical object (look up that object)
-	# 	 params will hold pick list id and physical object id
-	# 5) A return trip from packing/skipping/splitting a physical object 
-	# 	 params will hold pick list id, physical object id of whatever WAS packed/skipped/split, and packing_mode  
-	# 	 specifying what happened to that physical object
-	def pack_list
-		puts "\n\nPacking list\n\n"
-		if params[:pack_button]
-			pack
-		elsif params[:next_button]
-			next_po
-		elsif params[:previous_button]
-			previous_po
-		elsif params[:skip_button]
-			skip
-		else
-			start
-		end
-	end
 
 	#Pack action
 	def assign_to_container
@@ -243,8 +218,152 @@ class PicklistsController < ApplicationController
 		end
 	end
 
+	# pack list can be reached in the following ways
+	# 1) from auto packing a bin - bin_id will be present
+  # 2) from auto packing a box - box_id will be present
+	# 3) from manually packing a pick list - only picklist_id will be present
+	# 4) after packing a physical object - the physical object id, 'pack', bin and/or box id (as hidden attributes) will be present
+	# 5) after unpacking a physical object - the physical object id, 'unpack', bin and/or box id (as hidden attributes) will also be present
+	# 5) after moving to previous physical object - picklist id, physical object id, bin/box id (as hidden attributes) will be present
+	# 6) after moving to the next physical object - picklist id, physical object id, bin/box id (as hidden attributes) will be present
+	def pack_list
+		@display_assigned = false
+		@edit_mode = true
+
+		if params[:picklist]
+			@picklist = Picklist.find(params[:picklist][:id])
+			if params[:search_button]
+				@physical_object = PhysicalObject.where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).order(:call_number, :id).first
+			elsif params[:physical_object]
+				@physical_object = PhysicalObject.find(params[:physical_object][:id])
+			else
+				@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null", @picklist.id).order(:call_number, :id).first
+			end	
+			unless @physical_object.nil?
+				@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			end
+			if @physical_object
+				surrounding_physical_objects
+			end
+
+			if params[:bin_id]
+				@bin = Bin.find(params[:bin_id])
+			elsif params[:bin_mdpi_barcode]
+				@bin = Bin.where("mdpi_barcode = ?", params[:bin_mdpi_barcode]).first
+			end
+			if @bin and @bin.workflow_statuses.last.past_status?("Created")
+				flash[:warning] = "The current workflow status of Bin <i>#{@bin.identifier}</i> is #{@bin.current_workflow_status}. It cannot be packed.".html_safe
+				render 'pack_list'
+				return
+			end
+
+			if params[:box_id]
+				@box = Box.find(params[:box_id])
+			elsif params[:box_mdpi_barcode]
+				@box = Box.where("mdpi_barcode = ?", params[:box_mdpi_barcode]).first
+			end
+			if @box and @box.full?
+				flash[:warning] = "Box #{@box.mdpi_barcode} is full. It cannot be packed.".html_safe
+				render 'pack_list'
+				return
+			end
+		end
+
+		if params[:pack_bin_button]
+			pack_bin
+		elsif params[:pack_box_button]
+			pack_box
+		elsif params[:manual_pack_button]
+			pack_manual
+		elsif params[:pack_button]
+			pack
+		elsif params[:unpack_button]
+			unpack
+		elsif params[:previous_button]
+			previous_po	
+		elsif params[:next_button]
+			next_po
+		end
+	end
 
 	private
+		# called when a bin object's pack button is clicked
+		def pack_bin
+			if @bin.workflow_statuses.last.past_status?("Created")
+				flash[:warning] = "#{@bin.identifier} cannot be packed. Its current status is #{@bin.current_workflow_status}".html_safe
+				redirect_to :back
+			end
+		end
+
+		# called when a box object's pack button is clicked
+		def pack_box
+			if @box.full?
+				flash[:warning] = "Box #{@box.mdpi_barcode} is full. Cannot pack more physical objects".html_safe
+				redirect_to :back
+			end	
+		end
+
+		# called while packing a picklist (in physical object view mode) to skip to the next physical object in the pick list
+		def next_po
+      unless updated?
+      	render 'pack_list'
+      end
+			@physical_object.save
+      @physical_object = @next_physical_object
+      # need to recalculate bookend physical objects
+      surrounding_physical_objects
+		end
+
+		# called while packing a picklist (in physical object view mode) to move to the previous physical object in the picklist
+		def previous_po
+      unless updated?
+      	render 'pack_list'
+      end
+			@physical_object.save
+      @physical_object = @previous_physical_object
+			# need to recalculate the bookend physical objects
+			surrounding_physical_objects
+		end
+
+		# called while packing a picklist (in physical object view mode) to mark the current physical object as packed (with the provided bin/box barcodes)
+		def pack
+			# lookup the values passed for box_mdpi_barcode and bin_mdpi_barcode
+			if updated?
+				if ApplicationHelper.assigned_real_barcode?(@physical_object)
+					if @physical_object.workflow_blocked?
+						@physical_object.errors[:condition_statuses] = "- One or more active Condition Statuses prevent the packing of this record.".html_safe
+						render 'pack_list'
+					else
+						if @bin
+							@physical_object.bin = @bin
+						end
+						if @box
+							@physical_object.box = @box
+						end
+						@physical_object.save
+
+						@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null", @picklist.id).order(:call_number, :id).first
+						surrounding_physical_objects
+					end
+				else
+					@physical_object.errors[:mdpi_barcode] = "- Must assign a valid MDPI barcode to pack a Physical Object".html_safe
+					render 'pack_list'
+				end
+			end
+		end
+
+		# called while packing a picklist (in physical object view mode) to mark the current physical object as unpacked
+		def unpack
+			# stay on the same object?
+			if updated?
+				@physical_object.bin = nil
+				@physical_object.box = nil
+				@physical_object.save
+			end
+			# @physical_object = @next_physical_object
+			# surrounding_physical_objects
+		end
+
 		def set_picklist
 		  if request.format.csv? || request.format.xls?
 		    # special case: picklist_ is spoofed into id value for nice CSV/XLS filenames
@@ -269,78 +388,20 @@ class PicklistsController < ApplicationController
 			end
 		end
 
-		def next_po
-			puts "\n\nHit the next button\n\n"
-			redirect_to(:back)
+		def surrounding_physical_objects
+			# make sure to check the SECOND object in the array - @physical_object and the previous may have the same call number
+			unless @physical_object.nil?
+				@next_physical_object = PhysicalObject.where("picklist_id = ? and call_number >= ?", @picklist.id, @physical_object.call_number).order(:call_number, :id)[1]
+				@previous_physical_object = PhysicalObject.where("picklist_id = ? and call_number <= ?", @picklist.id, @physical_object.call_number).order('call_number DESC', :id)[1]
+			end
 		end
 
-		def previous_po
-			puts "\n\nHit the previous button\n\n"
-			redirect_to(:back)
+		def updated?
+			updated = @physical_object.update_attributes(physical_object_params)
+      if updated
+        update = @tm.update_attributes(tm_params)
+      end
+      return updated
 		end
-
-		def pack
-			puts "\n\nHit the pack button\n\n"
-			redirect_to(:back)
-		end
-
-		def skip
-			puts "\n\nHit the skip button\n\n"
-			redirect_to(:back)
-		end
-
-		def start
-			if params and params[:picklist] and params[:picklist][:id]
-			@picklist = Picklist.find(params[:picklist][:id])
-			if params[:box_id] and params[:box_id].length > 0
-				@box = Box.find(params[:box_id])
-				session[:current_packing_box] = @box.id
-			elsif session[:current_packing_box]
-				@box = Box.find(session[:current_packing_box])
-			end
-
-			if params[:bin_id] and params[:bin_id].length > 0
-				@bin = Bin.find(params[:bin_id])
-				session[:current_packing_bin] = @bin.id
-			elsif session[:current_packing_bin]
-				@bin = Bin.find(session[:current_packing_bin])
-			end
-
-			packing_mode ||= params[:packing_mode]
-			# if there's no packing_mode specified it's not a round trip so clear the session cache
-			if packing_mode.nil?
-				session[:current_packing_bin] = nil
-				session[:current_packing_bin] = nil
-			end
-			if packing_mode
-				last_po = PhysicalObject.find(params[:physical_object][:id])
-				verb = (packing_mode == "Pack" ? "Packed" : (packing_mode == "Skip" ? "Skipped" : packing_mode))
-				flash[:notice] = "Physical Object <i>#{last_po.call_number}</i> was #{verb}".html_safe
-				@physical_object = PhysicalObject.where("id > ?", params[:physical_object][:id]).where(
-					picklist_id: @picklist.id, 
-					box_id: nil, 
-					bin_id: nil, 
-					).order(:call_number).first
-			else
-				@physical_object = params[:physical_object] ? 
-					PhysicalObject.where(picklist_id: @picklist.id, id: params[:physical_object][:id]).order(:call_number).first : 
-					PhysicalObject.where(picklist_id: @picklist.id, box_id: nil, bin_id: nil).first
-			end
-
-			# no unpacked physical object was found for the pick list - it was either completely packed, or there are no physical objects on it
-			if @physical_object.nil?
-				flash[:warning] = "<i>#{@picklist.name}</i> has 0 unpacked physical objects".html_safe
-				redirect_to(:back)
-			else
-				@edit_mode = true
-				@picklisting = true
-				@display_assigned = true
-				@physical_object.bin = @bin
-				@physical_object.box = @box
-			end
-		else
-		  flash[:notice] = "No picklist specified for processing"
-		  redirect_to(controller: 'picklist_specifications', action: 'index')
-		end	
-	end
+	
 end

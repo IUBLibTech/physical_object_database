@@ -67,6 +67,10 @@ class PhysicalObject < ActiveRecord::Base
   scope :search_id, lambda {|i| 
     where(['mdpi_barcode = ? OR iucat_barcode = ? OR call_number like ?', i, i, i, i])
   }
+  scope :search_by_barcode_title_call_number, lambda { |query|
+    query = "%#{query}%"
+    where("mdpi_barcode like ? or call_number like ? or title like ?", query, query, query)
+  }
   scope :advanced_search, lambda {|po| 
     po.physical_object_query(false)
   }
@@ -203,6 +207,16 @@ class PhysicalObject < ActiveRecord::Base
 
   def printable_row
     printable_attributes.values_at(*printable_columns) + metadata_attributes.values_at(*metadata_columns)
+  end
+
+  def workflow_blocked?
+    condition_statuses.each do |s|
+      name = s.condition_status_template.name
+      if s.active? and !(name == "Cannot go to Memnon" or name == "Catalog Problem" or name == "Send to IU")
+        return true
+      end
+    end
+    return false
   end
   
   # omit_picklisted is a boolean specifying whether physical objects that have been added to
