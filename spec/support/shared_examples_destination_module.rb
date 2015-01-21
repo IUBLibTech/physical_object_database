@@ -15,10 +15,10 @@ shared_examples "destination module examples" do |test_object|
       expect(test_object).to be_invalid
     end
   
-    it "gets a default destination of IU" do
+    it "gets a default destination of Memnon" do
       test_object.destination = nil
       test_object.default_destination
-      expect(test_object.destination).to eq "IU"
+      expect(test_object.destination).to eq "Memnon"
     end
   
     it "provides valid values hash constant" do
