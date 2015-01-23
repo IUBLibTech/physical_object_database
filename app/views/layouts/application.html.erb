@@ -13,6 +13,9 @@
   <div id="header">
     <div id="branding">
       <%= image_tag "branding.png", {alt:"POD - Physical Object Database"} %>
+      <div id="user_info">
+        <strong>User</strong>: <%= current_user %> (<%= link_to "logout", signout_path, method: :delete %>)
+      </div>
     </div>
     <%= environment_notice %>
     <div id="menu">

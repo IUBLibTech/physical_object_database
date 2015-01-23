@@ -3,7 +3,7 @@
 module FeatureHelpers
   def sign_in(username = "user@example.com")
     page.set_rack_session(username: username)
-    SessionInfoModule.session = page.get_rack_session
+    User.current_user = username
   end
   
   def sign_out

@@ -1,5 +1,4 @@
 class Note < ActiveRecord::Base
-  include SessionInfoModule
 
   belongs_to :physical_object
 
@@ -10,6 +9,6 @@ class Note < ActiveRecord::Base
 
   def default_values
     self.export ||= false if self.new_record?
-    self.user ||= SessionInfoModule.current_username
+    self.user ||= User.current_user
   end
 end

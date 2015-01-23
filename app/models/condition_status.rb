@@ -1,5 +1,4 @@
 class ConditionStatus < ActiveRecord::Base
-  include SessionInfoModule
 
   belongs_to :condition_status_template
   belongs_to :physical_object
@@ -22,7 +21,7 @@ class ConditionStatus < ActiveRecord::Base
 
   def default_values
     self.active ||= true if self.new_record?
-    self.user ||= SessionInfoModule.current_username
+    self.user ||= User.current_user if self.new_record?
   end
 
 end

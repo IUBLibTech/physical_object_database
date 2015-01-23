@@ -2,8 +2,7 @@
 
 module ModelHelpers
   def sign_in(username = "user@example.com")
-    SessionInfoModule.session ||= {}
-    SessionInfoModule.session[:username] = username
+    User.current_user = username
   end
   
   def sign_out
