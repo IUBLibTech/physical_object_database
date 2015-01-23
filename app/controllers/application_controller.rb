@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   # Note that sessions_controller does not inherit from ApplicationController to avoid the following line and the catch-22 result
   before_action :signed_in_user
+  around_filter :scope_current_user
 
   helper_method :tm_partial_path
 
@@ -95,6 +96,14 @@ class ApplicationController < ActionController::Base
       :warped, :dirty, :scratched, :worn, :broken, :label,
       :subtype
       )
+  end
+
+  private
+  def scope_current_user
+    User.current_user = current_user
+    yield
+  ensure
+    User.current_user = nil
   end
 
 end

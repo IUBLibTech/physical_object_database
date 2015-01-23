@@ -41,4 +41,7 @@ Pod::Application.configure do
 
   #enable session variables in capybara
   config.middleware.use RackSessionAccess::Middleware
+
+  # Test workaround for resolving routing issue in assets/images
+  config.assets.debug = true
 end

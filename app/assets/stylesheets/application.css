@@ -64,6 +64,24 @@ td>input {
   height: 100px;
 }
 
+#user_info {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  z-index: 10;
+  font-family: 'Tahoma';
+  color: white;
+}
+#user_info a:link {
+  color: white;
+}
+#user_info a:visited {
+  color: white;
+}
+#user_info a:hover {
+  color: #DBCEAC;
+}
+
 #environment {
   background: #C49491;
   font-family: 'Tahoma';

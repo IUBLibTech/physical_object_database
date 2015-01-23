@@ -1,5 +1,4 @@
 module SessionsHelper
-  include SessionInfoModule
 
   def sign_in(username)
     self.current_user = username
@@ -7,7 +6,6 @@ module SessionsHelper
 
   def current_user=(username)
     session[:username] = username
-    SessionInfoModule.session = session
   end
 
   def current_user

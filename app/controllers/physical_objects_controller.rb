@@ -85,7 +85,7 @@ class PhysicalObjectsController < ApplicationController
       @box = params[:box_mdpi_barcode] ? Box.where(mdpi_barcode: params[:box_mdpi_barcode]).first : nil
 
       #if the box (and then bin) are different then validate and save
-      unless @box == @physical_object.box
+      unless @box.nil? || (@box == @physical_object.box)
         if @box.container_full?
           PhysicalObject.errors[:box] = "Cannot pack this Physical Object in Box <i>#{@box.mdpi_barcode}</i>. It is full!".html_safe
         else
@@ -93,7 +93,7 @@ class PhysicalObjectsController < ApplicationController
           @physical_object.current_workflow_status = "Boxed"
         end
       end
-      unless @bin == @physical_object.bin
+      unless @bin.nil? || (@bin == @physical_object.bin)
         if @bin.workflow_statuses.last.past_or_equal_to_status?("Sealed")
           PhysicalObject.errors[:bin] = "Cannot assign this Physical Object to Bin <i>#{@bin.identifier}</i>. It is sealed or further in the workflow.".html_safe
         else

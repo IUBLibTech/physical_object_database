@@ -35,8 +35,7 @@ class SessionsController < ActionController::Base
 
   def destroy
     sign_out
-    redirect_to root_url
-    #NOTE: add logout url if needed
+    redirect_to 'https://cas.iu.edu/cas/logout'
   end
 
 end

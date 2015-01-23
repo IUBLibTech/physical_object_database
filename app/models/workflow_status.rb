@@ -28,9 +28,9 @@ class WorkflowStatus < ActiveRecord::Base
     return self.workflow_status_template.sequence_index
   end
 
-	def default_values
-	  self.user ||= SessionInfoModule.current_username
-	end
+  def default_values
+    self.user ||= User.current_user
+  end
 
   def past_status?(status_name)
     past? status_name, :>

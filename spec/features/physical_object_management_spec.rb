@@ -8,7 +8,7 @@ feature "Physical Object management" do
     scenario "tries to access the form for a new physical object" do
       #NOTE: the rack test server cannot visit external URLs, so a redirect to CAS raises an error
       sign_in(nil)
-      expect{ visit new_physical_object_path; save_and_open_page }.to raise_error(ActionController::RoutingError, /No route matches/)
+      expect{ visit new_physical_object_path }.to raise_error(ActionController::RoutingError, /No route matches/)
     end
   end
 
@@ -31,7 +31,6 @@ feature "Physical Object management" do
         within('//body/div#content/div[@class="notice"]'){expect(page).to have_text "Physical Object was successfully created."}
       end
       scenario "specifying a note populates signed-in username", js: true do
-        SessionInfoModule.session = { username: "user@example.com" }
         visit new_physical_object_path
         fill_in "physical_object_title", with: "Test Title"
         find("#physical_object_unit_id").find(:xpath, 'option[2]').select_option
@@ -39,11 +38,8 @@ feature "Physical Object management" do
 	conclude_jquery
 	within('#notes_div') do
 	  expect(page).to have_text "Creator"
-	  expect(page).to have_selector("input[value='UNAVAILABLE']")
-	  skip "FIXME: get session username to populate, rather than default UNAVAILABLE"
-	  # expect(page).to have_selector("input[value='user@example.com']")
+	  expect(page).to have_selector("input[value='user@example.com']")
 	end
-	SessionInfoModule.session = nil
       end
     end
   
