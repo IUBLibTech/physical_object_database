@@ -77,6 +77,8 @@ class PhysicalObjectsController < ApplicationController
     PhysicalObject.transaction do
       updated = @physical_object.update_attributes(physical_object_params)
       if updated
+        @physical_object.reload
+        @tm = @physical_object.ensure_tm
         update = @tm.update_attributes(tm_params)
       end
 
