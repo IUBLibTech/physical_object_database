@@ -1,7 +1,0 @@
-<% condition_notes = po.condition_statuses.where(active: true).order(updated_at: :desc) %>
-<% export_text = "" %>
-<% condition_notes.each_with_index do |condition, index| %>
-  <% export_text += "#{condition.condition_status_template.name.upcase}: #{condition.notes} [#{condition.user}, #{condition.updated_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S")}]" %>
-  <% export_text += note_delimiter unless index == condition_notes.size - 1 %>
-<% end %>
-    <Cell><Data ss:Type="String"><%= export_text %></Data></Cell>

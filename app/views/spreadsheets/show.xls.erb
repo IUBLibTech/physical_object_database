@@ -8,7 +8,7 @@
     <Table>
       <% @media_format = @physical_objects.first.format if @physical_objects and @physical_objects.any? %>
       <% @media_format ||= "" %>
-      <% @column_names = ["Bin barcode", "Bin identifier", "Box barcode", "MDPI barcode", "Format", "Unit", "Title", "Author", "Title control number", "Call number", "Catalog key", "Home location", "IUCAT barcode", "OCLC number", "Other copies", "Group key", "Group position", "Group total", "Collection identifier", "Collection name", "Year", "Generation", "Has ephemera"] %>
+      <% @column_names = ["Bin barcode", "Bin identifier", "Box barcode", "MDPI barcode", "Format", "Unit", "Title", "Author", "Title control number", "Call number", "Catalog key", "Home location", "IUCAT barcode", "OCLC number", "Other copies", "Group key", "Group position", "Group total", "Collection identifier", "Collection name", "Year", "Generation", "Has ephemera", "Internal Notes", "External Notes", "Conditions"] %>
       <%# format-specific columns %>
       <% if @media_format == "CD-R" %>
         <% @column_names += ["Damage", "Preservation problems", "Format duration"] %>
