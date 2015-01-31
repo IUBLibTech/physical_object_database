@@ -298,6 +298,28 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
+  def condition_notes(include_metadata = false)
+    active_conditions = self.condition_statuses.where(active: true).order(updated_at: :desc) 
+    export_text = "" 
+    active_conditions.each_with_index do |condition, index| 
+      export_text += "#{condition.condition_status_template.name.upcase}: #{condition.notes}"
+      export_text += " [#{condition.user}, #{condition.updated_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S")}]" if include_metadata
+      export_text += " || " unless index == active_conditions.size - 1 
+    end 
+    return export_text
+  end
+
+  def other_notes(export_flag = true, include_metadata = false)
+    export_notes = self.notes.where(export: export_flag).order(updated_at: :desc) 
+    export_text = "" 
+    export_notes.each_with_index do |note, index| 
+      export_text += note.body
+      export_text += " [#{note.user}, #{note.updated_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S")}]" if include_metadata
+      export_text += " || " unless index == export_notes.size - 1 
+    end
+    return export_text
+  end
+
   private
   def physical_object_where_clause
     sql = " "

@@ -322,6 +322,79 @@ describe PhysicalObject do
         expect(valid_po.display_workflow_status).to match /No bin or box assigned/
       end
     end
+    describe "#condition_notes" do
+      condition_user = "condition_user"
+      let(:cst_templates) { ConditionStatusTemplate.where(object_type: "Physical Object") }
+      let!(:active1) { FactoryGirl.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Active 1", active: true, condition_status_template_id: cst_templates[0].id }
+      let!(:active2) { FactoryGirl.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Active 2", active: true, condition_status_template_id: cst_templates[1].id }
+      let!(:inactive1) { FactoryGirl.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Inactive 1", active: false, condition_status_template_id: cst_templates[2].id }
+      let!(:inactive2) { FactoryGirl.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Inactive 2", active: false, condition_status_template_id: cst_templates[3].id }
+      [false, true].each do |include_metadata|
+        context "include_metadata: #{include_metadata}" do
+          let!(:export_results) { po.reload; po.condition_notes(include_metadata) }
+          it "exports active notes text, only" do
+            expect(export_results).to match active1.notes
+            expect(export_results).to match active2.notes
+            expect(export_results).not_to match inactive1.notes
+            expect(export_results).not_to match inactive2.notes
+          end
+          it "exports active template names, only" do
+            expect(export_results).to match active1.condition_status_template.name.upcase
+            expect(export_results).to match active2.condition_status_template.name.upcase
+            expect(export_results).not_to match inactive1.condition_status_template.name.upcase
+            expect(export_results).not_to match inactive2.condition_status_template.name.upcase
+          end
+          if include_metadata
+            specify "includes condition metadata" do
+              expect(export_results).to match /\[#{condition_user}, /
+            end
+          else
+            specify "does not includes condition metadata" do
+              expect(export_results).not_to match /\[#{condition_user}, /
+            end
+          end
+        end
+      end
+    end
+    describe "#other_notes" do
+      note_user = "note_user"
+      let!(:external1) { FactoryGirl.create :note, physical_object: po, export: true, body: "External 1", user: note_user }
+      let!(:external2) { FactoryGirl.create :note, physical_object: po, export: true, body: "External 2", user: note_user }
+      let!(:internal1) { FactoryGirl.create :note, physical_object: po, export: false, body: "Internal 1", user: note_user }
+      let!(:internal2) { FactoryGirl.create :note, physical_object: po, export: false, body: "Internal 2", user: note_user }
+      [ { export_flag: false, include_metadata: false },
+        { export_flag: false, include_metadata: true },
+        { export_flag: true, include_metadata: false },
+        { export_flag: false, include_metadata: true } ].each do |params_hash|
+        context "export_flag: #{params_hash[:export_flag].to_s}, include_metadata: #{params_hash[:include_metadata].to_s}" do
+          let!(:export_results) { po.other_notes(params_hash[:export_flag], params_hash[:include_metadata]) }
+          if params_hash[:export_flag]
+            specify "includes external note body text, only" do
+              expect(export_results).to match external1.body
+              expect(export_results).to match external2.body
+              expect(export_results).not_to match internal1.body
+              expect(export_results).not_to match internal2.body
+            end
+          else
+            specify "includes internal note body text, only" do
+              expect(export_results).not_to match external1.body
+              expect(export_results).not_to match external2.body
+              expect(export_results).to match internal1.body
+              expect(export_results).to match internal2.body
+            end
+          end
+          if params_hash[:include_metadata]
+            specify "includes note metadata" do
+              expect(export_results).to match /\[#{note_user}, /
+            end
+          else
+            specify "excludes note metadata" do
+              expect(export_results).not_to match /\[#{note_user}, /
+            end
+          end
+        end
+      end
+    end
   end
 
   describe "#create_tm" do

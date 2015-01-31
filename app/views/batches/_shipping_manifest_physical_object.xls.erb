@@ -64,7 +64,6 @@
   <% end %>
   <%# metadata-specific: ??? %>
   <%# Conditions and Notes %>
-    <% note_delimiter = " " %>
-    <%= render 'shipping_manifest_condition_notes', po: po, note_delimiter: note_delimiter %>
-    <%= render 'shipping_manifest_other_notes', po: po, note_delimiter: note_delimiter %>
+    <Cell><Data ss:Type="String"><%= po.condition_notes %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= po.other_notes %></Data></Cell>
 </Row>
