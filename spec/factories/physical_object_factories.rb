@@ -7,6 +7,10 @@ FactoryGirl.define do
     # select an existing unit since we are seeding unit data
     unit_id { Unit.all[rand(Unit.all.size)].id }
 
+    trait :barcoded do
+      mdpi_barcode BarcodeHelper.valid_mdpi_barcode
+    end
+
     trait :cdr do
       format "CD-R"
       association :technical_metadatum, factory: [:technical_metadatum, :cdr]
