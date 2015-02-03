@@ -23,3 +23,5 @@ config/database.yml
 database.yml
 nohup.out
 
+# Ignore precompiled assets, if present
+/public/assets
