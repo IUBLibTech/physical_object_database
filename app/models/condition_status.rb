@@ -6,6 +6,7 @@ class ConditionStatus < ActiveRecord::Base
   
   validates :condition_status_template_id, presence: true, uniqueness: { scope: [:physical_object_id, :bin_id] }
   validates :user, presence: true
+  validates :physical_object, presence: true, on: :update
 
   after_initialize :default_values
 
