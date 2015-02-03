@@ -8,11 +8,6 @@ describe Note do
     expect(valid_note).to be_valid
   end
 
-  it "requires a physical object association" do
-    valid_note.physical_object = nil
-    expect(valid_note).to be_invalid
-  end
-
   it "requires a username" do
     valid_note.user = nil
     expect(valid_note).to be_invalid
