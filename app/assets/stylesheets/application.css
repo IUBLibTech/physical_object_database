@@ -230,6 +230,10 @@ div.warning {
     margin: 0px;
 }
 
+#pl_container_div {
+  margin-bottom: 25px;
+}
+
 p {
   margin: 0;
 }

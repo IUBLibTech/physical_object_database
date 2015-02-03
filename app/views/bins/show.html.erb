@@ -15,18 +15,23 @@
 <div id="assign_bin_dialog" title="Assign Bin" class="dialog"></div>
 
 <%= error_messages_for(@bin) %>
-
 <div id="bin_div" class="left">
   <h2>Bin</h2>
   <%= render 'bin' %>
-    <% packed_status = @bin.packed_status? %>
-    <% if packed_status %>
-      <div>
-        <h2>Sealed Bin</h2>
-        <%= Bin.packed_status_message %>
-				<%= button_to "Unseal", unseal_bin_path(@bin), disabled: (@bin.current_workflow_status != "Sealed") %>
-      </div>
-    <% end %>
+  <% packed_status = @bin.packed_status? %>
+  <% action = (@bin.current_workflow_status == "Created" ? "seal" : "unseal") %>
+  <div>
+  	<%= form_for(@bin, url: {controller: 'bins', action: action}) do |f| %>
+  		<table>
+  			<tr>
+  				<th><%= action == "seal" ? "Seal Bin" : "Unseal Bin" %></th>
+  				<td>
+						<%= f.submit(action == "seal" ? "Seal" : "Unseal") %>
+  				</td>
+  			</tr>
+  		</table>
+  	<% end %>
+  </div>
 	<div>
 	    <h2>Pack From Picklist</h2>
 	    <%= form_for(@bin, url: {controller: 'picklists', action: 'pack_list', bin_id: @bin.id}) do |f| %>

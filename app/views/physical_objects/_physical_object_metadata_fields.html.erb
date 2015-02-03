@@ -264,3 +264,12 @@
   <div id="technicalMetadatum" class="left">
     <%= render(:partial => tm_partial_path(@tm)) %>
   </div>
+  <% if @picklisting %>
+  <script type="text/javascript">
+    el = $("#physical_object_mdpi_barcode")
+    el.focus();
+    if (el.val() == 0) {
+      el.select();
+    }
+  </script
+  <% end %>

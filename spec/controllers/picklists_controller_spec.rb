@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'ruby-debug'
 
 describe PicklistsController do
   render_views
@@ -145,329 +146,352 @@ describe PicklistsController do
     end
   end
 
-  describe "GET process_list on collection" do
-    it "redirects to index if no picklist set" do
-      get :process_list
-      expect(response).to redirect_to controller: 'picklist_specifications', action: 'index'
+  shared_examples_for "starting a picklist packing session" do 
+    before(:each) do
+      request.env['HTTP_REFERER'] = "Foo"
     end
-    it "assigns @picklist" do
-      get :process_list, picklist: { id: picklist.id }
-      expect(assigns(:picklist)).to eq picklist
-    end
-    it "assigns a @box if passed" do
-      get :process_list, picklist: { id: picklist.id }, box_id: box.id
-      expect(assigns(:box)).to eq box
-    end
-    it "assigns a @bin if passed" do
-      get :process_list, picklist: { id: picklist.id }, bin_id: bin.id
-      expect(assigns(:bin)).to eq bin
-    end
-    it "renders :process_list" do
-      get :process_list, picklist: { id: picklist.id }
-      expect(response).to render_template :process_list
-    end
-    describe "rejects a full @box" do
-      before(:each) do
-        box.full = true
-        box.save
-        get :process_list, picklist: { id: picklist.id }, box_id: box.id
-      end
-      it "flashes a notice" do
-        expect(flash[:notice]).to match /cannot be packed/
-      end
-      it "redirects to the index" do
-        expect(response).to redirect_to controller: 'picklist_specifications', action: 'index'
-      end
-    end
-    describe "rejects a sealed @bin" do
-      before(:each) do
-        bin.current_workflow_status = "Sealed"
-        bin.save
-        get :process_list, picklist: { id: picklist.id }, bin_id: bin.id
-      end
-      it "flashes a notice" do
-        expect(flash[:notice]).to match /cannot be packed/
-      end
-      it "redirects to the index" do
-        expect(response).to redirect_to controller: 'picklist_specifications', action: 'index'
-      end
-    end
-  end
 
-  describe "PATCH assign_to_container on collection" do
-    let(:assign_arguments) { {po_id: physical_object.id, physical_object: { mdpi_barcode: physical_object.mdpi_barcode, has_ephemera: physical_object.has_ephemera }, bin_id: nil, box_id: nil, bin_barcode: nil, box_barcode: nil} }
-    let(:assign_to_container) { patch :assign_to_container, **assign_arguments }
-    it "assigns a physical object to a bin by bin_id" do
-      assign_arguments[:bin_id] = bin.id 
-      assign_to_container
-      physical_object.reload
-      expect(physical_object.bin).to eq bin
-      expect(physical_object.current_workflow_status).to eq "Binned"
-    end
-    it "assigns a physical object to a bin by bin_barcode" do
-      bin.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-      bin.save
-      assign_arguments[:bin_barcode] = bin.mdpi_barcode 
-      assign_to_container
-      physical_object.reload
-      expect(physical_object.bin).to eq bin
-      expect(physical_object.current_workflow_status).to eq "Binned"
-    end
-    it "rejects a 0 for bin_barcode" do
-      bin.mdpi_barcode = "0"
-      bin.save
-      assign_arguments[:bin_barcode] = bin.mdpi_barcode
-      assign_to_container
-      physical_object.reload
-      expect(physical_object.bin).to be_nil
-      expect(physical_object.current_workflow_status).not_to eq "Binned"
-    end
-    it "assigns a physical object to a box by box_id" do
-      assign_arguments[:box_id] = box.id 
-      assign_to_container
-      physical_object.reload
-      expect(physical_object.box).to eq box
-      expect(physical_object.current_workflow_status).to eq "Boxed"
-    end
-    it "assigns a physical object to a box by box_barcode" do
-      assign_arguments[:box_barcode] = box.mdpi_barcode
-      assign_to_container
-      physical_object.reload
-      expect(physical_object.box).to eq box
-      expect(physical_object.current_workflow_status).to eq "Boxed"
-    end
-    it "rejects a 0 for box_barcode" do
-      box.mdpi_barcode = "0"
-      box.save
-      assign_arguments[:box_barcode] = box.mdpi_barcode
-      assign_to_container
-      physical_object.reload
-      expect(physical_object.box).to be_nil
-      expect(physical_object.current_workflow_status).not_to eq "Boxed"
-    end
-    describe "rejects a full box" do
-      before(:each) do
-        box.full = true
-        box.save
-      end
-      after(:each) do
-        assign_to_container
-        physical_object.reload
-        expect(physical_object.box).to be_nil
-        expect(physical_object.current_workflow_status).not_to eq "Boxed"
-        expect(assigns(:error_msg)).to match /cannot be packed/
-      end
-      specify "by box_id" do
-        assign_arguments[:box_id] = box.id
-      end
-      specify "by box_barcode" do
-        assign_arguments[:box_barcode] = box.mdpi_barcode
-      end
-    end
-    describe "rejects a sealed bin" do
-      before(:each) do
-        bin.current_workflow_status = "Sealed"
-        bin.save
-      end
-      after(:each) do
-        assign_to_container
-        physical_object.reload
-        expect(physical_object.bin).to be_nil
-        expect(physical_object.current_workflow_status).not_to eq "Binned"
-        expect(assigns(:error_msg)).to match /cannot be packed/
-      end
-      specify "by bin_id" do
-        assign_arguments[:bin_id] = bin.id
-      end
-      specify "by bin_barcode" do
-        assign_arguments[:bin_barcode] = bin.mdpi_barcode
-      end
-    end
-    it "sets only box when assigning both a bin and box simultaneously" do
-      assign_arguments[:bin_id] = bin.id
-      assign_arguments[:box_id] = box.id
-      assign_to_container
-      physical_object.reload
-      expect(physical_object.box).not_to be_nil
-      expect(physical_object.bin).to be_nil
-      expect(physical_object.current_workflow_status).to eq "Boxed"
-    end
-  end
-
-  describe "PATCH remove_from_container on collection" do
-    let(:remove_from_container) { patch :remove_from_container, po_id: physical_object.id }
-    it "removes the physical object from a bin" do
-      physical_object.bin = bin
-      physical_object.save
-      physical_object.reload
-      expect(physical_object.bin).not_to be_nil
-      remove_from_container
-      physical_object.reload
-      expect(physical_object.bin).to be_nil
-      expect(physical_object.current_workflow_status).to eq "On Pick List"
-    end
-    it "removes the physical object from a box" do
-      physical_object.box = box
-      physical_object.save
-      physical_object.reload
-      expect(physical_object.box).not_to be_nil
-      remove_from_container
-      physical_object.reload
-      expect(physical_object.box).to be_nil
-      expect(physical_object.current_workflow_status).to eq "On Pick List"
-    end
-  end
-
-  describe "PATCH container_full on collection" do
-    let(:patch_arguments) { {bin_id: nil, box_id: nil, bin_barcode: nil} }
-    let(:container_full) { patch :container_full, **patch_arguments }
-    context "with box_id and bin_id argument" do
-      before(:each) do
-        patch_arguments[:bin_id] = bin.id
-        patch_arguments[:box_id] = box.id
-      end
-      it "associates bin to box" do
-        expect(box.bin).to be_nil
-        container_full
-        box.reload
-        expect(box.bin).to eq bin
-      end
-    end
-    context "with box_id and bin_barcode argument" do
-      before(:each) do
-        patch_arguments[:bin_barcode] = bin.mdpi_barcode
-        patch_arguments[:box_id] = box.id
-      end
-      it "associates bin to box" do
-        expect(box.bin).to be_nil
-        container_full
-        box.reload
-        expect(box.bin).to eq bin
-      end
-      it "sets the box as full" do
-        expect(box.full?).to be false
-        container_full
-        box.reload
-        expect(box.full?).to be true
-      end
-    end
-    context "with box_id argument" do
-      before(:each) do
-        patch_arguments[:box_id] = box.id
-      end
-      it "sets the box as full" do
-        expect(box.full?).to be false
-        container_full
-        box.reload
-        expect(box.full?).to be true
-      end
-    end
-    context "with bin_id argument" do
-      before(:each) do 
-        patch_arguments[:bin_id] = bin.id
-      end
-      it "sets bin status to Sealed" do
-        expect(bin.current_workflow_status).not_to eq "Sealed"
-        container_full
-        bin.reload
-        expect(bin.current_workflow_status).to eq "Sealed"
-      end
-    end
-    context "with bin_barcode argument" do
-      before(:each) do
-        patch_arguments[:bin_barcode] = bin.mdpi_barcode
-      end
-      it "sets bin status to Sealed" do
-        expect(bin.current_workflow_status).not_to eq "Sealed"
-        container_full
-        bin.reload
-        expect(bin.current_workflow_status).to eq "Sealed"
-      end
-    end
-    context "with no box or bin" do
-      it "flashes an error" do
-        container_full
-        expect(flash[:notice]).to match /Could not find a Bin/
-      end
-    end
-  end
-
-  describe "PATCH pack_list on member" do
-    skip "Rewrite spec tests for testing pick list controller" do
-      let(:pack_picklist) { FactoryGirl.create(:picklist, name: "Foo") }
-      let(:pack_bin) { FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier: "binbar") }
-      let(:pack_box) { FactoryGirl.create(:box, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
-      let(:args) { {picklist: {id: nil}, box_id: nil, bin_id: nil, physical_object: {id: nil} } }
-      let(:pack_list) { patch :pack_list, **args }
-      let(:po) { FactoryGirl.create(:physical_object, :cdr, picklist: picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode ) }
-      
-      before(:each) { 
-        request.env['HTTP_REFERER'] = "Foo"
-      }
-
-      after(:each) do
-        pack_picklist.reload
-        pack_bin.reload
-        pack_box.reload
-        po.reload
-      end
-      
-      context "with empty pick list and bin" do
+    context "while packing a picklist" do  
+      context " starting with missing pick list param" do
         before(:each) do
-          args[:picklist][:id] = pack_picklist.id
-          args[:bin_id] = pack_bin.id
+          args.delete :picklist
           pack_list
         end
-        it "finds a pick list" do
-          expect(assigns(:picklist)).to eq pack_picklist
-        end
-        it "can't find a physical object to pack" do
-          expect(assigns(:physical_object)).to be_nil
-        end
-        it "creates flash hash warning" do
-          expect(flash[:warning]).to eq "<i>#{pack_picklist.name}</i> has 0 unpacked physical objects".html_safe
+        it "redirects to pick list specifications page" do
+          expect(response).to redirect_to picklist_specifications_path 
         end
       end
 
-      context "with fully packed pick list and bin" do
+      context "starting with invalid pick list id" do
+        before(:each) {
+          args[:picklist][:id] = -1
+        }
+        it "raises error" do
+          expect{ pack_list }.to raise_error
+        end
+      end
+
+      context "starting with empty pick list" do
         before(:each) do
-          po.picklist = pack_picklist
-          po.current_workflow_status = "On Pick List"        
-          po.bin = pack_bin
-          po.current_workflow_status = "Binned"
-          bin.current_workflow_status = "Sealed"
-          args[:picklist][:id] = pack_picklist.id
-          args[:bin_id] = pack_bin.id
+          po1.picklist = nil
+          po1.save
+          po2.picklist = nil
+          po2.save
+          po3.picklist = nil
+          po3.save
           pack_list
         end
-        it "finds a pick list" do
+        it "finds the pick list" do
           expect(assigns(:picklist)).to eq pack_picklist
         end
-        it "can't find a physical object to pack" do
-          expect(assigns(:physical_object)).to be_nil
-        end
-        it "creates flash hash warning" do
-          expect(flash[:warning]).to eq "<i>#{pack_picklist.name}</i> has 0 unpacked physical objects".html_safe
-        end
-      end
-    end
-
-    # context "with invalid physical object barcode and valid bin" do
-    #   before(:each) do
-    #     physical_object.mdpi_barcode = "0"
-    #     args[:picklist][:id] = pack_picklist.id
-    #     args[:bin_id] = pack_bin.id
-    #     args[:physical_object][:id] = po.id
-    #   end
-
-    #   it "finds a physical object" do
-    #     expect(assigns(:physical_object)).to eq po
-    #   end
-    #   it "cannot pack physical object with barcode '0'" do
         
-    #   end
-    # end
+        it "cannot find a physical object" do
+          expect(assigns(:physical_object)).to be_nil
+        end
+      end
 
+      context " starting with packable items on pick list" do
+        before(:each) do
+          po1.picklist = pack_picklist
+          po1.save
+          po2.picklist = pack_picklist
+          po2.save
+          po3.picklist = pack_picklist
+          po3.save
+          if bin.nil? and box.nil?
+            args[:bin_mdpi_barcode] = pack_bin
+            args.delete :bin_id
+            args.delete :box_id
+            args.delete :physical_object
+          end
+        end
+        it "finds nil/current/next physical objects" do
+          pack_list
+          expect(assigns(:previous_physical_object)).to be_nil
+          expect(assigns(:physical_object)).to eq po1        
+          expect(assigns(:next_physical_object)).to eq po2
+        end
+
+        it "finds prev/current/next physical objects" do
+          # for the test we don't need to differentiate on WHAT the physical object is pack in, only that it is packed
+          po1.bin = pack_bin
+          po1.save
+          pack_list
+          
+          expect(assigns(:physical_object)).to eq po2        
+          expect(assigns(:previous_physical_object)).to eq po1
+          expect(assigns(:next_physical_object)).to eq po3
+        end
+        it "finds prev/current/nil physical objects" do
+          po1.bin = pack_bin
+          po1.save
+          po2.bin = pack_bin
+          po2.save
+          pack_list
+          expect(assigns(:previous_physical_object)).to eq po2
+          expect(assigns(:physical_object)).to eq po3        
+          expect(assigns(:next_physical_object)).to be_nil
+        end
+      end 
+
+      context "starting with unpackable items on the pick list" do
+        before(:each) do
+          po1.picklist = pack_picklist
+          po1.bin = pack_bin
+          po1.save
+          po2.picklist = pack_picklist
+          po2.bin = pack_bin
+          po2.save
+          po3.picklist = pack_picklist
+          po3.bin = pack_bin
+          po3.save
+          if bin.nil? and box.nil?
+            args[:bin_mdpi_barcode] = pack_bin
+            args.delete :bin_id
+            args.delete :box_id
+            args.delete :physical_object
+          end
+        end
+        it "doesn't find prev/current/next" do
+          expect(assigns(:previous_physical_object)).to be_nil
+          expect(assigns(:physical_object)).to be_nil
+          expect(assigns(:next_physical_object)).to be_nil
+        end
+      end
+    end
+  end
+
+  describe "Packing a Pick List", "" do
+    let(:pack_picklist) { FactoryGirl.create(:picklist, name: "Foo") }
+    let(:pack_bin) { FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier: "binbar") }
+    let(:pack_box) { FactoryGirl.create(:box, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
+    let(:pack_list) { patch :pack_list, **args }
+    let!(:po1) { FactoryGirl.create(:physical_object, :cdr, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "A" ) }
+    let!(:po2) { FactoryGirl.create(:physical_object, :cdr, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "B" )}
+    let!(:po3) { FactoryGirl.create(:physical_object, :cdr, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "C" ) }
+    let(:tm) {}
+
+    pack_mode = "auto-box"
+    it_behaves_like "starting a picklist packing session" do 
+      let(:args) { {picklist: {id: pack_picklist.id}, box_id: pack_box.id } }
+    end
+
+    pack_mode = "atuo-bin"
+    it_behaves_like "starting a picklist packing session" do
+      let(:args) { {picklist: {id: pack_picklist.id}, bin_id: pack_bin.id}}
+    end
+
+    pack_mode = "manually (with bin barcode)"
+    it_behaves_like "starting a picklist packing session" do
+      let(:args) { {picklist: {id: pack_picklist.id}, bin_mdpi_barcode: pack_bin.mdpi_barcode} }
+    end
+
+    pack_mode = "manually (with box barcode)"
+    it_behaves_like "starting a picklist packing session" do
+      let(:args) { {picklist: {id: pack_picklist.id}, box_mdpi_barcode: pack_box.mdpi_barcode} }
+    end
+
+    context "submitting from picklist packing page with a Bin" do
+      let(:args) { {picklist: {id: pack_picklist.id}, bin_id: pack_bin.id, physical_object: {id: po2.id}} }
+      
+      before(:each) do
+        request.env['HTTP_REFERER'] = "Foo"
+      end
+      it "moves to previous object on previous button submission" do
+        args[:previous_button] = "Previous"
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(assigns(:previous_physical_object)).to be_nil
+        expect(assigns(:physical_object)).to eq po1
+        expect(assigns(:next_physical_object)).to eq po2
+      end
+      it "moves to next object on next button submission" do
+        args[:next_button] = "Previous"
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:next_physical_object)).to be_nil
+      end
+
+      it "packs a physical object" do
+        args[:pack_button] = "Pack"
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        po2.reload
+        expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:next_physical_object)).to be_nil
+        expect(po2.bin).to eq pack_bin
+      end
+
+      it "updates metadata fields on pack" do
+        changed = "A new call number"
+        args[:pack_button] = "Pack"
+        args[:physical_object] = po2.attributes
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        
+        args[:physical_object][:call_number] = changed
+        pack_list
+        po2.reload
+        expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:next_physical_object)).to be_nil
+        expect(po2.bin).to eq pack_bin
+        expect(po2.call_number).to eq changed
+      end
+
+      it "doesn't pack without an mdpi barcode" do
+        args[:pack_button] = "Pack"
+        args[:physical_object] = po2.attributes
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:physical_object][:mdpi_barcode] = '0'
+        pack_list
+        expect(assigns(:physical_object).errors[:mdpi_barcode]).to include("- Must assign a valid MDPI barcode to pack a Physical Object")
+      end
+
+      it "doesn't pack into a full bin" do
+        pack_bin.current_workflow_status = "Sealed"
+        pack_bin.save
+        args[:pack_button] = "Pack"
+        args[:physical_object] = po2.attributes
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(flash[:warning]).to include("The current workflow status of Bin")
+      end
+
+      it "unpacks a physical object" do
+        po2.bin = pack_bin
+        po2.save
+        args[:unpack_button] = "Unpack"
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        po2.reload
+        expect(assigns(:previous_physical_object)).to eq po1
+        expect(assigns(:physical_object)).to eq po2
+        expect(assigns(:next_physical_object)).to eq po3
+        expect(po2.bin).to be_nil
+        expect(po2.box).to be_nil
+      end
+
+      it "finds a physical object on a relevant search" do
+        args[:search_button] = "Search"
+        args[:call_number] = po2.call_number
+        # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(assigns(:previous_physical_object)).to eq po1
+        expect(assigns(:physical_object)).to eq po2
+        expect(assigns(:next_physical_object)).to eq po3
+      end
+
+      it "doesn't find a physical object on an irrelevant search" do
+        args[:search_button] = "Search"
+        args[:call_number] = "Bad Call Number"
+        # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(assigns(:previous_physical_object)).to be_nil
+        expect(assigns(:physical_object)).to be_nil
+        expect(assigns(:next_physical_object)).to be_nil
+      end
+    end
+
+    context "submitting from picklist packing page with no container specified" do
+      let(:args) { {picklist: {id: pack_picklist.id}, bin_mdpi_barcode: pack_bin.mdpi_barcode, physical_object: {id: po2.id}} }
+      
+      before(:each) do
+        request.env['HTTP_REFERER'] = "Foo"
+      end
+
+      it "moves to previous object on previous button submission" do
+        args[:previous_button] = "Previous"
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(assigns(:previous_physical_object)).to be_nil
+        expect(assigns(:physical_object)).to eq po1
+        expect(assigns(:next_physical_object)).to eq po2
+      end
+      it "moves to next object on next button submission" do
+        args[:next_button] = "Previous"
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:next_physical_object)).to be_nil
+      end
+      it "packs a physical object" do
+        args[:pack_button] = "Pack"
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        po2.reload
+        expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:next_physical_object)).to be_nil
+        expect(po2.bin).to eq pack_bin
+      end
+      it "updates metadata fields on pack" do
+        changed = "A new call number"
+        args[:pack_button] = "Pack"
+        args[:physical_object] = po2.attributes
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:physical_object][:call_number] = changed
+        pack_list
+        po2.reload
+        expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:next_physical_object)).to be_nil
+        expect(po2.bin).to eq pack_bin
+        expect(po2.call_number).to eq changed
+      end
+      it "doesn't pack without an mdpi barcode" do
+        args[:pack_button] = "Pack"
+        args[:physical_object] = po2.attributes
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:physical_object][:mdpi_barcode] = '0'
+        pack_list
+        expect(assigns(:physical_object).errors[:mdpi_barcode]).to include("- Must assign a valid MDPI barcode to pack a Physical Object")
+      end
+      it "doesn't pack into a full bin" do
+        pack_bin.current_workflow_status = "Sealed"
+        pack_bin.save
+        args[:pack_button] = "Pack"
+        args[:physical_object] = po2.attributes
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(flash[:warning]).to include("The current workflow status of Bin")
+      end
+      it "unpacks a physical object" do
+        po2.bin = pack_bin
+        po2.save
+        args[:unpack_button] = "Unpack"
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        po2.reload
+        expect(assigns(:previous_physical_object)).to eq po1
+        expect(assigns(:physical_object)).to eq po2
+        expect(assigns(:next_physical_object)).to eq po3
+        expect(po2.bin).to be_nil
+        expect(po2.box).to be_nil
+      end
+      it "finds a physical object on a relevant search" do
+        args[:search_button] = "Search"
+        args[:call_number] = po2.call_number
+        # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(assigns(:previous_physical_object)).to eq po1
+        expect(assigns(:physical_object)).to eq po2
+        expect(assigns(:next_physical_object)).to eq po3
+      end
+      it "doesn't find a physical object on an irrelevant search" do
+        args[:search_button] = "Search"
+        args[:call_number] = "Bad Call Number"
+        # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        expect(assigns(:previous_physical_object)).to be_nil
+        expect(assigns(:physical_object)).to be_nil
+        expect(assigns(:next_physical_object)).to be_nil
+      end
+
+    end
   end
 
 end

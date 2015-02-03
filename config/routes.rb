@@ -11,7 +11,8 @@ Pod::Application.routes.draw do
   resources :bins do
     post :add_barcode_item, on: :member
     post :unbatch, on: :member
-    post :unseal, on: :member
+    patch :seal, on: :member
+    patch :unseal, on: :member
     get :show_boxes, on: :member
     get :workflow_history, on: :member
     patch :assign_boxes, on: :member
@@ -62,14 +63,17 @@ Pod::Application.routes.draw do
   end
 
   resources :picklists, except: [:index] do
-    patch :process_list, on: :collection
-    get :process_list, on: :collection
     patch :pack_list, on: :collection
     get :pack_list, on: :collection
-    patch :assign_to_container, on: :collection
     get :assign, on: :member
-    patch :remove_from_container, on: :collection
-    post :container_full, on: :collection
+    
+    # these 5 routes were deprecated in sprint-22 and replaced with the pack_list route - these action are no more
+    # patch :assign_to_container, on: :collection
+    # patch :remove_from_container, on: :collection
+    # post :container_full, on: :collection
+    # patch :process_list, on: :collection
+    # get :process_list, on: :collection
+
   end
 
   resources :returns, only: [:index] do

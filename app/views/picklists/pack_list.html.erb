@@ -18,6 +18,12 @@
 <% end %>
 
 <div id="pl_container_div">
+	<% if @bin %>
+		<%= form_for(@bin, url: seal_bin_path(@bin)) do |f| %>
+			<%= f.submit("Mark Bin as Sealed") %>
+		<% end %>
+	<% else %>
+	<% end %>
 	<% if (@box or @bin) %>
 		<h2>Packing <%= @box ? "Box" : "Bin" %> <i><%= @box ? @box.mdpi_barcode : @bin.identifier %></i> From Picklist <i><%= @picklist.name %></i></h2>
 	<% else %>

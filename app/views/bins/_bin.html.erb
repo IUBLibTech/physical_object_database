@@ -61,7 +61,9 @@
 		</tr>
 		<tr>
 			<th>Workflow Status</th>
-			<td><%= @bin.display_workflow_status %></td>
+			<td>
+				<%= @bin.display_workflow_status %>
+			</td>
 		</tr>
 	</table>
         <%= f.fields_for :condition_statuses do |condition| %>

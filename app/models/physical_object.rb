@@ -80,12 +80,6 @@ class PhysicalObject < ActiveRecord::Base
     GENERATION_VALUES
   end
 
-  #manually add virtual attributes to @attributes
-  def attributes
-    @attributes['group_total'] = group_total
-    @attributes
-  end
-
   def group_identifier
     return "MISSING" if self.group_key.nil?
     self.group_key.group_identifier
@@ -171,9 +165,7 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def self.printable_columns
-    @column_names = column_names
-    @column_names << 'group_total' unless @column_names.include?('group_total')
-    @column_names
+    self.column_names + ['group_total']
   end
   
   def printable_attributes

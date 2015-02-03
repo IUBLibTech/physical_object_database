@@ -9,4 +9,8 @@ class Spreadsheet < ActiveRecord::Base
 
   validates :filename, presence: true, uniqueness: true
 
+  def spreadsheet_descriptor
+    filename
+  end
+
 end
