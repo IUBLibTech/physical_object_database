@@ -13,7 +13,7 @@
           <td>Number of objects (including original)</td>
           <td><%= number_field_tag :count, params[:count], min: 1 %></td>
           <td>Put new objects in same group key?</td>
-          <td><%= check_box_tag :grouped, params[:grouped], true %></td>
+          <td style="min-width: 20px;"><%= check_box_tag :grouped, params[:grouped], true %></td>
           <td><%= submit_tag("Split") %></td>
         </tr>
       </table>
