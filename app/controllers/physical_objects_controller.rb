@@ -86,7 +86,7 @@ class PhysicalObjectsController < ApplicationController
 
       #if the box (and then bin) are different then validate and save
       unless @box == @physical_object.box
-        if @box.container_full?
+        if @box.full?
           PhysicalObject.errors[:box] = "Cannot pack this Physical Object in Box <i>#{@box.mdpi_barcode}</i>. It is full!".html_safe
         else
           @physical_object.box = @box
@@ -275,7 +275,6 @@ class PhysicalObjectsController < ApplicationController
 
   #called as both AJAX call, from packing screen, and regular call from picklist screen
   def unpick
-    # SEE - views/picklists/process_list.html.erb "$("[id^=remove_]").click(function(event) {" javascript
     if @physical_object.group_key.nil?
       @physical_object.picklist = nil
       @physical_object.save

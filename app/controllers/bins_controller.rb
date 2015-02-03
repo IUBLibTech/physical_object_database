@@ -1,5 +1,5 @@
 class BinsController < ApplicationController
-  before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :unseal, :show_boxes, :assign_boxes, :workflow_history]
+  before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :seal, :unseal, :show_boxes, :assign_boxes, :workflow_history]
   before_action :set_assigned_boxes, only: [:show]
   before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
@@ -119,6 +119,18 @@ class BinsController < ApplicationController
                 redirect_to :back
 	end
 
+	def seal
+		if @bin.current_workflow_status == "Created"
+			@bin.current_workflow_status = "Sealed"
+			@bin.save
+			flash[:notice] = "Bin <i>#{@bin.identifier}</i> was marked as Sealed.".html_safe
+		else 
+			flash[:warning] = "Cannot Seal Bin <i>#{@bin.identifier}</i>. It's current workflow status is aready #{@bin.current_workflow_status}"
+		end
+		puts "\n\n............ #{request.env["HTTP_REFERER"]}\n\n"
+		redirect_to bin_path
+	end
+
 	def unseal
 	  case @bin.current_workflow_status
 	  when "Created"
@@ -135,8 +147,7 @@ class BinsController < ApplicationController
 	  else # Returned, Complete
 	    flash[:notice] = "<b class='warning'>Unsealing the bin is not applicable to this workflow status.</b>".html_safe
 	  end
-	  
-	  redirect_to :back
+	  redirect_to bin_path
 	end
 
 	def show_boxes

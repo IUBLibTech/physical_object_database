@@ -10,7 +10,7 @@ class Bin < ActiveRecord::Base
         has_many :boxes
         has_many :workflow_statuses, :dependent => :destroy
         after_initialize :assign_default_workflow_status
-	before_save :assign_inferred_workflow_status
+	      before_save :assign_inferred_workflow_status
         include WorkflowStatusModule
         extend WorkflowStatusQueryModule
         has_many :condition_statuses, :dependent => :destroy
@@ -19,7 +19,7 @@ class Bin < ActiveRecord::Base
         include DestinationModule
 
         validates :identifier, presence: true, uniqueness: true
-        validates :mdpi_barcode, mdpi_barcode: true
+        validates :mdpi_barcode, mdpi_barcode: true, uniqueness: true, numericality: { greater_than: 0 }
         validates :workflow_status, presence: true
 
         scope :available_bins, -> {

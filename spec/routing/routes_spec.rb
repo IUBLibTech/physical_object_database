@@ -27,8 +27,12 @@ describe "bins" do
     expect(post("/bins/:id/unbatch")).to be_routable
   end
 
+  it "routes to seal" do
+    expect(patch("/bins/:id/seal")).to be_routable
+  end
+
   it "routes to unseal" do
-    expect(post("/bins/:id/unseal")).to be_routable
+    expect(patch("/bins/:id/unseal")).to be_routable
   end
 
   it "routes to show_boxes" do
@@ -180,21 +184,30 @@ describe "picklists" do
   it "does not route to index" do
     expect(get("/picklists")).not_to be_routable
   end
-  it "routes to process_list" do
-    expect(patch("/picklists/process_list")).to be_routable
+  
+  # it "routes to process_list" do
+  #   expect(patch("/picklists/process_list")).to be_routable
+  # end
+  # it "routes to process_list" do
+  #   expect(get("/picklists/process_list")).to be_routable
+  # end
+  it "routes to pack_list" do
+    expect(patch("/picklists/pack_list")).to be_routable
   end
   it "routes to process_list" do
-    expect(get("/picklists/process_list")).to be_routable
+    expect(get("/picklists/pack_list")).to be_routable
   end
+  
+
   it "routes to assign_to_container" do
     expect(patch("/picklists/assign_to_container")).to be_routable
   end
   it "routes to remove_from_container" do
     expect(patch("/picklists/remove_from_container")).to be_routable
   end
-  it "routes to container_full" do
-    expect(post("/picklists/container_full")).to be_routable
-  end
+  # it "routes to container_full" do
+  #   expect(post("/picklists/container_full")).to be_routable
+  # end
 end
 
 describe "returns" do

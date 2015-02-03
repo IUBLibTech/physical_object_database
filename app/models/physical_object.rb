@@ -81,10 +81,10 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   #manually add virtual attributes to @attributes
-  def attributes
-    @attributes['group_total'] = group_total
-    @attributes
-  end
+  # def attributes
+  #   @attributes['group_total'] = group_total
+  #   @attributes
+  # end
 
   def group_identifier
     return "MISSING" if self.group_key.nil?

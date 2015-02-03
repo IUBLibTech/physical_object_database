@@ -2,9 +2,13 @@ require 'rails_helper'
 
 describe BinsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { 
+    sign_in 
+    request.env['HTTP_REFERER'] = "Foo"
+  }
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin) }
+  let(:sealed) {FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier:"UNIQUE!", current_workflow_status: "Sealed")} 
   let(:box) { FactoryGirl.create(:box, bin: bin) }
   let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: box) }
   let(:other_boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: unassigned_box) }
@@ -253,58 +257,6 @@ describe BinsController do
       expect(response).to render_template(:workflow_history)
     end
   end
-
-
-  describe "POST unseal" do
-    before(:each) { request.env["HTTP_REFERER"] = "source_page" }
-    context "on an unsealed (Created) bin" do
-      before(:each) do
-        post :unseal, id: bin.id
-      end
-      it "flashes a notification that the bin was already unsealed" do
-	expect(flash[:notice]).to match /already unsealed/
-      end
-      it "redirects to :back" do
-        expect(response).to redirect_to "source_page"
-      end
-    end
-    context "on a Sealed bin" do
-      before(:each) do
-        bin.current_workflow_status = "Sealed"
-	bin.save
-        post :unseal, id: bin.id
-      end
-      it "sets the current workflow status to Created" do
-        expect(bin.current_workflow_status).to eq "Sealed"
-        bin.reload
-        expect(bin.current_workflow_status).to eq "Created"
-      end
-      it "flashes a notification that the bin was successfully unsealed" do
-	expect(flash[:notice]).to match /success/
-      end
-      it "redirects to :back" do
-	expect(response).to redirect_to "source_page"
-      end
-    end
-    context "on a Batched bin" do
-      before(:each) do
-        bin.batch = batch
-	bin.save
-        post :unseal, id: bin.id
-      end
-      it "does not change the workflow status" do
-        expect(bin.current_workflow_status).to eq "Batched"
-	bin.reload
-        expect(bin.current_workflow_status).to eq "Batched"
-      end
-      it "flashes a notification that the bin must be unbatched " do
-	expect(flash[:notice]).to match /must be unbatched/
-      end
-      it "redirects to :back" do
-	expect(response).to redirect_to "source_page"
-      end
-    end
-  end
  
   describe "PATCH assign_boxes" do
     context "for an unsealed bin" do
@@ -330,6 +282,78 @@ describe BinsController do
       end
     end
     it "NOTE: does not check if box is already binned in another bin"
+  end
+
+  describe "Patch seal Bin" do
+    let(:sealed) {FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, current_workflow_status: "Sealed")} 
+    context "with a sealable Bin" do
+      before(:each) do
+        patch :seal, id: bin.id
+      end
+      it "it seals the bin" do
+        bin.reload
+        expect(bin.current_workflow_status).to eq "Sealed"
+      end
+    end
+    context "with an unsealable bin" do
+      before(:each) do
+        patch :seal, id: sealed.id
+      end
+      it "warns user" do
+        expect(flash[:warning]).to start_with("Cannot Seal Bin")
+      end
+    end
+  end
+
+  describe "POST unseal" do
+    before(:each) { request.env["HTTP_REFERER"] = "source_page" }
+    context "on an unsealed (Created) bin" do
+      before(:each) do
+        post :unseal, id: bin.id
+      end
+      it "flashes a notification that the bin was already unsealed" do
+        expect(flash[:notice]).to match /already unsealed/
+      end
+      it "redirects to bin_path" do
+        expect(response).to redirect_to bin_path
+      end
+    end
+    context "on a Sealed bin" do
+      before(:each) do
+        bin.current_workflow_status = "Sealed"
+        bin.save
+        post :unseal, id: bin.id
+      end
+      it "sets the current workflow status to Created" do
+        expect(bin.current_workflow_status).to eq "Sealed"
+        bin.reload
+        expect(bin.current_workflow_status).to eq "Created"
+      end
+      it "flashes a notification that the bin was successfully unsealed" do
+        expect(flash[:notice]).to match /success/
+      end
+      it "redirects to bin_path" do
+       expect(response).to redirect_to bin_path
+      end
+    end
+    context "on a Batched bin" do
+      before(:each) do
+        bin.batch = batch
+        bin.save
+        post :unseal, id: bin.id
+      end
+      it "does not change the workflow status" do
+        expect(bin.current_workflow_status).to eq "Batched"
+        bin.reload
+        expect(bin.current_workflow_status).to eq "Batched"
+      end
+      it "flashes a notification that the bin must be unbatched " do
+        expect(flash[:notice]).to match /must be unbatched/
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to bin_path
+      end
+    end
   end
 
 end
