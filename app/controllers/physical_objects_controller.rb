@@ -1,5 +1,8 @@
 class PhysicalObjectsController < ApplicationController
   before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :workflow_history,:split_show, :split_update, :unbin, :unbox, :unpick, :ungroup]  
+  before_action :set_new_physical_object, only: [:new, :create_multiple]
+  before_action :set_new_physical_object_with_params, only: [:create]
+  before_action :set_box_and_bin_by_barcodes, only: [:create, :create_multiple, :update]
   before_action :set_picklists, only: [:edit]
   helper :all
 
@@ -11,7 +14,6 @@ class PhysicalObjectsController < ApplicationController
     # we instantiate an new object here because rails will pick up any default values assigned
     # by the database and the form will be prepopulated with those values
     # we can also pass a hash to PhysicalObject.new({iucat_barcode => "123436"}) to assign defaults programmatically
-    @physical_object = PhysicalObject.new
     #default format for now
     format = PhysicalObject.formats["Open Reel Audio Tape"]
     @physical_object.format = format
@@ -21,7 +23,7 @@ class PhysicalObjectsController < ApplicationController
     @edit_mode = true
     @action = "create"
     @submit_text = "Create Physical Object"
-    @display_assigned = false
+    @display_assigned = true
 
     if !params[:group_key_id].nil?
       @group_key = GroupKey.find(params[:group_key_id])
@@ -35,7 +37,6 @@ class PhysicalObjectsController < ApplicationController
     if params[:repeat] == "true"
       @repeat = true
     end
-    @physical_object = PhysicalObject.new(physical_object_params)
     @tm = @physical_object.ensure_tm
     saved = @physical_object.save and @tm.update_attributes(tm_params)
     if saved
@@ -49,7 +50,11 @@ class PhysicalObjectsController < ApplicationController
         @physical_object = PhysicalObject.new(physical_object_params)
         @tm = @physical_object.ensure_tm
         @tm.assign_attributes(tm_params)
+      else
+        # for failed save, carry over tm attributes
+        @tm.assign_attributes(tm_params)
       end
+      @display_assigned = true
       render('new')
     end
   end
@@ -75,45 +80,22 @@ class PhysicalObjectsController < ApplicationController
 
   def update
     PhysicalObject.transaction do
-      updated = @physical_object.update_attributes(physical_object_params)
+      # initial save processes bin, box assignment
+      updated = @physical_object.save unless @physical_object.errors.any?
+      updated = @physical_object.update_attributes(physical_object_params) if updated
       if updated
         @physical_object.reload
         @tm = @physical_object.ensure_tm
+        #FIXME: we are not checking if this succeeds
         update = @tm.update_attributes(tm_params)
       end
-
-      # a new barcode may have been scanned for the bin and/or box
-      @bin = params[:bin_mdpi_barcode] ? Bin.where(mdpi_barcode: params[:bin_mdpi_barcode]).first : nil
-      @box = params[:box_mdpi_barcode] ? Box.where(mdpi_barcode: params[:box_mdpi_barcode]).first : nil
-
-      #if the box (and then bin) are different then validate and save
-      unless @box.nil? || (@box == @physical_object.box)
-        if @box.container_full?
-          PhysicalObject.errors[:box] = "Cannot pack this Physical Object in Box <i>#{@box.mdpi_barcode}</i>. It is full!".html_safe
-        else
-          @physical_object.box = @box
-          @physical_object.current_workflow_status = "Boxed"
-        end
-      end
-      unless @bin.nil? || (@bin == @physical_object.bin)
-        if @bin.workflow_statuses.last.past_or_equal_to_status?("Sealed")
-          PhysicalObject.errors[:bin] = "Cannot assign this Physical Object to Bin <i>#{@bin.identifier}</i>. It is sealed or further in the workflow.".html_safe
-        else
-          @physical_object.bin = @bin
-          @physical_object.current_workflow_status = "Binned"
-        end
-      end
-
-      if updated and @physical_object.changed?
-        @physical_object.save
-      end
-
 
       if updated 
         flash[:notice] = "Physical Object successfully updated".html_safe
         redirect_to(action: 'index')
       else
         @edit_mode = true
+        @display_assigned = true
         render action: :edit  
       end
     end
@@ -135,10 +117,13 @@ class PhysicalObjectsController < ApplicationController
   def split_show
     if @physical_object.bin or @physical_object.box
       flash[:notice] = "This physical object must be removed from its container (bin or box) before it can be split."
+      @display_assigned = true
+      @submit_text = ""
       redirect_to action: :show
     else
       @count = 0;
       @display_assigned = true
+      @submit_text = ""
     end
   end
   
@@ -224,7 +209,6 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def create_multiple
-    @physical_object = PhysicalObject.new
     #default format for now
     format = PhysicalObject.formats["CD-R"]
     @physical_object.format = format
@@ -235,7 +219,7 @@ class PhysicalObjectsController < ApplicationController
     @action = "create"
     @submit_text = "Create Physical Object"
     @repeat = true
-    @display_assigned = false
+    @display_assigned = true
   end
     
   def unbin
@@ -333,8 +317,40 @@ class PhysicalObjectsController < ApplicationController
       @group_key = @physical_object.group_key
     end
 
+    def set_new_physical_object
+      @physical_object = PhysicalObject.new
+    end
+
+    def set_new_physical_object_with_params
+      @physical_object = PhysicalObject.new(physical_object_params)
+    end
+
     def set_picklists
       @picklists = Picklist.all
+    end
+
+    def set_box_and_bin_by_barcodes
+      # a new barcode may have been scanned for the bin and/or box
+      @bin = params[:bin_mdpi_barcode] ? Bin.where(mdpi_barcode: params[:bin_mdpi_barcode]).first : nil
+      @box = params[:box_mdpi_barcode] ? Box.where(mdpi_barcode: params[:box_mdpi_barcode]).first : nil
+
+      #if the box (and then bin) are different then validate and save
+      unless @box.nil? || (@box == @physical_object.box)
+        if @box.full?
+          @physical_object.errors[:box] = "Cannot pack this Physical Object in Box <i>#{@box.mdpi_barcode}</i>. It is full!".html_safe
+        else
+          @physical_object.box = @box
+          @physical_object.current_workflow_status = "Boxed"
+        end
+      end
+      unless @bin.nil? || (@bin == @physical_object.bin)
+        if @bin.workflow_statuses.last.past_or_equal_status?("Sealed")
+          @physical_object.errors[:bin] = "Cannot assign this Physical Object to Bin <i>#{@bin.identifier}</i>. It is sealed or further in the workflow.".html_safe
+        else
+          @physical_object.bin = @bin
+          @physical_object.current_workflow_status = "Binned"
+        end
+      end
     end
     
     # helper for re-rendering pick list if updating failed in some way
