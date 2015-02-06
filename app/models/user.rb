@@ -1,4 +1,7 @@
-class User #< ActiveRecord::Base
+class User < ActiveRecord::Base
+
+  validates :name, presence: true, uniqueness: true
+  validates :username, presence: true, uniqueness: true
 
   def self.authenticate(username)
     return false if username.nil? || username.blank?
@@ -6,16 +9,8 @@ class User #< ActiveRecord::Base
     return false
   end
 
-  #FIXME: change to model lookup
   def self.valid_usernames
-    return ["aploshay", "jaalbrec", "wgcowan",
-    "pfeaster",
-    "jelyon",
-    "caitreyn",
-    "jtshelby",
-    "adbohm",
-    "jearoe"
-    ]
+    return User.all.map { |user| user.username }
   end
 
   def self.current_user=(user)

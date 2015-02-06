@@ -1,8 +1,47 @@
 require 'rails_helper'
 
 describe User do
+  # users are seed data and must be manually deleted
+  let(:user) { FactoryGirl.create :user }
+  let(:valid_user) { FactoryGirl.build :user }
+  let(:invalid_user) { FactoryGirl.build :user, :invalid }
+
   let(:invalid_username) { "invalid username" }
   let(:valid_username) { "aploshay" }
+
+  describe "FactoryGirl" do
+    specify ":valid_user is valid" do
+      expect(valid_user).to be_valid
+    end
+    specify ":invalid_user is invalid" do
+      expect(invalid_user).not_to be_valid
+    end
+  end
+
+  describe "has required fields:" do
+    specify "name" do
+      valid_user.name = ""
+      expect(valid_user).not_to be_valid
+    end
+    specify "username" do
+      valid_user.username = ""
+      expect(valid_user).not_to be_valid
+    end
+  end
+
+  describe "has unique fields:" do
+    # user is seed data and must be manually destroyed in tests
+    before(:each) { user }
+    after(:each) { user.destroy }
+    specify "unique name" do
+      duplicate_user = FactoryGirl.build :user, name: user.name
+      expect(duplicate_user).not_to be_valid
+    end
+    specify "unique username" do
+      duplicate_user = FactoryGirl.build :user, username: user.username
+      expect(duplicate_user).not_to be_valid
+    end
+  end
 
   describe ".authenticate(username)" do
     it "rejects a nil value" do

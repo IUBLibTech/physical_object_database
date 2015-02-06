@@ -31,6 +31,27 @@ def seed_units(type = "default")
   puts "#{added_count} Unit record(s) added, #{skipped_count} skipped.\n"
 end
 
+def seed_users(type = "default")
+  puts "=== Seeding User data ==="
+  users_csv = CSV.parse(File.read('lib/tasks/users_values.csv'), headers: true)
+  added_count = 0
+  skipped_count = 0
+  users_csv.each do |user|
+    begin
+      result = User.create!(name: user["Name"], username: user["Username"])
+      puts "\tUser \##{result.id} created: #{result.name}, #{result.username}"
+      added_count += 1
+    rescue
+      puts "\tError on User create (#{user["Name"]}, #{user["Username"]}): #{$!}" unless type == "add"
+      skipped_count += 1
+    ensure
+      #no op
+    end
+  end
+  puts "#{added_count} User record(s) added, #{skipped_count} skipped.\n"
+end
+
+
 def seed_wst(type = "default")
   puts "=== Seeding Workflow Status Template data ==="
   seed_files = {
