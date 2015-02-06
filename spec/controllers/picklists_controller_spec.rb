@@ -209,6 +209,7 @@ describe PicklistsController do
           pack_list
           expect(assigns(:previous_physical_object)).to be_nil
           expect(assigns(:physical_object)).to eq po1        
+          expect(assigns(:tm)).to eq po1.technical_metadatum.as_technical_metadatum        
           expect(assigns(:next_physical_object)).to eq po2
         end
 
@@ -218,8 +219,9 @@ describe PicklistsController do
           po1.save
           pack_list
           
-          expect(assigns(:physical_object)).to eq po2        
           expect(assigns(:previous_physical_object)).to eq po1
+          expect(assigns(:physical_object)).to eq po2
+          expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
           expect(assigns(:next_physical_object)).to eq po3
         end
         it "finds prev/current/nil physical objects" do
@@ -230,6 +232,7 @@ describe PicklistsController do
           pack_list
           expect(assigns(:previous_physical_object)).to eq po2
           expect(assigns(:physical_object)).to eq po3        
+          expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
           expect(assigns(:next_physical_object)).to be_nil
         end
       end 
@@ -261,7 +264,7 @@ describe PicklistsController do
     end
   end
 
-  describe "Packing a Pick List", "" do
+  describe "PATCH pack_list on collection", "" do
     let(:pack_picklist) { FactoryGirl.create(:picklist, name: "Foo") }
     let(:pack_bin) { FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier: "binbar") }
     let(:pack_box) { FactoryGirl.create(:box, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
@@ -303,6 +306,7 @@ describe PicklistsController do
         pack_list
         expect(assigns(:previous_physical_object)).to be_nil
         expect(assigns(:physical_object)).to eq po1
+        expect(assigns(:tm)).to eq po1.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to eq po2
       end
       it "moves to next object on next button submission" do
@@ -311,6 +315,7 @@ describe PicklistsController do
         pack_list
         expect(assigns(:previous_physical_object)).to eq po2
         expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to be_nil
       end
 
@@ -321,6 +326,7 @@ describe PicklistsController do
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
         expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to be_nil
         expect(po2.bin).to eq pack_bin
       end
@@ -336,6 +342,7 @@ describe PicklistsController do
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
         expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to be_nil
         expect(po2.bin).to eq pack_bin
         expect(po2.call_number).to eq changed
@@ -369,6 +376,7 @@ describe PicklistsController do
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po1
         expect(assigns(:physical_object)).to eq po2
+        expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to eq po3
         expect(po2.bin).to be_nil
         expect(po2.box).to be_nil
@@ -381,6 +389,7 @@ describe PicklistsController do
         pack_list
         expect(assigns(:previous_physical_object)).to eq po1
         expect(assigns(:physical_object)).to eq po2
+        expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to eq po3
       end
 
@@ -408,6 +417,7 @@ describe PicklistsController do
         pack_list
         expect(assigns(:previous_physical_object)).to be_nil
         expect(assigns(:physical_object)).to eq po1
+        expect(assigns(:tm)).to eq po1.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to eq po2
       end
       it "moves to next object on next button submission" do
@@ -416,6 +426,7 @@ describe PicklistsController do
         pack_list
         expect(assigns(:previous_physical_object)).to eq po2
         expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to be_nil
       end
       it "packs a physical object" do
@@ -425,6 +436,7 @@ describe PicklistsController do
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
         expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to be_nil
         expect(po2.bin).to eq pack_bin
       end
@@ -438,6 +450,7 @@ describe PicklistsController do
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
         expect(assigns(:physical_object)).to eq po3
+        expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to be_nil
         expect(po2.bin).to eq pack_bin
         expect(po2.call_number).to eq changed
@@ -468,6 +481,7 @@ describe PicklistsController do
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po1
         expect(assigns(:physical_object)).to eq po2
+        expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to eq po3
         expect(po2.bin).to be_nil
         expect(po2.box).to be_nil
@@ -479,6 +493,7 @@ describe PicklistsController do
         pack_list
         expect(assigns(:previous_physical_object)).to eq po1
         expect(assigns(:physical_object)).to eq po2
+        expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
         expect(assigns(:next_physical_object)).to eq po3
       end
       it "doesn't find a physical object on an irrelevant search" do
