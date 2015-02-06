@@ -1,9 +1,21 @@
-class User
+class User #< ActiveRecord::Base
 
-  #NOTE: currently accepts any CAS user; later rewrite to look up allowed users
   def self.authenticate(username)
     return false if username.nil? || username.blank?
-    return true
+    return true if valid_usernames.include? username
+    return false
+  end
+
+  #FIXME: change to model lookup
+  def self.valid_usernames
+    return ["aploshay", "jaalbrec", "wgcowan",
+    "pfeaster",
+    "jelyon",
+    "caitreyn",
+    "jtshelby",
+    "adbohm",
+    "jearoe"
+    ]
   end
 
   def self.current_user=(user)
