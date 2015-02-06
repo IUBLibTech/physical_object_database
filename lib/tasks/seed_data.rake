@@ -24,6 +24,7 @@ namespace :db do
       Rake::Task["db:unit_data"].invoke(type)
       Rake::Task["db:workflow_status_data"].invoke(type)
       Rake::Task["db:condition_status_data"].invoke(type)
+      Rake::Task["db:users_data"].invoke(type)
     end
 
   desc "Populate Unit records into database"
@@ -84,6 +85,27 @@ namespace :db do
         end
       when "add", "reseed"
         seed_cst(type)
+      else
+        puts "Invalid type argument: #{type}"
+      end
+    end
+
+  desc "Populate User records into database"
+    task :users_data, [:type] => :environment do |task, args|
+      type = args.type || "default"
+      if type == "reseed"
+        User.destroy_all
+        puts "*** Existing User entries destroyed. ***"
+      end
+      case type
+      when "default"
+        if User.any?
+          puts "--- User table already has values.  Skipping. ---"
+        else
+          seed_users(type)
+        end
+      when "add", "reseed"
+        seed_users(type)
       else
         puts "Invalid type argument: #{type}"
       end
