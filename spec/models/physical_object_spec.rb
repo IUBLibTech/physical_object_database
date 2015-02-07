@@ -85,12 +85,17 @@ describe PhysicalObject do
     end
   end
 
-  describe "has relationships" do
+  describe "has relationships:" do
     specify "can belong to a box" do
       expect(valid_po.box).to be_nil
     end
     specify "can belong to a bin" do
       expect(valid_po.bin).to be_nil
+    end
+    specify "cannot belong to a bin and box" do
+      valid_po.box = box
+      valid_po.bin = bin
+      expect(valid_po).not_to be_valid
     end
     specify "can belong to a picklist" do
       expect(valid_po.picklist).to be_nil
