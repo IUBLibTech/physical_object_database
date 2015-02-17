@@ -5,7 +5,7 @@ describe ResponsesController do
     end
 
     it "routes to #push_status" do
-    	expect(:get => "/responses/push_status/json").to route_to("responses#push_status", :json => "json")
+    	expect(:get => "/responses/push_status").to route_to("responses#push_status")
     end
 
   end

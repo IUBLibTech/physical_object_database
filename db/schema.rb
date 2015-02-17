@@ -13,7 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20150217185510) do
 
-
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
     t.string   "speed"
