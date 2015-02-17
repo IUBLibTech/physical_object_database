@@ -32,6 +32,8 @@ Pod::Application.routes.draw do
     resources :physical_objects, only: [:new]
   end
 
+  resources :messages
+
   resources :physical_objects do
     get :download_spreadsheet_example, on: :collection
     get :tm_form, on: :collection

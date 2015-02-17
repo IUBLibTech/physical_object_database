@@ -1,6 +1,3 @@
-#FIXME: rewrite for boxes!
-require 'rails_helper'
-
 describe BoxesController do
   render_views
   before(:each) { sign_in }
