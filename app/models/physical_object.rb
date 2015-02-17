@@ -27,6 +27,7 @@ class PhysicalObject < ActiveRecord::Base
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
   has_many :notes, :dependent => :destroy
+  has_many :digital_statuses, :dependent => :destroy
 
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
   accepts_nested_attributes_for :notes, allow_destroy: true
@@ -310,6 +311,10 @@ class PhysicalObject < ActiveRecord::Base
       export_text += " || " unless index == export_notes.size - 1 
     end
     return export_text
+  end
+
+  def current_digital_status
+    digital_statuses.order("last_updated DESC").first
   end
 
   private

@@ -17,3 +17,4 @@
 //= require picklist_specification
 //= require picklist
 //= require_tree .
+

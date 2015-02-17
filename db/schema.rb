@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150121134955) do
+ActiveRecord::Schema.define(version: 20150206161907) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -154,6 +154,19 @@ ActiveRecord::Schema.define(version: 20150121134955) do
     t.string   "role"
     t.string   "format"
     t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "digital_statuses", force: true do |t|
+    t.integer  "physical_object_id"
+    t.integer  "physical_object_mdpi_barcode", limit: 8
+    t.string   "state"
+    t.text     "message"
+    t.boolean  "accepted"
+    t.boolean  "attention"
+    t.text     "decided"
+    t.text     "options"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
