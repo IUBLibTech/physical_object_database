@@ -79,6 +79,7 @@ Pod::Application.routes.draw do
   end
 
   get 'responses/metadata/:barcode', to: 'responses#metadata', as: 'metadata_response'
+  post 'responses/message', to: 'messages#create', as: 'message_response' 
 
   resources :returns, only: [:index] do
     get :return_bins, on: :member

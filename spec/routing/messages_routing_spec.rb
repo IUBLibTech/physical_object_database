@@ -19,6 +19,7 @@ describe MessagesController, :type => :routing do
 
     it "routes to #create" do
       expect(:post => "/messages").to route_to("messages#create")
+      expect(:post => "/responses/message").to route_to("messages#create")
     end
 
     it "routes to #update" do
