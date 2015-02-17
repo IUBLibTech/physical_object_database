@@ -158,6 +158,19 @@ ActiveRecord::Schema.define(version: 20150217185510) do
     t.datetime "updated_at"
   end
 
+  create_table "digital_statuses", force: true do |t|
+    t.integer  "physical_object_id"
+    t.integer  "physical_object_mdpi_barcode", limit: 8
+    t.string   "state"
+    t.text     "message"
+    t.boolean  "accepted"
+    t.boolean  "attention"
+    t.text     "decided"
+    t.text     "options"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "group_keys", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"

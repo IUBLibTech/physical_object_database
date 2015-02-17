@@ -45,9 +45,9 @@ class BinsController < ApplicationController
 
 	def show
 		if @boxes.any?
-		  @physical_objects = PhysicalObject.where(box_id: @boxes.map { |box| box.id })
+		  @physical_objects = PhysicalObject.includes(:group_key).where(box_id: @boxes.map { |box| box.id }).references(:group_key).order("call_number, group_keys.id, physical_objects.id")
 		else
-		  @physical_objects = @bin.physical_objects
+		  @physical_objects = PhysicalObject.includes(:group_key).where("bin_id = ?", @bin.id).references(:group_key).order("call_number", "group_keys.id", "group_position", "physical_objects.id")
 		end
 		@picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
 		@edit_mode = false

@@ -227,7 +227,8 @@ class PicklistsController < ApplicationController
 		  end
 		  #@picklist = Picklist.find(params[:id])
 		  @picklist = Picklist.eager_load(:physical_objects).where("picklists.id = ?", params[:id]).first
-		  @physical_objects = @picklist.physical_objects.order("call_number")
+		  #@physical_objects = @picklist.physical_objects.order("call_number")
+		  @physical_objects = PhysicalObject.includes(:group_key).where("picklist_id = ?", @picklist.id).references(:group_key).order("call_number", "group_keys.id", "group_position", "physical_objects.id")
 		end
 
 		def picklist_params

@@ -27,6 +27,7 @@ class PhysicalObject < ActiveRecord::Base
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
   has_many :notes, :dependent => :destroy
+  has_many :digital_statuses, :dependent => :destroy
 
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
   accepts_nested_attributes_for :notes, allow_destroy: true
@@ -317,6 +318,9 @@ class PhysicalObject < ActiveRecord::Base
 
   def validate_single_container_assignment
     errors[:base] << "You are attempting to directly assign this object to both a bin (#{bin.mdpi_barcode}) and a box (#{box.mdpi_barcode}), but an object can only be directly assigned to single container, at most." if bin && box
+  end
+  def current_digital_status
+    digital_statuses.order("last_updated DESC").first
   end
 
   private

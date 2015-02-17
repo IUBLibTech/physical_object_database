@@ -80,6 +80,8 @@ Pod::Application.routes.draw do
 
   get 'responses/metadata/:barcode', to: 'responses#metadata', as: 'metadata_response'
   post 'responses/message', to: 'messages#create', as: 'message_response' 
+  get 'responses/push_status', to: 'responses#push_status', as: 'push_status_response'
+  get 'responses/pull_state/:barcode', to: "responses#pull_state", as: "pull_state_response"
 
   resources :returns, only: [:index] do
     get :return_bins, on: :member

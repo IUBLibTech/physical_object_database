@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'ruby-debug'
 
 describe PicklistsController do
   render_views
