@@ -11,6 +11,8 @@ class ResponsesController < ActionController::Base
     render template: 'responses/metadata.xml.builder', layout: false
   end
 
+  # message: handled by messages controller
+
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:barcode]) unless response_params[:barcode].to_i.zero?

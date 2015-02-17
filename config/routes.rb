@@ -32,6 +32,8 @@ Pod::Application.routes.draw do
     resources :physical_objects, only: [:new]
   end
 
+  resources :messages
+
   resources :physical_objects do
     get :download_spreadsheet_example, on: :collection
     get :tm_form, on: :collection
@@ -77,6 +79,7 @@ Pod::Application.routes.draw do
   end
 
   get 'responses/metadata/:barcode', to: 'responses#metadata', as: 'metadata_response'
+  post 'responses/message', to: 'messages#create', as: 'message_response' 
 
   resources :returns, only: [:index] do
     get :return_bins, on: :member
