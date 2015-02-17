@@ -1,10 +1,17 @@
-class ResponsesController < ApplicationController
+# Does not inherit from ApplicationController to avoid requiring sign-in here
+class ResponsesController < ActionController::Base
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :exception
+  include SessionsHelper
+
   before_action :set_physical_object, only: [:metadata, :pull_state]
 
   def metadata
     render template: 'responses/metadata.xml.builder', layout: false
   end
 
+  # message: handled by messages controller
   # push_status is used for notifying POD of digital status changes from Brian's
   # QC script. Expected format of request: 
   #<app root>/responses/push_status?json=<json status object>&qc_user=<Settings.qc_user>&qc_pass=<Settings.qc_pass>

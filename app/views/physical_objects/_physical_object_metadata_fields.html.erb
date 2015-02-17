@@ -150,6 +150,11 @@
         <td><%= @physical_object.display_workflow_status %></td>
       </tr>
     </table>
+    <%# FIXME: kludge workaround for 1st link_to_add being broken, bug POD-648 %>
+    <% f.fields_for :workflow_statuses do |ws| %>
+    <% end %>
+    <% f.link_to_add "WS", :workflow_statuses %>
+    <%# end kludge %>
     <div id="condition_statuses_div">
       <%= f.fields_for :condition_statuses do |condition| %>
         <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @physical_object %>

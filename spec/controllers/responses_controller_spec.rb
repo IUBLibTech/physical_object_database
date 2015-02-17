@@ -3,7 +3,8 @@ require 'ruby-debug'
 
 describe ResponsesController do
   render_views
-  before(:each) { sign_in }
+  # responses controller does not require CAS
+  before(:each) { sign_out }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
   let(:barcoded_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
 

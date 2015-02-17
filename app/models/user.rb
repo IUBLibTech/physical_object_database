@@ -1,9 +1,16 @@
-class User
+class User < ActiveRecord::Base
 
-  #NOTE: currently accepts any CAS user; later rewrite to look up allowed users
+  validates :name, presence: true, uniqueness: true
+  validates :username, presence: true, uniqueness: true
+
   def self.authenticate(username)
     return false if username.nil? || username.blank?
-    return true
+    return true if valid_usernames.include? username
+    return false
+  end
+
+  def self.valid_usernames
+    return User.all.map { |user| user.username }
   end
 
   def self.current_user=(user)

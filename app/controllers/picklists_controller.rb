@@ -93,11 +93,8 @@ class PicklistsController < ApplicationController
 			else
 				@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null", @picklist.id).order(:call_number, :id).first
 			end	
-			unless @physical_object.nil?
-				@tm = @physical_object.technical_metadatum.as_technical_metadatum
-			end
-
 			if @physical_object
+				@tm = @physical_object.technical_metadatum.as_technical_metadatum
 				surrounding_physical_objects
 			end
 			if params[:bin_id]
@@ -166,6 +163,7 @@ class PicklistsController < ApplicationController
       end
 			@physical_object.save
       @physical_object = @next_physical_object
+      @tm = @physical_object.technical_metadatum.as_technical_metadatum
       # need to recalculate bookend physical objects
       surrounding_physical_objects
 		end
@@ -177,6 +175,8 @@ class PicklistsController < ApplicationController
       end
 			@physical_object.save
       @physical_object = @previous_physical_object
+      @tm = @physical_object.technical_metadatum.as_technical_metadatum
+
 			# need to recalculate the bookend physical objects
 			surrounding_physical_objects
 		end
@@ -198,6 +198,7 @@ class PicklistsController < ApplicationController
 						end
 						@physical_object.save
 						@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null and call_number >= ?", @picklist.id, @physical_object.call_number).order(:call_number, :id).first
+						@tm = @physical_object.technical_metadatum.as_technical_metadatum
 						surrounding_physical_objects
 					end
 				else

@@ -31,6 +31,8 @@ class PhysicalObject < ActiveRecord::Base
 
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
   accepts_nested_attributes_for :notes, allow_destroy: true
+  # below line supports kludge workaround for bug POD-648
+  accepts_nested_attributes_for :workflow_statuses, allow_destroy: false
 
   # default per_page value can be overriden in a request
   self.per_page = 50
@@ -61,6 +63,7 @@ class PhysicalObject < ActiveRecord::Base
   validates :technical_metadatum, presence: true
   validates :workflow_status, presence: true
   validates_with PhysicalObjectValidator
+  validate :validate_single_container_assignment
 
   accepts_nested_attributes_for :technical_metadatum
   scope :search_by_catalog, lambda {|query| where(["call_number = ?", query, query])}
@@ -313,6 +316,9 @@ class PhysicalObject < ActiveRecord::Base
     return export_text
   end
 
+  def validate_single_container_assignment
+    errors[:base] << "You are attempting to directly assign this object to both a bin (#{bin.mdpi_barcode}) and a box (#{box.mdpi_barcode}), but an object can only be directly assigned to single container, at most." if bin && box
+  end
   def current_digital_status
     digital_statuses.order("last_updated DESC").first
   end
