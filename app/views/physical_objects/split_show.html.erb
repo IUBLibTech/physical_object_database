@@ -5,18 +5,6 @@
 <% end %>
 <div>
   <h2>Split Physical Object</h2>
-  
-  </div>
-    <%= form_for(@physical_object, :url => {:action => "split_update", :id => @physical_object.id}) do |f| %>
-      <table>
-        <tr>
-          <td>Number of objects (including original)</td>
-          <td><%= number_field_tag :count, params[:count], min: 1 %></td>
-          <td>Put new objects in same group key?</td>
-          <td style="min-width: 20px;"><%= check_box_tag :grouped, params[:grouped], true %></td>
-          <td><%= submit_tag("Split") %></td>
-        </tr>
-      </table>
-    <%end%>
-  </div>
-  <%= render(partial: "physical_object_form") %>
+  <div><%= render partial: "split_form" %></div>
+  <%= render partial: "physical_object_form" %>
+</div>

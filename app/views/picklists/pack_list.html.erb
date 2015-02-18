@@ -14,7 +14,10 @@
 			Search Call Number: <%= text_field_tag('call_number') %>
 			<%= f.submit "Search", name: 'search_button' %>
 	  <% end %>
-	</div>
+  </div>
+  <div class="contextMenuItem">
+    <%= render partial: "physical_objects/split_form" %>
+  </div>
 <% end %>
 
 <div id="pl_container_div">

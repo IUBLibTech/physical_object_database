@@ -1,0 +1,7 @@
+<%= form_for(@physical_object, url: {controller: 'physical_objects', action: "split_update", id: @physical_object.id}) do |f| %>
+      Split into (including original):
+      <%= number_field_tag :count, params[:count], min: 1 %>
+      Same group key?
+      <%= check_box_tag :grouped, params[:grouped], true %>
+      <%= submit_tag("Split") %>
+<%end%>
