@@ -153,7 +153,7 @@ describe PicklistsController do
     context "while packing a picklist" do  
       context " starting with missing pick list param" do
         before(:each) do
-          args.delete :picklist
+          args.delete :id
           pack_list
         end
         it "redirects to pick list specifications page" do
@@ -163,7 +163,7 @@ describe PicklistsController do
 
       context "starting with invalid pick list id" do
         before(:each) {
-          args[:picklist][:id] = -1
+          args[:id] = -1
         }
         it "raises error" do
           expect{ pack_list }.to raise_error
@@ -263,11 +263,15 @@ describe PicklistsController do
     end
   end
 
-  describe "PATCH pack_list on collection", "" do
+  describe "PATCH pack_list on collection" do
+    skip "redirects to member"
+  end
+
+  describe "PATCH pack_list on member", "" do
     let(:pack_picklist) { FactoryGirl.create(:picklist, name: "Foo") }
     let(:pack_bin) { FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier: "binbar") }
     let(:pack_box) { FactoryGirl.create(:box, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
-    let(:pack_list) { patch :pack_list, **args }
+    let(:pack_list) { patch :pack_list, args }
     let!(:po1) { FactoryGirl.create(:physical_object, :cdr, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "A" ) }
     let!(:po2) { FactoryGirl.create(:physical_object, :cdr, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "B" )}
     let!(:po3) { FactoryGirl.create(:physical_object, :cdr, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "C" ) }
@@ -275,26 +279,26 @@ describe PicklistsController do
 
     pack_mode = "auto-box"
     it_behaves_like "starting a picklist packing session" do 
-      let(:args) { {picklist: {id: pack_picklist.id}, box_id: pack_box.id } }
+      let(:args) { {id: pack_picklist.id, box_id: pack_box.id } }
     end
 
-    pack_mode = "atuo-bin"
+    pack_mode = "auto-bin"
     it_behaves_like "starting a picklist packing session" do
-      let(:args) { {picklist: {id: pack_picklist.id}, bin_id: pack_bin.id}}
+      let(:args) { {id: pack_picklist.id, bin_id: pack_bin.id}}
     end
 
     pack_mode = "manually (with bin barcode)"
     it_behaves_like "starting a picklist packing session" do
-      let(:args) { {picklist: {id: pack_picklist.id}, bin_mdpi_barcode: pack_bin.mdpi_barcode} }
+      let(:args) { {id: pack_picklist.id, bin_mdpi_barcode: pack_bin.mdpi_barcode} }
     end
 
     pack_mode = "manually (with box barcode)"
     it_behaves_like "starting a picklist packing session" do
-      let(:args) { {picklist: {id: pack_picklist.id}, box_mdpi_barcode: pack_box.mdpi_barcode} }
+      let(:args) { {id: pack_picklist.id, box_mdpi_barcode: pack_box.mdpi_barcode} }
     end
 
     context "submitting from picklist packing page with a Bin" do
-      let(:args) { {picklist: {id: pack_picklist.id}, bin_id: pack_bin.id, physical_object: {id: po2.id}} }
+      let(:args) { {id: pack_picklist.id, bin_id: pack_bin.id, physical_object: {id: po2.id}} }
       
       before(:each) do
         request.env['HTTP_REFERER'] = "Foo"
@@ -404,7 +408,7 @@ describe PicklistsController do
     end
 
     context "submitting from picklist packing page with no container specified" do
-      let(:args) { {picklist: {id: pack_picklist.id}, bin_mdpi_barcode: pack_bin.mdpi_barcode, physical_object: {id: po2.id}} }
+      let(:args) { {id: pack_picklist.id, bin_mdpi_barcode: pack_bin.mdpi_barcode, physical_object: {id: po2.id}} }
       
       before(:each) do
         request.env['HTTP_REFERER'] = "Foo"

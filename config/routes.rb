@@ -65,8 +65,11 @@ Pod::Application.routes.draw do
   end
 
   resources :picklists, except: [:index] do
+    # kludge to allow easy form submission: pack_list on collection redirects to member action
     patch :pack_list, on: :collection
     get :pack_list, on: :collection
+    patch :pack_list, on: :member
+    get :pack_list, on: :member
     get :assign, on: :member
     
     # these 5 routes were deprecated in sprint-22 and replaced with the pack_list route - these action are no more

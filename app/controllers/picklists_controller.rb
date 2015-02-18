@@ -84,8 +84,10 @@ class PicklistsController < ApplicationController
 		@display_assigned = false
 		@edit_mode = true
 		@picklisting = true
-		if params[:picklist]
-			@picklist = Picklist.find(params[:picklist][:id])
+		if params[:picklist] && params[:picklist][:id]
+		  redirect_to pack_list_picklist_path(params[:picklist][:id], box_id: params[:box_id], bin_id: params[:bin_id])
+		elsif params[:id]
+			@picklist = Picklist.find(params[:id])
 			if params[:search_button]
 				@physical_object = PhysicalObject.where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).order(:call_number, :id).first
 			elsif params[:physical_object]
@@ -118,24 +120,24 @@ class PicklistsController < ApplicationController
 				render 'pack_list'
 				return
 			end
+			if params[:pack_bin_button]
+				pack_bin
+			elsif params[:pack_box_button]
+				pack_box
+			elsif params[:manual_pack_button]
+				pack_manual
+			elsif params[:pack_button]
+				pack
+			elsif params[:unpack_button]
+				unpack
+			elsif params[:previous_button]
+				previous_po	
+			elsif params[:next_button]
+				next_po
+			end
 		else
 			flash[:warning] = "A valid Pick List ID was not specified.".html_safe
 			redirect_to picklist_specifications_path 
-		end
-		if params[:pack_bin_button]
-			pack_bin
-		elsif params[:pack_box_button]
-			pack_box
-		elsif params[:manual_pack_button]
-			pack_manual
-		elsif params[:pack_button]
-			pack
-		elsif params[:unpack_button]
-			unpack
-		elsif params[:previous_button]
-			previous_po	
-		elsif params[:next_button]
-			next_po
 		end
 	end
 
