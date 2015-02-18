@@ -234,7 +234,10 @@ describe PhysicalObjectsController do
     let(:count) { 3 }
     # params[:grouped] = "on" keeps objects in same group
     let(:split_args) { { id: physical_object.id, count: count } }
-    let(:split_update) { patch :split_update, **split_args }
+    let(:split_update) do 
+      request.env["HTTP_REFERER"] = "source_page"
+      patch :split_update, split_args
+    end
     context "on an unboxed/unbinned item" do
       context "keeping the same group key" do
         before(:each) { split_args[:grouped] = "on" }
@@ -256,9 +259,9 @@ describe PhysicalObjectsController do
           expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
     
         end
-        it "redirects to the group_key of the split object" do
+        it "redirects to :back" do
           split_update
-          expect(response).to redirect_to(controller: "group_keys", action: :show, id: physical_object.group_key.id)
+          expect(response).to redirect_to "source_page" 
         end
       end
       context "changing the group key" do
@@ -280,9 +283,9 @@ describe PhysicalObjectsController do
           expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
 
         end
-        it "redirects to the split object" do
+        it "redirects to :back" do
           split_update
-          expect(response).to redirect_to physical_object
+          expect(response).to redirect_to "source_page"
         end
       end
     end
@@ -295,9 +298,9 @@ describe PhysicalObjectsController do
         split_update
         expect(flash[:notice]).to match /must be removed/
       end
-      it "redirects to the object" do
+      it "redirects to :back" do
         split_update
-        expect(response).to redirect_to(controller: "physical_objects", action: "show", id: physical_object.id)
+        expect(response).to redirect_to "source_page"
       end
     end
     context "on a boxed item" do

@@ -132,7 +132,6 @@ class PhysicalObjectsController < ApplicationController
     split_grouped = params[:grouped]
     if @physical_object.bin or @physical_object.box
       flash[:notice] = "This physical object must be removed from its container (bin or box) before it can be split."
-      redirect_to action: :show
     elsif split_count > 1
 
       (1...split_count).each do |i|
@@ -150,17 +149,11 @@ class PhysicalObjectsController < ApplicationController
         tm.save
         #po is automatically saved by association
       end
-
       flash[:notice] = "<i>#{@physical_object.title}</i> was successfully split into #{split_count} records.".html_safe
-      if split_grouped
-        redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
-      else
-        redirect_to @physical_object
-      end
     else
       flash[:notice] = "<i>#{@physical_object.title}</i> was NOT split.".html_safe
-      redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
     end
+    redirect_to :back
   end
   
   def upload_show
