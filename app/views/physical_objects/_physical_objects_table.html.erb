@@ -48,7 +48,11 @@
         <%= link_to("Show", po, class: 'action show') %>
         <% if @bin.nil? && @box.nil? && @picklist.nil? && @group_key.nil? %>
           <%= link_to("Edit", edit_physical_object_path(po), :class => 'action edit') %>
-          <%= link_to("Split", split_show_physical_object_path(po), :class => 'action split')%>
+	  <% if po.box.nil? && po.bin.nil? %>
+            <%= link_to("Split", split_show_physical_object_path(po), :class => 'action split')%>
+	  <% else %>
+	    <strong><strike>Split</strike></strong>
+	  <% end %>
           <%= link_to("Delete", physical_object_path(po.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Physical Object?'})%>
         <% elsif (!@bin.nil? and po.box.nil?) %>
           <%= link_to("Remove", unbin_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Bin?'}) %>
