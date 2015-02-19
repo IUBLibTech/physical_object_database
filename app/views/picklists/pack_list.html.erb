@@ -1,7 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-	  <%= form_for(@picklist, url: {action: 'pack_list', bin_id: @bin ? @bin.id : nil, box_id: @box ? @box.id : nil}) do |f| %>
-			<%= hidden_field_tag "picklist[id]", @picklist.id %>
+	  <%= form_for(@picklist, url: pack_list_picklist_path(@picklist, bin_id: @bin ? @bin.id : nil, box_id: @box ? @box.id : nil)) do |f| %>
 			<% if @physical_object %>
 				<%= hidden_field_tag "physical_object[id]", @physical_object.id %>
 			<% end %>
@@ -14,7 +13,10 @@
 			Search Call Number: <%= text_field_tag('call_number') %>
 			<%= f.submit "Search", name: 'search_button' %>
 	  <% end %>
-	</div>
+  </div>
+  <div class="contextMenuItem">
+    <%= render partial: "physical_objects/split_form" %>
+  </div>
 <% end %>
 
 <div id="pl_container_div">
@@ -34,8 +36,7 @@
 	<% @tm ||= @physical_object.technical_metadatum.as_technical_metadatum %>
 	<%= error_messages_for(@physical_object) %>
 	<%= error_messages_for(@tm) %>
-	<%= nested_form_for(@physical_object, url: {controller: "picklists", action: "pack_list", bin_id: @bin ? @bin.id : nil, box_id: @box ? @box.id : nil}) do |f| %>
-		<%= hidden_field_tag "picklist[id]", @picklist.id %>
+	<%= nested_form_for(@physical_object, url: pack_list_picklist_path(@picklist.id, bin_id: @bin ? @bin.id : nil, box_id: @box ? @box.id : nil)) do |f| %>
 		<% if @physical_object %>
 			<%= hidden_field_tag "physical_object[id]", @physical_object.id %>
 		<% end %>

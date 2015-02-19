@@ -1,0 +1,10 @@
+<% if @physical_object %>
+  <% contained_flag = !@physical_object.bin.nil? || !@physical_object.box.nil? %>
+  <%= form_for(@physical_object, url: {controller: 'physical_objects', action: "split_update", id: @physical_object.id}) do |f| %>
+        Split into (including original):
+        <%= number_field_tag :count, params[:count], min: 1, disabled: contained_flag %>
+        Same group key?
+        <%= check_box_tag :grouped, params[:grouped], true, disabled: contained_flag %>
+        <%= submit_tag("Split", disabled: contained_flag) %>
+  <% end %>
+<% end %>

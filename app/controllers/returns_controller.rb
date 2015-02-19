@@ -11,8 +11,8 @@ class ReturnsController < ApplicationController
 	end
 
 	def return_bin
-		@returned = PhysicalObject.where(bin_id: @bin.id, workflow_status: ["Unpacked", "Returned to Unit"]).order(:call_number)
-		@shipped = PhysicalObject.where(bin_id: @bin.id, workflow_status: "Binned").order(:call_number)
+		@returned = PhysicalObject.where(bin_id: @bin.id, workflow_status: ["Unpacked", "Returned to Unit"]).packing_sort
+		@shipped = PhysicalObject.where(bin_id: @bin.id, workflow_status: "Binned").packing_sort
 	end
 
         # FIXME: deprecated?

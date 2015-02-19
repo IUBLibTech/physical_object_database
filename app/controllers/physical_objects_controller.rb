@@ -60,7 +60,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def index
-    @physical_objects = PhysicalObject.includes(:group_key).all.references(:group_key).order("call_number, group_keys.id, group_position, physical_objects.id")
+    @physical_objects = PhysicalObject.includes(:group_key).all.references(:group_key).packing_sort
     if request.format.html?
       @physical_objects = @physical_objects.paginate(page: params[:page])
     end
@@ -132,7 +132,7 @@ class PhysicalObjectsController < ApplicationController
     split_grouped = params[:grouped]
     if @physical_object.bin or @physical_object.box
       flash[:notice] = "This physical object must be removed from its container (bin or box) before it can be split."
-      redirect_to action: :show
+      redirect_to :back
     elsif split_count > 1
 
       (1...split_count).each do |i|
@@ -150,16 +150,25 @@ class PhysicalObjectsController < ApplicationController
         tm.save
         #po is automatically saved by association
       end
-
       flash[:notice] = "<i>#{@physical_object.title}</i> was successfully split into #{split_count} records.".html_safe
-      if split_grouped
-        redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
+      if URI(request.referer).path == split_show_physical_object_path(@physical_object)
+        if split_grouped
+          redirect_to controller: 'group_keys', action: "show", id: @physical_object.group_key
+	else
+	  redirect_to @physical_object
+	end
+      # for pack_list action, append physical_object[id] param to redirection back, to return to same object in packing process
+      elsif URI(request.referer).path.match /pack_list/
+        referrer_url = URI.parse(request.referrer) rescue URI.parse(physical_object_path(@physical_object))
+        referrer_url.query = Rack::Utils.parse_nested_query(referrer_url.query).merge({physical_object: { id: @physical_object.id}}).to_query
+        #redirect_to referrer_url.to_s
+        redirect_to URI(request.referer).path + "&physical_object[id]=#{@physical_object.id}"
       else
-        redirect_to @physical_object
+        redirect_to :back
       end
     else
       flash[:notice] = "<i>#{@physical_object.title}</i> was NOT split.".html_safe
-      redirect_to(controller: 'group_keys', action: "show", id: @physical_object.group_key)
+      redirect_to :back
     end
   end
   

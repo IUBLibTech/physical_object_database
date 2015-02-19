@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe "root" do
   it "routes to physical_objects#index" do
     expect(get("/")).to route_to("physical_objects#index")
@@ -184,30 +182,24 @@ describe "picklists" do
   it "does not route to index" do
     expect(get("/picklists")).not_to be_routable
   end
-  
-  # it "routes to process_list" do
-  #   expect(patch("/picklists/process_list")).to be_routable
-  # end
-  # it "routes to process_list" do
-  #   expect(get("/picklists/process_list")).to be_routable
-  # end
-  it "routes to pack_list" do
+  it "routes to patch pack_list on collection" do
     expect(patch("/picklists/pack_list")).to be_routable
   end
-  it "routes to process_list" do
+  it "routes to get pack_list on collection" do
     expect(get("/picklists/pack_list")).to be_routable
   end
-  
-
+  it "routes to patch pack_list on member" do
+    expect(patch("/picklists/1/pack_list")).to be_routable
+  end
+  it "routes to get pack_list on member" do
+    expect(get("/picklists/1/pack_list")).to be_routable
+  end
   it "routes to assign_to_container" do
     expect(patch("/picklists/assign_to_container")).to be_routable
   end
   it "routes to remove_from_container" do
     expect(patch("/picklists/remove_from_container")).to be_routable
   end
-  # it "routes to container_full" do
-  #   expect(post("/picklists/container_full")).to be_routable
-  # end
 end
 
 describe "returns" do

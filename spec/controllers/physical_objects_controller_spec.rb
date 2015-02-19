@@ -234,57 +234,72 @@ describe PhysicalObjectsController do
     let(:count) { 3 }
     # params[:grouped] = "on" keeps objects in same group
     let(:split_args) { { id: physical_object.id, count: count } }
-    let(:split_update) { patch :split_update, **split_args }
-    context "on an unboxed/unbinned item" do
-      context "keeping the same group key" do
-        before(:each) { split_args[:grouped] = "on" }
-        it "creates additional objects" do
-          physical_object
-          expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+    let(:split_update) do 
+      request.env["HTTP_REFERER"] = source_page
+      patch :split_update, split_args
+    end
+    shared_examples "splits successfully" do
+      context "on an unboxed/unbinned item" do
+        context "keeping the same group key" do
+          before(:each) { split_args[:grouped] = "on" }
+          it "creates additional objects" do
+            physical_object
+            expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+          end
+          it "does not create additional group keys" do
+            physical_object
+            expect{ split_update }.not_to change(GroupKey, :count)
+          end
+          it "updates group position on objects" do
+	    physical_object
+	    split_update
+	    expect(PhysicalObject.last.group_position).to eq count
+          end
+          it "flashes a success notice" do
+            split_update
+            expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+      
+          end
+          it "redirects to :back/group_key" do
+            split_update
+            expect(response).to redirect_to destinations[:grouped]
+          end
         end
-        it "does not create additional group keys" do
-          physical_object
-          expect{ split_update }.not_to change(GroupKey, :count)
-        end
-        it "updates group position on objects" do
-	  physical_object
-	  split_update
-	  expect(PhysicalObject.last.group_position).to eq count
-        end
-        it "flashes a success notice" do
-          split_update
-          expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
-    
-        end
-        it "redirects to the group_key of the split object" do
-          split_update
-          expect(response).to redirect_to(controller: "group_keys", action: :show, id: physical_object.group_key.id)
+        context "changing the group key" do
+          it "creates additional objects" do
+            physical_object
+            expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+          end
+          it "creates additional group keys" do
+            physical_object
+            expect{ split_update }.to change(GroupKey, :count).by(count - 1)
+          end
+          it "does not update group position on objects" do
+            physical_object
+            split_update
+            expect(PhysicalObject.last.group_position).to eq 1
+          end
+          it "flashes a success notice" do
+            split_update
+            expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+  
+          end
+          it "redirects to :back/physical_object" do
+            split_update
+            expect(response).to redirect_to destinations[:ungrouped]
+          end
         end
       end
-      context "changing the group key" do
-        it "creates additional objects" do
-          physical_object
-          expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
-        end
-        it "creates additional group keys" do
-          physical_object
-          expect{ split_update }.to change(GroupKey, :count).by(count - 1)
-        end
-        it "does not update group position on objects" do
-          physical_object
-          split_update
-          expect(PhysicalObject.last.group_position).to eq 1
-        end
-        it "flashes a success notice" do
-          split_update
-          expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
-
-        end
-        it "redirects to the split object" do
-          split_update
-          expect(response).to redirect_to physical_object
-        end
-      end
+    end
+    context "from split_show" do
+      let(:source_page) { "source_page" }
+      let(:destinations) { { grouped: "source_page", ungrouped: "source_page" } }
+      include_examples "splits successfully"
+    end
+    context "from anywhere but split_show" do
+      let(:source_page) { split_show_physical_object_path(physical_object) }
+      let(:destinations) { { grouped: group_key_path(physical_object.group_key), ungrouped: physical_object_path(physical_object) } }
+      include_examples "splits successfully"
     end
     shared_examples "prevents split" do
       it "does not create additional records" do
@@ -295,12 +310,13 @@ describe PhysicalObjectsController do
         split_update
         expect(flash[:notice]).to match /must be removed/
       end
-      it "redirects to the object" do
+      it "redirects to :back" do
         split_update
-        expect(response).to redirect_to(controller: "physical_objects", action: "show", id: physical_object.id)
+        expect(response).to redirect_to "source_page"
       end
     end
     context "on a boxed item" do
+      let(:source_page) { "source_page" }
       before(:each) do
         physical_object.box = FactoryGirl.create(:box)
         physical_object.save
@@ -308,6 +324,7 @@ describe PhysicalObjectsController do
       include_examples "prevents split"
     end
     context "on a binned item" do
+      let(:source_page) { "source_page" }
       before(:each) do
         physical_object.bin = FactoryGirl.create(:bin)
         physical_object.save

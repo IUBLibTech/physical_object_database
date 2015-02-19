@@ -13,7 +13,8 @@
   <div>
     <h2>Pack This Box</h2>
     <%= Box.packed_status_message if @box.full? %>
-    <%= form_for(@box, url: {controller: 'picklists', action: 'pack_list', box_id: @box.id}) do |f| %>
+    <%# form_for(@box, url: {controller: 'picklists', action: 'pack_list', box_id: @box.id}) do |f| %>
+    <%= form_for(@box, url: pack_list_picklists_path(box_id: @box.id)) do |f| %>
       <table>
         <tr>
           <th>Select the picklist to pack this box from</th>

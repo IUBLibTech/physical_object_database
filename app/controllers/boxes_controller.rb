@@ -136,7 +136,7 @@ class BoxesController < ApplicationController
       @box = Box.find(params[:id])
       @bins = Bin.all
       #@physical_objects = @box.physical_objects
-      @physical_objects = PhysicalObject.includes(:group_key).where(box_id: @box.id).references(:group_key).order("call_number", "group_keys.id", "group_position", "physical_objects.id")
+      @physical_objects = PhysicalObject.includes(:group_key).where(box_id: @box.id).references(:group_key).packing_sort
     end
     def box_params
       params.require(:box).permit(:mdpi_barcode, :spreadsheet, :spreadsheet_id, :bin, :bin_id, :full, :description)

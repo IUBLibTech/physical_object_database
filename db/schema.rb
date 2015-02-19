@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150217185510) do
+ActiveRecord::Schema.define(version: 20150219181554) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -269,6 +269,7 @@ ActiveRecord::Schema.define(version: 20150217185510) do
   end
 
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
+  add_index "physical_objects", ["picklist_id", "group_key_id", "group_position", "id"], name: "index_physical_objects_on_packing_sort", using: :btree
   add_index "physical_objects", ["spreadsheet_id"], name: "index_physical_objects_on_spreadsheet_id", using: :btree
   add_index "physical_objects", ["unit_id"], name: "index_physical_objects_on_unit_id", using: :btree
   add_index "physical_objects", ["workflow_status"], name: "index_physical_objects_on_workflow_status", using: :btree

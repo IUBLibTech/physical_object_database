@@ -37,6 +37,9 @@ class PhysicalObject < ActiveRecord::Base
   # default per_page value can be overriden in a request
   self.per_page = 50
 
+  scope :packing_sort, -> { order(:call_number, :group_key_id, :group_position, :id) }
+  scope :packable_on_picklist, lambda { |picklist_id, object_id| where("(picklist_id = ? and bin_id is null and box_id is null) or id = ?", picklist_id, object_id) }
+
   # needs to be declared before the validation that uses it
   def self.formats
     TM_FORMATS
