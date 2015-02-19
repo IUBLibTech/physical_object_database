@@ -206,10 +206,18 @@ describe PicklistsController do
         end
         it "finds nil/current/next physical objects" do
           pack_list
-          expect(assigns(:previous_physical_object)).to be_nil
+          expect(assigns(:previous_physical_object)).to eq po3
+          expect(assigns(:wrap_previous)).to be true
+          expect(assigns(:previous_packable_physical_object)).to eq po3
+          expect(assigns(:wrap_previous_packable)).to be true
+
           expect(assigns(:physical_object)).to eq po1        
-          expect(assigns(:tm)).to eq po1.technical_metadatum.as_technical_metadatum        
+          expect(assigns(:tm)).to eq po1.technical_metadatum.as_technical_metadatum
+    
           expect(assigns(:next_physical_object)).to eq po2
+          expect(assigns(:wrap_next)).to be_falsey
+          expect(assigns(:next_packable_physical_object)).to eq po2
+          expect(assigns(:wrap_next_packable)).to be_falsey
         end
 
         it "finds prev/current/next physical objects" do
@@ -219,9 +227,17 @@ describe PicklistsController do
           pack_list
           
           expect(assigns(:previous_physical_object)).to eq po1
+          expect(assigns(:wrap_previous)).to be_falsey
+          expect(assigns(:previous_packable_physical_object)).to eq po3
+          expect(assigns(:wrap_previous_packable)).to be true
+
           expect(assigns(:physical_object)).to eq po2
           expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
+
           expect(assigns(:next_physical_object)).to eq po3
+          expect(assigns(:wrap_next)).to be_falsey
+          expect(assigns(:next_packable_physical_object)).to eq po3
+          expect(assigns(:wrap_next_packable)).to be_falsey
         end
         it "finds prev/current/nil physical objects" do
           po1.bin = pack_bin
@@ -230,9 +246,17 @@ describe PicklistsController do
           po2.save
           pack_list
           expect(assigns(:previous_physical_object)).to eq po2
+          expect(assigns(:wrap_previous)).to be_falsey
+          expect(assigns(:previous_packable_physical_object)).to eq po3
+          expect(assigns(:wrap_previous_packable)).to be true
+
           expect(assigns(:physical_object)).to eq po3        
           expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
-          expect(assigns(:next_physical_object)).to be_nil
+
+          expect(assigns(:next_physical_object)).to eq po1
+          expect(assigns(:wrap_next)).to be true
+          expect(assigns(:next_packable_physical_object)).to eq po3
+          expect(assigns(:wrap_next_packable)).to be true
         end
       end 
 
@@ -256,8 +280,17 @@ describe PicklistsController do
         end
         it "doesn't find prev/current/next" do
           expect(assigns(:previous_physical_object)).to be_nil
+          expect(assigns(:wrap_previous)).to be_falsey
+          expect(assigns(:previous_packable_physical_object)).to be_nil
+          expect(assigns(:wrap_previous_packable)).to be_falsey
+
           expect(assigns(:physical_object)).to be_nil
+          expect(assigns(:tm)).to be_nil
+
           expect(assigns(:next_physical_object)).to be_nil
+          expect(assigns(:wrap_next)).to be_falsey
+          expect(assigns(:next_packable_physical_object)).to be_nil
+          expect(assigns(:wrap_next_packable)).to be_falsey
         end
       end
     end
@@ -307,19 +340,35 @@ describe PicklistsController do
         args[:previous_button] = "Previous"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
-        expect(assigns(:previous_physical_object)).to be_nil
+        expect(assigns(:previous_physical_object)).to eq po3
+        expect(assigns(:wrap_previous)).to be true
+        expect(assigns(:previous_packable_physical_object)).to eq po3
+        expect(assigns(:wrap_previous_packable)).to be true
+
         expect(assigns(:physical_object)).to eq po1
         expect(assigns(:tm)).to eq po1.technical_metadatum.as_technical_metadatum
+
         expect(assigns(:next_physical_object)).to eq po2
+        expect(assigns(:wrap_next)).to be_falsey
+        expect(assigns(:next_packable_physical_object)).to eq po2
+        expect(assigns(:wrap_next_packable)).to be_falsey
       end
       it "moves to next object on next button submission" do
         args[:next_button] = "Previous"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
         expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po2
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po3
         expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
-        expect(assigns(:next_physical_object)).to be_nil
+
+        expect(assigns(:next_physical_object)).to eq po1
+        expect(assigns(:wrap_next)).to be true
+        expect(assigns(:next_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_next_packable)).to be true
       end
 
       it "packs a physical object" do
@@ -328,9 +377,18 @@ describe PicklistsController do
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po3
         expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
-        expect(assigns(:next_physical_object)).to be_nil
+
+        expect(assigns(:next_physical_object)).to eq po1
+        expect(assigns(:wrap_next)).to be true
+        expect(assigns(:next_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_next_packable)).to be true
+
         expect(po2.bin).to eq pack_bin
       end
 
@@ -344,9 +402,18 @@ describe PicklistsController do
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po3
         expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
-        expect(assigns(:next_physical_object)).to be_nil
+
+        expect(assigns(:next_physical_object)).to eq po1
+        expect(assigns(:wrap_next)).to be true
+        expect(assigns(:next_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_next_packable)).to be true
+
         expect(po2.bin).to eq pack_bin
         expect(po2.call_number).to eq changed
       end
@@ -378,9 +445,18 @@ describe PicklistsController do
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po1
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po2
         expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
+
         expect(assigns(:next_physical_object)).to eq po3
+        expect(assigns(:wrap_next)).to be_falsey
+        expect(assigns(:next_packable_physical_object)).to eq po3
+        expect(assigns(:wrap_next_packable)).to be_falsey
+
         expect(po2.bin).to be_nil
         expect(po2.box).to be_nil
       end
@@ -391,9 +467,17 @@ describe PicklistsController do
         # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
         expect(assigns(:previous_physical_object)).to eq po1
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po2
         expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
+
         expect(assigns(:next_physical_object)).to eq po3
+        expect(assigns(:wrap_next)).to be_falsey
+        expect(assigns(:next_packable_physical_object)).to eq po3
+        expect(assigns(:wrap_next_packable)).to be_falsey
       end
 
       it "doesn't find a physical object on an irrelevant search" do
@@ -402,8 +486,17 @@ describe PicklistsController do
         # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
         expect(assigns(:previous_physical_object)).to be_nil
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to be_nil
+        expect(assigns(:wrap_previous)).to be_falsey
+
         expect(assigns(:physical_object)).to be_nil
+        expect(assigns(:tm)).to be_nil
+
         expect(assigns(:next_physical_object)).to be_nil
+        expect(assigns(:wrap_next)).to be_falsey
+        expect(assigns(:next_packable_physical_object)).to be_nil
+        expect(assigns(:wrap_next_packable)).to be_falsey
       end
     end
 
@@ -418,19 +511,35 @@ describe PicklistsController do
         args[:previous_button] = "Previous"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
-        expect(assigns(:previous_physical_object)).to be_nil
+        expect(assigns(:previous_physical_object)).to eq po3
+        expect(assigns(:wrap_previous)).to be true
+        expect(assigns(:previous_packable_physical_object)).to eq po3
+        expect(assigns(:wrap_previous_packable)).to be true
+
         expect(assigns(:physical_object)).to eq po1
         expect(assigns(:tm)).to eq po1.technical_metadatum.as_technical_metadatum
+
         expect(assigns(:next_physical_object)).to eq po2
+        expect(assigns(:wrap_next)).to be_falsey
+        expect(assigns(:next_packable_physical_object)).to eq po2
+        expect(assigns(:wrap_next_packable)).to be_falsey
       end
       it "moves to next object on next button submission" do
         args[:next_button] = "Previous"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
         expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po2
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po3
         expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
-        expect(assigns(:next_physical_object)).to be_nil
+
+        expect(assigns(:next_physical_object)).to eq po1
+        expect(assigns(:wrap_next)).to be true
+        expect(assigns(:next_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_next_packable)).to be true
       end
       it "packs a physical object" do
         args[:pack_button] = "Pack"
@@ -438,9 +547,18 @@ describe PicklistsController do
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po3
         expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
-        expect(assigns(:next_physical_object)).to be_nil
+
+        expect(assigns(:next_physical_object)).to eq po1
+        expect(assigns(:wrap_next)).to be true
+        expect(assigns(:next_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_next_packable)).to be true
+
         expect(po2.bin).to eq pack_bin
       end
       it "updates metadata fields on pack" do
@@ -452,9 +570,18 @@ describe PicklistsController do
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po3
         expect(assigns(:tm)).to eq po3.technical_metadatum.as_technical_metadatum
-        expect(assigns(:next_physical_object)).to be_nil
+
+        expect(assigns(:next_physical_object)).to eq po1
+        expect(assigns(:wrap_next)).to be true
+        expect(assigns(:next_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_next_packable)).to be true
+
         expect(po2.bin).to eq pack_bin
         expect(po2.call_number).to eq changed
       end
@@ -483,9 +610,18 @@ describe PicklistsController do
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po1
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po2
         expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
+
         expect(assigns(:next_physical_object)).to eq po3
+        expect(assigns(:wrap_next)).to be_falsey
+        expect(assigns(:next_packable_physical_object)).to eq po3
+        expect(assigns(:wrap_next_packable)).to be_falsey
+
         expect(po2.bin).to be_nil
         expect(po2.box).to be_nil
       end
@@ -495,9 +631,18 @@ describe PicklistsController do
         # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
         expect(assigns(:previous_physical_object)).to eq po1
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to eq po1
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to eq po2
         expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
+
         expect(assigns(:next_physical_object)).to eq po3
+        expect(assigns(:wrap_next)).to be_falsey
+        expect(assigns(:next_packable_physical_object)).to eq po3
+        expect(assigns(:wrap_next_packable)).to be_falsey
+
       end
       it "doesn't find a physical object on an irrelevant search" do
         args[:search_button] = "Search"
@@ -505,8 +650,17 @@ describe PicklistsController do
         # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
         expect(assigns(:previous_physical_object)).to be_nil
+        expect(assigns(:wrap_previous)).to be_falsey
+        expect(assigns(:previous_packable_physical_object)).to be_nil
+        expect(assigns(:wrap_previous_packable)).to be_falsey
+
         expect(assigns(:physical_object)).to be_nil
+        expect(assigns(:tm)).to be_nil
+
         expect(assigns(:next_physical_object)).to be_nil
+        expect(assigns(:wrap_next)).to be_falsey
+        expect(assigns(:next_packable_physical_object)).to be_nil
+        expect(assigns(:wrap_next_packable)).to be_falsey
       end
 
     end

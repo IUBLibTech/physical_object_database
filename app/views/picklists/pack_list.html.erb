@@ -47,14 +47,17 @@
 			<%= hidden_field_tag "box_id", @box.id %>
 		<% end %>
 		<div >
-			<%= f.submit "Previous", name: "previous_button", disabled: @previous_physical_object.nil? %>
+			<%= f.submit (@wrap_previous_packable ? "*||" : "") + "< Unpacked", name: "previous_unpacked_button", disabled: @previous_packable_physical_object.nil?, title: "Previous unpacked item" + (@wrap_previous_packable ? " (wrapping)" : "") %>
+			<%= f.submit (@wrap_previous ? "*||" : "") + "<", name: "previous_button", disabled: @previous_physical_object.nil?, title: "Previous item" + (@wrap_previous ? " (wrapping)" : "") %>
 			<% if @physical_object.bin or @physical_object.box %>
 				<%= f.submit "Unpack", name: "unpack_button" %>
 			<% else %>
 				<%= f.submit "Pack", name: "pack_button" %>
 			<% end %>
-			<%= f.submit "Next", name: "next_button", disabled: @next_physical_object.nil? %>
-		  <%= hidden_field_tag "repeat", @repeat %>
+			<%= f.submit ">" + (@wrap_next ? "||*" : ""), name: "next_button", disabled: @next_physical_object.nil?, title: "Next item" + (@wrap_next ? " (wrapping)" : "") %>
+			<%= f.submit "Unpacked >" + (@wrap_next_packable ? "||*" : ""), name: "next_unpacked_button", disabled: @next_packable_physical_object.nil?, title: "Next unpacked item" + (@wrap_next_packable ? " (wrapping)" : "") %>
+
+			<%= hidden_field_tag "repeat", @repeat %>
 		</div>
 		<table>
   	  <tr>
@@ -79,4 +82,8 @@
      </table>
 	  <%= render(partial: 'physical_objects/physical_object_metadata_fields', locals: {f: f}) %>
 	<% end %>
+<% elsif @picklist.physical_objects.any? %>
+  All physical objects on this picklist have been packed.
+<% else %>
+  There are physical objects assigned to this picklist.
 <% end %>
