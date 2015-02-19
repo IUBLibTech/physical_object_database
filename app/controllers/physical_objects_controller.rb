@@ -161,8 +161,7 @@ class PhysicalObjectsController < ApplicationController
       elsif URI(request.referer).path.match /pack_list/
         referrer_url = URI.parse(request.referrer) rescue URI.parse(physical_object_path(@physical_object))
         referrer_url.query = Rack::Utils.parse_nested_query(referrer_url.query).merge({physical_object: { id: @physical_object.id}}).to_query
-        #redirect_to referrer_url.to_s
-        redirect_to URI(request.referer).path + "&physical_object[id]=#{@physical_object.id}"
+        redirect_to referrer_url.to_s
       else
         redirect_to :back
       end
