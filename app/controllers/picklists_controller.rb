@@ -89,11 +89,12 @@ class PicklistsController < ApplicationController
 		elsif params[:id]
 			@picklist = Picklist.find(params[:id])
 			if params[:search_button]
-				@physical_object = PhysicalObject.where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).order(:call_number, :id).first
+				@physical_object = PhysicalObject.where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
 			elsif params[:physical_object]
 				@physical_object = PhysicalObject.find(params[:physical_object][:id])
 			else
-				@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null", @picklist.id).order(:call_number, :id).first
+				#@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null", @picklist.id).packing_sort.first
+				@physical_object = PhysicalObject.packable_on_picklist(@picklist.id, nil).packing_sort.first
 			end	
 			if @physical_object
 				@tm = @physical_object.technical_metadatum.as_technical_metadatum
@@ -199,7 +200,7 @@ class PicklistsController < ApplicationController
 							@physical_object.box = @box
 						end
 						@physical_object.save
-						@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null and call_number >= ?", @picklist.id, @physical_object.call_number).order(:call_number, :id).first
+						@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null and call_number >= ?", @picklist.id, @physical_object.call_number).order(:call_number, :group_key_id, :group_position, :id).first
 						@tm = @physical_object.technical_metadatum.as_technical_metadatum
 						surrounding_physical_objects
 					end
@@ -227,9 +228,7 @@ class PicklistsController < ApplicationController
 		    # special case: picklist_ is spoofed into id value for nice CSV/XLS filenames
 	 	    params[:id] = params[:id].sub(/picklist_/, '')
 		  end
-		  #@picklist = Picklist.find(params[:id])
 		  @picklist = Picklist.eager_load(:physical_objects).where("picklists.id = ?", params[:id]).first
-		  #@physical_objects = @picklist.physical_objects.order("call_number")
 		  @physical_objects = PhysicalObject.includes(:group_key).where("picklist_id = ?", @picklist.id).references(:group_key).order("call_number", "group_keys.id", "group_position", "physical_objects.id")
 		end
 
@@ -249,21 +248,25 @@ class PicklistsController < ApplicationController
 		end
 
 		def surrounding_physical_objects
-			# make sure to check the SECOND object in the array - @physical_object and the previous may have the same call number
 			unless @physical_object.nil?
 				# find immediate neighbors
-				candidates = PhysicalObject.where("picklist_id = ? and call_number >= ?", @picklist.id, @physical_object.call_number).order(:call_number, :id)
-				index = candidates.find_index {|p| p.id == @physical_object.id}
-				@next_physical_object = candidates[index + 1]
-				candidates = PhysicalObject.where("picklist_id = ? and call_number <= ?", @picklist.id, @physical_object.call_number).order("call_number DESC", "id DESC")
-				index = candidates.find_index {|p| p.id == @physical_object.id}
-				@previous_physical_object = candidates[index + 1]
+				candidates = PhysicalObject.where(picklist_id: @picklist.id).packing_sort
+				if candidates.any?
+				  index = candidates.find_index {|p| p.id == @physical_object.id}
+				  @next_physical_object = candidates[(index + 1) < candidates.size ? index + 1 : 0]
+				  @previous_physical_object = candidates[index - 1]
+				  #FIXME: remove these lines to turn on wraparound
+				  @next_physical_object = nil unless (index + 1) < candidates.size
+				  @previous_physical_object = nil unless index - 1 >= 0
+				end
 
 				# find surrounding packable neighbors
-				# candidates = PhysicalObject.where("picklist_id = ? and call_number >= ? and bin is null and box is null", @picklist.id, @physical_object.call_number).order(:call_number, :id)
-				# @next_packable_physical_object = candidates[candidates.find_index {|p| p.id == @physical_object.id} + 1]
-				# candidates = PhysicalObject.where("picklist_id = ? and call_number <= ? and bin is null and box is null", @picklist.id, @physical_object.call_number).order(:call_number, :id)
-				# @previous_packable_physical_object = candidates[candidates.find_index |p| p.id == @physical_object.id} + 1]
+                                # candidates = PhysicalObject.packable_on_picklist(@picklist.id, @physical_object.id).packing_sort
+				# if candidates.any?
+                                  # index = candidates.find_index {|p| p.id == @physical_object.id}
+                                  # @next_packable_physical_object = candidates[(index + 1) < candidates.size ? index + 1 : 0]
+                                  # @previous_packable_physical_object = candidates[index - 1]
+				# end
 			end
 		end
 

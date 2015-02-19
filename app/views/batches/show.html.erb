@@ -53,7 +53,7 @@
 							<%= b.description %>
 						</td>
 						<td>
-							<%= check_box_tag 'bin_ids[]', b.id %>
+							<%= check_box_tag 'bin_ids[]', b.id, false, disabled: @batch.packed_status? %>
 						</td>
 					</tr>
 			 	<% end %>

@@ -60,7 +60,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def index
-    @physical_objects = PhysicalObject.includes(:group_key).all.references(:group_key).order("call_number, group_keys.id, group_position, physical_objects.id")
+    @physical_objects = PhysicalObject.includes(:group_key).all.references(:group_key).packing_sort
     if request.format.html?
       @physical_objects = @physical_objects.paginate(page: params[:page])
     end
