@@ -41,7 +41,7 @@
 // }
 $(document).ready(function() 
 {
-    $(":input").keypress(function(event) 
+    $("#pack_form > *").keypress(function(event) 
     { 
         if (event.keyCode == 13)
         {
