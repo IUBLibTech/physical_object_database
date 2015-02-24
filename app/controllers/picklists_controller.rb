@@ -135,6 +135,10 @@ class PicklistsController < ApplicationController
 				previous_po	
 			elsif params[:next_button]
 				next_po
+			elsif params[:previous_unpacked_button]
+				previous_po(true)
+			elsif params[:next_unpacked_button]
+				next_po(true)
 			end
 		else
 			flash[:warning] = "A valid Pick List ID was not specified.".html_safe
@@ -160,26 +164,43 @@ class PicklistsController < ApplicationController
 		end
 
 		# called while packing a picklist (in physical object view mode) to skip to the next physical object in the pick list
-		def next_po
-      unless updated?
-      	render 'pack_list'
-      end
+		def next_po(unpacked_flag = false)
+		        if (@wrap_next && !unpacked_flag) || (@wrap_next_packable && unpacked_flag)
+		          flash[:notice] = "Wrapped around start of picklist."
+			else
+			  flash[:notice] = ""
+			end
+      			unless updated?
+      				render 'pack_list'
+      			end
 			@physical_object.save
-      @physical_object = @next_physical_object
-      @tm = @physical_object.technical_metadatum.as_technical_metadatum
-      # need to recalculate bookend physical objects
-      surrounding_physical_objects
+			if unpacked_flag
+      				@physical_object = @next_packable_physical_object
+			else
+      				@physical_object = @next_physical_object
+			end
+      			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+      			# need to recalculate bookend physical objects
+      			surrounding_physical_objects
 		end
 
 		# called while packing a picklist (in physical object view mode) to move to the previous physical object in the picklist
-		def previous_po
-      unless updated?
-      	render 'pack_list'
-      end
+		def previous_po(unpacked_flag = false)
+		        if (@wrap_previous && !unpacked_flag) || (@wrap_previous_packable && unpacked_flag)
+		          flash[:notice] = "Wrapped around end of picklist."
+			else
+			  flash[:notice] = ""
+			end
+      			unless updated?
+      				render 'pack_list'
+      			end
 			@physical_object.save
-      @physical_object = @previous_physical_object
-      @tm = @physical_object.technical_metadatum.as_technical_metadatum
-
+			if unpacked_flag
+      				@physical_object = @previous_packable_physical_object
+			else
+      				@physical_object = @previous_physical_object
+			end
+      			@tm = @physical_object.technical_metadatum.as_technical_metadatum
 			# need to recalculate the bookend physical objects
 			surrounding_physical_objects
 		end
@@ -200,9 +221,14 @@ class PicklistsController < ApplicationController
 							@physical_object.box = @box
 						end
 						@physical_object.save
-						@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null and call_number >= ?", @picklist.id, @physical_object.call_number).order(:call_number, :group_key_id, :group_position, :id).first
-						@tm = @physical_object.technical_metadatum.as_technical_metadatum
-						surrounding_physical_objects
+						#FIXME: make this more efficient by combining with surrounding_physical_objects?
+						@physical_object = PhysicalObject.packable_on_picklist(@picklist.id, nil).where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", @physical_object.call_number, @physical_object.call_number, @physical_object.group_key_id, @physical_object.group_key_id, @physical_object.group_position, @physical_object.group_position, @physical_object.id).packing_sort.first
+						if @physical_object
+						  @tm = @physical_object.technical_metadatum.as_technical_metadatum
+						  surrounding_physical_objects
+						else
+						  render 'pack_list'
+						end
 					end
 				else
 					@physical_object.errors[:mdpi_barcode] = "- Must assign a valid MDPI barcode to pack a Physical Object".html_safe
@@ -250,23 +276,24 @@ class PicklistsController < ApplicationController
 		def surrounding_physical_objects
 			unless @physical_object.nil?
 				# find immediate neighbors
-				candidates = PhysicalObject.where(picklist_id: @picklist.id).packing_sort
-				if candidates.any?
-				  index = candidates.find_index {|p| p.id == @physical_object.id}
-				  @next_physical_object = candidates[(index + 1) < candidates.size ? index + 1 : 0]
-				  @previous_physical_object = candidates[index - 1]
-				  #FIXME: remove these lines to turn on wraparound
-				  @next_physical_object = nil unless (index + 1) < candidates.size
-				  @previous_physical_object = nil unless index - 1 >= 0
+				all_candidates = PhysicalObject.where(picklist_id: @picklist.id).packing_sort
+				if all_candidates.any?
+				  index = all_candidates.find_index {|p| p.id == @physical_object.id}
+				  @previous_physical_object = all_candidates[index - 1]
+				  @wrap_previous = ((index - 1) < 0)
+				  @next_physical_object = all_candidates[(index + 1) < all_candidates.size ? index + 1 : 0]
+				  @wrap_next = ((index + 1) >= all_candidates.size)
 				end
 
 				# find surrounding packable neighbors
-                                # candidates = PhysicalObject.packable_on_picklist(@picklist.id, @physical_object.id).packing_sort
-				# if candidates.any?
-                                  # index = candidates.find_index {|p| p.id == @physical_object.id}
-                                  # @next_packable_physical_object = candidates[(index + 1) < candidates.size ? index + 1 : 0]
-                                  # @previous_packable_physical_object = candidates[index - 1]
-				# end
+                                packable_candidates = PhysicalObject.packable_on_picklist(@picklist.id, @physical_object.id).packing_sort
+				if packable_candidates.any?
+                                  index = packable_candidates.find_index {|p| p.id == @physical_object.id}
+                                  @previous_packable_physical_object = packable_candidates[index - 1]
+				  @wrap_previous_packable = ((index - 1 ) < 0)
+                                  @next_packable_physical_object = packable_candidates[(index + 1) < packable_candidates.size ? index + 1 : 0]
+				  @wrap_next_packable = ((index + 1) >= packable_candidates.size)
+				end
 			end
 		end
 
