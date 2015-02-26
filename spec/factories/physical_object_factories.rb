@@ -21,7 +21,7 @@ FactoryGirl.define do
     end
     trait :lp do
       format "LP"
-      association :technical_metadatum, factory: [:technical_metadatum, :lp]
+      association :technical_metadatum, factory: [:technical_metadatum, :analog_sound_disc]
     end
     trait :open_reel do
       format "Open Reel Audio Tape"

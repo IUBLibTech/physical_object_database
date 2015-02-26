@@ -10,10 +10,15 @@ describe PhysicalObject do
   let(:bin) { FactoryGirl.create :bin }
 
   describe "FactoryGirl" do
-    specify "provides a valid object" do
-      expect(valid_po).to be_valid
-      expect(valid_po.technical_metadatum).to be_valid
-      expect(valid_po.technical_metadatum.as_technical_metadatum).to be_valid
+    [:cdr, :dat, :lp, :open_reel].each do |tm_type|
+      context "with tm_type: #{tm_type}" do
+        let(:valid_po) { FactoryGirl.build :physical_object, tm_type }
+        specify "provides a valid object" do
+	  expect(valid_po).to be_valid
+          expect(valid_po.technical_metadatum).to be_valid
+          expect(valid_po.technical_metadatum.as_technical_metadatum).to be_valid
+	end
+      end
     end
     specify "provides an invalid object" do
       expect(invalid_po).to be_valid
