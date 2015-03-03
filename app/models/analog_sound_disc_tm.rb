@@ -24,7 +24,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	SIMPLE_FIELDS = [
           "diameter", "speed", "groove_size", "groove_orientation",
 	  "recording_method", "material", "substrate", "coating",
-	  "equalization", "country_of_origin", "label"
+	  "equalization", "sound_field", "country_of_origin", "label"
 	]
 	MULTIVALUED_FIELDSETS = {
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
