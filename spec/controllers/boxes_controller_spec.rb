@@ -9,6 +9,7 @@ describe BoxesController do
   let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: box) }
   let(:binned_object) { FactoryGirl.create(:physical_object, :cdr, bin: bin) }
   let(:picklist) { FactoryGirl.create(:picklist) }
+  let!(:complete) {FactoryGirl.create(:picklist, name: 'complete', complete: true)}
   let(:spreadsheet) { FactoryGirl.create(:spreadsheet) }
   let(:valid_box) { FactoryGirl.build(:box) }
   let(:invalid_box) { FactoryGirl.build(:invalid_box) }

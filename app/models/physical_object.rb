@@ -82,6 +82,7 @@ class PhysicalObject < ActiveRecord::Base
     po.physical_object_query(false)
   }
 
+
   attr_accessor :generation_values
   def generation_values
     GENERATION_VALUES
@@ -103,6 +104,10 @@ class PhysicalObject < ActiveRecord::Base
     else
       self.group_key.group_identifier + "_" + self.group_position.to_s + "_" + self.group_key.group_total.to_s
     end
+  end
+
+  def active_blockers
+    condition_statuses.select { |cs| cs.active and cs.condition_status_template.blocks_packing = true }
   end
 
   def container_id

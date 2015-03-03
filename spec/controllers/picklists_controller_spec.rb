@@ -92,7 +92,7 @@ describe PicklistsController do
   describe "PUT update on member" do
     context "with valid attributes" do
       before(:each) do
-        put :update, id: picklist.id, picklist: FactoryGirl.attributes_for(:picklist, name: "Updated Test Picklist")
+        put :update, id: picklist.id, picklist: FactoryGirl.attributes_for(:picklist, name: "Updated Test Picklist", complete: true)
       end
 
       it "locates the requested object" do
@@ -102,6 +102,7 @@ describe PicklistsController do
         expect(picklist.name).not_to eq "Updated Test Picklist"
         picklist.reload
         expect(picklist.name).to eq "Updated Test Picklist"
+        expect(picklist.complete).to eq true
       end
       it "redirects to the picklist specficications index" do
         expect(response).to redirect_to(controller: :picklist_specifications, action: :index) 

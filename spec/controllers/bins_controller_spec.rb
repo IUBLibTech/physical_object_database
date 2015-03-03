@@ -16,6 +16,7 @@ describe BinsController do
   let(:unassigned_object) { FactoryGirl.create(:physical_object, :cdr) }
   let(:unassigned_box) { FactoryGirl.create(:box) }
   let(:picklist) { FactoryGirl.create(:picklist) }
+  let!(:complete) { FactoryGirl.create(:picklist, name: 'complete', complete: true)}
   let(:valid_bin) { FactoryGirl.build(:bin) }
   let(:invalid_bin) { FactoryGirl.build(:invalid_bin) }
 

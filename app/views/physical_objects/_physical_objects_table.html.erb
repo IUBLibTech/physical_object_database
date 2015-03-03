@@ -25,11 +25,9 @@
   <% count = 1 %>
   <% unless @physical_objects.nil? %>
     <% @physical_objects.each do |po| %>
-      <% if count.odd? %>
-        <tr class='odd'>
-        <%else%>
-        <tr class='even'>
-      <%end%>
+      <% css_class = "#{(po.bin or po.box) ? (count.odd? ? 'faded odd' : 'faded even') : (count.odd? ? 'odd' : 'even')}" %>
+      <tr class='<%= css_class %>'>
+
       <% unless @group_key.nil? %>
         <td><%= po.group_position %></td>
         <td>

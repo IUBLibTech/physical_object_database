@@ -6,20 +6,23 @@ describe PicklistSpecificationsController do
   let(:picklist_specification) { FactoryGirl.create(:picklist_specification, :cdr) }
   let(:valid_picklist_specification) { FactoryGirl.build(:picklist_specification, :cdr) }
   let(:invalid_picklist_specification) { FactoryGirl.build(:invalid_picklist_specification, :cdr) }
-  let(:picklist) { FactoryGirl.create(:picklist) }
+  let(:picklist) { FactoryGirl.create(:picklist, name: 'first') }
+  let(:picklist2) { FactoryGirl.create(:picklist, name: 'second') }
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
 
   describe "GET index" do
     before(:each) do
       picklist
+      picklist2.complete = true;
+      picklist2.save
       picklist_specification
       get :index
     end
     it "assigns all picklist_specification specs to @picklist_specs" do
       expect(assigns(:picklist_specs)).to eq [picklist_specification]
     end
-    it "assigns all picklists to @picklists" do
-      expect(assigns(:picklists)).to eq [picklist]
+    it "assigns all picklists to @picklists in order (complete, then name)" do
+      expect(assigns(:picklists)).to eq [picklist, picklist2]
     end
     it "renders :index" do
       expect(response).to render_template :index

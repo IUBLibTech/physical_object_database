@@ -49,7 +49,7 @@ class BinsController < ApplicationController
 		else
 		  @physical_objects = PhysicalObject.includes(:group_key).where(bin_id: @bin.id).references(:group_key).packing_sort
 		end
-		@picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
+		@picklists = Picklist.where("complete = false").order('name').collect{|p| [p.name, p.id]}
 		@edit_mode = false
 		if request.format.html?
 		  @physical_objects = @physical_objects.paginate(page: params[:page])

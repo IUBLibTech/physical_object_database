@@ -86,6 +86,9 @@ Pod::Application.routes.draw do
   get 'responses/push_status', to: 'responses#push_status', as: 'push_status_response'
   get 'responses/pull_state/:barcode', to: "responses#pull_state", as: "pull_state_response"
 
+  get 'quality_control/:status', to: "quality_control#index", as: "quality_control_status"
+  get "quality_control/", to: "quality_control#index", as: "quality_control_index"
+
   resources :returns, only: [:index] do
     get :return_bins, on: :member
     get :return_bin, on: :member

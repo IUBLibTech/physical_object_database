@@ -46,7 +46,7 @@
 		</tr>
 		<% count = 1 %>
 		<% @picklists.each do |pl| %>
-			<tr>
+			<tr class='<%= pl.complete ? "faded strike" : "" %>'>
 				<td><%= pl.name %></td>
 				<td><%= pl.description[0,20] %><%= pl.description.length > 20 ? "..." : "" %></td>
 				<td><%= pl.destination %></td>
