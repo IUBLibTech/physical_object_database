@@ -4,7 +4,7 @@ class PicklistSpecificationsController < ApplicationController
 
   def index
     @picklist_specs = PicklistSpecification.all
-    @picklists = Picklist.all
+    @picklists = Picklist.all.order("complete, name")
   end
 
   def new

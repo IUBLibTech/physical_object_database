@@ -92,7 +92,7 @@ def seed_cst(type = "default")
     skipped_count = 0
     cst_csv.each do |status|
       begin
-        result = ConditionStatusTemplate.create!(name: status["Name"], description: status["Description"], object_type: object_type)
+        result = ConditionStatusTemplate.create!(name: status["Name"], description: status["Description"], object_type: object_type, blocks_packing: status["Blocks Packing"])
         puts "\t\tCST \##{result.id} created: #{result.name}, #{result.object_type}"
         added_count += 1
       rescue

@@ -11,7 +11,7 @@ class BoxesController < ApplicationController
   end
 
   def show
-    @picklists = Picklist.all.order('name').collect{|p| [p.name, p.id]}
+    @picklists = Picklist.where("complete = false").order('name').collect{|p| [p.name, p.id]}
     if request.format.html?
       @physical_objects = @physical_objects.paginate(page: params[:page])
     end

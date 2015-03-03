@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150219181554) do
+ActiveRecord::Schema.define(version: 20150303145727) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(version: 20150219181554) do
     t.string   "object_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "blocks_packing", default: false
   end
 
   add_index "condition_status_templates", ["object_type", "name"], name: "index_cst_on_object_and_name", using: :btree
@@ -288,6 +289,7 @@ ActiveRecord::Schema.define(version: 20150219181554) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "destination"
+    t.boolean  "complete",    default: false
   end
 
   add_index "picklists", ["destination"], name: "index_picklists_on_destination", using: :btree

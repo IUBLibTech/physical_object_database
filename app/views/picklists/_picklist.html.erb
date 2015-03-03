@@ -23,17 +23,49 @@
 					<%= f.select(:destination, Picklist.DESTINATION_VALUES, {}, disabled: !@edit_mode) %>
 				</td>
 			</tr>
+			<tr>
+				<th>Complete</th>
+				<td>
+					<%= f.check_box :complete, disabled: !@edit_mode %>
+				</td>
+			</tr>
 		</table>
-                <div class="clear">
-                  <% if @edit_mode %>
-                    <%= f.submit(@submit_text) %>
-                  <% end %>
-                </div>
+    <div class="clear">
+      <% if @edit_mode %>
+        <%= f.submit(@submit_text) %>
+      <% end %>
+    </div>
 	<% end %>
-	<% unless @picklist.id.nil? || @action == 'update' || @picklist.physical_objects.empty? %>
+	<% unless @picklist.id.nil? || @action == 'update' || @picklist.physical_objects.empty? || @picklist.complete %>
 	  <%= form_for(@picklist, url: {action: 'pack_list', picklist: {id: @picklist.id}}) do |f| %>
 		  <%= f.submit("Pack Items") %>
 	  <% end %>
+	<% end %>
+</div>
+<div class="left">
+	<h2><%= @packed_count %>/<%= @total_count %> Physical Objects are packed.</h2>
+	<% if @blocked.size > 0 %>
+	<h4>Blocked Physical Objects</h4>
+	<table class="blocked">
+		<tr>
+			<td>MDPI Barcode</td>
+			<td>Title</td>
+			<td>Condition Status</td>
+		</tr>
+		<% @blocked.each do |p| %>
+			<tr>
+				<td><%= link_to p.mdpi_barcode, (physical_object_path(p)) %></td>
+				<td><%= link_to p.title, (physical_object_path(p)) %></td>
+				<td>
+					<ul>
+					<% p.active_blockers.each do |cs| %>
+						<li><%= cs.name %></li>
+					<% end %>
+					</ul>
+				</td>
+			</tr>
+		<% end %>
+	</table>
 	<% end %>
 </div>
 <div class="left">

@@ -1,9 +1,9 @@
-Name,Description
-Not on Shelf,It was not found on shelf as expected.
-Missing,Item has been misplaced within the workflow.
-Unplayable,Item is so badly damaged that it cannot be sent to Memnon or IU
-Cannot go to Memnon,Item cannot be shipped to Memnon. Can possibly go to IU though.
-Send to IU,Item should be digitized by the IU facility.
-Catalog Problem,Indicates that there is a problem with the catalog record for this item.
-Duplicate Record,Indicates that this record is a duplicate of another record for the same item.
-Problem,A problem with the item that cannot be described by any other condition status.
+Name,Description,Blocks Packing
+Not on Shelf,It was not found on shelf as expected.,true
+Missing,Item has been misplaced within the workflow.,true
+Unplayable,Item is so badly damaged that it cannot be sent to Memnon or IU,true
+Cannot go to Memnon,Item cannot be shipped to Memnon. Can possibly go to IU though.,false
+Send to IU,Item should be digitized by the IU facility.,false
+Catalog Problem,Indicates that there is a problem with the catalog record for this item.,false
+Duplicate Record,Indicates that this record is a duplicate of another record for the same item.,true
+Problem,A problem with the item that cannot be described by any other condition status.,true
