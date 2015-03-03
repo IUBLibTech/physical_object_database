@@ -71,13 +71,4 @@ module ApplicationHelper
 			return "<div id='environment'>#{Rails.env.capitalize} Environment</div>".html_safe
 		end
 	end
-
-	def ApplicationHelper.authenticated_qc?(params)
-		if Settings.qc_user.nil? or Settings.qc_pass.nil?
-			raise 'config/settings/<environment>.yml file does not contain values for qc_user and/or qc_pass'
-		else
-		return (params[:qc_user] and params[:qc_user] == Settings.qc_user and params[:qc_pass] and params[:qc_pass] == Settings.qc_pass)
-		end
-	end
-
 end

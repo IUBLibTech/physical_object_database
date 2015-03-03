@@ -3,12 +3,15 @@ class ResponsesController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
-  include SessionsHelper
+
+  include BasicAuthenticationHelper
+  before_action :authenticate
 
   before_action :set_physical_object, only: [:metadata, :pull_state]
 
   def metadata
-    render template: 'responses/metadata.xml.builder', layout: false
+    @status = 200
+    render template: 'responses/metadata.xml.builder', layout: false, status: @status
   end
 
   # message: handled by messages controller
@@ -18,35 +21,29 @@ class ResponsesController < ActionController::Base
   def push_status
     puts "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
     status = 200
-    if ApplicationHelper.authenticated_qc?(params)
-      begin
-        if params[:json]
-          ds = DigitalStatus.new.from_json(params[:json])
-          if ds.valid_physical_object?
-            @message = "Status updated"
-            ds.save
-          else
-            @message = "Unknown physical object from json: #{params[:json]}"
-            status = 400
-          end
+    begin
+      if params[:json]
+        ds = DigitalStatus.new.from_json(params[:json])
+        if ds.valid_physical_object?
+          @message = "Status updated"
+          ds.save
         else
-          @message = "Missing json param..."
+          @message = "Unknown physical object from json: #{params[:json]}"
           status = 400
         end
-      rescue ParseError => e
+      else
+        @message = "Missing json param..."
         status = 400
-        puts e.message  
-        puts e.backtrace.inspect 
-        @message = "Parsing JSON string failed:\n#{e.message}\n#{e.backtrace.inspect}"
-      rescue Exception => e
-        status = 501
-        puts e.message
-        puts e.backtrace.inspect
       end
-      
-    else
-      status = 401
-      @message = "You are not authorized to access this service"
+    rescue ParseError => e
+      status = 400
+      puts e.message  
+      puts e.backtrace.inspect 
+      @message = "Parsing JSON string failed:\n#{e.message}\n#{e.backtrace.inspect}"
+    rescue Exception => e
+      status = 501
+      puts e.message
+      puts e.backtrace.inspect
     end
     render template: 'responses/push_status_response.xml.builder', layout: false, status: status
   end
@@ -56,23 +53,18 @@ class ResponsesController < ActionController::Base
   # <app root>/responses/pull_stat/barcode?qc_user=<Settings.qc_user>&qc_pass=<Settings.qc_pass>
   def pull_state
     puts "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
-    if ApplicationHelper.authenticated_qc?(params)
-      if @physical_object
-        @ds = @physical_object.digital_statuses.order("updated_at DESC").last
-        unless @ds.nil?
-          @status = 200
-          @message = @ds.decided
-        else
-          @status = 400
-          @message = "Physical object #{@physical_object.mdpi_barcode} has 0 Digital Statuses..."
-        end
+    if @physical_object
+      @ds = @physical_object.digital_statuses.order("updated_at DESC").last
+      unless @ds.nil?
+        @status = 200
+        @message = @ds.decided
       else
         @status = 400
-        @message = "Unknown physical object: #{params[:barcode]}"
+        @message = "Physical object #{@physical_object.mdpi_barcode} has 0 Digital Statuses..."
       end
     else
-      @status = 401
-      @message = "You are not authorized to access this service"
+      @status = 400
+      @message = "Unknown physical object: #{params[:barcode]}"
     end
     render template: 'responses/push_status_response.xml.builder', layout: false, status: status
   end
