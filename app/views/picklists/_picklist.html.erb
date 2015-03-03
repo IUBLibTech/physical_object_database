@@ -42,6 +42,7 @@
 	  <% end %>
 	<% end %>
 </div>
+<% if @picklist.persisted? %>
 <div class="left">
 	<h2><%= @packed_count %>/<%= @total_count %> Physical Objects are packed.</h2>
 	<% if @blocked.size > 0 %>
@@ -68,6 +69,7 @@
 	</table>
 	<% end %>
 </div>
+<% end %>
 <div class="left">
 	<h2>Physical Objects in this picklist: <%= @picklist.physical_objects.size %></h2>
 	<% if !@picklist.id.nil? && @picklist.physical_objects.any? %>

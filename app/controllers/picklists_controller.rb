@@ -1,5 +1,6 @@
 class PicklistsController < ApplicationController
   before_action :set_picklist, only: [:show, :edit, :update, :destroy]
+  before_action :set_counts, only: [:show, :edit]
   # before_action :set_packing_picklist, only: :pack_list
 
 	def new
@@ -29,18 +30,7 @@ class PicklistsController < ApplicationController
 		respond_to do |format|
 			format.html do
 				@physical_objects = @physical_objects.paginate(page: params[:page])
-				@packed_count = PhysicalObject.where("picklist_id = ? and (bin_id is not null or box_id is not null)", @picklist.id).count
-				@total_count = PhysicalObject.where("picklist_id = ? and (bin_id is null and box_id is null)", @picklist.id).count
-				@blocked = PhysicalObject.find_by_sql("
-					select physical_objects.*
-					from physical_objects, condition_statuses, condition_status_templates
-					where condition_statuses.physical_object_id = physical_objects.id
-						and condition_statuses.condition_status_template_id = condition_status_templates.id
-						and condition_statuses.active = true
-    				and condition_status_templates.blocks_packing = true
-    				and physical_objects.picklist_id = #{@picklist.id}
-					")
-		  end
+		  	end
 			format.csv { send_data PhysicalObject.to_csv(@physical_objects, @picklist) }
 			format.xls
 		end
@@ -50,6 +40,9 @@ class PicklistsController < ApplicationController
 		@edit_mode = true
 		@action = 'update'
 		@submit_text = "Update Picklist"
+                respond_to do |format|
+                  format.html { @physical_objects = @physical_objects.paginate(page: params[:page]) }
+                end
 	end
 
 	def update
@@ -67,6 +60,8 @@ class PicklistsController < ApplicationController
 			@edit_mode = true
 			@action = 'update'
 			@submit_text = "Update Picklist"
+                        set_counts
+                        @physical_objects = @physical_objects.paginate(page: params[:page])
 			render(action: :edit)
 		end
 	end
@@ -267,6 +262,19 @@ class PicklistsController < ApplicationController
 		  end
 		  @picklist = Picklist.eager_load(:physical_objects).where("picklists.id = ?", params[:id]).first
 		  @physical_objects = PhysicalObject.includes(:group_key).where("picklist_id = ?", @picklist.id).references(:group_key).order("call_number", "group_keys.id", "group_position", "physical_objects.id")
+		end
+
+		def set_counts
+                  @packed_count = PhysicalObject.where("picklist_id = ? and (bin_id is not null or box_id is not null)", @picklist.id).count
+                  @total_count = PhysicalObject.where("picklist_id = ? and (bin_id is null and box_id is null)", @picklist.id).count
+                  @blocked = PhysicalObject.find_by_sql("
+                    select physical_objects.*
+                    from physical_objects, condition_statuses, condition_status_templates
+                    where condition_statuses.physical_object_id = physical_objects.id
+                      and condition_statuses.condition_status_template_id = condition_status_templates.id
+                      and condition_statuses.active = true
+                      and condition_status_templates.blocks_packing = true
+                      and physical_objects.picklist_id = #{@picklist.id}")
 		end
 
 		def picklist_params
