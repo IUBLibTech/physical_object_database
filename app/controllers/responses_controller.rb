@@ -38,13 +38,15 @@ class ResponsesController < ActionController::Base
     @status = 200
     begin
       if @request_xml
-        ds = DigitalStatus.new.from_xml(@request_xml)
-        if ds.valid_physical_object?
-          @message = "Status updated"
-          ds.save
-        else
+        ds = DigitalStatus.new.from_xml(response_params[:mdpi_barcode],@request_xml)
+        if !ds.valid_physical_object?
           @message = "Unknown physical object from request xml:\n#{@request_xml}"
           @status = 400
+	elsif ds.valid? && ds.save
+          @message = "Status updated"
+        else
+	  @message = "Unable to save digital status, with errors:\n#{ds.errors.full_messages}"
+	  @status = 400
         end
       else
         @message = "Missing request xml..."
@@ -79,7 +81,7 @@ class ResponsesController < ActionController::Base
       end
     else
       @status = 400
-      @message = "Unknown physical object: #{params[:barcode]}"
+      @message = "Unknown physical object: #{params[:mdpi_barcode]}"
     end
     render template: 'responses/pull_state.xml.builder', layout: false, status: @status
   end
@@ -98,7 +100,7 @@ class ResponsesController < ActionController::Base
 
   private
     def set_physical_object
-      @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:barcode]) unless response_params[:barcode].to_i.zero?
+      @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?
     end
 
     def set_request_xml
@@ -106,6 +108,6 @@ class ResponsesController < ActionController::Base
     end
 
     def response_params
-      params.permit(:barcode)
+      params.permit(:mdpi_barcode)
     end
 end
