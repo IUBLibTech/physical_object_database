@@ -85,6 +85,28 @@ class DigitalStatus < ActiveRecord::Base
 		self
 	end
 
+        def from_xml(xml)
+          self.physical_object_mdpi_barcode = xml.xpath("/pod/data/id").text
+          po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
+          unless po.nil?
+            self.physical_object_id = po.id
+          end
+          #FIXME
+          #self.state = obj[:state]
+          self.message = xml.xpath("/pod/data/message").text
+          #FIXME
+          #self.accepted = false
+          self.attention = xml.xpath("/pod/data/attention").text
+          #self.decided
+          #self.decided = nil
+          options_hash = {}
+          xml.xpath("/pod/data/options/option").each do |option|
+            options_hash[option.xpath("state").text.to_sym] = option.xpath("description").text
+          end
+          self.options = options_hash
+          self
+        end
+
 	def invalid_physical_object?
 		return physical_object.nil?
 	end
