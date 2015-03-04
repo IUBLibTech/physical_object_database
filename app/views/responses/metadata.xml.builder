@@ -1,11 +1,14 @@
 xml.instruct! :xml, :version=>"1.0"
 
-xml.metadata do
+xml.pod do
    if @physical_object
-     xml.found true, type: :boolean
-     xml.format @physical_object.format, type: :string
-     xml.files @physical_object.technical_metadatum.master_copies, type: :integer
+     xml.success true
+     xml.data do
+       xml.format @physical_object.format
+       xml.files @physical_object.technical_metadatum.master_copies
+     end
    else
-     xml.found false, type: :boolean
+     xml.success false
+     xml.message "ID #{params[:barcode]} does not exist"
    end
 end
