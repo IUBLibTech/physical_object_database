@@ -91,14 +91,11 @@ class DigitalStatus < ActiveRecord::Base
           unless po.nil?
             self.physical_object_id = po.id
           end
-          #FIXME
-          #self.state = obj[:state]
+          self.state = xml.path("/pod/data/state").text
           self.message = xml.xpath("/pod/data/message").text
-          #FIXME
-          #self.accepted = false
+          self.accepted = false
           self.attention = xml.xpath("/pod/data/attention").text
-          #self.decided
-          #self.decided = nil
+          self.decided = nil
           options_hash = {}
           xml.xpath("/pod/data/options/option").each do |option|
             options_hash[option.xpath("state").text.to_sym] = option.xpath("description").text
