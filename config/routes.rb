@@ -81,14 +81,14 @@ Pod::Application.routes.draw do
 
   end
 
-  get 'responses/objects/:barcode/metadata', to: 'responses#metadata', as: 'metadata_response'
+  get 'responses/objects/:mdpi_barcode/metadata', to: 'responses#metadata', as: 'metadata_response'
   post 'responses/notify', to: 'responses#notify', as: 'notify_response' 
-  post 'responses/objects/:barcode/state', to: 'responses#push_status', as: 'push_status_response'
-  get 'responses/objects/:barcode/state', to: "responses#pull_state", as: "pull_state_response"
-  get 'responses/objects/:barcode/flags', to: "responses#flags", as: "flags_response"
+  post 'responses/objects/:mdpi_barcode/state', to: 'responses#push_status', as: 'push_status_response'
+  get 'responses/objects/:mdpi_barcode/state', to: "responses#pull_state", as: "pull_state_response"
+  get 'responses/objects/:mdpi_barcode/flags', to: "responses#flags", as: "flags_response"
   post 'responses/transfers', to: "responses#transfer_request", as: "transfer_request_response"
   get 'responses/transfers', to: "responses#transfers_index", as: "transfers_index_response"
-  post 'responses/transfers/:barcode', to: "responses#transfer_result", as: "transfer_result_response"
+  post 'responses/transfers/:mdpi_barcode', to: "responses#transfer_result", as: "transfer_result_response"
 
   get 'quality_control/:status', to: "quality_control#index", as: "quality_control_status"
   get "quality_control/", to: "quality_control#index", as: "quality_control_index"

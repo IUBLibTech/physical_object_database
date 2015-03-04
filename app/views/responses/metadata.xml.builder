@@ -9,6 +9,10 @@ xml.pod do
      end
    else
      xml.success false
-     xml.message "ID #{params[:barcode]} does not exist"
+     if params[:mdpi_barcode].to_i.zero?
+       xml.message "MDPI Barcode cannot be 0, blank, or unspecified"
+     else
+       xml.message "MDPI Barcode #{params[:mdpi_barcode]} does not exist"
+     end
    end
 end
