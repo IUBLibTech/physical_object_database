@@ -132,9 +132,7 @@ class PhysicalObjectsController < ApplicationController
     split_grouped = params[:grouped]
     if @physical_object.bin or @physical_object.box
       flash[:notice] = "This physical object must be removed from its container (bin or box) before it can be split."
-      redirect_to :back
     elsif split_count > 1
-
       (1...split_count).each do |i|
         po = @physical_object.dup
         po.assign_default_workflow_status
@@ -151,22 +149,25 @@ class PhysicalObjectsController < ApplicationController
         #po is automatically saved by association
       end
       flash[:notice] = "<i>#{@physical_object.title}</i> was successfully split into #{split_count} records.".html_safe
-      if URI(request.referer).path == split_show_physical_object_path(@physical_object)
-        if split_grouped
-          redirect_to controller: 'group_keys', action: "show", id: @physical_object.group_key
-	else
-	  redirect_to @physical_object
-	end
-      # for pack_list action, append physical_object[id] param to redirection back, to return to same object in packing process
-      elsif URI(request.referer).path.match /pack_list/
-        referrer_url = URI.parse(request.referrer) rescue URI.parse(physical_object_path(@physical_object))
-        referrer_url.query = Rack::Utils.parse_nested_query(referrer_url.query).merge({physical_object: { id: @physical_object.id}}).to_query
-        redirect_to referrer_url.to_s
-      else
-        redirect_to :back
-      end
     else
       flash[:notice] = "<i>#{@physical_object.title}</i> was NOT split.".html_safe
+    end
+    if URI(request.referer).path == split_show_physical_object_path(@physical_object)
+      if split_grouped
+        redirect_to controller: 'group_keys', action: "show", id: @physical_object.group_key
+      else
+        redirect_to @physical_object
+      end
+    # for pack_list action, append physical_object[id] param to redirection back, to return to same object in packing process
+    elsif URI(request.referer).path.match /pack_list/
+      referrer_url = URI.parse(request.referrer) rescue URI.parse(physical_object_path(@physical_object))
+      referrer_query = Rack::Utils.parse_nested_query(referrer_url.query)
+      # merge was not working, so delete and (re)add the parameter
+      referrer_query.delete("physical_object")
+      referrer_query["physical_object"] = { "id" => @physical_object.id }
+      referrer_url.query = referrer_query.to_query
+      redirect_to referrer_url.to_s
+    else
       redirect_to :back
     end
   end
@@ -359,6 +360,10 @@ class PhysicalObjectsController < ApplicationController
           @physical_object.current_workflow_status = "Binned"
         end
       end
+    end
+
+    # redirect logic for returning to pack_list action
+    def packing_redirect
     end
     
     # helper for re-rendering pick list if updating failed in some way
