@@ -97,7 +97,7 @@ class PicklistsController < ApplicationController
 			if params[:search_button]
 				@physical_object = PhysicalObject.where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
 				if @physical_object.nil?
-				  flash[:warning] = "No matching items found.  First item in picklist loaded."
+				  flash[:warning] = "No matching items found.  Loading first packable item on picklist (if applicable), instead."
 				  @physical_object = PhysicalObject.packable_on_picklist(@picklist.id, nil).packing_sort.first
 				else
 				  flash[:notice] = "First matching item loaded."
