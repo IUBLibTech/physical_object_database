@@ -9,16 +9,48 @@ describe ResponsesController do
   end
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
   let(:barcoded_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
+  let!(:unmatched_barcode) { 1234 }
 
   describe "requires BasicAuth" do
+    # as this is applied to the entire controller, we'll just test one call
     it "returns 200 status on an action if authenticated" do
-      get :metadata, mdpi_barcode: 0
+      get :metadata, mdpi_barcode: barcoded_object.mdpi_barcode
       expect(response).to have_http_status(200)
     end
     it "returns 401 status on an action if not authenticated" do
       invalid_auth
-      get :metadata, mdpi_barcode: 0
+      get :metadata, mdpi_barcode: barcoded_object.mdpi_barcode
       expect(response).to have_http_status(401)
+    end
+  end
+
+  shared_examples "barcode 0" do
+    it "assigns @physical_object to nil" do
+      expect(assigns(:physical_object)).to be_nil
+    end
+    it "returns failure XML" do
+      expect(response.body).to match /<success>false/
+    end
+    it "returns failure message XML" do
+      expect(response.body).to match /<message>MDPI Barcode.*cannot be 0/
+    end
+    it "returns a 400 status" do
+      expect(response).to have_http_status(400)
+    end
+  end
+
+  shared_examples "barcode not found" do
+    it "assigns @physical_object to nil" do
+      expect(assigns(:physical_object)).to be_nil
+    end
+    it "returns failure XML" do
+      expect(response.body).to match /<success>false/
+    end
+    it "returns failure message XML" do
+      expect(response.body).to match /<message>MDPI Barcode.*does not exist/
+    end
+    it "returns a 200 status" do
+      expect(response).to have_http_status(200)
     end
   end
 
@@ -40,27 +72,13 @@ describe ResponsesController do
         expect(response).to have_http_status(200)
       end
     end
-    shared_examples "finds no object" do
-      it "assigns @physical_object to nil" do
-        expect(assigns(:physical_object)).to be_nil
-      end
-      it "returns failture XML" do
-        expect(response.body).to match /<success>false/
-      end
-      it "returns failure message XML" do
-        expect(response.body).to match /<message>MDPI Barcode.*(does not exist|cannot be 0)/
-      end
-      it "returns a 200 status" do
-        expect(response).to have_http_status(200)
-      end
-    end
     context "with a 0 barcode" do
       before(:each) { get :metadata, mdpi_barcode: physical_object.mdpi_barcode }
-      include_examples "finds no object"
+      include_examples "barcode 0"
     end
     context "with an unmatched barcode" do
-      before(:each) { get :metadata, mdpi_barcode: 1234 }
-      include_examples "finds no object"
+      before(:each) { get :metadata, mdpi_barcode: unmatched_barcode }
+      include_examples "barcode not found"
     end
   end
 
@@ -70,8 +88,8 @@ describe ResponsesController do
     context "with message text" do
       let(:message_text) { "Hello world" }
       it "creates a notification message" do
-        expect(assigns(:message)).to be_persisted
-        expect(assigns(:message).content).to eq message_text
+        expect(assigns(:notification)).to be_persisted
+        expect(assigns(:notification).content).to eq message_text
         expect(Message.first).not_to be_nil
       end
       it "returns success XML" do
@@ -84,7 +102,7 @@ describe ResponsesController do
     context "without message text" do
       let(:message_text) { "" }
       it "does not create a notification message" do
-        expect(assigns(:message)).not_to be_persisted
+        expect(assigns(:notification)).not_to be_persisted
         expect(Message.first).to be_nil
       end
       it "returns failure xml" do
@@ -94,30 +112,15 @@ describe ResponsesController do
         expect(response).to have_http_status(400)
       end
     end
+    # context of message creation failing
   end
 
   describe "#push_status" do
-    let!(:po) { FactoryGirl.create( :physical_object, :cdr, :barcoded) }
-    #FIXME: deprecate
-    let!(:jh) { 
-      {
-        mdpi_barcode: po.mdpi_barcode, 
-        #FIXME: receive state?
-        state: "failed", 
-        attention: true, 
-        messsage: "some message about the error", 
-        options: {
-          accept: "Retry processing",
-          investigate: "Manually investigate data storage for what went wrong",
-          to_delete: "Discard this object and redigitize or re-upload it"
-        }
-      }
-    }
-
-    context "missing xml" do
-      before(:each) do
-       post :push_status, mdpi_barcode: po.mdpi_barcode, content_type: 'application/xml'
-      end
+    before(:each) do
+      post :push_status, request_xml, mdpi_barcode: barcoded_object.mdpi_barcode, content_type: 'application/xml'
+    end
+    context "invalid xml" do
+      let(:request_xml) { "<pod><data></data></pod>" }
       pending "FIXME: digital status objects need validations before an invalid request can be made..." do
         it "renders failure XML" do
           expect(response.body).to match /<success>false/
@@ -130,11 +133,6 @@ describe ResponsesController do
         end
       end
     end
-    
-    context "invalid xml" do
-      pending "FIXME: test sending XML insufficient to create a valid digital status"
-    end
-
     context "valid xml" do
       let(:request_xml) {
 "     <pod>
@@ -158,12 +156,8 @@ describe ResponsesController do
         </data>
       </pod>"
       }
-      before(:each) do
-        expect(po.digital_statuses).to be_empty
-        post :push_status, request_xml, mdpi_barcode: po.mdpi_barcode, content_type: 'application/xml'
-      end
       it "creates a digital status" do
-        expect(po.digital_statuses.size).to eq 1
+        expect(barcoded_object.digital_statuses.size).to eq 1
       end
       it "renders success XML" do
         expect(response.body).to match /<success>true/
@@ -176,6 +170,18 @@ describe ResponsesController do
 
   describe "#pull_state" do
     let!(:po) { FactoryGirl.create( :physical_object, :cdr, :barcoded) }
+    context "with a 0 barcode" do
+      before(:each) do
+        get :pull_state, mdpi_barcode: physical_object.mdpi_barcode
+      end
+      include_examples "barcode 0"
+    end
+    context "physical object not found" do
+      before(:each) do
+        get :pull_state, mdpi_barcode: 1234
+      end
+      include_examples "barcode not found"
+    end
     context "physical object has no digital statuses" do
       before(:each) do
         expect(po.digital_statuses.size).to eq 0
@@ -187,8 +193,8 @@ describe ResponsesController do
       it "returns a failure message" do
         expect(response.body).to match /<message>Physical Object.*0.*Statuses/i
       end
-      it "returns 400 status" do
-        expect(response).to have_http_status(400)
+      it "returns 200 status" do
+        expect(response).to have_http_status(200)
       end
     end
     context "physical object has digital status but no decision" do
