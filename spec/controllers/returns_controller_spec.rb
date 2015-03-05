@@ -81,8 +81,8 @@ describe ReturnsController do
         bin.save
         patch_action
       end
-      it "flashes an inaction message" do
-        expect(flash[:notice]).to match /not associated.*batch/
+      it "flashes an inaction warning" do
+        expect(flash[:warning]).to match /not associated.*batch/
       end
       it "redirects to :back" do
         expect(response).to redirect_to "source_page"
@@ -133,8 +133,8 @@ describe ReturnsController do
       before(:each) do
         patch :physical_object_returned, id: bin.id, mdpi_barcode: '1234'
       end
-      it "flashes a 'not found' message" do
-        expect(flash[:notice]).to match /No Physical Object.*was found/
+      it "flashes a 'not found' warning" do
+        expect(flash[:warning]).to match /No Physical Object.*was found/
       end
       it "redirects to return_bin action" do
         expect(response).to redirect_to return_bin_return_path(bin.id)
@@ -147,8 +147,8 @@ describe ReturnsController do
         physical_object.save
         patch_action
       end
-      it "flashes a 'not originally shipped with this bin' message" do
-        expect(flash[:notice]).to match /not originally shipped.*with this bin/
+      it "flashes a 'not originally shipped with this bin' warning" do
+        expect(flash[:warning]).to match /not originally shipped.*with this bin/
       end
       it "redirects to return_bin action" do
         expect(response).to redirect_to return_bin_return_path(bin.id)
@@ -161,14 +161,27 @@ describe ReturnsController do
         physical_object.save
         patch_action
       end
-      it "flashes a 'not originally shipped with this bin' message" do
-        expect(flash[:notice]).to match /not originally shipped.*with this bin/
+      it "flashes a 'not originally shipped with this bin' warning" do
+        expect(flash[:warning]).to match /not originally shipped.*with this bin/
       end
       it "redirects to return_bin action" do
         expect(response).to redirect_to return_bin_return_path(bin.id)
       end
     end
     context "physical object associated to bin" do
+      context "already returned" do
+        before(:each) do
+	  physical_object.current_workflow_status = "Unpacked"
+	  physical_object.save
+	  patch_action
+        end
+        it "flashes an inaction notice" do
+          expect(flash[:notice]).to match /already.*returned/
+        end
+        it "redirects to return_bin action" do
+          expect(response).to redirect_to return_bin_return_path(bin.id)
+        end
+      end
       context "without ephemera" do
         before(:each) do
           physical_object.has_ephemera = false
@@ -294,7 +307,7 @@ describe ReturnsController do
         patch_action
       end
       it "flashes a failure warning" do
-        expect(flash[:notice]).to match /cannot be.*Complete/
+        expect(flash[:warning]).to match /cannot be.*Complete/
       end
       it "redirects to return_bins action" do
         expect(response).to redirect_to return_bins_return_path(batch.id)
@@ -309,7 +322,7 @@ describe ReturnsController do
         patch_action
       end
       it "flashes inaction warning" do
-        expect(flash[:notice]).to match /cannot be/
+        expect(flash[:warning]).to match /cannot be/
       end
       it "redirects to return_bins action for batch" do
         expect(response).to redirect_to return_bins_return_path(bin.batch.id)
@@ -360,7 +373,7 @@ describe ReturnsController do
             expect(assigns(:bin)).to eq bin
           end
           it "flashes a warning" do
-            expect(flash[:notice]).to match /warning/
+            expect(flash[:warning]).not_to be_blank
           end
           it "redirects to return_bin action for bin" do
             expect(response).to redirect_to return_bin_return_path(bin.id)
@@ -375,7 +388,7 @@ describe ReturnsController do
             expect(assigns(:bin)).to eq bin
           end
           it "flashes a warning" do
-            expect(flash[:notice]).to match /warning/
+            expect(flash[:warning]).not_to be_blank
           end
           it "redirects to return_bin action for bin" do
             expect(response).to redirect_to return_bin_return_path(bin.id)

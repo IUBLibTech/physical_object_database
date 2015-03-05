@@ -53,6 +53,10 @@ $( document ).ready(function() {
 						//make sure the checkbox is unchecked because this item does not have ephemera
 						$("#ephemera_returned_ephemera_returned").prop("checked", false)
 						$("#barcode_form").submit();
+					} else if (text == 'returned') {
+						alert("This item has already been unpacked.")
+					} else if (bc == '0' || bc == '') {
+						alert("You may not pack/unpack an item with barcode that is blank or 0.");
 					} else {
 						alert("There is no Physical Object with barcode: "+bc);
 					}
