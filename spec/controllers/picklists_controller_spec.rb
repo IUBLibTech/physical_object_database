@@ -334,6 +334,39 @@ describe PicklistsController do
       let(:args) { {id: pack_picklist.id, box_mdpi_barcode: pack_box.mdpi_barcode} }
     end
 
+    context "submitting with invalid bin/box combinations" do
+      shared_examples "does not pack" do
+        before(:each) do
+          request.env['HTTP_REFERER'] = "Foo"
+          args[:pack_button] = "Pack"
+          args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+          pack_list
+        end
+        describe "pack button" do
+          it "stays on the same object" do
+	    expect(assigns(:physical_object)).to eq po2
+	    expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
+	  end
+	  it "flashes a failure warning" do
+	    expect(flash[:warning]).not_to be_blank
+	  end
+	  it "does not pack the object" do
+	    po2.reload
+	    expect(po2.bin).to be_nil
+	    expect(po2.box).to be_nil
+	  end
+        end
+      end
+      context "with no bin or box specified" do
+        let(:args) { {id: pack_picklist.id, physical_object: {id: po2.id}} }
+	include_examples "does not pack"
+      end
+      context "with BOTH bin and box specified" do
+        let(:args) { {id: pack_picklist.id, physical_object: {id: po2.id}, bin_mdpi_barcode: pack_bin.mdpi_barcode, box_mdpi_barcode: pack_box.mdpi_barcode } }
+        include_examples "does not pack"
+      end
+    end
+
     context "submitting from picklist packing page with a Bin" do
       let(:args) { {id: pack_picklist.id, bin_id: pack_bin.id, physical_object: {id: po2.id}} }
       

@@ -137,8 +137,6 @@ class PicklistsController < ApplicationController
 				pack_bin
 			elsif params[:pack_box_button]
 				pack_box
-			elsif params[:manual_pack_button]
-				pack_manual
 			elsif params[:pack_button]
 				pack
 			elsif params[:unpack_button]
@@ -225,6 +223,9 @@ class PicklistsController < ApplicationController
 					if @physical_object.workflow_blocked?
 						@physical_object.errors[:condition_statuses] = "- One or more active Condition Statuses prevent the packing of this record.".html_safe
 						render 'pack_list'
+					elsif @bin.nil? && @box.nil?
+						flash[:warning] = "You must assign a valid bin or box barcode in order to pack this item.  Physical object not saved."
+						render 'pack_list'
 					else
 						if @bin
 							@physical_object.bin = @bin
@@ -232,13 +233,17 @@ class PicklistsController < ApplicationController
 						if @box
 							@physical_object.box = @box
 						end
-						@physical_object.save
-						#FIXME: make this more efficient by combining with surrounding_physical_objects?
-						@physical_object = PhysicalObject.packable_on_picklist(@picklist.id, nil).where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", @physical_object.call_number, @physical_object.call_number, @physical_object.group_key_id, @physical_object.group_key_id, @physical_object.group_position, @physical_object.group_position, @physical_object.id).packing_sort.first
-						if @physical_object
+						if @physical_object.save
+						  #FIXME: make this more efficient by combining with surrounding_physical_objects?
+						  @physical_object = PhysicalObject.packable_on_picklist(@picklist.id, nil).where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", @physical_object.call_number, @physical_object.call_number, @physical_object.group_key_id, @physical_object.group_key_id, @physical_object.group_position, @physical_object.group_position, @physical_object.id).packing_sort.first
 						  @tm = @physical_object.technical_metadatum.as_technical_metadatum
 						  surrounding_physical_objects
 						else
+						  flash[:warning] = "Unable to save physical object."
+						  if @bin && @box
+						    @bin = nil
+						    @box = nil
+						  end
 						  render 'pack_list'
 						end
 					end
