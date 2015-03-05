@@ -4,6 +4,7 @@ describe PhysicalObjectsController do
   render_views
   before(:each) { sign_in }
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
+  let(:barcoded_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded) }
   let(:second_object) { FactoryGirl.create(:physical_object, :cdr, unit: physical_object.unit, group_key: physical_object.group_key, group_position: 2) }
   let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
   let(:invalid_physical_object) { FactoryGirl.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
@@ -756,22 +757,33 @@ describe PhysicalObjectsController do
   end
 
   describe "POST has_ephemera" do
-    let(:post_has_ephemera) { post :has_ephemera, mdpi_barcode: physical_object.mdpi_barcode }
+    let(:post_has_ephemera) { post :has_ephemera, mdpi_barcode: barcoded_object.mdpi_barcode }
     it "returns 'true' when ephemera present" do
-      physical_object.has_ephemera = true
-      physical_object.save
+      barcoded_object.has_ephemera = true
+      barcoded_object.save
       post_has_ephemera
       expect(response.body).to eq "true"
     end
     it "returns 'false' when ephemera not present" do
-      physical_object.has_ephemera = false
-      physical_object.save
+      barcoded_object.has_ephemera = false
+      barcoded_object.save
       post_has_ephemera
       expect(response.body).to eq "false"
     end
     it "returns 'unknown physical Object' when physical object not found" do
-      post :has_ephemera
+      post :has_ephemera, mdpi_barcode: 1234
       expect(response.body).to eq "unknown physical Object"
+    end
+    it "returns 'unknown physical Object' when given a 0 barcode" do
+      physical_object
+      post :has_ephemera, mdpi_barcode: 0
+      expect(response.body).to eq "unknown physical Object"
+    end
+    it "returns 'returned' when item has already been marked returned" do
+      barcoded_object.current_workflow_status = "Unpacked"
+      barcoded_object.save
+      post_has_ephemera
+      expect(response.body).to eq 'returned'
     end
   end
 
