@@ -8,80 +8,67 @@ class ResponsesController < ActionController::Base
   include BasicAuthenticationHelper
   before_action :authenticate
 
-  before_action :set_physical_object, only: [:metadata, :pull_state]
+  before_action :set_physical_object, only: [:metadata, :pull_state, :push_status]
   before_action :set_request_xml, only: [:notify, :push_status]
 
+  # GET /responses/objects/:mdpi_barcode/metadata
   def metadata
-    @status = 200
+    if @physical_object
+      @status = 200
+      @success = true
+    end
     render template: 'responses/metadata.xml.builder', layout: false, status: @status
   end
 
+  # POST /responses/notify
   def notify
-    @message = Message.new
-    begin
-      @message.content = @request_xml.xpath("/pod/data/message").text
-    rescue
-    end
-    if !@message.content.blank? && @message.save
-      @status = 200
-    else
+    @notification = Message.new(content: @request_xml.xpath("/pod/data/message").text)
+    if @notification.content.blank?
       @status = 400
+      @success = false
+      @message = "Notification message text must not be blank."
+    elsif @notification.save
+      @status = 200
+      @success = true
+    else
+      @status = 500
+      @success = false
+      @message = "Notification creation failed with errors: #{@message.errors.full_messages}"
     end
     render template: 'responses/notify.xml.builder', layout: false, status: @status
   end
 
-  # push_status is used for notifying POD of digital status changes from Brian's
-  # QC script. Expected format of request: 
-  #<app root>/responses/push_status?json=<json status object>&qc_user=<Settings.qc_user>&qc_pass=<Settings.qc_pass>
+  # POST /responses/objects/<mdpi_barcode>/state
+  # QC process action for notifying POD of digital status changes.
   def push_status
-    #puts "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
-    @status = 200
-    begin
-      if @request_xml
-        ds = DigitalStatus.new.from_xml(response_params[:mdpi_barcode],@request_xml)
-        if !ds.valid_physical_object?
-          @message = "Unknown physical object from request xml:\n#{@request_xml}"
-          @status = 400
-	elsif ds.valid? && ds.save
-          @message = "Status updated"
-        else
-	  @message = "Unable to save digital status, with errors:\n#{ds.errors.full_messages}"
-	  @status = 400
-        end
+    if @physical_object
+      ds = DigitalStatus.new.from_xml(@physical_object.mdpi_barcode, @request_xml)
+      if ds.valid? && ds.save
+        @status = 200
+        @success = true
       else
-        @message = "Missing request xml..."
         @status = 400
+        @success = false
+        @message = "Unable to save digital status, with errors: #{ds.errors.full_messages}"
       end
-    rescue ParseError => e
-      @status = 400
-      puts e.message  
-      puts e.backtrace.inspect 
-      @message = "Parsing JSON string failed:\n#{e.message}\n#{e.backtrace.inspect}"
-    rescue Exception => e
-      @status = 501
-      puts e.message
-      puts e.backtrace.inspect
     end
     render template: 'responses/push_status.xml.builder', layout: false, status: @status
   end
 
-  # this action is for Brian's automated QC process to to query what the last decision the user made regard a fork
-  # in the qc workflow. Response format is expect to be:
-  # <app root>/responses/pull_stat/barcode?qc_user=<Settings.qc_user>&qc_pass=<Settings.qc_pass>
+  # GET /responses/objects/:mdpi_barcode/state
+  # QC process action to to query the last decision the user made regarding
+  # a fork in the qc workflow.
   def pull_state
-    #puts "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
     if @physical_object
+      @status = 200
       @ds = @physical_object.digital_statuses.order("updated_at DESC").last
       unless @ds.nil?
-        @status = 200
+        @success = true
         @message = @ds.decided
       else
-        @status = 400
+        @success = false
         @message = "Physical object #{@physical_object.mdpi_barcode} has 0 Digital Statuses..."
       end
-    else
-      @status = 400
-      @message = "Unknown physical object: #{params[:mdpi_barcode]}"
     end
     render template: 'responses/pull_state.xml.builder', layout: false, status: @status
   end
@@ -101,6 +88,7 @@ class ResponsesController < ActionController::Base
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?
+      barcode_not_found if @physical_object.nil?
     end
 
     def set_request_xml
@@ -109,5 +97,16 @@ class ResponsesController < ActionController::Base
 
     def response_params
       params.permit(:mdpi_barcode)
+    end
+
+    def barcode_not_found
+      @success = false
+      if params[:mdpi_barcode].to_i.zero?
+        @status = 400
+        @message = "MDPI Barcode cannot be 0, blank, or unspecified"
+      else
+        @status = 200
+        @message = "MDPI Barcode #{params[:mdpi_barcode]} does not exist"
+      end
     end
 end

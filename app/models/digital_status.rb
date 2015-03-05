@@ -67,31 +67,14 @@ class DigitalStatus < ActiveRecord::Base
 			ORDER BY state"
 	end
 
-
-
-	def from_json(json)
-		obj = JSON.parse(json, symbolize_names: true)
-		self.physical_object_mdpi_barcode = obj[:barcode]
-		po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
-		unless po.nil?
-			self.physical_object_id = po.id
-		end
-		self.state = obj[:state]
-		self.message = obj[:message]
-		self.accepted = false
-		self.attention = obj[:attention]
-		self.decided = nil
-		self.options = obj[:options]
-		self
-	end
-
+        # FIXME: consider dropping physical_object_mdpi_barcode as attribute
         def from_xml(mdpi_barcode, xml)
           self.physical_object_mdpi_barcode = mdpi_barcode
           po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
           unless po.nil?
             self.physical_object_id = po.id
           end
-          self.state = xml.path("/pod/data/state").text
+          self.state = xml.xpath("/pod/data/state").text
           self.message = xml.xpath("/pod/data/message").text
           self.accepted = false
           self.attention = xml.xpath("/pod/data/attention").text
@@ -104,19 +87,11 @@ class DigitalStatus < ActiveRecord::Base
           self
         end
 
-	def invalid_physical_object?
-		return physical_object.nil?
-	end
-
-	def valid_physical_object?
-		return ! invalid_physical_object?
-	end
-
 	def requires_attention?
-		attention and !decided		
+		attention and !decided.blank?
 	end
 
 	def decided?
-		!decided.nil?
+		!decided.blank?
 	end
 end
