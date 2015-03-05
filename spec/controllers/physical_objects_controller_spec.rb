@@ -238,68 +238,128 @@ describe PhysicalObjectsController do
       request.env["HTTP_REFERER"] = source_page
       patch :split_update, split_args
     end
-    shared_examples "splits successfully" do
-      context "on an unboxed/unbinned item" do
-        context "keeping the same group key" do
-          before(:each) { split_args[:grouped] = "on" }
-          it "creates additional objects" do
-            physical_object
-            expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
-          end
-          it "does not create additional group keys" do
-            physical_object
-            expect{ split_update }.not_to change(GroupKey, :count)
-          end
-          it "updates group position on objects" do
-	    physical_object
-	    split_update
-	    expect(PhysicalObject.last.group_position).to eq count
-          end
-          it "flashes a success notice" do
-            split_update
-            expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
-      
-          end
-          it "redirects to :back/group_key" do
-            split_update
-            expect(response).to redirect_to destinations[:grouped]
-          end
+    shared_examples "split behavior" do
+      shared_examples "prevents split" do
+        it "does not create additional records" do
+          physical_object
+          expect{ split_update }.not_to change(PhysicalObject, :count)
         end
-        context "changing the group key" do
-          it "creates additional objects" do
-            physical_object
-            expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+        it "flashes a failure notice" do
+          split_update
+          expect(flash[:notice]).to match /must be removed/
+        end
+        it "redirects to :back/pack_list" do
+          split_update
+          expect(response).to redirect_to destinations[:ungrouped]
+        end
+      end
+      shared_examples "does not split" do
+        it "does not create additional records" do
+          physical_object
+          expect{ split_update }.not_to change(PhysicalObject, :count)
+        end
+        it "flashes an inaction notice" do
+          split_update
+          expect(flash[:notice]).to match /NOT split/i
+        end
+        it "redirects to :back/pack_list" do
+          split_update
+          expect(response).to redirect_to destinations[:ungrouped]
+        end
+      end
+      context "on a boxed item" do
+        before(:each) do
+          physical_object.box = FactoryGirl.create(:box)
+          physical_object.save
+        end
+        include_examples "prevents split"
+      end
+      context "on a binned item" do
+        before(:each) do
+          physical_object.bin = FactoryGirl.create(:bin)
+          physical_object.save
+        end
+        include_examples "prevents split"
+      end
+      context "on an unboxed/unbinned item" do
+        context "with count less than or equal to 1" do
+          let(:count) { 0 }
+          include_examples "does not split"
+        end
+        context "with count greater than 1" do
+          context "keeping the same group key" do
+            before(:each) { split_args[:grouped] = "on" }
+            it "creates additional objects" do
+              physical_object
+              expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+            end
+            it "does not create additional group keys" do
+              physical_object
+              expect{ split_update }.not_to change(GroupKey, :count)
+            end
+            it "updates group position on objects" do
+	      physical_object
+	      split_update
+	      expect(PhysicalObject.last.group_position).to eq count
+            end
+            it "flashes a success notice" do
+              split_update
+              expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+        
+            end
+            it "redirects to :back/group_key/pack_list" do
+              split_update
+              expect(response).to redirect_to destinations[:grouped]
+            end
           end
-          it "creates additional group keys" do
-            physical_object
-            expect{ split_update }.to change(GroupKey, :count).by(count - 1)
-          end
-          it "does not update group position on objects" do
-            physical_object
-            split_update
-            expect(PhysicalObject.last.group_position).to eq 1
-          end
-          it "flashes a success notice" do
-            split_update
-            expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
-  
-          end
-          it "redirects to :back/physical_object" do
-            split_update
-            expect(response).to redirect_to destinations[:ungrouped]
+          context "changing the group key" do
+            it "creates additional objects" do
+              physical_object
+              expect{ split_update }.to change(PhysicalObject, :count).by(count - 1)
+            end
+            it "creates additional group keys" do
+              physical_object
+              expect{ split_update }.to change(GroupKey, :count).by(count - 1)
+            end
+            it "does not update group position on objects" do
+              physical_object
+              split_update
+              expect(PhysicalObject.last.group_position).to eq 1
+            end
+            it "flashes a success notice" do
+              split_update
+              expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
+    
+            end
+            it "redirects to :back/physical_object/pack_list" do
+              split_update
+              expect(response).to redirect_to destinations[:ungrouped]
+            end
           end
         end
       end
     end
     context "from split_show" do
-      let(:source_page) { "source_page" }
-      let(:destinations) { { grouped: "source_page", ungrouped: "source_page" } }
-      include_examples "splits successfully"
-    end
-    context "from anywhere but split_show" do
       let(:source_page) { split_show_physical_object_path(physical_object) }
       let(:destinations) { { grouped: group_key_path(physical_object.group_key), ungrouped: physical_object_path(physical_object) } }
-      include_examples "splits successfully"
+      include_examples "split behavior"
+    end
+    context "from pack_list, generally" do
+      let(:source_page) { pack_list_picklist_path(picklist.id) }
+      let(:dest_page) { pack_list_picklist_path(picklist.id, physical_object: { id: physical_object.id }) }
+      let(:destinations) { { grouped: dest_page, ungrouped: dest_page } }
+      include_examples "split behavior"
+    end
+    context "from pack_list, specific item" do
+      let(:source_page) { pack_list_picklist_path(picklist.id, physical_object: { id: physical_object.id }) }
+      let(:dest_page) { pack_list_picklist_path(picklist.id, physical_object: { id: physical_object.id }) }
+      let(:destinations) { { grouped: dest_page, ungrouped: dest_page } }
+      include_examples "split behavior"
+    end
+    context "from other sources (not split_show, not pack_list)" do
+      let(:source_page) { "source_page" }
+      let(:destinations) { { grouped: source_page, ungrouped: source_page } }
+      include_examples "split behavior"
     end
     shared_examples "prevents split" do
       it "does not create additional records" do
