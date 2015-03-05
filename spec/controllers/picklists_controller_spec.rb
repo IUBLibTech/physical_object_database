@@ -298,7 +298,10 @@ describe PicklistsController do
   end
 
   describe "PATCH pack_list on collection" do
-    skip "redirects to member"
+    before(:each) { patch :pack_list, picklist: { id: picklist.id } }
+    it "redirects to member" do
+      expect(response).to redirect_to pack_list_picklist_path(picklist.id)
+    end
   end
 
   describe "PATCH pack_list on member", "" do
@@ -481,23 +484,29 @@ describe PicklistsController do
         expect(assigns(:wrap_next_packable)).to be_falsey
       end
 
-      it "doesn't find a physical object on an irrelevant search" do
-        args[:search_button] = "Search"
-        args[:call_number] = "Bad Call Number"
-        # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
-        pack_list
-        expect(assigns(:previous_physical_object)).to be_nil
-        expect(assigns(:wrap_previous)).to be_falsey
-        expect(assigns(:previous_packable_physical_object)).to be_nil
-        expect(assigns(:wrap_previous)).to be_falsey
+      describe "on an irrelevant search" do
+        before(:each) do
+          args[:search_button] = "Search"
+          args[:call_number] = "Bad Call Number"
+          pack_list
+	end
+	it "flashes a no item found warning" do
+          expect(flash[:warning]).to match /no.*item.*found/i
+	end
+	it "loads the first item in the picklist" do
+          expect(assigns(:previous_physical_object)).to eq po3
+          expect(assigns(:wrap_previous)).to be true
+          expect(assigns(:previous_packable_physical_object)).to eq po3
+          expect(assigns(:wrap_previous)).to be true
+  
+          expect(assigns(:physical_object)).to eq po1
+          expect(assigns(:tm)).to eq po1.technical_metadatum.as_technical_metadatum
 
-        expect(assigns(:physical_object)).to be_nil
-        expect(assigns(:tm)).to be_nil
-
-        expect(assigns(:next_physical_object)).to be_nil
-        expect(assigns(:wrap_next)).to be_falsey
-        expect(assigns(:next_packable_physical_object)).to be_nil
-        expect(assigns(:wrap_next_packable)).to be_falsey
+          expect(assigns(:next_physical_object)).to eq po2
+          expect(assigns(:wrap_next)).to be_falsey
+          expect(assigns(:next_packable_physical_object)).to eq po2
+          expect(assigns(:wrap_next_packable)).to be_falsey
+	end
       end
     end
 
@@ -645,25 +654,30 @@ describe PicklistsController do
         expect(assigns(:wrap_next_packable)).to be_falsey
 
       end
-      it "doesn't find a physical object on an irrelevant search" do
-        args[:search_button] = "Search"
-        args[:call_number] = "Bad Call Number"
-        # args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
-        pack_list
-        expect(assigns(:previous_physical_object)).to be_nil
-        expect(assigns(:wrap_previous)).to be_falsey
-        expect(assigns(:previous_packable_physical_object)).to be_nil
-        expect(assigns(:wrap_previous_packable)).to be_falsey
+      describe "on an irrelevant search" do
+        before(:each) do
+          args[:search_button] = "Search"
+          args[:call_number] = "Bad Call Number"
+          pack_list
+        end
+        it "flashes a no item found warning" do
+          expect(flash[:warning]).to match /no.*item.*found/i
+        end
+        it "loads the first item in the picklist" do
+          expect(assigns(:previous_physical_object)).to eq po3
+          expect(assigns(:wrap_previous)).to be true
+          expect(assigns(:previous_packable_physical_object)).to eq po3
+          expect(assigns(:wrap_previous)).to be true
 
-        expect(assigns(:physical_object)).to be_nil
-        expect(assigns(:tm)).to be_nil
+          expect(assigns(:physical_object)).to eq po1
+          expect(assigns(:tm)).to eq po1.technical_metadatum.as_technical_metadatum
 
-        expect(assigns(:next_physical_object)).to be_nil
-        expect(assigns(:wrap_next)).to be_falsey
-        expect(assigns(:next_packable_physical_object)).to be_nil
-        expect(assigns(:wrap_next_packable)).to be_falsey
+          expect(assigns(:next_physical_object)).to eq po2
+          expect(assigns(:wrap_next)).to be_falsey
+          expect(assigns(:next_packable_physical_object)).to eq po2
+          expect(assigns(:wrap_next_packable)).to be_falsey
+        end
       end
-
     end
   end
 
