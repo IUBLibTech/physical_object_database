@@ -57,8 +57,8 @@ class PhysicalObject < ActiveRecord::Base
     'collection_name', 'generation', 'oclc_number', 'other_copies', 'year', 'group_position', 'ephemera_returned' ]
   MULTIVALUED_FIELDSETS = {}
 
-  validates :format, presence: true, inclusion: { in: TM_FORMATS.keys }
-  validates :generation, inclusion: { in: GENERATION_VALUES.keys }
+  validates :format, presence: true, inclusion: { in: TM_FORMATS.keys, message: "value \"%{value}\" is not in list of valid values: #{TM_FORMATS.keys}" }
+  validates :generation, inclusion: { in: GENERATION_VALUES.keys, message: "value \"%{value}\" is not in list of valid values: #{GENERATION_VALUES.keys}" }
   validates :group_position, presence: true
   validates :mdpi_barcode, mdpi_barcode: true
   validates :unit, presence: true
