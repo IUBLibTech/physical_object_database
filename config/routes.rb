@@ -92,6 +92,7 @@ Pod::Application.routes.draw do
 
   get 'quality_control/:status', to: "quality_control#index", as: "quality_control_status"
   get "quality_control/", to: "quality_control#index", as: "quality_control_index"
+  patch "quality_control/decide/:id", to: "quality_control#decide", as: "quality_control_decide"
 
   resources :returns, only: [:index] do
     get :return_bins, on: :member

@@ -34,14 +34,31 @@ class DigitalStatus < ActiveRecord::Base
 					FROM digital_statuses
 					GROUP BY physical_object_id
 				) as x INNER JOIN digital_statuses as ds 
-				WHERE ds.id = x.id and state='#{i}'
+				WHERE ds.id = x.id and state='#{i}' and options is not null and decided is null
 			) as po_ids INNER JOIN physical_objects
 			WHERE physical_objects.id = po_ids.id"
     )
   }
 
+  scope :action_statuses, -> {
+  	DigitalStatus.connection.execute(
+  		"SELECT state, count(*)
+			FROM (
+				SELECT id as y_id 
+				FROM (
+					SELECT MAX(id) as max_id
+					FROM digital_statuses
+					GROUP BY physical_object_id
+				) AS x INNER JOIN digital_statuses AS ds
+				WHERE ds.id = x.max_id and ds.options is not null and ds.decided is null 
+			) as y INNER JOIN digital_statuses as ds2 
+			WHERE ds2.id = y.y_id
+			GROUP BY state"
+		)
+  }
+
 	def self.test(*barcode)
-		barcode ||= "40000000031296"
+		barcode ||= ["40000000031296"]
 		"{
 			\"barcode\": #{barcode.first},
 			\"state\":\"failed\",
@@ -67,6 +84,9 @@ class DigitalStatus < ActiveRecord::Base
 			ORDER BY state"
 	end
 
+	def select_options
+		self.options.map{|key, value| [value, key.to_s]}
+	end
 
 
 	def from_json(json)
@@ -85,27 +105,27 @@ class DigitalStatus < ActiveRecord::Base
 		self
 	end
 
-        def from_xml(xml)
-          self.physical_object_mdpi_barcode = xml.xpath("/pod/data/id").text
-          po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
-          unless po.nil?
-            self.physical_object_id = po.id
-          end
-          #FIXME
-          #self.state = obj[:state]
-          self.message = xml.xpath("/pod/data/message").text
-          #FIXME
-          #self.accepted = false
-          self.attention = xml.xpath("/pod/data/attention").text
-          #self.decided
-          #self.decided = nil
-          options_hash = {}
-          xml.xpath("/pod/data/options/option").each do |option|
-            options_hash[option.xpath("state").text.to_sym] = option.xpath("description").text
-          end
-          self.options = options_hash
-          self
-        end
+  def from_xml(xml)
+    self.physical_object_mdpi_barcode = xml.xpath("/pod/data/id").text
+    po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
+    unless po.nil?
+      self.physical_object_id = po.id
+    end
+    #FIXME
+    #self.state = obj[:state]
+    self.message = xml.xpath("/pod/data/message").text
+    #FIXME
+    #self.accepted = false
+    self.attention = xml.xpath("/pod/data/attention").text
+    #self.decided
+    #self.decided = nil
+    options_hash = {}
+    xml.xpath("/pod/data/options/option").each do |option|
+      options_hash[option.xpath("state").text.to_sym] = option.xpath("description").text
+    end
+    self.options = options_hash
+    self
+  end
 
 	def invalid_physical_object?
 		return physical_object.nil?

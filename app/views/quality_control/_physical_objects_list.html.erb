@@ -1,0 +1,29 @@
+<h2><%= params[:status].titleize %> Physical Objects</h2>
+<table class="status">
+	<tr>
+		<th>Unit</th>
+		<th>MDPI Barcode</th>
+		<th>Title</th>
+		<th>Format</th>
+		<th>Choice</th>
+	</tr>
+	<% @physical_objects.each_with_index do |p, i| %>
+		<% # ci begins at 0 so flip the odd/even css class %>
+		<% if i.odd? %>
+			<tr class="even">
+		<% else %>
+			<tr class="odd">
+		<% end %>
+			<td><%= p.unit.abbreviation %></td>
+			<td><%= link_to("#{p.mdpi_barcode}", physical_object_path(p.id), target: "_blank") %></td>
+			<td><%=	p.title %></td>
+			<td><%= p.format %></td>
+			<td>
+				<%= form_for(p.current_digital_status, url: quality_control_decide_path(p.current_digital_status)) do |f|%>
+					<%= select_tag(:decided, options_for_select(p.current_digital_status.select_options)) %>
+					<%= f.submit("Decide") %>
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+</table>

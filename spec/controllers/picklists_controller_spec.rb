@@ -1,16 +1,48 @@
 require 'rails_helper'
+require 'debugger'
 
 describe PicklistsController do
   render_views
   before(:each) { sign_in }
-  let(:picklist) { FactoryGirl.create(:picklist) }
-  let(:valid_picklist) { FactoryGirl.build(:picklist) }
+  let(:picklist) { FactoryGirl.create(:picklist, name: 'one') }
+  let(:valid_picklist) { FactoryGirl.build(:picklist, name: 'two') }
   let(:invalid_picklist) { FactoryGirl.build(:invalid_picklist) }
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr, picklist: picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode ) }
   let(:box) { FactoryGirl.create(:box) }
   let(:bin) { FactoryGirl.create(:bin) }
+  let(:blocked) { FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
+  let(:condition) { FactoryGirl.create(:condition_status, condition_status_template_id: 1, active: true)}
 
   #no index
+
+  describe "GET show regarding packing status" do
+    before(:each) do
+        blocked.picklist = picklist
+        blocked.save
+        condition.physical_object = blocked
+        condition.save
+      end
+    context "physical objects with active blocking statuses" do
+      before(:each) do
+        get :show, id: picklist.id, format: :html
+      end
+      it "does assign blocked physical objects" do
+        expect(assigns(:picklist).physical_objects).to include blocked
+        expect(assigns(:blocked)).to eq [blocked]
+      end
+    end
+    context "physical objects with inactive blocking statuses" do
+      before(:each) do
+        condition.active = false
+        condition.save
+        get :show, id: picklist.id, format: :html
+      end
+      it "does not assign blocked physical objects" do
+        expect(assigns(:picklist).physical_objects).to include blocked
+        expect(assigns(:blocked)).to eq []
+      end
+    end
+  end
 
   describe "GET show on member" do
     context "html format" do
@@ -67,7 +99,7 @@ describe PicklistsController do
   describe "POST create on member" do
     context "with valid attributes" do
       let(:creation) { post :create, picklist: valid_picklist.attributes.symbolize_keys }
-      it "saves the new physical object in the database" do
+      it "saves the new picklist in the database" do
         expect{ creation }.to change(Picklist, :count).by(1)
       end
       it "redirects to the picklist specifications" do
@@ -393,6 +425,18 @@ describe PicklistsController do
         expect(po2.bin).to eq pack_bin
       end
 
+      it "marks a picklist complete on last packed item" do
+        po1.bin = pack_bin
+        po1.save
+        po3.bin = pack_bin
+        po3.save
+        args[:pack_button] = "Pack"
+        args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        pack_list
+        pack_picklist.reload
+        expect(pack_picklist.complete).to eq true
+      end
+
       it "updates metadata fields on pack" do
         changed = "A new call number"
         args[:pack_button] = "Pack"
@@ -561,6 +605,7 @@ describe PicklistsController do
         expect(assigns(:wrap_next_packable)).to be true
 
         expect(po2.bin).to eq pack_bin
+        expect(pack_picklist.complete).to eq false
       end
       it "updates metadata fields on pack" do
         changed = "A new call number"
@@ -663,8 +708,26 @@ describe PicklistsController do
         expect(assigns(:next_packable_physical_object)).to be_nil
         expect(assigns(:wrap_next_packable)).to be_falsey
       end
-
     end
+
+    # context "pack_list picklist completion" do
+    #   let(:args) { {id: pack_picklist.id, bin_id: pack_bin.id, physical_object: {id: po3.id}, tm: po3.technical_metadatum.as_technical_metadatum.attributes, pack_button: 'Pack' }}
+    #   before(:each) do
+    #     po1.picklist = pack_picklist
+    #     po1.bin = pack_bin
+    #     po1.save
+    #     po2.picklist = pack_picklist
+    #     po2.bin = pack_bin
+    #     po2.save
+    #     po3.picklist = pack_picklist
+    #     po3.save
+    #     patch :pack_list, args
+    #   end
+    #   it "packs last item and completes picklist" do
+    #     expect(assigns(:picklist)).to eq pack_picklist
+    #     expect(assigns(:picklist).complete).to eq true
+    #   end
+    # end
   end
 
 end

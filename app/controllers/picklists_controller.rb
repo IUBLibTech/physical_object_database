@@ -26,7 +26,6 @@ class PicklistsController < ApplicationController
 	def show
 		@edit_mode = false
 		#@action = 'show'
-
 		respond_to do |format|
 			format.html do
 				@physical_objects = @physical_objects.paginate(page: params[:page])
@@ -150,6 +149,10 @@ class PicklistsController < ApplicationController
 			flash[:warning] = "A valid Pick List ID was not specified.".html_safe
 			redirect_to picklist_specifications_path 
 		end
+		if @picklist
+			# handles both pack of last item and upack of a fully packed pick list
+			@picklist.update(complete: @picklist.all_packed?)
+		end
 	end
 
 	private
@@ -266,7 +269,7 @@ class PicklistsController < ApplicationController
 
 		def set_counts
                   @packed_count = PhysicalObject.where("picklist_id = ? and (bin_id is not null or box_id is not null)", @picklist.id).count
-                  @total_count = PhysicalObject.where("picklist_id = ? and (bin_id is null and box_id is null)", @picklist.id).count
+                  @total_count = PhysicalObject.where("picklist_id = ?", @picklist.id).count
                   @blocked = PhysicalObject.find_by_sql("
                     select physical_objects.*
                     from physical_objects, condition_statuses, condition_status_templates
