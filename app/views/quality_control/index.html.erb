@@ -1,16 +1,28 @@
 <h2>Quality Control</h2>
 <div class="left">
-	<ul>
-		<li>Current Digital Statuses</li>
-	<% DigitalStatus.unique_statuses.each do |r| %>
-		<li>
-			<%= link_to("#{r[0].titleize} (#{r[1]})", quality_control_status_path(r[0])) %>	
-		</li>
-	<% end %>
-	</ul>
+	<div>
+		<ul>
+			<li>Action Required</li>
+			<% DigitalStatus.action_statuses.each do |as| %>
+				<li>
+					<%= link_to("#{as[0]} (#{as[1]})", quality_control_status_path(as[0])) %>
+				</li>
+			<% end %>
+		</ul>
+	</div>
+	<div>
+		<ul>
+			<li>All Digital Statuses</li>
+		<% DigitalStatus.unique_statuses.each do |r| %>
+			<li>
+				<%= "#{r[0].titleize} (#{r[1]})" %>	
+			</li>
+		<% end %>
+		</ul>
+	</div>
 </div>
 <% if @physical_objects %>
 	<div class="left">
-		<%= render 'physical_objects/physical_objects_table' %>	
+		<%= render 'physical_objects_list' %>	
 	</div>
 <% end %>

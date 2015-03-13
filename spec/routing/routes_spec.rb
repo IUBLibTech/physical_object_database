@@ -269,3 +269,12 @@ describe "sessions" do
     end
 end
 
+describe "quality_control" do
+  it "routes to QC index" do
+    expect(get("/quality_control/index")).to be_routable
+  end
+  it "routes to QC#decide" do
+    expect(patch("/quality_control/decide/:id")).to route_to("quality_control#decide", id: ':id')
+  end
+end
+

@@ -1,12 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe QualityControlController, :type => :controller do
+	render_views
+
 	let!(:po) { FactoryGirl.create :physical_object, :open_reel, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
 	let!(:po1) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
 	let!(:po2) { FactoryGirl.create :physical_object, :dat, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
 	let(:ds) { FactoryGirl.create :digital_status, state: "failed" }
 	let(:ds1) { FactoryGirl.create :digital_status, state: "accepted" }
 	let(:ds2) { FactoryGirl.create :digital_status, state: "transfered" }
+
+	before(:each) do
+		sign_in
+	end
+	
 	describe "#index" do
 		context "with no statuses" do
 			before(:each) do
@@ -47,6 +54,20 @@ RSpec.describe QualityControlController, :type => :controller do
 				expect(DigitalStatus.unique_statuses.size).to eq 2
 				expect(DigitalStatus.current_status(ds1.state).size).to eq 1
 				expect(DigitalStatus.current_status(ds1.state)).to include(po)
+			end
+		end
+	end
+
+	describe "#decide" do
+		context "making a decision" do
+			it "sets the decision for a digital status state" do
+				ds.physical_object_mdpi_barcode = po.mdpi_barcode
+				ds.physical_object_id = po.id
+				ds.save
+				patch :decide, id: ds.id, decided: ds.options[ds.options.keys[2]]
+				expect(assigns(:ds)).not_to be_nil
+				ds.reload
+				expect(ds.decided).to eq ds.options[ds.options.keys[2]]
 			end
 		end
 

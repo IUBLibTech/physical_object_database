@@ -216,11 +216,15 @@ class PhysicalObject < ActiveRecord::Base
   def workflow_blocked?
     condition_statuses.each do |s|
       name = s.condition_status_template.name
-      if s.active? and !(name == "Cannot go to Memnon" or name == "Catalog Problem" or name == "Send to IU")
+      if s.active? and !(name == "Cannot go to Memnon" or name == "Catalog Problem")
         return true
       end
     end
     return false
+  end
+
+  def current_digital_status
+    DigitalStatus.where("physical_object_id = #{self.id}").order(:id).last
   end
   
   # omit_picklisted is a boolean specifying whether physical objects that have been added to
@@ -326,9 +330,6 @@ class PhysicalObject < ActiveRecord::Base
 
   def validate_single_container_assignment
     errors[:base] << "You are attempting to directly assign this object to both a bin (#{bin.mdpi_barcode}) and a box (#{box.mdpi_barcode}), but an object can only be directly assigned to single container, at most." if bin && box
-  end
-  def current_digital_status
-    digital_statuses.order("last_updated DESC").first
   end
 
   private

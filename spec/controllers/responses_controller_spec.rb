@@ -1,5 +1,5 @@
 require "rails_helper"
-require 'ruby-debug'
+require 'debugger'
 
 describe ResponsesController do
   render_views
