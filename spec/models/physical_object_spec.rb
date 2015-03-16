@@ -97,6 +97,12 @@ describe PhysicalObject do
     specify "can belong to a bin" do
       expect(valid_po.bin).to be_nil
     end
+    specify "cannnot belong to a bin containing boxes" do
+      box.bin = bin
+      box.save
+      valid_po.bin = bin
+      expect(valid_po).not_to be_valid
+    end
     specify "cannot belong to a bin and box" do
       valid_po.box = box
       valid_po.bin = bin
