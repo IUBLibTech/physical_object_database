@@ -16,6 +16,10 @@ module TechnicalMetadatumModule
 
   TM_SUBTYPES = ["LP"]
 
+  BOX_FORMATS = [ "CD-R", "DAT", "LP" ]
+
+  BIN_FORMATS = [ "Open Reel Audio Tape" ]
+
   TM_GENRES = {
     "CD-R" => :audio,
     "DAT" => :audio,
