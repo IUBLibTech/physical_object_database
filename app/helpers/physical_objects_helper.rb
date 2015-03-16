@@ -126,14 +126,22 @@ module PhysicalObjectsHelper
     
           group_position = r[PhysicalObject.human_attribute_name("group_position")].to_i
           group_position = 1 if group_position.zero?
+
+	  # Convert floats to ints, coming from XLSX files read by Roo
+	  [PhysicalObject.human_attribute_name("catalog_key"),
+	   PhysicalObject.human_attribute_name("oclc_number"),
+	   PhysicalObject.human_attribute_name("year")
+	  ].each do |field_name|
+	    r[field_name] = r[field_name].to_i if r[field_name].class == Float
+	  end
     
           po = PhysicalObject.new(
               spreadsheet: spreadsheet,
               author: r[PhysicalObject.human_attribute_name("author")],
               bin_id: bin_id,
               box_id: box_id,
-              call_number: r[PhysicalObject.human_attribute_name("call_number")].to_i,
-              catalog_key: r[PhysicalObject.human_attribute_name("catalog_key")].to_i,
+              call_number: r[PhysicalObject.human_attribute_name("call_number")],
+              catalog_key: r[PhysicalObject.human_attribute_name("catalog_key")],
               collection_identifier: r[PhysicalObject.human_attribute_name("collection_identifier")],
               collection_name: r[PhysicalObject.human_attribute_name("collection_name")],
               format: r[PhysicalObject.human_attribute_name("format")],
@@ -143,13 +151,13 @@ module PhysicalObjectsHelper
               home_location: r[PhysicalObject.human_attribute_name("home_location")],
               iucat_barcode: r[PhysicalObject.human_attribute_name("iucat_barcode")] ? r[PhysicalObject.human_attribute_name("iucat_barcode")].to_i : "0",
               mdpi_barcode: r[PhysicalObject.human_attribute_name("mdpi_barcode")] ? r[PhysicalObject.human_attribute_name("mdpi_barcode")].to_i : 0,
-              oclc_number: r[PhysicalObject.human_attribute_name("oclc_number")].to_i,
+              oclc_number: r[PhysicalObject.human_attribute_name("oclc_number")],
               other_copies: !r[PhysicalObject.human_attribute_name("other_copies")].nil?,
               has_ephemera: !r[PhysicalObject.human_attribute_name("has_ephemera")].nil?,
               title: r[PhysicalObject.human_attribute_name("title")],
               title_control_number: r[PhysicalObject.human_attribute_name("title_control_number")],
               unit_id: unit_id,
-              year: r[PhysicalObject.human_attribute_name("year").to_i]
+              year: r[PhysicalObject.human_attribute_name("year")]
             )
           po.picklist = picklist unless picklist.nil?
           po.assign_inferred_workflow_status
