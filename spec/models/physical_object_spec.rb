@@ -97,10 +97,71 @@ describe PhysicalObject do
     specify "can belong to a bin" do
       expect(valid_po.bin).to be_nil
     end
-    specify "cannot belong to a bin and box" do
-      valid_po.box = box
-      valid_po.bin = bin
-      expect(valid_po).not_to be_valid
+    PhysicalObject.const_get(:BOX_FORMATS).each_with_index do |format, index|
+      describe "boxable format: #{format}" do
+        before(:each) { valid_po.format = format }
+        specify "cannot belong to a bin and box" do
+          valid_po.box = box
+          valid_po.bin = bin
+          expect(valid_po).not_to be_valid
+        end
+        specify "can belong to a box" do
+          valid_po.box = box
+          expect(valid_po).to be_valid
+        end
+        unless format.in? PhysicalObject.const_get(:BIN_FORMATS)
+          specify "cannot belong to a bin" do
+            valid_po.bin = bin
+            expect(valid_po).not_to be_valid
+          end
+        end
+        if PhysicalObject.const_get(:BOX_FORMATS).size > 1
+          specify "cannot belong to a box containing other formats" do
+            po.format = PhysicalObject.const_get(:BOX_FORMATS)[index - 1]
+            po.box = box
+            po.save!
+            valid_po.box = box
+            expect(valid_po).not_to be_valid
+          end
+        end
+      end
+    end
+    PhysicalObject.const_get(:BIN_FORMATS).each do |format|
+      describe "binnable format: #{format}" do
+        before(:each) { valid_po.format = format }
+        specify "cannot belong to a bin and box" do
+          valid_po.box = box
+          valid_po.bin = bin
+          expect(valid_po).not_to be_valid
+        end
+        specify "can belong to a bin" do
+          valid_po.format = format
+          valid_po.bin = bin
+          expect(valid_po).to be_valid
+        end
+        unless format.in? PhysicalObject.const_get(:BOX_FORMATS)
+          specify "cannot belong to a box" do
+            valid_po.format = format
+            valid_po.box = box
+            expect(valid_po).not_to be_valid
+          end
+        end
+        if PhysicalObject.const_get(:BIN_FORMATS).size > 1
+          specify "cannot belong to a bin containing other formats" do
+            po.format = PhysicalObject.const_get(:BIN_FORMATS)[index - 1]
+            po.bin = bin
+            po.save!
+            valid_po.bin = bin
+            expect(valid_po).not_to be_valid
+          end
+        end
+        specify "cannnot belong to a bin containing boxes" do
+          box.bin = bin
+          box.save
+          valid_po.bin = bin
+          expect(valid_po).not_to be_valid
+        end
+      end
     end
     specify "can belong to a picklist" do
       expect(valid_po.picklist).to be_nil

@@ -7,8 +7,9 @@ class QualityControlController < ApplicationController
 	end
 
 	def decide
-		puts "WTF!?!?!?"
-		debugger
+                # FIXME: deprecate lines below
+		# puts "WTF!?!?!?"
+		# debugger
 		@ds = DigitalStatus.find(params[:id])
 		@ds.update_attributes(decided: params[:decided])
 		flash[:notice] = "Updated Digital Status for #{@ds.physical_object.mdpi_barcode} - chose #{@ds.decided}"

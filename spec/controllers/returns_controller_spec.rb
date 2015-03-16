@@ -6,7 +6,7 @@ describe ReturnsController do
   let(:batch) { FactoryGirl.create :batch, identifier: "Created Batch" }
   let(:created_batch) { FactoryGirl.create :batch, identifier: "Returned Batch" }
   let(:bin) { FactoryGirl.create :bin, batch: batch }
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr, bin: bin }
+  let(:physical_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
 
   before(:each) do
     batch.current_workflow_status = "Returned"
@@ -46,8 +46,8 @@ describe ReturnsController do
   end
 
   describe "GET return_bin (on member)" do
-    let(:unpacked_object) { FactoryGirl.create :physical_object, :cdr, bin: bin }
-    let(:returned_object) { FactoryGirl.create :physical_object, :cdr, bin: bin }
+    let(:unpacked_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
+    let(:returned_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
     before(:each) do
       batch.save
       bin.save

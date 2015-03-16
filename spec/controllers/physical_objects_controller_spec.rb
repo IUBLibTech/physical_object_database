@@ -216,15 +216,16 @@ describe PhysicalObjectsController do
     context "on a boxed object" do
       before(:each) do
         physical_object.box = FactoryGirl.create(:box)
-        physical_object.save
+        physical_object.save!
         split_show
       end
       include_examples "rejects action"
     end
     context "on a binned object" do
       before(:each) do
-        physical_object.box = FactoryGirl.create(:box)
-        physical_object.save
+        physical_object.format = "Open Reel Audio Tape"
+        physical_object.bin = FactoryGirl.create(:bin)
+        physical_object.save!
         split_show
       end
       include_examples "rejects action"
@@ -271,14 +272,15 @@ describe PhysicalObjectsController do
       context "on a boxed item" do
         before(:each) do
           physical_object.box = FactoryGirl.create(:box)
-          physical_object.save
+          physical_object.save!
         end
         include_examples "prevents split"
       end
       context "on a binned item" do
         before(:each) do
+          physical_object.format = "Open Reel Audio Tape"
           physical_object.bin = FactoryGirl.create(:bin)
-          physical_object.save
+          physical_object.save!
         end
         include_examples "prevents split"
       end
@@ -380,15 +382,16 @@ describe PhysicalObjectsController do
       let(:source_page) { "source_page" }
       before(:each) do
         physical_object.box = FactoryGirl.create(:box)
-        physical_object.save
+        physical_object.save!
       end
       include_examples "prevents split"
     end
     context "on a binned item" do
       let(:source_page) { "source_page" }
       before(:each) do
+        physical_object.format = "Open Reel Audio Tape"
         physical_object.bin = FactoryGirl.create(:bin)
-        physical_object.save
+        physical_object.save!
       end
       include_examples "prevents split"
     end
@@ -471,6 +474,9 @@ describe PhysicalObjectsController do
         objects.each do |object|
           expect(object.updated_at).to be <= spreadsheet.created_at
         end
+      end
+      it "creates a Bin record" do
+        expect{ upload_update }.to change(Bin, :count).by(1)
       end
       it "creates Condition Status records" do
         expect{ upload_update }.to change(ConditionStatus, :count).by(2) 
@@ -562,7 +568,7 @@ describe PhysicalObjectsController do
       let(:box) { FactoryGirl.create(:box) }
       before(:each) do
         physical_object.box = box
-        physical_object.save
+        physical_object.save!
       end
       it "raises an error" do
         expect{ post_unbin }.to raise_error RuntimeError
@@ -572,7 +578,7 @@ describe PhysicalObjectsController do
       before(:each) do
         physical_object.box = nil
         physical_object.bin = nil
-        physical_object.save
+        physical_object.save!
         post_unbin
       end
       it "displays an error message" do
@@ -585,9 +591,10 @@ describe PhysicalObjectsController do
     context "when in a bin" do
       let(:bin) { FactoryGirl.create(:bin) }
       before(:each) do
+        physical_object.format = "Open Reel Audio Tape"
         physical_object.box = nil
         physical_object.bin = bin
-        physical_object.save
+        physical_object.save!
         post_unbin
       end
       it "displays a success message" do
@@ -614,7 +621,7 @@ describe PhysicalObjectsController do
     context "when not in a box" do
       before(:each) do
         physical_object.box = nil
-        physical_object.save
+        physical_object.save!
         post_unbox
       end
       it "displays an error message" do
@@ -628,7 +635,7 @@ describe PhysicalObjectsController do
       let(:box) { FactoryGirl.create(:box) }
       before(:each) do
         physical_object.box = box
-        physical_object.save
+        physical_object.save!
         post_unbox
       end
       it "displays a success message" do
@@ -690,7 +697,7 @@ describe PhysicalObjectsController do
     context "when not in a picklist" do
       before(:each) do 
         physical_object.picklist = nil
-        physical_object.save
+        physical_object.save!
         post_unpick_with_same_barcode
       end
       include_examples "flashes successful removal message"
@@ -700,9 +707,9 @@ describe PhysicalObjectsController do
       let(:picklist) { FactoryGirl.create(:picklist) }
       before(:each) do
         physical_object.picklist = picklist
-        physical_object.save
+        physical_object.save!
         second_object.picklist = picklist
-        second_object.save
+        second_object.save!
       end
       context "setting the same barcode" do
         before(:each) { post_unpick_with_same_barcode }
@@ -744,7 +751,7 @@ describe PhysicalObjectsController do
     end
     it "resets the group_position to 1" do
       physical_object.group_position = 2
-      physical_object.save
+      physical_object.save!
       ungroup
       physical_object.reload
       expect(physical_object.group_position).to eq 1
@@ -759,13 +766,13 @@ describe PhysicalObjectsController do
     let(:post_has_ephemera) { post :has_ephemera, mdpi_barcode: barcoded_object.mdpi_barcode }
     it "returns 'true' when ephemera present" do
       barcoded_object.has_ephemera = true
-      barcoded_object.save
+      barcoded_object.save!
       post_has_ephemera
       expect(response.body).to eq "true"
     end
     it "returns 'false' when ephemera not present" do
       barcoded_object.has_ephemera = false
-      barcoded_object.save
+      barcoded_object.save!
       post_has_ephemera
       expect(response.body).to eq "false"
     end
@@ -780,7 +787,7 @@ describe PhysicalObjectsController do
     end
     it "returns 'returned' when item has already been marked returned" do
       barcoded_object.current_workflow_status = "Unpacked"
-      barcoded_object.save
+      barcoded_object.save!
       post_has_ephemera
       expect(response.body).to eq 'returned'
     end

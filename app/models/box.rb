@@ -6,6 +6,7 @@ class Box < ActiveRecord::Base
 	has_many :physical_objects
 
 	validates :mdpi_barcode, mdpi_barcode: true, numericality: { greater_than: 0 }
+        validate :validate_bin_container
 	before_save :default_values
 
         def packed_status?
@@ -27,6 +28,10 @@ class Box < ActiveRecord::Base
 	def default_values
 	  self.full ||= false
 	  self.description ||= ""
+	end
+
+	def validate_bin_container
+	  errors[:base] << "This bin (#{bin.mdpi_barcode}) contains physical objects.  You may only assign a box to a bin containing boxes." if bin && bin.physical_objects.any?
 	end
 
 end

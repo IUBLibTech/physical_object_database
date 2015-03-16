@@ -28,7 +28,7 @@ RSpec.describe QualityControlController, :type => :controller do
 			before(:each) do
 				ds.physical_object_mdpi_barcode = po.mdpi_barcode
 				ds.physical_object_id = po.id
-				ds.save
+				ds.save!
 				get :index
 			end
 			it "finds a status" do
@@ -41,13 +41,13 @@ RSpec.describe QualityControlController, :type => :controller do
 			before(:each) do
 				# 2 states for the same physical object but the current state should be based on ds1
 				ds.physical_object_id = po.id
-				ds.save
+				ds.save!
 				ds1.physical_object_id = po.id
-				ds1.save
+				ds1.save!
 
 				# 1 different state for another physical object
 				ds2.physical_object_id = po2.id
-				ds2.save
+				ds2.save!
 			end
 
 			it "finds the correct status" do
@@ -63,7 +63,7 @@ RSpec.describe QualityControlController, :type => :controller do
 			it "sets the decision for a digital status state" do
 				ds.physical_object_mdpi_barcode = po.mdpi_barcode
 				ds.physical_object_id = po.id
-				ds.save
+				ds.save!
 				patch :decide, id: ds.id, decided: ds.options[ds.options.keys[2]]
 				expect(assigns(:ds)).not_to be_nil
 				ds.reload

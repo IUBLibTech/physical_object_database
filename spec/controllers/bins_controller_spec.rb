@@ -12,7 +12,7 @@ describe BinsController do
   let(:box) { FactoryGirl.create(:box, bin: bin) }
   let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: box) }
   let(:other_boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: unassigned_box) }
-  let(:binned_object) { FactoryGirl.create(:physical_object, :cdr, bin: bin) }
+  let(:binned_object) { FactoryGirl.create(:physical_object, :binnable, bin: bin) }
   let(:unassigned_object) { FactoryGirl.create(:physical_object, :cdr) }
   let(:unassigned_box) { FactoryGirl.create(:box) }
   let(:picklist) { FactoryGirl.create(:picklist) }
@@ -52,13 +52,14 @@ describe BinsController do
     before(:each) do
       bin
       box
-      binned_object
+      #binned_object
       other_boxed_object
       boxed_object
       unassigned_object
       picklist
       get :show, id: bin.id
     end
+
     it "assigns the requested object to @bin" do
       expect(assigns(:bin)).to eq bin
     end
@@ -174,20 +175,23 @@ describe BinsController do
     let(:deletion) { delete :destroy, id: bin.id }
     it "deletes the object" do
       bin
-      box
-      binned_object
       expect{ deletion }.to change(Bin, :count).by(-1)
     end
     it "redirects to the object index" do
       deletion
       expect(response).to redirect_to bins_path
     end
-    it "disassociates remaining boxes and physical objects" do
+    it "disassociates remaining boxes" do
+      box
+      deletion
+      box.reload
+      expect(box.bin).to be_nil
+    end
+    it "disassociates remaining physical objects" do
+      binned_object
       deletion
       binned_object.reload
-      box.reload
       expect(binned_object.bin).to be_nil
-      expect(box.bin).to be_nil
     end
   end
 
