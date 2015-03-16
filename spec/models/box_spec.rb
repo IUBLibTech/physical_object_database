@@ -6,6 +6,7 @@ describe Box do
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_box) { FactoryGirl.build :box }
   let(:po) { FactoryGirl.create :physical_object, :cdr, box: box}
+  let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
 
   it "gets a valid object from FactoryGirl" do
     expect(valid_box).to be_valid
@@ -50,6 +51,12 @@ describe Box do
   	  expect(box.bin).to be_nil
   	  box.save
   	  expect(bin.boxes.where(id: box.id).first).to eq nil
+    end
+    it "cannot belong to a bin containing physical objects" do
+      physical_object.bin = bin
+      physical_object.save
+      valid_box.bin = bin
+      expect(valid_box).not_to be_valid
     end
     it "can belong to a spreadsheet" do
       expect(box.spreadsheet).to be_nil

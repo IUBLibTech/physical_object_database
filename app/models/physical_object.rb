@@ -67,6 +67,7 @@ class PhysicalObject < ActiveRecord::Base
   validates :workflow_status, presence: true
   validates_with PhysicalObjectValidator
   validate :validate_single_container_assignment
+  validate :validate_bin_container
 
   accepts_nested_attributes_for :technical_metadatum
   scope :search_by_catalog, lambda {|query| where(["call_number = ?", query, query])}
@@ -330,6 +331,10 @@ class PhysicalObject < ActiveRecord::Base
 
   def validate_single_container_assignment
     errors[:base] << "You are attempting to directly assign this object to both a bin (#{bin.mdpi_barcode}) and a box (#{box.mdpi_barcode}), but an object can only be directly assigned to single container, at most." if bin && box
+  end
+
+  def validate_bin_container
+    errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes.  You may only assign a physical object to a bin containing physical objects." if bin && bin.boxes.any?
   end
 
   private
