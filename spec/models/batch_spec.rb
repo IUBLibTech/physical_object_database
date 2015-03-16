@@ -62,9 +62,9 @@ describe Batch do
     end
     it "returns format of first object in first bin" do
       bin
-      physical_object
+      physical_object.format = "Open Reel Audio Tape"
       physical_object.bin = bin
-      physical_object.save
+      physical_object.save!
       physical_object.reload
       bin.reload
       expect(bin.boxes).to be_empty
@@ -74,7 +74,7 @@ describe Batch do
       bin
       box
       physical_object.box = box
-      physical_object.save
+      physical_object.save!
       physical_object.reload
       box.reload
       bin.reload

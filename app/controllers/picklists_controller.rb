@@ -239,8 +239,10 @@ class PicklistsController < ApplicationController
 						if @physical_object.save
 						  #FIXME: make this more efficient by combining with surrounding_physical_objects?
 						  @physical_object = PhysicalObject.packable_on_picklist(@picklist.id, nil).where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", @physical_object.call_number, @physical_object.call_number, @physical_object.group_key_id, @physical_object.group_key_id, @physical_object.group_position, @physical_object.group_position, @physical_object.id).packing_sort.first
-						  @tm = @physical_object.technical_metadatum.as_technical_metadatum
-						  surrounding_physical_objects
+						  if @physical_object
+						    @tm = @physical_object.technical_metadatum.as_technical_metadatum
+						    surrounding_physical_objects
+						  end
 						else
 						  flash[:warning] = "Unable to save physical object."
 						  if @bin && @box

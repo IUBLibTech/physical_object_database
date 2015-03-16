@@ -7,10 +7,10 @@ describe PicklistsController do
   let(:picklist) { FactoryGirl.create(:picklist, name: 'one') }
   let(:valid_picklist) { FactoryGirl.build(:picklist, name: 'two') }
   let(:invalid_picklist) { FactoryGirl.build(:invalid_picklist) }
-  let(:physical_object) { FactoryGirl.create(:physical_object, :cdr, picklist: picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode ) }
+  let(:physical_object) { FactoryGirl.create(:physical_object, :boxable, picklist: picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode ) }
   let(:box) { FactoryGirl.create(:box) }
   let(:bin) { FactoryGirl.create(:bin) }
-  let(:blocked) { FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
+  let(:blocked) { FactoryGirl.create(:physical_object, :boxable, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
   let(:condition) { FactoryGirl.create(:condition_status, condition_status_template_id: 1, active: true)}
 
   #no index
@@ -18,9 +18,9 @@ describe PicklistsController do
   describe "GET show regarding packing status" do
     before(:each) do
         blocked.picklist = picklist
-        blocked.save
+        blocked.save!
         condition.physical_object = blocked
-        condition.save
+        condition.save!
       end
     context "physical objects with active blocking statuses" do
       before(:each) do
@@ -34,7 +34,7 @@ describe PicklistsController do
     context "physical objects with inactive blocking statuses" do
       before(:each) do
         condition.active = false
-        condition.save
+        condition.save!
         get :show, id: picklist.id, format: :html
       end
       it "does not assign blocked physical objects" do
@@ -109,9 +109,8 @@ describe PicklistsController do
     end
 
     context "with invalid attributes" do
-      let(:creation) { post :create, picklist: invalid_picklist.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
-      it "does not save the new physical object in the database" do
-        expect(invalid_picklist).to be_invalid
+      let(:creation) { post :create, picklist: invalid_picklist.attributes.symbolize_keys }
+      it "does not save the new picklist in the database" do
         expect{ creation }.not_to change(Picklist, :count)
       end
       it "re-renders the :new template" do
@@ -206,11 +205,11 @@ describe PicklistsController do
       context "starting with empty pick list" do
         before(:each) do
           po1.picklist = nil
-          po1.save
+          po1.save!
           po2.picklist = nil
-          po2.save
+          po2.save!
           po3.picklist = nil
-          po3.save
+          po3.save!
           pack_list
         end
         it "finds the pick list" do
@@ -225,11 +224,11 @@ describe PicklistsController do
       context " starting with packable items on pick list" do
         before(:each) do
           po1.picklist = pack_picklist
-          po1.save
+          po1.save!
           po2.picklist = pack_picklist
-          po2.save
+          po2.save!
           po3.picklist = pack_picklist
-          po3.save
+          po3.save!
           if bin.nil? and box.nil?
             args[:bin_mdpi_barcode] = pack_bin
             args.delete :bin_id
@@ -256,7 +255,7 @@ describe PicklistsController do
         it "finds prev/current/next physical objects" do
           # for the test we don't need to differentiate on WHAT the physical object is pack in, only that it is packed
           po1.bin = pack_bin
-          po1.save
+          po1.save!
           pack_list
           
           expect(assigns(:previous_physical_object)).to eq po1
@@ -274,9 +273,9 @@ describe PicklistsController do
         end
         it "finds prev/current/nil physical objects" do
           po1.bin = pack_bin
-          po1.save
+          po1.save!
           po2.bin = pack_bin
-          po2.save
+          po2.save!
           pack_list
           expect(assigns(:previous_physical_object)).to eq po2
           expect(assigns(:wrap_previous)).to be_falsey
@@ -297,13 +296,13 @@ describe PicklistsController do
         before(:each) do
           po1.picklist = pack_picklist
           po1.bin = pack_bin
-          po1.save
+          po1.save!
           po2.picklist = pack_picklist
           po2.bin = pack_bin
-          po2.save
+          po2.save!
           po3.picklist = pack_picklist
           po3.bin = pack_bin
-          po3.save
+          po3.save!
           if bin.nil? and box.nil?
             args[:bin_mdpi_barcode] = pack_bin
             args.delete :bin_id
@@ -341,9 +340,9 @@ describe PicklistsController do
     let(:pack_bin) { FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier: "binbar") }
     let(:pack_box) { FactoryGirl.create(:box, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
     let(:pack_list) { patch :pack_list, args }
-    let!(:po1) { FactoryGirl.create(:physical_object, :cdr, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "A" ) }
-    let!(:po2) { FactoryGirl.create(:physical_object, :cdr, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "B" )}
-    let!(:po3) { FactoryGirl.create(:physical_object, :cdr, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "C" ) }
+    let!(:po1) { FactoryGirl.create(:physical_object, :binnable, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "A" ) }
+    let!(:po2) { FactoryGirl.create(:physical_object, :binnable, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "B" )}
+    let!(:po3) { FactoryGirl.create(:physical_object, :binnable, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "C" ) }
     let(:tm) {}
 
     pack_mode = "auto-box"
@@ -463,9 +462,9 @@ describe PicklistsController do
 
       it "marks a picklist complete on last packed item" do
         po1.bin = pack_bin
-        po1.save
+        po1.save!
         po3.bin = pack_bin
-        po3.save
+        po3.save!
         args[:pack_button] = "Pack"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
@@ -510,7 +509,7 @@ describe PicklistsController do
 
       it "doesn't pack into a full bin" do
         pack_bin.current_workflow_status = "Sealed"
-        pack_bin.save
+        pack_bin.save!
         args[:pack_button] = "Pack"
         args[:physical_object] = po2.attributes
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
@@ -520,7 +519,7 @@ describe PicklistsController do
 
       it "unpacks a physical object" do
         po2.bin = pack_bin
-        po2.save
+        po2.save!
         args[:unpack_button] = "Unpack"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
@@ -683,7 +682,7 @@ describe PicklistsController do
       end
       it "doesn't pack into a full bin" do
         pack_bin.current_workflow_status = "Sealed"
-        pack_bin.save
+        pack_bin.save!
         args[:pack_button] = "Pack"
         args[:physical_object] = po2.attributes
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
@@ -692,7 +691,7 @@ describe PicklistsController do
       end
       it "unpacks a physical object" do
         po2.bin = pack_bin
-        po2.save
+        po2.save!
         args[:unpack_button] = "Unpack"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
         pack_list
@@ -763,12 +762,12 @@ describe PicklistsController do
     #   before(:each) do
     #     po1.picklist = pack_picklist
     #     po1.bin = pack_bin
-    #     po1.save
+    #     po1.save!
     #     po2.picklist = pack_picklist
     #     po2.bin = pack_bin
-    #     po2.save
+    #     po2.save!
     #     po3.picklist = pack_picklist
-    #     po3.save
+    #     po3.save!
     #     patch :pack_list, args
     #   end
     #   it "packs last item and completes picklist" do

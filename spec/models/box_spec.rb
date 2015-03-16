@@ -49,12 +49,13 @@ describe Box do
   	  expect(box.bin).to eq(bin)
   	  box.bin = nil
   	  expect(box.bin).to be_nil
-  	  box.save
+  	  box.save!
   	  expect(bin.boxes.where(id: box.id).first).to eq nil
     end
     it "cannot belong to a bin containing physical objects" do
+      physical_object.format = "Open Reel Audio Tape"
       physical_object.bin = bin
-      physical_object.save
+      physical_object.save!
       valid_box.bin = bin
       expect(valid_box).not_to be_valid
     end
