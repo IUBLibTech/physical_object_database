@@ -103,6 +103,16 @@ describe PhysicalObject do
       valid_po.bin = bin
       expect(valid_po).not_to be_valid
     end
+    specify "cannot belong to a bin containing other formats" do
+      FactoryGirl.create :physical_object, :dat, bin: bin
+      valid_po.bin = bin
+      expect(valid_po).not_to be_valid
+    end
+    specify "cannot belong to a box containing other formats" do
+      FactoryGirl.create :physical_object, :dat, box: box
+      valid_po.box = box
+      expect(valid_po).not_to be_valid
+    end
     specify "cannot belong to a bin and box" do
       valid_po.box = box
       valid_po.bin = bin

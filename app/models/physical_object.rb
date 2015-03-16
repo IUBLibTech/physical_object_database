@@ -68,6 +68,7 @@ class PhysicalObject < ActiveRecord::Base
   validates_with PhysicalObjectValidator
   validate :validate_single_container_assignment
   validate :validate_bin_container
+  validate :validate_box_container
 
   accepts_nested_attributes_for :technical_metadatum
   scope :search_by_catalog, lambda {|query| where(["call_number = ?", query, query])}
@@ -335,6 +336,11 @@ class PhysicalObject < ActiveRecord::Base
 
   def validate_bin_container
     errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes.  You may only assign a physical object to a bin containing physical objects." if bin && bin.boxes.any?
+    errors[:base] << "This bin (#{bin.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a bin containing the matching format (#{self.format})." if bin && bin.physical_objects.any? && bin.physical_objects.first.format != self.format
+  end
+
+  def validate_box_container
+    errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a box containing the matching format (#{self.format})." if box && box.physical_objects.any? && box.physical_objects.first.format != self.format
   end
 
   private

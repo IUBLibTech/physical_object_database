@@ -10,7 +10,9 @@ module TechnicalMetadatumModule
     Hash[array.map{ |v| [v.to_s,v.to_s] }]
   end
 
-  TM_FORMATS = hashify [ "CD-R", "DAT", "Open Reel Audio Tape", "LP" ]
+  TM_FORMAT_ARRAY = [ "CD-R", "DAT", "Open Reel Audio Tape", "LP" ]
+
+  TM_FORMATS = hashify(TM_FORMAT_ARRAY)
 
   TM_SUBTYPES = ["LP"]
 
