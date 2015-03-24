@@ -81,12 +81,21 @@ tr.faded {
   height: 100px;
 }
 
+#version_info {
+ position: absolute;
+ top: 0px;
+ left: 0px;
+ z-index: 10;
+ font-family: "Courier New", Courier, monospace;
+ color: white;
+}
+
 #user_info {
   position: absolute;
   top: 0px;
   right: 0px;
   z-index: 10;
-  font-family: 'Tahoma';
+  font-family: "Arial", Helvetica, sans-serif;
   color: white;
 }
 #user_info a:link {
