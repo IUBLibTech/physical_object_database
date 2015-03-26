@@ -177,6 +177,14 @@ describe PicklistSpecificationsController do
         expect(flash[:notice]).to match /no objects selected/i
       end
     end
+    shared_examples "updates workflow status" do
+      it "sets the physical object workflow status to On Pick List" do
+        expect(physical_object.current_workflow_status).not_to eq "On Pick List"
+        query_add
+        physical_object.reload
+        expect(physical_object.current_workflow_status).to eq "On Pick List"
+      end
+    end
     # picklist, but not found - DEV ERROR
     context "adding to an existing picklist" do
       context "NOT selecting a picklist" do
@@ -194,6 +202,7 @@ describe PicklistSpecificationsController do
           physical_object.reload
           expect(physical_object.picklist).to eq picklist
         end
+        it_behaves_like "updates workflow status"
         it "flashes success" do
           query_add
           expect(flash[:notice]).to match /success/
@@ -227,6 +236,7 @@ describe PicklistSpecificationsController do
           physical_object.reload
           expect(physical_object.picklist).not_to be_nil
         end
+	it_behaves_like "updates workflow status"
         it "flashes success" do
           query_add
           expect(flash[:notice]).to match /success/
