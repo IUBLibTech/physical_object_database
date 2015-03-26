@@ -102,8 +102,18 @@ class PicklistSpecificationsController < ApplicationController
     
     if flash[:notice].to_s.blank? and flash[:warning].to_s.blank?
       unless params[:po_ids].nil? or @picklist.nil?
-        PhysicalObject.where(id: params[:po_ids]).update_all(picklist_id: @picklist.id)
-	flash[:notice] = "#{params[:po_ids].count} selected object(s) successfully added to picklist: #{@picklist.name}"
+	results = { success: 0, failure: 0, errors: [] }
+        PhysicalObject.where(id: params[:po_ids]).each do |po|
+	  po.picklist_id = @picklist.id
+	  if po.save
+	    results[:success] += 1
+	  else
+	    results[:failure] += 1
+	    results[:errors] = results[:errors] | po.errors.full_messages
+	  end
+	end
+	flash[:notice] = "#{results[:success]} selected object(s) successfully added to picklist: #{@picklist.name}"
+	flash[:warning] = "#{results[:failure]} selected object(s) were NOT added due to errors: #{results[:errors]}"
       end
     end
     redirect_to(action: 'query', id: params[:id])
