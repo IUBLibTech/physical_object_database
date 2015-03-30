@@ -2,8 +2,7 @@
 # More info at https://github.com/guard/guard#readme
 
 #all_after_pass: false prevents re-running the entire suite after a failing test passes
-#cmd: 'rspec --drb' uses command-line interface to spork server
-guard :rspec, all_after_pass: false, cmd: 'rspec --drb' do 
+guard :rspec, all_after_pass: false, cmd: 'bin/rspec' do
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb')  { "spec" }
@@ -15,6 +14,7 @@ guard :rspec, all_after_pass: false, cmd: 'rspec --drb' do
   watch(%r{^spec/support/(.+)\.rb$})                  { "spec" }
   watch('config/routes.rb')                           { "spec/routing" }
   watch('app/controllers/application_controller.rb')  { "spec/controllers" }
+  watch('spec/rails_helper.rb')                       { "spec" }
 
   # Capybara features specs
   watch(%r{^app/views/(.+)/.*\.(erb|haml|slim)$})     { |m| "spec/features/#{m[1]}_spec.rb" }
@@ -22,15 +22,4 @@ guard :rspec, all_after_pass: false, cmd: 'rspec --drb' do
   # Turnip features and steps
   watch(%r{^spec/acceptance/(.+)\.feature$})
   watch(%r{^spec/acceptance/steps/(.+)_steps\.rb$})   { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'spec/acceptance' }
-end
-
-guard 'spork', :cucumber_env => { 'RAILS_ENV' => 'test' }, :rspec_env => { 'RAILS_ENV' => 'test' } do
-  watch('config/application.rb')
-  watch('config/environment.rb')
-  watch('config/environments/test.rb')
-  watch(%r{^config/initializers/.+\.rb$})
-  watch('Gemfile.lock')
-  watch('spec/spec_helper.rb') { :rspec }
-  #watch('test/test_helper.rb') { :test_unit }
-  watch(%r{features/support/}) { :cucumber }
 end
