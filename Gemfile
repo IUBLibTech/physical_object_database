@@ -1,7 +1,4 @@
 source 'https://rubygems.org'
-#SPECIAL CASES
-#spork granch to fix uninitialized constant RSpec::Core::CommandLine (NameError)
-gem "spork", git: 'https://github.com/codecarson/spork.git', branch: 'rspec3_runner'
 
 #STANDARD CASES
 #act_as_relation handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
@@ -76,17 +73,14 @@ group :development, :test do
   gem 'childprocess'
   gem 'guard-livereload'
   gem 'guard-rspec'
-  gem 'guard-spork'
   #allows capybara access to session variable
   gem 'rack_session_access'
   gem 'rspec-rails'
-  gem 'spork-rails', '~> 4.0.0'
   gem 'debugger'
 end
 
 group :development do
-  gem 'debugger'
-  gem 'spring'
+  gem 'spring-commands-rspec'
 end
 
 group :test do
