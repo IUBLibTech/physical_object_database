@@ -244,7 +244,7 @@ class PicklistsController < ApplicationController
 						    surrounding_physical_objects
 						  end
 						else
-						  flash[:warning] = "Unable to save physical object."
+						  flash[:warning] = "Unable to save physical object: #{@physical_object.errors.full_messages}"
 						  if @bin && @box
 						    @bin = nil
 						    @box = nil
@@ -335,6 +335,7 @@ class PicklistsController < ApplicationController
 		def updated?
 			updated = @physical_object.update_attributes(physical_object_params)
       if updated
+        @tm = @physical_object.technical_metadatum.as_technical_metadatum
         update = @tm.update_attributes(tm_params)
       end
       return updated
