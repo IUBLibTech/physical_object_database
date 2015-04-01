@@ -1,6 +1,6 @@
 class BinsController < ApplicationController
   before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :seal, :unseal, :show_boxes, :assign_boxes, :workflow_history]
-  before_action :set_assigned_boxes, only: [:show]
+  before_action :set_assigned_boxes, only: [:show, :assign_boxes]
   before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
 	def index
@@ -151,16 +151,23 @@ class BinsController < ApplicationController
 
 	def show_boxes
 		if @bin.packed_status?
-		  flash[:notice] = Bin.packed_status_message
+		  flash[:warning] = Bin.packed_status_message
 		  redirect_to action: :show
+                elsif @bin.physical_objects.any?
+                  flash[:warning] = Bin.invalid_box_assignment_message
+                  redirect_to action: :show
 		end
 	end
 
 	def assign_boxes
                 if @bin.packed_status?
-                  flash[:notice] = Bin.packed_status_message
+                  flash[:warning] = Bin.packed_status_message
                   redirect_to action: :show
 		  return
+                elsif @bin.physical_objects.any?
+                  flash[:warning] = Bin.invalid_box_assignment_message
+                  redirect_to action: :show
+                  return
                 end
 		unless params[:box_ids].nil?
 			params[:box_ids].each do |b_id|

@@ -31,7 +31,7 @@ class Box < ActiveRecord::Base
 	end
 
 	def validate_bin_container
-	  errors[:base] << "This bin (#{bin.mdpi_barcode}) contains physical objects.  You may only assign a box to a bin containing boxes." if bin && bin.physical_objects.any?
+	  errors[:base] << Bin.invalid_box_assignment_message if bin && bin.physical_objects.any?
 	end
 
 end

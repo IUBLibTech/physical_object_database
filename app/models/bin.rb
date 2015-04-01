@@ -57,6 +57,10 @@ class Bin < ActiveRecord::Base
           "This bin has been marked as sealed. To enable packing physical objects or assigning boxes, a bin must be unbatched and unsealed."
         end
 
+        def Bin.invalid_box_assignment_message
+          "This bin contains physical objects.  You may only assign a box to a bin containing boxes."
+        end
+
         def physical_objects_count
           physical_objects.size + boxed_physical_objects.size
         end
