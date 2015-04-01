@@ -10,10 +10,10 @@ describe BinsController do
   let(:bin) { FactoryGirl.create(:bin) }
   let(:sealed) {FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier:"UNIQUE!", current_workflow_status: "Sealed")} 
   let(:box) { FactoryGirl.create(:box, bin: bin) }
-  let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: box) }
-  let(:other_boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: unassigned_box) }
+  let(:boxed_object) { FactoryGirl.create(:physical_object, :boxable, box: box) }
+  let(:other_boxed_object) { FactoryGirl.create(:physical_object, :boxable, box: unassigned_box) }
   let(:binned_object) { FactoryGirl.create(:physical_object, :binnable, bin: bin) }
-  let(:unassigned_object) { FactoryGirl.create(:physical_object, :cdr) }
+  let(:unassigned_object) { FactoryGirl.create(:physical_object, :boxable) }
   let(:unassigned_box) { FactoryGirl.create(:box) }
   let(:picklist) { FactoryGirl.create(:picklist) }
   let!(:complete) { FactoryGirl.create(:picklist, name: 'complete', complete: true)}
@@ -241,10 +241,22 @@ describe BinsController do
         bin.save
         get :show_boxes, id: bin.id
       end
-      it "flashes packed_status_message" do
-        expect(flash[:notice]).to eq Bin.packed_status_message
+      it "flashes warning of packed_status_message" do
+        expect(flash[:warning]).to eq Bin.packed_status_message
       end
-      it "redirect to :show" do
+      it "redirects to :show" do
+        expect(response).to redirect_to action: :show
+      end
+    end
+    context "for a bin with physical objects" do
+      before(:each) do
+        binned_object
+        get :show_boxes, id: bin.id
+      end
+      it "flashes a warning of invalid_box_assignment_message" do
+        expect(flash[:warning]).to eq Bin.invalid_box_assignment_message
+      end
+      it "redirects to :show" do
         expect(response).to redirect_to action: :show
       end
     end
@@ -279,8 +291,20 @@ describe BinsController do
         bin.save
         patch :assign_boxes, id: bin.id, box_ids: [unassigned_box.id]
       end
-      it "flashes packed_status_message" do
-        expect(flash[:notice]).to eq Bin.packed_status_message
+      it "flashes warning of packed_status_message" do
+        expect(flash[:warning]).to eq Bin.packed_status_message
+      end
+      it "redirects to :show" do
+        expect(response).to redirect_to action: :show
+      end
+    end
+    context "for a bin with physical objects" do
+      before(:each) do
+        binned_object
+        patch :assign_boxes, id: bin.id, box_ids: [unassigned_box.id]
+      end
+      it "flashes warning of invalid_box_assignment_message" do
+        expect(flash[:warning]).to eq Bin.invalid_box_assignment_message
       end
       it "redirects to :show" do
         expect(response).to redirect_to action: :show
