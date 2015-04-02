@@ -18,6 +18,12 @@ describe User do
     end
   end
 
+  describe "should be seeded with data" do
+    specify "17 values" do
+      expect(User.all.size).to eq 17
+    end
+  end
+
   describe "has required fields:" do
     specify "name" do
       valid_user.name = ""

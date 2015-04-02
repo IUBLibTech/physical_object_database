@@ -1,0 +1,24 @@
+<%= form_for(@user) do |f| %>
+  <table>
+    <tr>
+      <th>Name</th>
+      <td>
+        <% if @edit_mode %>
+	  <%= f.text_field(:name) %>
+	<% else %>
+	  <%= @user.name %>
+	<% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Username</th>
+      <td>
+        <% if @edit_mode %>
+	  <%= f.text_field(:username) %>
+	<% else %>
+	  <%= @user.username %>
+	<% end %>
+      </td>
+    </tr>
+  </table>
+<% end %>

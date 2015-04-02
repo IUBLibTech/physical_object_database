@@ -14,15 +14,6 @@ describe BoxesController do
   let(:valid_box) { FactoryGirl.build(:box) }
   let(:invalid_box) { FactoryGirl.build(:invalid_box) }
 
-  describe "FactoryGirl creation" do
-    specify "makes a valid box" do
-      expect(valid_box).to be_valid
-    end
-    specify "makes an invalid bin" do
-      expect(invalid_box).to be_invalid
-    end
-  end
-
   describe "GET index" do
     context "specifying a bin" do
       before(:each) do
