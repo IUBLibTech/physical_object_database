@@ -78,6 +78,12 @@
         </td>
       </tr>
       <tr>
+        <th>Format</th>
+        <td>
+          <%= f.select(:format, PhysicalObject.formats, {}, disabled: !@edit_mode, :onChange => "tm_div(this.value, 'PhysicalObject', #{@physical_object.id.nil? ? 0 : @physical_object.id}, #{@edit_mode})")  %>
+        </td>
+      </tr>
+      <tr>
         <th>Has ephemera</th>
         <td>
           <% if @edit_mode %>
@@ -204,12 +210,6 @@
             <th>OCLC number</th>
             <td>
               <%= f.text_field(:oclc_number, readonly: !@edit_mode) %>
-            </td>
-          </tr>
-          <tr>
-            <th>Format</th>
-            <td>
-              <%= f.select(:format, PhysicalObject.formats, {}, disabled: !@edit_mode, :onChange => "tm_div(this.value, 'PhysicalObject', #{@physical_object.id.nil? ? 0 : @physical_object.id}, #{@edit_mode})")  %>    
             </td>
           </tr>
           <tr>
