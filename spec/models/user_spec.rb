@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe User do
   # users are seed data and must be manually deleted
   let(:user) { FactoryGirl.create :user }
@@ -19,8 +17,8 @@ describe User do
   end
 
   describe "should be seeded with data" do
-    specify "17 values" do
-      expect(User.all.size).to eq 17
+    specify "18 values" do
+      expect(User.all.size).to eq 18
     end
   end
 
