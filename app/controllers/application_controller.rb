@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
       :unit_id, :home_location, :call_number, :iucat_barcode, :format, 
       :group_key_id, :group_key,
       :group_position, :collection_identifier, :mdpi_barcode, :format_duration,
-      :has_ephemera, :author, :catalog_key, :collection_name, :generation, :oclc_number,
+      :has_ephemera, :ephemera_returned, :author, :catalog_key, :collection_name, :generation, :oclc_number,
       :other_copies, :year, :bin, :bin_id, :unit, :unit_id, :current_workflow_status, :picklist_id,
       :spreadsheet, :spreadsheet_id, :box, :box_id,
       condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :active, :user, :_destroy],

@@ -84,12 +84,22 @@
         </td>
       </tr>
       <tr>
-        <th>Has ephemera</th>
+        <th>Has ephemera</th> 
         <td>
           <% if @edit_mode %>
             <%= f.check_box(:has_ephemera) %>
           <% else %>
-            <input type="text" name="has_ephemera" value=<%= @physical_object.has_ephemera ? "true" : "false" %> readonly />
+            <%= @physical_object.has_ephemera.to_s.titleize %>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th>Ephemera returned</th>
+        <td>
+          <% if @edit_mode %>
+            <%= f.check_box(:ephemera_returned) %>
+          <% else %>
+            <%= @physical_object.ephemera_returned.to_s.titleize %>
           <% end %>
         </td>
       </tr>
