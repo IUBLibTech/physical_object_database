@@ -1,15 +1,19 @@
-require 'rails_helper'
-
 describe Box do
 
   let(:bin) { FactoryGirl.create :bin}
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_box) { FactoryGirl.build :box }
+  let(:invalid_box) { FactoryGirl.build :box, :invalid }
   let(:po) { FactoryGirl.create :physical_object, :cdr, box: box}
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
 
-  it "gets a valid object from FactoryGirl" do
-    expect(valid_box).to be_valid
+  describe "FactoryGirl" do
+    it "gets a valid object by default" do
+      expect(valid_box).to be_valid
+    end
+    it "provides an invalid object with :invalid trait" do
+      expect(invalid_box).to be_invalid
+    end
   end
 
   describe "has required attributes" do

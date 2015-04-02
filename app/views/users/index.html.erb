@@ -1,0 +1,9 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to "Create User", new_user_path %>
+  </div>
+<% end %>
+<div>
+  <h2>Users</h2>
+  <%= render 'users_table' %> 
+</div>
