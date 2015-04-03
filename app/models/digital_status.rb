@@ -4,6 +4,8 @@ class DigitalStatus < ActiveRecord::Base
 	serialize :options, Hash
 	belongs_to :physical_object
 
+	DIGITAL_STATUS_START = "transferred"
+	
 	# This scope returns an array of arrays containing all of the current digital statuses
 	# and their respective counts: [['failed', 3], ['queued', 10], etc]
 	scope :unique_statuses, -> {
@@ -22,7 +24,7 @@ class DigitalStatus < ActiveRecord::Base
 		)
 	}
 
-	# this scope takes a status name ('start', 'transfered', 'accepted', failed', etc) and returns all
+	# this scope takes a status name ('transferred', 'accepted', failed', etc) and returns all
 	# physical objects currently in that state
 	scope :current_status, lambda {|i| 
     PhysicalObject.find_by_sql(
@@ -191,5 +193,12 @@ class DigitalStatus < ActiveRecord::Base
 
 	def decided?
 		!decided.blank?
+	end
+
+	# need to nil out the options hash if there are no options.
+	def before_save(record)
+		if options.size == 0
+			options = nil
+		end
 	end
 end

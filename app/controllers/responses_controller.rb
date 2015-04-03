@@ -9,7 +9,7 @@ class ResponsesController < ActionController::Base
   before_action :authenticate
 
   before_action :set_physical_object, only: [:metadata, :pull_state, :push_status]
-  before_action :set_request_xml, only: [:notify, :push_status]
+  before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
   def metadata
@@ -44,6 +44,12 @@ class ResponsesController < ActionController::Base
     if @physical_object
       ds = DigitalStatus.new.from_xml(@physical_object.mdpi_barcode, @request_xml)
       if ds.valid? && ds.save
+        # the digital files for a physical object come in from memnon and Brian's QC will send this message
+        # each time they come in from Memnon (they may come in more than once if we reject their files because they
+        # faile our QC). Set this timestamp each time this message is sent in
+        if ds.state == DigitStatus::DIGITAL_STATUS_START
+          @physical_object.update_attributes(digital_start: ds.updated_at)
+        end
         @status = 200
         @success = true
       else
@@ -78,12 +84,23 @@ class ResponsesController < ActionController::Base
   end
   def transfer_request
   end
+  
   def transfers_index
+    @pos = PhysicalObject.where("staging_requested = true AND staged = false")
+    @success = true
+    render template: 'responses/transfers_index.xml.builder', layout: false, status: 200
   end
+
   def transfer_result
+    po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
+    unless po.nil?
+      po.update_attributes(staged: true)
+      @success = true
+    else
+      @message = "Could not find physical object with mdpi_barcode: #{params[:mdpi_barcode]}"
+    end
+    render template: "responses/notify.xml.builder", layout: false, status: 200
   end
-
-
 
   private
     def set_physical_object

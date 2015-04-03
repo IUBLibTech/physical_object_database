@@ -43,6 +43,10 @@ table {
   border-collapse:collapse;
 }
 
+table.full_width {
+  width:100%;
+}
+
 table.blocked>tbody>tr>td>ul {
   margin: 0;
   padding: 0 5px;

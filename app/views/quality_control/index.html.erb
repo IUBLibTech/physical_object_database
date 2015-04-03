@@ -1,3 +1,4 @@
+<%= render 'context_menu' %>
 <h2>Quality Control</h2>
 <div class="left">
 	<div>
@@ -23,6 +24,6 @@
 </div>
 <% if @physical_objects %>
 	<div class="left">
-		<%= render 'physical_objects_list' %>	
+		<%= render 'physical_objects_list', physical_objects: @physical_objects, choice_header: "Choice" %>	
 	</div>
 <% end %>
