@@ -1,0 +1,11 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Statuses", controller: 'quality_control', action: 'index') %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Staging", controller: 'quality_control', action: 'staging_index') %>
+  </div>
+  <div class="contextMenuItem">
+  	<%= link_to("responses/transfers xml", transfers_index_response_path ) %>
+  </div>
+<% end %>
