@@ -47,7 +47,7 @@ class ResponsesController < ActionController::Base
         # the digital files for a physical object come in from memnon and Brian's QC will send this message
         # each time they come in from Memnon (they may come in more than once if we reject their files because they
         # faile our QC). Set this timestamp each time this message is sent in
-        if ds.state == DigitStatus::DIGITAL_STATUS_START
+        if ds.state == DigitalStatus::DIGITAL_STATUS_START
           @physical_object.update_attributes(digital_start: ds.updated_at)
         end
         @status = 200
