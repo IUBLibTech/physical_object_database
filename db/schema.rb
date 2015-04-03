@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150309133808) do
+ActiveRecord::Schema.define(version: 20150331170116) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -238,9 +238,9 @@ ActiveRecord::Schema.define(version: 20150309133808) do
 
   create_table "physical_objects", force: true do |t|
     t.integer  "bin_id"
-    t.integer  "box_id",                limit: 8
-    t.integer  "picklist_id",           limit: 8
-    t.integer  "container_id",          limit: 8
+    t.integer  "box_id",                    limit: 8
+    t.integer  "picklist_id",               limit: 8
+    t.integer  "container_id",              limit: 8
     t.text     "title"
     t.string   "title_control_number"
     t.string   "home_location"
@@ -248,7 +248,7 @@ ActiveRecord::Schema.define(version: 20150309133808) do
     t.string   "iucat_barcode"
     t.string   "format"
     t.string   "collection_identifier"
-    t.integer  "mdpi_barcode",          limit: 8
+    t.integer  "mdpi_barcode",              limit: 8
     t.string   "format_duration"
     t.boolean  "has_ephemera"
     t.datetime "created_at"
@@ -267,6 +267,10 @@ ActiveRecord::Schema.define(version: 20150309133808) do
     t.integer  "spreadsheet_id"
     t.string   "workflow_status"
     t.integer  "workflow_index"
+    t.boolean  "staging_requested",                   default: false
+    t.boolean  "staged",                              default: false
+    t.datetime "digital_start"
+    t.datetime "staging_request_timestamp"
   end
 
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree

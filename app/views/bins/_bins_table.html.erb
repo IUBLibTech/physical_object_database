@@ -1,8 +1,7 @@
 <% string_limit = 12 %>
 <table>
   <tr class="header">
-    <th>Barcode</th>
-    <th>Identifier</th>
+    <th>Barcode / Identifier</th>
     <th>Desc.</th>
     <% if @batch.nil? %>
     <th>Batch</th>
@@ -14,9 +13,8 @@
   <% count = 1 %>
   <% @bins.each do |bin|%>
     <tr>
-      <td><%= bin.mdpi_barcode %></td>
-      <td title="<%= bin.identifier.length <= string_limit ? "" : bin.identifier %>"><%= bin.identifier.length <= string_limit ? bin.identifier : bin.identifier[0,string_limit - 3] + '...'%></td>
-      <td title="<%= bin.description %>"><%= bin.description.to_s.blank? ? "" : bin.description[0,1] + "..." %></td>
+      <td><%= bin.mdpi_barcode %><br/><%= bin.identifier %></td>
+      <td><%= bin.description %></td>
       <% if @batch.nil? %>
       <% batch_string = bin.batch.nil? ? "" : bin.batch.identifier %>
       <td title="<%= batch_string.length <= string_limit ? "" : batch_string %>">

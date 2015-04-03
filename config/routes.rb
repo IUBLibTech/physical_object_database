@@ -90,9 +90,11 @@ Pod::Application.routes.draw do
   get 'responses/transfers', to: "responses#transfers_index", as: "transfers_index_response"
   post 'responses/transfers/:mdpi_barcode', to: "responses#transfer_result", as: "transfer_result_response"
 
-  get 'quality_control/:status', to: "quality_control#index", as: "quality_control_status"
+  get 'quality_control/statuses/:status', to: "quality_control#index", as: "quality_control_status"
   get "quality_control/", to: "quality_control#index", as: "quality_control_index"
   patch "quality_control/decide/:id", to: "quality_control#decide", as: "quality_control_decide"
+  get 'quality_control/staging', to: "quality_control#staging_index", as: 'quality_control_staging_index_path'
+  post 'quality_control/staging', to: 'quality_control#staging_post', as: 'quality_control_staging_post_path'
 
   resources :returns, only: [:index] do
     get :return_bins, on: :member

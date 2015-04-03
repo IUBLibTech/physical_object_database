@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <title>
-    POD: <%= controller.controller_name.titleize %>: <%= controller.action_name.titleize %>
+    POD: <%= controller.controller_name.to_s.titleize %>: <%= controller.action_name.to_s.titleize %>
   </title>
   <%= stylesheet_link_tag "application", media: "all" %>
   <%# TODO: review javascript_include_tag approach %>

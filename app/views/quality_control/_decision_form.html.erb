@@ -1,0 +1,5 @@
+<% debugger %>
+<%= form_for(p.current_digital_status, url: quality_control_decide_path(p.current_digital_status)) do |f|%>
+	<%= select_tag(:decided, options_for_select(p.current_digital_status.select_options)) %>
+	<%= f.submit("Decide") %>
+<% end %>

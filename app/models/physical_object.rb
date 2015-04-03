@@ -37,6 +37,9 @@ class PhysicalObject < ActiveRecord::Base
   # default per_page value can be overriden in a request
   self.per_page = 50
 
+  # the number of minutes before a staging request can no longer be undone
+  STAGING_UNDO = 60
+
   scope :packing_sort, -> { order(:call_number, :group_key_id, :group_position, :id) }
   scope :packable_on_picklist, lambda { |picklist_id, object_id| where("(picklist_id = ? and bin_id is null and box_id is null) or id = ?", picklist_id, object_id) }
 
@@ -84,10 +87,56 @@ class PhysicalObject < ActiveRecord::Base
     po.physical_object_query(false)
   }
 
+  scope :unstaged_by_date, lambda {|date|
+    date_sql = date.nil? ? "" : "AND created_at > '#{date}'"
+    PhysicalObject.find_by_sql(
+      "SELECT physical_objects.*
+      FROM physical_objects
+      WHERE physical_objects.staged = false AND staging_requested = false AND physical_objects.id in 
+      (
+        SELECT physical_object_id
+        FROM (
+          SELECT max(id) as ds_id
+          FROM digital_statuses
+          WHERE state = '#{DigitalStatus::DIGITAL_STATUS_START}' #{date_sql}
+          GROUP BY physical_object_id
+        ) as ns_ids INNER JOIN digital_statuses as dses
+        WHERE ns_ids.ds_id = dses.id
+      )
+      ORDER BY digital_start"
+    )
+  }
+
+  # selects all physical objects whose staging_requested_timestamp is less than *hours_old*
+  scope :staging_requested, lambda{|hours_old|
+    PhysicalObject.find_by_sql(
+      "SELECT *
+      FROM physical_objects
+      WHERE staging_requested = true AND staged = false "
+    )
+  }
+
 
   attr_accessor :generation_values
   def generation_values
     GENERATION_VALUES
+  end
+
+  def init_start_digital_status
+    if ApplicationHelper.real_barcode?(self.mdpi_barcode)
+      start = DigitalStatus.new(
+        physical_object_id: self.id, 
+        physical_object_mdpi_barcode: self.mdpi_barcode, 
+        state: DigitalStatus::DIGITAL_STATUS_START, 
+        message: "I'm starting!",
+        options: nil,
+        attention: false)
+      self.digital_start = DateTime.now
+      self.save
+      start.save
+    else
+      raise "Cannot create a start digital status for PhysicalObject without a barcode"
+    end
   end
 
   def group_identifier
@@ -170,6 +219,14 @@ class PhysicalObject < ActiveRecord::Base
           csv << physical_object.printable_row
         end
       end
+    end
+  end
+
+  def digital_start_readable
+    unless digital_start.nil?
+      self.digital_start.strftime("%l:%M%P %B %-d, %Y")
+    else
+      "Digitization Has Not Begun"
     end
   end
 
