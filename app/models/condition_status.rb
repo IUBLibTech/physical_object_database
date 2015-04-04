@@ -10,6 +10,8 @@ class ConditionStatus < ActiveRecord::Base
 
   after_initialize :default_values
 
+  scope :blocking, lambda { where(active: true, condition_status_template_id: ConditionStatusTemplate.blocking_ids) }
+
   def name
     return "" if self.condition_status_template.nil?
     return self.condition_status_template.name

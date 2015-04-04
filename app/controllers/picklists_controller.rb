@@ -97,15 +97,14 @@ class PicklistsController < ApplicationController
 				@physical_object = PhysicalObject.where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
 				if @physical_object.nil?
 				  flash[:warning] = "No matching items found.  Loading first packable item on picklist (if applicable), instead."
-				  @physical_object = PhysicalObject.packable_on_picklist(@picklist.id, nil).packing_sort.first
+				  @physical_object = @picklist.physical_objects.unpacked.packing_sort.first
 				else
 				  flash[:notice] = "First matching item loaded."
 				end
 			elsif params[:physical_object]
 				@physical_object = PhysicalObject.find(params[:physical_object][:id])
 			else
-				#@physical_object = PhysicalObject.where("picklist_id = ? and box_id is null and bin_id is null", @picklist.id).packing_sort.first
-				@physical_object = PhysicalObject.packable_on_picklist(@picklist.id, nil).packing_sort.first
+				@physical_object = @picklist.physical_objects.unpacked.packing_sort.first
 			end	
 			if @physical_object
 				@tm = @physical_object.technical_metadatum.as_technical_metadatum
@@ -238,7 +237,7 @@ class PicklistsController < ApplicationController
 						end
 						if @physical_object.save
 						  #FIXME: make this more efficient by combining with surrounding_physical_objects?
-						  @physical_object = PhysicalObject.packable_on_picklist(@picklist.id, nil).where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", @physical_object.call_number, @physical_object.call_number, @physical_object.group_key_id, @physical_object.group_key_id, @physical_object.group_position, @physical_object.group_position, @physical_object.id).packing_sort.first
+						  @physical_object = @picklist.physical_objects.unpacked.where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", @physical_object.call_number, @physical_object.call_number, @physical_object.group_key_id, @physical_object.group_key_id, @physical_object.group_position, @physical_object.group_position, @physical_object.id).packing_sort.first
 						  if @physical_object
 						    @tm = @physical_object.technical_metadatum.as_technical_metadatum
 						    surrounding_physical_objects
@@ -277,20 +276,16 @@ class PicklistsController < ApplicationController
 	 	    params[:id] = params[:id].sub(/picklist_/, '')
 		  end
 		  @picklist = Picklist.eager_load(:physical_objects).where("picklists.id = ?", params[:id]).first
-		  @physical_objects = PhysicalObject.includes(:group_key).where("picklist_id = ?", @picklist.id).references(:group_key).order("call_number", "group_keys.id", "group_position", "physical_objects.id")
+		  @physical_objects = PhysicalObject.includes(:group_key).where("picklist_id = ?", @picklist.id).references(:group_key).packing_sort
 		end
 
 		def set_counts
-                  @packed_count = PhysicalObject.where("picklist_id = ? and (bin_id is not null or box_id is not null)", @picklist.id).count
-                  @total_count = PhysicalObject.where("picklist_id = ?", @picklist.id).count
-                  @blocked = PhysicalObject.find_by_sql("
-                    select physical_objects.*
-                    from physical_objects, condition_statuses, condition_status_templates
-                    where condition_statuses.physical_object_id = physical_objects.id
-                      and condition_statuses.condition_status_template_id = condition_status_templates.id
-                      and condition_statuses.active = true
-                      and condition_status_templates.blocks_packing = true
-                      and physical_objects.picklist_id = #{@picklist.id}")
+                  @total_count = @physical_objects.size
+                  @packed_count = @physical_objects.packed.size
+                  @blocked = @physical_objects.unpacked.blocked
+                  @blocked_count = @blocked.size
+                  @unpacked_count = @total_count - @packed_count
+                  @packable_count = @unpacked_count - @blocked_count
 		end
 
 		def picklist_params
@@ -311,7 +306,7 @@ class PicklistsController < ApplicationController
 		def surrounding_physical_objects
 			unless @physical_object.nil?
 				# find immediate neighbors
-				all_candidates = PhysicalObject.where(picklist_id: @picklist.id).packing_sort
+				all_candidates = @picklist.physical_objects.packing_sort
 				if all_candidates.any?
 				  index = all_candidates.find_index {|p| p.id == @physical_object.id}
 				  @previous_physical_object = all_candidates[index - 1]
@@ -321,14 +316,12 @@ class PicklistsController < ApplicationController
 				end
 
 				# find surrounding packable neighbors
-                                packable_candidates = PhysicalObject.packable_on_picklist(@picklist.id, @physical_object.id).packing_sort
-				if packable_candidates.any?
-                                  index = packable_candidates.find_index {|p| p.id == @physical_object.id}
-                                  @previous_packable_physical_object = packable_candidates[index - 1]
-				  @wrap_previous_packable = ((index - 1 ) < 0)
-                                  @next_packable_physical_object = packable_candidates[(index + 1) < packable_candidates.size ? index + 1 : 0]
-				  @wrap_next_packable = ((index + 1) >= packable_candidates.size)
-				end
+                                packable_candidates = PhysicalObject.unpacked_on_picklist(@picklist.id, @physical_object.id).packing_sort
+                                index = packable_candidates.find_index {|p| p.id == @physical_object.id}
+                                @previous_packable_physical_object = packable_candidates[index - 1]
+				@wrap_previous_packable = ((index - 1 ) < 0)
+                                @next_packable_physical_object = packable_candidates[(index + 1) < packable_candidates.size ? index + 1 : 0]
+				@wrap_next_packable = ((index + 1) >= packable_candidates.size)
 			end
 		end
 

@@ -3,12 +3,15 @@
 FactoryGirl.define do
 
   factory :condition_status, class: ConditionStatus do
+    transient do
+      blocks_packing false
+    end
     # trait filters selection of template to appropriate object type
     trait :bin do
-      condition_status_template_id { ConditionStatusTemplate.where(object_type: "Bin")[rand(ConditionStatusTemplate.where(object_type: "Bin").size)].id }
+      condition_status_template_id { ConditionStatusTemplate.where(object_type: "Bin", blocks_packing: blocks_packing)[rand(ConditionStatusTemplate.where(object_type: "Bin", blocks_packing: blocks_packing).size)].id }
     end
     trait :physical_object do
-      condition_status_template_id { ConditionStatusTemplate.where(object_type: "Physical Object")[rand(ConditionStatusTemplate.where(object_type: "Physical Object").size)].id }
+      condition_status_template_id { ConditionStatusTemplate.where(object_type: "Physical Object", blocks_packing: blocks_packing)[rand(ConditionStatusTemplate.where(object_type: "Physical Object", blocks_packing: blocks_packing).size)].id }
     end
 
     notes "Factory Girl condition status"

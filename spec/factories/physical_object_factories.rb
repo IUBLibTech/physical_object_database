@@ -34,7 +34,7 @@ FactoryGirl.define do
       open_reel
     end
     trait :binable do
-      open_reel
+      binnable
     end
 
     generation ""

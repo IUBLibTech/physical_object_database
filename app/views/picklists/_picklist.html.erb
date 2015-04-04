@@ -26,7 +26,22 @@
 			<tr>
 				<th>Complete</th>
 				<td>
-					<%= f.check_box :complete, disabled: !@edit_mode %>
+					<%= f.check_box :complete, disabled: !@edit_mode || (@packable_count.to_i > 0 && !@picklist.complete) %>
+					<% if @edit_mode %>
+					  <% if @packable_count.to_i > 0 %>
+					    <b class="notice">
+					      You may not mark this<br/>
+					      picklist "Complete" while<br/>
+					      there are outstanding<br/>
+					      packable items (<%= @packable_count %>)</b>
+					  <% elsif @blocked_count.to_i > 0 %>
+					    <b class="warning">
+					      Marking this picklist<br/>
+					      "Complete" will remove<br/>
+					      all blocked objects (<%= @blocked_count %>)
+					    </b>
+					  <% end %>
+					<% end %>
 				</td>
 			</tr>
 		</table>
@@ -45,7 +60,33 @@
 <% if @picklist.persisted? %>
 <div class="left">
 	<h2><%= @packed_count %>/<%= @total_count %> Physical Objects are packed.</h2>
-	<% if @blocked.size > 0 %>
+	<div>
+	  <table style="text-align: center;">
+	    <tr>
+	      <th colspan="2">Packed</th>
+	      <th>Packable</th>
+	      <th>Blocked</th>
+	    </tr>
+	    <tr>
+	      <td colspan="2" rowspan="3"><%= @packed_count %></td>
+	      <td><%= @packable_count %></td>
+	      <td><%= @blocked_count %></td>
+	    </tr>
+	    <tr>
+	      <th colspan="2">Unpacked</th>
+	    </tr>
+	    <tr>
+	      <td colspan="2"><%= @unpacked_count %></td>
+	    </tr>
+	    <tr>
+	      <th colspan="4">TOTAL</th>
+	    </tr>
+	    <tr>
+	      <td colspan="4"><%= @total_count %></td>
+	    </tr>
+	  </table>
+	</div>
+	<% if @blocked_count > 0 %>
 	<h4>Blocked Physical Objects</h4>
 	<table class="blocked">
 		<tr>
@@ -59,7 +100,7 @@
 				<td><%= link_to p.title, (physical_object_path(p)) %></td>
 				<td>
 					<ul>
-					<% p.active_blockers.each do |cs| %>
+					<% p.condition_statuses.blocking.each do |cs| %>
 						<li><%= cs.name %></li>
 					<% end %>
 					</ul>
