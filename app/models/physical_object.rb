@@ -37,9 +37,10 @@ class PhysicalObject < ActiveRecord::Base
   # default per_page value can be overriden in a request
   self.per_page = 50
 
-  scope :packing_sort, -> { order(:call_number, :group_key_id, :group_position, :id) }
-  scope :unpacked, lambda { where(bin_id: [nil, 0], box_id: [nil, 0]) }
-  scope :unpacked_on_picklist, lambda { |picklist_id, object_id| where("(picklist_id = ? and bin_id in (null, 0) and box_id in (null, 0)) or id = ?", picklist_id, object_id) }
+  scope :packing_sort, lambda { order(:call_number, :group_key_id, :group_position, :id) }
+  scope :following_for_packing, lambda { |po| where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", po.call_number, po.call_number, po.group_key_id, po.group_key_id, po.group_position, po.group_position, po.id) }
+  scope :unpacked, lambda { where(bin_id: nil, box_id: nil) }
+  scope :unpacked_or_id, lambda { |object_id| where("(bin_id is null and box_id is null) or id = ?", object_id) }
   scope :packed, lambda { where("physical_objects.bin_id > 0 OR physical_objects.box_id > 0") }
   scope :blocked, lambda { joins(:condition_statuses).where("condition_statuses.active is true and condition_statuses.condition_status_template_id in (?)", ConditionStatusTemplate.blocking_ids).includes(:condition_statuses) }
 

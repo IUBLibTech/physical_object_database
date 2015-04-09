@@ -237,7 +237,18 @@ class PicklistsController < ApplicationController
 						end
 						if @physical_object.save
 						  #FIXME: make this more efficient by combining with surrounding_physical_objects?
-						  @physical_object = @picklist.physical_objects.unpacked.where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", @physical_object.call_number, @physical_object.call_number, @physical_object.group_key_id, @physical_object.group_key_id, @physical_object.group_position, @physical_object.group_position, @physical_object.id).packing_sort.first
+						  #FIXME: what happens when the last object in the list is packed? 
+						  #FIXME: answer: a bug!  claims to have an empty list
+
+						  #@physical_object = @picklist.physical_objects.unpacked.following_for_packing(@physical_object).packing_sort.first
+						  #FIXME: kludgey workaround for last object but; better fixed by not setting next/previous packables, in first place, if recursive
+						  original_object = @physical_object
+						  surrounding_physical_objects
+						  if @next_physical_object
+						    @physical_object = @next_physical_object
+						    @physical_object = nil if (@next_packable_physical_object == original_object && @previous_packable_physical_object == original_object)
+						  end
+
 						  if @physical_object
 						    @tm = @physical_object.technical_metadatum.as_technical_metadatum
 						    surrounding_physical_objects
@@ -295,7 +306,8 @@ class PicklistsController < ApplicationController
 		def set_container(physical_object, box, bin)
 			if (box or bin)
 				PhysicalObject.transaction do
-					physical_object.update_attributes(bin_id: (bin.nil? ? 0 : bin.id), box_id: (box.nil? ? 0 : box.id))
+				        #FIXME: WHOA THIS WAS SETTING _ID VALUES TO 0 INSTEAD OF NIL, AND THAT'S A PROBLEM
+					physical_object.update_attributes(bin_id: (bin.nil? ? nil : bin.id), box_id: (box.nil? ? nil : box.id))
 					# workflow status automatically updated
 				end
 			else
@@ -316,12 +328,14 @@ class PicklistsController < ApplicationController
 				end
 
 				# find surrounding packable neighbors
-                                packable_candidates = PhysicalObject.unpacked_on_picklist(@picklist.id, @physical_object.id).packing_sort
-                                index = packable_candidates.find_index {|p| p.id == @physical_object.id}
-                                @previous_packable_physical_object = packable_candidates[index - 1]
-				@wrap_previous_packable = ((index - 1 ) < 0)
-                                @next_packable_physical_object = packable_candidates[(index + 1) < packable_candidates.size ? index + 1 : 0]
-				@wrap_next_packable = ((index + 1) >= packable_candidates.size)
+                                packable_candidates = @picklist.physical_objects.unpacked_or_id(@physical_object.id).packing_sort
+				if packable_candidates.any?
+                                  index = packable_candidates.find_index {|p| p.id == @physical_object.id}
+                                  @previous_packable_physical_object = packable_candidates[index - 1]
+				  @wrap_previous_packable = ((index - 1 ) < 0)
+                                  @next_packable_physical_object = packable_candidates[(index + 1) < packable_candidates.size ? index + 1 : 0]
+				  @wrap_next_packable = ((index + 1) >= packable_candidates.size)
+				end
 			end
 		end
 
