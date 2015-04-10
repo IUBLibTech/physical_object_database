@@ -230,6 +230,14 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
+  def master_copies
+    if self.technical_metadatum && self.technical_metadatum.as_technical_metadatum
+      self.technical_metadatum.as_technical_metadatum.master_copies
+    else
+      0
+    end
+  end
+
   #manually add virtual attribute
   def printable_columns
     self.class.printable_columns

@@ -39,8 +39,10 @@ describe OpenReelTm do
   describe "#master_copies" do
     cases_hash = { { full_track: true } => 1,
                    { half_track: true, stereo: true } => 1,
+                   { half_track: true, stereo: true, unknown_sound_field: true } => 2,
                    { half_track: true, mono: true } => 2,
                    { quarter_track: true, stereo: true } => 2,
+                   { quarter_track: true, stereo: true, unknown_sound_field: true } => 4,
                    { quarter_track: true, mono: true } => 4,
                    { unknown_track: true} => 4
                  }

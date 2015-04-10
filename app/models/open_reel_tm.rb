@@ -94,13 +94,13 @@ class OpenReelTm < ActiveRecord::Base
         	if self.unknown_track
 			4
 		elsif self.quarter_track
-			if stereo and not mono and not unknown_track
+			if stereo and not mono and not unknown_sound_field
 				2
 			else
 				4
 			end
 		elsif self.half_track
-			if stereo and not mono and not unknown_track
+			if stereo and not mono and not unknown_sound_field
 				1
 			else
 				2

@@ -466,6 +466,19 @@ describe PhysicalObject do
         end
       end
     end
+    describe "#master_copies" do
+      context "with technical metadatum present" do
+        it "returns values from technical metadatum" do
+	  expect(po.master_copies).to eq po.technical_metadatum.as_technical_metadatum.master_copies
+	end
+      end
+      context "without technical metadatum present" do
+        before(:each) { po.technical_metadatum = nil }
+        it "returns 0" do
+	  expect(po.master_copies).to eq 0
+	end
+      end
+    end
   end
 
   describe "#create_tm" do
