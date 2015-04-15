@@ -233,4 +233,34 @@ describe ResponsesController do
 
   end
 
+  let!(:po_requested) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: true, staged: false }
+  let!(:po_nothing) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: false, staged: false }
+  let!(:po_staged) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: true, staged: true }
+  describe "#trasfers_index" do    
+    before(:each) do 
+      get :transfers_index
+    end
+
+    it "finds only stageable objects" do
+      expect(assigns(:pos)).to include(po_requested)
+      expect(assigns(:pos)).to_not include(po_nothing)
+      expect(assigns(:pos)).to_not include(po_staged)
+    end
+
+  end
+
+  describe "#transer_result" do
+    before(:each) do
+      po_requested.reload
+      expect(po_requested.staging_requested).to eq true
+      expect(po_requested.staged).to eq false
+      post :transfer_result, mdpi_barcode: po_requested.mdpi_barcode
+    end
+
+    it "a staged object is updated" do
+      po_requested.reload
+      expect(po_requested.staged).to eq true
+    end
+  end
+
 end
