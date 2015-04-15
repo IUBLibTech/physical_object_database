@@ -221,6 +221,10 @@ b.warning {
   color: red;
 }
 
+b.notice {
+  color: blue;
+}
+
 #new_picklist_spec_div>input {
   margin-left: 200px;
 }

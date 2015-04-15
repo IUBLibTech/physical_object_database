@@ -58,7 +58,7 @@ class ConditionStatusTemplatesController < ApplicationController
 
   private
     def condition_status_template_params
-      params.require(:condition_status_template).permit(:name, :description, :object_type)
+      params.require(:condition_status_template).permit(:name, :description, :object_type, :blocks_packing)
     end
 
 end
