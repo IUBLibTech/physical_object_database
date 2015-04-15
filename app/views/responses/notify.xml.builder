@@ -5,6 +5,6 @@ xml.pod do
      xml.success true
    else
      xml.success false
-     xml.message @message
    end
+    xml.message @message
 end

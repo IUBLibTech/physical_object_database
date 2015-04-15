@@ -89,6 +89,8 @@ Pod::Application.routes.draw do
   post 'responses/transfers', to: "responses#transfer_request", as: "transfer_request_response"
   get 'responses/transfers', to: "responses#transfers_index", as: "transfers_index_response"
   post 'responses/transfers/:mdpi_barcode', to: "responses#transfer_result", as: "transfer_result_response"
+  get 'responses/objects/:mdpi_barcode/clear_statuses', to: "responses#clear", as: "clear_statuses"
+  get 'responses/objects/clear_all_statuses', to: "responses#clear_all", as: "clear_all_statuses"
 
   get 'quality_control/statuses/:status', to: "quality_control#index", as: "quality_control_status"
   get "quality_control/", to: "quality_control#index", as: "quality_control_index"
