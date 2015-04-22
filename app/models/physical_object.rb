@@ -39,6 +39,8 @@ class PhysicalObject < ActiveRecord::Base
 
   # the number of minutes before a staging request can no longer be undone
   STAGING_UNDO = 0
+  # list of workflow statuses where ephemera (if persent) should be returned
+  EPHEMERA_RETURNED_STATUSES = ["Unpacked", "Returned to Unit"]
 
   scope :packing_sort, lambda { order(:call_number, :group_key_id, :group_position, :id) }
   scope :following_for_packing, lambda { |po| where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", po.call_number, po.call_number, po.group_key_id, po.group_key_id, po.group_position, po.group_position, po.id) }

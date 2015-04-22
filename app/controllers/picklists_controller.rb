@@ -88,6 +88,7 @@ class PicklistsController < ApplicationController
 	def pack_list
 		@display_assigned = false
 		@edit_mode = true
+		@pack_mode = true
 		@picklisting = true
 		if params[:picklist] && params[:picklist][:id]
 		  redirect_to pack_list_picklist_path(params[:picklist][:id], box_id: params[:box_id], bin_id: params[:bin_id])

@@ -3,6 +3,9 @@ require 'rails_helper'
 describe WorkflowStatus do
   let(:workflow_status) { FactoryGirl.create(:workflow_status, :physical_object) }
   let(:valid_workflow_status) { FactoryGirl.build(:workflow_status, :physical_object) }
+  let(:physical_object) { FactoryGirl.create(:physical_object, :boxable) }
+  let(:batch) { FactoryGirl.create(:batch) }
+  let(:bin) { FactoryGirl.create(:bin) }
 
   it "gets a valid workflow status from FactoryGirl" do
     expect(valid_workflow_status).to be_valid
@@ -25,6 +28,59 @@ describe WorkflowStatus do
       expect(valid_workflow_status).to be_valid
     end
     skip "NOTES DEPRECATED HERE?"
+  end
+
+  describe "has ephemera tracking fields:" do
+    describe "has_ephemera" do
+      specify "boolean trait exists" do
+        expect(valid_workflow_status).to respond_to(:has_ephemera?)
+      end
+    end
+    describe "ephemera_returned" do
+      specify "boolean trait exists" do
+        expect(valid_workflow_status).to respond_to(:ephemera_returned?)
+      end
+    end
+    describe "ephemera_okay" do
+      specify "boolean trait exists" do
+        expect(valid_workflow_status).to respond_to(:ephemera_okay?)
+      end
+    end
+    describe "#set_ephemera_values" do
+      shared_examples "leaves nil values" do
+        it "leaves nil values" do
+	  expect(ws.has_ephemera).to be_nil
+	  expect(ws.ephemera_returned).to be_nil
+	  expect(ws.ephemera_okay).to be_nil
+	end
+      end
+      context "on a Batch" do
+        subject(:ws) { batch.workflow_statuses.last }
+        include_examples "leaves nil values"
+      end
+      context "on a Bin" do
+        subject(:ws) { bin.workflow_statuses.last }
+        include_examples "leaves nil values"
+      end
+      { "Boxed, no ephemera" =>		{ workflow_status: "Boxed", has_ephemera: false, ephemera_returned: false, ephemera_okay: nil },
+        "Boxed, with ephemera" =>	{ workflow_status: "Boxed", has_ephemera: true, ephemera_returned: false, ephemera_okay: nil },
+        "Unpacked, no ephemera" =>	{ workflow_status: "Unpacked", has_ephemera: false, ephemera_returned: false, ephemera_okay: nil },
+        "Unpacked, with ephemera" =>	{ workflow_status: "Unpacked", has_ephemera: true, ephemera_returned: true, ephemera_okay: true },
+        "Unpacked, missing ephemera" =>	{ workflow_status: "Unpacked", has_ephemera: true, ephemera_returned: false, ephemera_okay: false },
+      }.each_pair do |context, values|
+        context "#{context}" do
+	  before(:each) do
+	    physical_object.current_workflow_status = values[:workflow_status]
+	    physical_object.has_ephemera = values[:has_ephemera]
+	    physical_object.ephemera_returned = values[:ephemera_returned]
+	    physical_object.save!
+	  end
+	  specify "sets ephemera_okay to: #{values[:ephemera_okay].nil? ? "nil" : values[:ephemera_okay].to_s}" do
+	    expect(physical_object.workflow_statuses.last.ephemera_okay).to eq values[:ephemera_okay]
+	  end
+	end
+      end
+    end
   end
 
   describe "has relationships: " do

@@ -293,6 +293,13 @@ describe PhysicalObject do
     end
   end
 
+  #class constants
+  describe "EPHEMERA_RETURNED_STATUSES" do
+    it "should include Unpacked, Returned to Unit" do
+      expect(PhysicalObject::EPHEMERA_RETURNED_STATUSES.sort).to eq ["Returned to Unit", "Unpacked"]
+    end
+  end
+
   describe "provides virtual attributes:" do
     it "#carrier_stream_index" do
       expect(valid_po.carrier_stream_index).to eq valid_po.group_identifier + "_1_1"
