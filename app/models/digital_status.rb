@@ -86,50 +86,6 @@ class DigitalStatus < ActiveRecord::Base
 			ORDER BY state"
 	end
 
-
-
-	def from_json(json)
-		obj = JSON.parse(json, symbolize_names: true)
-		self.physical_object_mdpi_barcode = obj[:barcode]
-		po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
-		unless po.nil?
-			self.physical_object_id = po.id
-		end
-		self.state = obj[:state]
-		self.message = obj[:message]
-		self.accepted = false
-		self.attention = obj[:attention]
-		self.decided = nil
-		self.options = obj[:options]
-		self
-	end
-
-        def from_xml(xml)
-          self.physical_object_mdpi_barcode = xml.xpath("/pod/data/id").text
-          po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
-          unless po.nil?
-            self.physical_object_id = po.id
-          end
-          #FIXME
-          #self.state = obj[:state]
-          self.message = xml.xpath("/pod/data/message").text
-          #FIXME
-          #self.accepted = false
-          self.attention = xml.xpath("/pod/data/attention").text
-          #self.decided
-          #self.decided = nil
-          options_hash = {}
-          xml.xpath("/pod/data/options/option").each do |option|
-            options_hash[option.xpath("state").text.to_sym] = option.xpath("description").text
-          end
-          self.options = options_hash
-          self
-        end
-	def select_options
-		self.options.map{|key, value| [value, key.to_s]}
-	end
-
-
 	def from_json(json)
 		obj = JSON.parse(json, symbolize_names: true)
 		self.physical_object_mdpi_barcode = obj[:barcode]
@@ -167,25 +123,30 @@ class DigitalStatus < ActiveRecord::Base
     self.options = options_hash
     self
   end
-        # FIXME: consider dropping physical_object_mdpi_barcode as attribute
-        def from_xml(mdpi_barcode, xml)
-          self.physical_object_mdpi_barcode = mdpi_barcode
-          po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
-          unless po.nil?
-            self.physical_object_id = po.id
-          end
-          self.state = xml.xpath("/pod/data/state").text
-          self.message = xml.xpath("/pod/data/message").text
-          self.accepted = false
-          self.attention = xml.xpath("/pod/data/attention").text
-          self.decided = nil
-          options_hash = {}
-          xml.xpath("/pod/data/options/option").each do |option|
-            options_hash[option.xpath("state").text.to_sym] = option.xpath("description").text
-          end
-          self.options = options_hash
-          self
-        end
+
+	def select_options
+		self.options.map{|key, value| [value, key.to_s]}
+	end
+  
+  # FIXME: consider dropping physical_object_mdpi_barcode as attribute
+  def from_xml(mdpi_barcode, xml)
+    self.physical_object_mdpi_barcode = mdpi_barcode
+    po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
+    unless po.nil?
+      self.physical_object_id = po.id
+    end
+    self.state = xml.xpath("/pod/data/state").text
+    self.message = xml.xpath("/pod/data/message").text
+    self.accepted = false
+    self.attention = xml.xpath("/pod/data/attention").text
+    self.decided = nil
+    options_hash = {}
+    xml.xpath("/pod/data/options/option").each do |option|
+      options_hash[option.xpath("state").text.to_sym] = option.xpath("description").text
+    end
+    self.options = options_hash
+    self
+  end
 
 	def requires_attention?
 		attention and !decided.blank?

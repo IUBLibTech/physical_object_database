@@ -102,6 +102,28 @@ class ResponsesController < ActionController::Base
     render template: "responses/notify.xml.builder", layout: false, status: 200
   end
 
+  def clear
+    po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
+    unless po.nil? or po.mdpi_barcode < 49000000000000
+      po.digital_statuses.delete_all
+      @success = true
+      @message = "digital statuses for #{params[:mdpi_barcode]} have been deleted"
+    else
+      @message = "could not find test physical object #{params[:mdpi_barcode]} - or it is not a test record"
+    end
+    render template: "responses/notify.xml.builder", layout: false, status: 200
+  end
+
+  def clear_all
+    pos = PhysicalObject.where("mdpi_barcode >= 49000000000000")
+    pos.each do |p|
+      p.digital_statuses.delete_all
+    end
+    @success = true
+    @message = "deleted digital statuses for #{pos.size} test records"
+    render template: "responses/notify.xml.builder", layout: false, status: 200
+  end
+
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?

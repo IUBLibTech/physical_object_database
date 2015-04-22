@@ -32,6 +32,15 @@
       <% end %>
     </td>
   </tr>
+  <tr>
+    <th>Blocks Packing?</th>
+    <td>
+      <% if @edit_mode %>
+        <%= f.check_box(:blocks_packing) %>
+      <% else %>
+        <%= @condition_status_template.blocks_packing ? '✓' : 'No' %>
+      <% end %>
+  </tr>
 </table>
 
 <%# add the submit and close off the form_for %>
