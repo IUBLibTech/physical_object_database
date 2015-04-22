@@ -26,9 +26,15 @@ nohup.out
 # Ignore precompiled assets, if present
 /public/assets
 
+# Ignore config settings
 config/settings.yml
 config/settings.local.yml
 config/settings/*.local.yml
 config/environments/*.local.yml
+
+# Ignore RubyMine files
 .idea/*
 .DS_Store
+
+# Ignore database update script
+script/copy-prod-db
