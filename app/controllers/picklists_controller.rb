@@ -108,6 +108,7 @@ class PicklistsController < ApplicationController
 			end	
 			if @physical_object
 				@tm = @physical_object.technical_metadatum.as_technical_metadatum
+				@group_key = @physical_object.group_key
 				surrounding_physical_objects
 			end
 			if params[:bin_id]
@@ -192,6 +193,7 @@ class PicklistsController < ApplicationController
       				@physical_object = @next_physical_object
 			end
       			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			@group_key = @physical_object.group_key
       			# need to recalculate bookend physical objects
       			surrounding_physical_objects
 		end
@@ -213,6 +215,7 @@ class PicklistsController < ApplicationController
       				@physical_object = @previous_physical_object
 			end
       			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			@group_key = @physical_object.group_key
 			# need to recalculate the bookend physical objects
 			surrounding_physical_objects
 		end
@@ -251,6 +254,7 @@ class PicklistsController < ApplicationController
 
 						  if @physical_object
 						    @tm = @physical_object.technical_metadatum.as_technical_metadatum
+						    @group_key = @physical_object.group_key
 						    surrounding_physical_objects
 						  end
 						else
@@ -341,11 +345,11 @@ class PicklistsController < ApplicationController
 
 		def updated?
 			updated = @physical_object.update_attributes(physical_object_params)
-      if updated
-        @tm = @physical_object.technical_metadatum.as_technical_metadatum
-        update = @tm.update_attributes(tm_params)
-      end
-      return updated
+      			if updated
+        			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+        			update = @tm.update_attributes(tm_params)
+      			end
+      			return updated
 		end
 	
 end
