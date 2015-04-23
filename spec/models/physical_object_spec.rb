@@ -88,6 +88,23 @@ describe PhysicalObject do
       valid_po.generation = "invalid value"
       expect(valid_po).not_to be_valid
     end
+
+    specify "has_ephemera" do
+      expect(valid_po).to respond_to :has_ephemera?
+    end
+
+    describe "ephemera_returned" do
+      specify "is optional" do
+        expect(valid_po).to respond_to :ephemera_returned?
+      end
+      specify "can only be true of has_ephemera is true" do
+        valid_po.has_ephemera = false
+	valid_po.ephemera_returned = true
+	valid_po.valid?
+	puts valid_po.errors.inspect
+	expect(valid_po).not_to be_valid
+      end
+    end
   end
 
   describe "has relationships:" do

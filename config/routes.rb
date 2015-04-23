@@ -42,6 +42,7 @@ Pod::Application.routes.draw do
     get :upload_show, on: :collection
     get :has_ephemera, on: :collection
     get :create_multiple, on: :collection
+    get :edit_ephemera, on: :member
 
     patch :split_update, on: :member
     post :upload_update, on: :collection
@@ -49,6 +50,7 @@ Pod::Application.routes.draw do
     post :unbox, on: :member
     post :ungroup, on: :member
     post :unpick, on: :member
+    patch :update_ephemera, on: :member
 
     #resources :digital_files
   end

@@ -67,6 +67,16 @@ describe PhysicalObjectsController do
     end
   end
 
+  describe "GET edit_ephemera" do
+    before(:each) { get :edit_ephemera, id: physical_object.id }
+    it "locates the requested object" do
+      expect(assigns(:physical_object)).to eq physical_object
+    end
+    it "renders the :edit_ephemera template" do
+      expect(response).to render_template(:edit_ephemera) 
+    end
+  end
+
   describe "POST create" do
     context "with valid attributes" do
       let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
@@ -90,6 +100,41 @@ describe PhysicalObjectsController do
       it "re-renders the :new template" do
         creation
         expect(response).to render_template(:new)
+      end
+    end
+  end
+
+  describe "PATCH update_ephemera" do
+    before(:each) { put :update_ephemera, id: physical_object.id, physical_object: ephemera_values }
+    context "with the same attributes" do
+      let(:ephemera_values) { { has_ephemera: physical_object.has_ephemera, ephemera_returned: physical_object.ephemera_returned } }
+      it "locates the requested object" do
+        expect(assigns(:physical_object)).to eq physical_object
+      end
+      it "flashes inaction warning" do
+        expect(flash[:warning]).to match /no.*change/i
+      end
+    end
+    context "with modified attributes" do
+      let(:ephemera_values) { { has_ephemera: !physical_object.has_ephemera?, ephemera_returned: !physical_object.ephemera_returned? } }
+      it "locates the requested object" do
+        expect(assigns(:physical_object)).to eq physical_object
+      end
+      it "changes the ephemera attributes" do
+        expect(physical_object.has_ephemera).not_to eq ephemera_values[:has_ephemera]
+        expect(physical_object.ephemera_returned).not_to eq ephemera_values[:ephemera_returned]
+        physical_object.reload
+        expect(physical_object.has_ephemera).to eq ephemera_values[:has_ephemera]
+        expect(physical_object.ephemera_returned).to eq ephemera_values[:ephemera_returned]
+      end
+      it "records a new workflow status history entry" do
+        original_status, updated_status = physical_object.workflow_statuses[-2..-1]
+	expect(original_status.workflow_status_template_id).to eq updated_status.workflow_status_template_id
+	expect(original_status.has_ephemera).not_to eq updated_status.has_ephemera
+	expect(original_status.ephemera_returned).not_to eq updated_status.ephemera_returned
+      end
+      it "flashes success notice" do
+        expect(flash[:notice]).to match /success/i
       end
     end
   end
@@ -301,9 +346,9 @@ describe PhysicalObjectsController do
               expect{ split_update }.not_to change(GroupKey, :count)
             end
             it "updates group position on objects" do
-	      physical_object
-	      split_update
-	      expect(PhysicalObject.last.group_position).to eq count
+              physical_object
+              split_update
+              expect(PhysicalObject.last.group_position).to eq count
             end
             it "flashes a success notice" do
               split_update
@@ -504,7 +549,7 @@ describe PhysicalObjectsController do
           end
         end
         context "and an existing picklist" do
-	  before(:each) { post_args[:type] = "existing" }
+          before(:each) { post_args[:type] = "existing" }
           describe "selected" do
             before(:each) do
               picklist
@@ -512,15 +557,15 @@ describe PhysicalObjectsController do
             end
             include_examples "upload results", filename
             it "uses the selected picklist" do
-	      upload_update
-	      expect(assigns[:picklist]).to eq picklist
+              upload_update
+              expect(assigns[:picklist]).to eq picklist
             end
           end
           describe "not selected" do
             before(:each) do
-	      post_args[:picklist] = {}
+              post_args[:picklist] = {}
               upload_update
-	    end
+            end
             it "flashes inaction" do
               expect(flash[:notice]).to match /select.*picklist/i
             end
@@ -545,11 +590,11 @@ describe PhysicalObjectsController do
             end
           end 
           describe "with a name collision" do
-	    before(:each) do
-	      picklist
-	      post_args[:picklist] = { name: picklist.name }
+            before(:each) do
+              picklist
+              post_args[:picklist] = { name: picklist.name }
               upload_update
-	    end
+            end
             it "flashes error warning" do
               expect(flash[:warning]).to match /error/i
             end
@@ -791,6 +836,14 @@ describe PhysicalObjectsController do
       post_has_ephemera
       expect(response.body).to eq 'returned'
     end
+  end
+
+  describe "GET edit_ephemera" do
+    pending "FIXME: needs tests"
+  end
+
+  describe "PATCH update_ephemera" do
+    pending "FIXME: needs tests"
   end
 
 end

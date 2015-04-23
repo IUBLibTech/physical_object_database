@@ -1,0 +1,33 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'show', :id => @physical_object.id}, :class => 'action split')%>
+  </div>
+<% end %>
+<div>
+  <h2>Update Ephemera Status of Physical Object</h2>
+  "Has ephemera" is normally set during the packing process, and "Ephemera returned" during the returns process, and is not generally editable.  This service allows you to edit the ephemera tracking values in exceptional circumstances, and will update the <%= link_to "workflow history log", workflow_history_physical_object_path(@physical_object) %> with a new entry recording the changed values.
+  <% @submit_text = "Update Ephemera Status" %>
+  <% @controller ||= 'physical_objects' %>
+  <%= error_messages_for(@physical_object) %>
+  <%= nested_form_for(@physical_object, url: {action: 'update_ephemera', id: @physical_object.id}) do |f| %>
+    <div class="clear" ><%= submit_tag(@submit_text) %></div>
+    <div id="physicalObject" class="left">
+      <h2>Physical Object [<%= @physical_object.id %>]</h2>
+      <table>
+        <tr>
+          <th>Has ephemera</th>
+          <td>
+            <%= f.check_box(:has_ephemera) %>
+          </td>
+        </tr>
+        <tr>
+          <th>Ephemera returned</th>
+          <td>
+            <%= f.check_box(:ephemera_returned) %>
+          </td>
+        </tr>
+        <tr>
+      </table>
+    </div>
+  <% end %>
+</div>

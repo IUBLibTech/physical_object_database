@@ -75,9 +75,10 @@ class PhysicalObject < ActiveRecord::Base
   validates :technical_metadatum, presence: true
   validates :workflow_status, presence: true
   validates_with PhysicalObjectValidator
-  validate :validate_single_container_assignment
-  validate :validate_bin_container
-  validate :validate_box_container
+  validate :validate_single_container_assignment, if: [:bin_id, :box_id]
+  validate :validate_bin_container, if: :bin_id
+  validate :validate_box_container, if: :box_id
+  validate :validate_ephemera_values, if: :ephemera_returned
 
   accepts_nested_attributes_for :technical_metadatum
   scope :search_by_catalog, lambda {|query| where(["call_number = ?", query, query])}
@@ -418,6 +419,12 @@ class PhysicalObject < ActiveRecord::Base
       elsif box.physical_objects.any? && box.physical_objects.first.format != self.format
         errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a box containing the matching format (#{self.format})."
       end
+    end
+  end
+
+  def validate_ephemera_values
+    if self.ephemera_returned
+      errors.add(:ephemera_returned, "cannot be checked if \"Has ephemera\" is unchecked.") unless self.has_ephemera
     end
   end
 
