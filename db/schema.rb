@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150331170116) do
+ActiveRecord::Schema.define(version: 20150423183551) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -366,6 +366,9 @@ ActiveRecord::Schema.define(version: 20150331170116) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "user"
+    t.boolean  "has_ephemera"
+    t.boolean  "ephemera_returned"
+    t.boolean  "ephemera_okay"
   end
 
   add_index "workflow_statuses", ["batch_id", "workflow_status_template_id"], name: "index_ws_on_batch_and_wst", using: :btree

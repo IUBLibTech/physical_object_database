@@ -65,6 +65,23 @@ shared_examples "includes Workflow Status Module" do |status_list|
       end
     end
   end
+  describe "#duplicate_workflow_status" do
+    context "when an object has no workflow statuses" do
+      before(:each) { object.workflow_statuses = [] }
+      it "does nothing" do
+        expect(object.workflow_statuses).to be_empty
+        object.duplicate_workflow_status
+	expect(object.workflow_statuses).to be_empty
+      end
+    end
+    context "when an object has at least one workflow status" do
+      it "creates a duplicate workflow status" do
+        object.save
+        expect{object.duplicate_workflow_status}.to change{object.workflow_statuses.size}.by(1)
+	expect(object.workflow_statuses[-1].workflow_status_template_id).to eq object.workflow_statuses[-2].workflow_status_template_id
+      end
+    end
+  end
   describe "#default_workflow_status" do
     it "returns default workflow status for object type" do
       expect(object.default_workflow_status).to eq default_status

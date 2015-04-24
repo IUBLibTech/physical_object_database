@@ -86,21 +86,13 @@
       <tr>
         <th>Has ephemera</th> 
         <td>
-          <% if @edit_mode %>
-            <%= f.check_box(:has_ephemera) %>
-          <% else %>
-            <%= @physical_object.has_ephemera.to_s.titleize %>
-          <% end %>
+          <%= f.check_box(:has_ephemera, disabled: !(@pack_mode || @ephemera_mode)) %>
         </td>
       </tr>
       <tr>
         <th>Ephemera returned</th>
         <td>
-          <% if @edit_mode %>
-            <%= f.check_box(:ephemera_returned) %>
-          <% else %>
-            <%= @physical_object.ephemera_returned.to_s.titleize %>
-          <% end %>
+          <%= f.check_box(:ephemera_returned, disabled: !@ephemera_mode) %>
         </td>
       </tr>
       <tr>

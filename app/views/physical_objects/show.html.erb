@@ -12,18 +12,14 @@
       <strong><strike>Split Record</strong></strike>
     <% end %>
   </div>
-
   <div class="contextMenuItem">
     <%= link_to("Create New Physical Object", :action => 'new') %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("View Imported Spreadsheets", spreadsheets_path) %>
-  </div>
-  <div class="contextMenuItem">
-    <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) %>
-  </div>
-  <div class="contextMenuItem">
     <%= link_to "View Workflow History", workflow_history_physical_object_path(@physical_object) %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Edit Ephemera Status", {:controller => 'physical_objects', :action => 'edit_ephemera', :id => @physical_object.id}, :class => 'action edit') %>
   </div>
 <% end %>
 
