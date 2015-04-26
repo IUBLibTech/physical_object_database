@@ -101,7 +101,6 @@ describe PhysicalObject do
         valid_po.has_ephemera = false
 	valid_po.ephemera_returned = true
 	valid_po.valid?
-	puts valid_po.errors.inspect
 	expect(valid_po).not_to be_valid
       end
     end
@@ -340,7 +339,7 @@ describe PhysicalObject do
     end
     it "#file_bext" do
       expect(valid_po.unit).not_to be_nil
-      expect(valid_po.file_bext).to eq "Indiana University, Bloomington. " +
+      expect(valid_po.file_bext).to eq "Indiana University-Bloomington. " +
         valid_po.unit.name + ". " +
         (valid_po.collection_identifier.nil? ? "" : valid_po.collection_identifier + ". ") +
         (valid_po.call_number.nil? ? "" : valid_po.call_number + ". ") +
@@ -350,7 +349,7 @@ describe PhysicalObject do
       expect(valid_po.file_icmt).to eq valid_po.file_bext
     end
     it "#file_iarl" do
-      expect(valid_po.file_iarl).to eq "Indiana University, Bloomington. #{valid_po.unit.name}."
+      expect(valid_po.file_iarl).to eq "Indiana University-Bloomington. #{valid_po.unit.name}."
     end
     it "#group_identifier" do
       expect(valid_po.group_identifier).to eq valid_po.group_key.group_identifier
