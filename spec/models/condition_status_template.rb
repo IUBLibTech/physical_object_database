@@ -5,7 +5,7 @@ describe ConditionStatusTemplate do
   let(:valid_condition_status_template) { FactoryGirl.build(:condition_status_template) }
 
   describe "should be seeded with data:" do
-    seeded_values = { "Bin" => 0, "Physical Object" => 7 }
+    seeded_values = { "Bin" => 0, "Physical Object" => 8 }
     seeded_values.each do |object_type, count|
       specify "#{count} #{object_type} status_templates" do
         expect(ConditionStatusTemplate.where(object_type: object_type).size).to eq count
