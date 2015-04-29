@@ -35,6 +35,12 @@ module WorkflowStatusModule
     self.workflow_statuses.new(workflow_status_template_id: workflow_status_template.id)
   end
 
+  # creates a new log entry for the same workflow status; used for physical object ephemera update
+  def duplicate_workflow_status
+    return if self.workflow_statuses.none?
+    self.workflow_statuses.create(workflow_status_template_id: self.workflow_statuses.last.workflow_status_template_id)
+  end
+
   def default_workflow_status
     self.is_a?(PhysicalObject) ? "Unassigned" : "Created"
   end

@@ -1,5 +1,5 @@
 class PhysicalObjectsController < ApplicationController
-  before_action :set_physical_object, only: [:show, :edit, :update, :destroy, :workflow_history,:split_show, :split_update, :unbin, :unbox, :unpick, :ungroup]  
+  before_action :set_physical_object, only: [:show, :edit, :edit_ephemera, :update, :update_ephemera, :destroy, :workflow_history, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup]  
   before_action :set_new_physical_object, only: [:new, :create_multiple]
   before_action :set_new_physical_object_with_params, only: [:create]
   before_action :set_box_and_bin_by_barcodes, only: [:create, :create_multiple, :update]
@@ -317,6 +317,27 @@ class PhysicalObjectsController < ApplicationController
       has_it = "unknown physical Object"
     end
     render plain: "#{has_it}", layout: false
+  end
+
+  def edit_ephemera
+  end
+
+  # update restricted to 2 epheemra values, with new workflow status log entry
+  def update_ephemera
+    respond_to do |format|
+      @physical_object.assign_attributes(physical_object_params)
+      if @physical_object.has_ephemera_was == @physical_object.has_ephemera && @physical_object.ephemera_returned_was == @physical_object.ephemera_returned
+        format.html { flash[:warning] = 'foo'; redirect_to @physical_object, flash: { warning: 'No ephemera status changes were submitted.' } }
+	format.html { head :no_content }
+      elsif @physical_object.save
+	@physical_object.duplicate_workflow_status
+        format.html { redirect_to @physical_object, notice: 'Ephemera was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: :edit_ephemera }
+        format.json { render json: @physical_object.errors, status: :unprocessable_entity }
+      end
+    end
   end
   
   private

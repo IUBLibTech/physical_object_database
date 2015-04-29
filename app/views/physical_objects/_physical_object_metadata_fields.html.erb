@@ -86,21 +86,13 @@
       <tr>
         <th>Has ephemera</th> 
         <td>
-          <% if @edit_mode %>
-            <%= f.check_box(:has_ephemera) %>
-          <% else %>
-            <%= @physical_object.has_ephemera.to_s.titleize %>
-          <% end %>
+          <%= f.check_box(:has_ephemera, disabled: !(@pack_mode || @ephemera_mode)) %>
         </td>
       </tr>
       <tr>
         <th>Ephemera returned</th>
         <td>
-          <% if @edit_mode %>
-            <%= f.check_box(:ephemera_returned) %>
-          <% else %>
-            <%= @physical_object.ephemera_returned.to_s.titleize %>
-          <% end %>
+          <%= f.check_box(:ephemera_returned, disabled: !@ephemera_mode) %>
         </td>
       </tr>
       <tr>
@@ -130,15 +122,15 @@
       <tr>
         <th>Group key</th>
         <td>
-          <% if !@group_key.nil? %>
-            <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id)) %>
+          <% unless @group_key.nil? %>
+            <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id), target: "_blank") %>
           <% else %>
             Not assigned
           <% end %>
-                <% if @edit_mode %>
-                  <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
-                  <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
-                <% end %>
+          <% if @edit_mode %>
+            <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
+            <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
+          <% end %>
         </td>
       </tr>
       <tr>

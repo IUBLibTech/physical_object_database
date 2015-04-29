@@ -88,6 +88,22 @@ describe PhysicalObject do
       valid_po.generation = "invalid value"
       expect(valid_po).not_to be_valid
     end
+
+    specify "has_ephemera" do
+      expect(valid_po).to respond_to :has_ephemera?
+    end
+
+    describe "ephemera_returned" do
+      specify "is optional" do
+        expect(valid_po).to respond_to :ephemera_returned?
+      end
+      specify "can only be true of has_ephemera is true" do
+        valid_po.has_ephemera = false
+	valid_po.ephemera_returned = true
+	valid_po.valid?
+	expect(valid_po).not_to be_valid
+      end
+    end
   end
 
   describe "has relationships:" do
@@ -293,6 +309,13 @@ describe PhysicalObject do
     end
   end
 
+  #class constants
+  describe "EPHEMERA_RETURNED_STATUSES" do
+    it "should include Unpacked, Returned to Unit" do
+      expect(PhysicalObject::EPHEMERA_RETURNED_STATUSES.sort).to eq ["Returned to Unit", "Unpacked"]
+    end
+  end
+
   describe "provides virtual attributes:" do
     it "#carrier_stream_index" do
       expect(valid_po.carrier_stream_index).to eq valid_po.group_identifier + "_1_1"
@@ -316,7 +339,7 @@ describe PhysicalObject do
     end
     it "#file_bext" do
       expect(valid_po.unit).not_to be_nil
-      expect(valid_po.file_bext).to eq "Indiana University, Bloomington. " +
+      expect(valid_po.file_bext).to eq "Indiana University-Bloomington. " +
         valid_po.unit.name + ". " +
         (valid_po.collection_identifier.nil? ? "" : valid_po.collection_identifier + ". ") +
         (valid_po.call_number.nil? ? "" : valid_po.call_number + ". ") +
@@ -326,7 +349,7 @@ describe PhysicalObject do
       expect(valid_po.file_icmt).to eq valid_po.file_bext
     end
     it "#file_iarl" do
-      expect(valid_po.file_iarl).to eq "Indiana University, Bloomington. #{valid_po.unit.name}."
+      expect(valid_po.file_iarl).to eq "Indiana University-Bloomington. #{valid_po.unit.name}."
     end
     it "#group_identifier" do
       expect(valid_po.group_identifier).to eq valid_po.group_key.group_identifier

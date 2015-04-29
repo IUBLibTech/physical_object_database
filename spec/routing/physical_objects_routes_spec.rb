@@ -1,0 +1,59 @@
+describe "physical_objects" do
+
+  it "routes to download_spreadsheet_example" do
+    expect(get("/physical_objects/download_spreadsheet_example")).to be_routable
+  end
+
+  it "routes to tm_form" do
+    expect(get("/physical_objects/tm_form")).to be_routable
+  end
+
+  it "routes to workflow_history" do
+    expect(get("/physical_objects/:id/workflow_history")).to be_routable
+  end
+
+  it "routes to split_show" do
+    expect(get("/physical_objects/:id/split_show")).to be_routable
+  end
+
+  it "routes to upload_show" do
+    expect(get("/physical_objects/upload_show")).to be_routable
+  end
+
+  it "routes to has_ephemera" do
+    expect(get("/physical_objects/has_ephemera")).to be_routable
+  end
+
+  it "routes to split_update" do
+    expect(patch("/physical_objects/:id/split_update")).to be_routable
+  end
+
+  it "routes to upload_update" do
+    expect(post("/physical_objects/upload_update")).to be_routable
+  end
+
+  it "routes to unbin" do
+    expect(post("/physical_objects/:id/unbin")).to be_routable
+  end
+
+  it "routes to unbox" do
+    expect(post("/physical_objects/:id/unbox")).to be_routable
+  end
+
+  it "routes to unpick" do
+    expect(post("/physical_objects/:id/unpick")).to be_routable
+  end
+
+  it "routes to ungroup" do
+    expect(post("/physical_objects/:id/ungroup")).to be_routable
+  end
+
+  it "routes to edit_ephemera" do
+    expect(get: "/physical_objects/1/edit_ephemera").to route_to("physical_objects#edit_ephemera", id: "1")
+  end
+
+  it "routes to update_ephemera" do
+    expect(patch: "/physical_objects/1/update_ephemera").to route_to("physical_objects#update_ephemera", id: "1")
+  end
+
+end

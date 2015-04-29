@@ -5,4 +5,4 @@
 <% end %>
 
 <h2>Workflow Status History for Bin [<%= @bin.id %>]</h2>
-<%= render(partial: "workflow_status_templates/workflow_history_table") %>
+<%= render(partial: "workflow_status_templates/workflow_history_table", locals: { show_ephemera_status: false }) %>
