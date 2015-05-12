@@ -6,6 +6,7 @@ describe ReturnsController do
   let(:batch) { FactoryGirl.create :batch, identifier: "Created Batch" }
   let(:created_batch) { FactoryGirl.create :batch, identifier: "Returned Batch" }
   let(:bin) { FactoryGirl.create :bin, batch: batch }
+  let(:box) { FactoryGirl.create :box, bin: bin }
   let(:physical_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
 
   before(:each) do
@@ -46,29 +47,52 @@ describe ReturnsController do
   end
 
   describe "GET return_bin (on member)" do
-    let(:unpacked_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
-    let(:returned_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
-    before(:each) do
-      batch.save
-      bin.save
-      physical_object.save
-      unpacked_object.current_workflow_status = "Unpacked"
-      unpacked_object.save
-      returned_object.current_workflow_status = "Returned to Unit"
-      returned_object.save
-      get :return_bin, id: bin.id
+    shared_examples "return_bin behavior" do
+      it "assigns @bin" do
+        expect(assigns(:bin)).to eq bin
+      end
+      it "assigns @returned as Unpacked, Returned to Unit objects in bin" do
+        expect(assigns(:returned).sort).to eq [unpacked_object, returned_object].sort
+      end
+      it "assigns @shipped as Binned objects in bin" do
+        expect(assigns(:shipped)).to eq [shipped_object]
+      end
+      it "renders the :return_bin view" do
+        expect(response).to render_template(:return_bin)
+      end
     end
-    it "assigns @bin" do
-      expect(assigns(:bin)).to eq bin
+    context "on binned objects" do
+      let(:shipped_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
+      let(:unpacked_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
+      let(:returned_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
+      before(:each) do
+        batch.save
+        bin.save
+        shipped_object.save
+        unpacked_object.current_workflow_status = "Unpacked"
+        unpacked_object.save
+        returned_object.current_workflow_status = "Returned to Unit"
+        returned_object.save
+        get :return_bin, id: bin.id
+      end
+      include_examples "return_bin behavior"
     end
-    it "assigns @returned as Unpacked, Returned to Unit objects in bin" do
-      expect(assigns(:returned).sort).to eq [unpacked_object, returned_object].sort
-    end
-    it "assigns @shipped as Binned objects in bin" do
-      expect(assigns(:shipped)).to eq [physical_object]
-    end
-    it "renders the :return_bin view" do
-      expect(response).to render_template(:return_bin)
+    context "on boxed objects" do
+      let(:shipped_object) { FactoryGirl.create :physical_object, :boxable, box: box }
+      let(:unpacked_object) { FactoryGirl.create :physical_object, :boxable, box: box }
+      let(:returned_object) { FactoryGirl.create :physical_object, :boxable, box: box }
+      before(:each) do
+        batch.save
+        bin.save
+	box.save
+        shipped_object.save
+        unpacked_object.current_workflow_status = "Unpacked"
+        unpacked_object.save
+        returned_object.current_workflow_status = "Returned to Unit"
+        returned_object.save
+        get :return_bin, id: bin.id
+      end
+      include_examples "return_bin behavior"
     end
   end
 
