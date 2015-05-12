@@ -11,8 +11,13 @@ class ReturnsController < ApplicationController
 	end
 
 	def return_bin
+	  if @bin.boxes.any?
+	    @returned = @bin.boxed_physical_objects.where(workflow_status: ["Unpacked", "Returned to Unit"]).packing_sort
+	    @shipped = @bin.boxed_physical_objects.where(workflow_status: "Boxed").packing_sort
+	  else
 		@returned = PhysicalObject.where(bin_id: @bin.id, workflow_status: ["Unpacked", "Returned to Unit"]).packing_sort
 		@shipped = PhysicalObject.where(bin_id: @bin.id, workflow_status: "Binned").packing_sort
+	  end
 	end
 
         # FIXME: deprecated?
