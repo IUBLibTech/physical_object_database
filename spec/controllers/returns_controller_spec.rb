@@ -7,7 +7,7 @@ describe ReturnsController do
   let(:created_batch) { FactoryGirl.create :batch, identifier: "Returned Batch" }
   let(:bin) { FactoryGirl.create :bin, batch: batch }
   let(:box) { FactoryGirl.create :box, bin: bin }
-  let(:physical_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
+  let(:physical_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
 
   before(:each) do
     batch.current_workflow_status = "Returned"
@@ -62,9 +62,9 @@ describe ReturnsController do
       end
     end
     context "on binned objects" do
-      let(:shipped_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
-      let(:unpacked_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
-      let(:returned_object) { FactoryGirl.create :physical_object, :binnable, bin: bin }
+      let(:shipped_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
+      let(:unpacked_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
+      let(:returned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
       before(:each) do
         batch.save
         bin.save
@@ -78,9 +78,9 @@ describe ReturnsController do
       include_examples "return_bin behavior"
     end
     context "on boxed objects" do
-      let(:shipped_object) { FactoryGirl.create :physical_object, :boxable, box: box }
-      let(:unpacked_object) { FactoryGirl.create :physical_object, :boxable, box: box }
-      let(:returned_object) { FactoryGirl.create :physical_object, :boxable, box: box }
+      let(:shipped_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
+      let(:unpacked_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
+      let(:returned_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
       before(:each) do
         batch.save
         bin.save

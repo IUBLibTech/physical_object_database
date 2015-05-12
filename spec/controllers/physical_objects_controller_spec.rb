@@ -260,6 +260,7 @@ describe PhysicalObjectsController do
     end
     context "on a boxed object" do
       before(:each) do
+        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = FactoryGirl.create(:box)
         physical_object.save!
         split_show
@@ -269,6 +270,7 @@ describe PhysicalObjectsController do
     context "on a binned object" do
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
+	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.bin = FactoryGirl.create(:bin)
         physical_object.save!
         split_show
@@ -316,6 +318,7 @@ describe PhysicalObjectsController do
       end
       context "on a boxed item" do
         before(:each) do
+	  physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
           physical_object.box = FactoryGirl.create(:box)
           physical_object.save!
         end
@@ -324,6 +327,7 @@ describe PhysicalObjectsController do
       context "on a binned item" do
         before(:each) do
           physical_object.format = "Open Reel Audio Tape"
+	  physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
           physical_object.bin = FactoryGirl.create(:bin)
           physical_object.save!
         end
@@ -426,6 +430,7 @@ describe PhysicalObjectsController do
     context "on a boxed item" do
       let(:source_page) { "source_page" }
       before(:each) do
+        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = FactoryGirl.create(:box)
         physical_object.save!
       end
@@ -435,6 +440,7 @@ describe PhysicalObjectsController do
       let(:source_page) { "source_page" }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
+	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.bin = FactoryGirl.create(:bin)
         physical_object.save!
       end
@@ -612,6 +618,7 @@ describe PhysicalObjectsController do
     context "when in a box" do
       let(:box) { FactoryGirl.create(:box) }
       before(:each) do
+        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = box
         physical_object.save!
       end
@@ -637,6 +644,7 @@ describe PhysicalObjectsController do
       let(:bin) { FactoryGirl.create(:bin) }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
+	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = nil
         physical_object.bin = bin
         physical_object.save!
@@ -679,6 +687,7 @@ describe PhysicalObjectsController do
     context "when in a box" do
       let(:box) { FactoryGirl.create(:box) }
       before(:each) do
+        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = box
         physical_object.save!
         post_unbox

@@ -121,9 +121,14 @@ describe PhysicalObject do
           valid_po.bin = bin
           expect(valid_po).not_to be_valid
         end
-        specify "can belong to a box" do
+        specify "can belong to a box if a barcode is set" do
+	  valid_po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
           valid_po.box = box
           expect(valid_po).to be_valid
+        end
+        specify "cannot belong to a box if a barcode is not set" do
+          valid_po.box = box
+          expect(valid_po).not_to be_valid
         end
         unless format.in? PhysicalObject.const_get(:BIN_FORMATS)
           specify "cannot belong to a bin" do
@@ -134,6 +139,7 @@ describe PhysicalObject do
         if PhysicalObject.const_get(:BOX_FORMATS).size > 1
           specify "cannot belong to a box containing other formats" do
             po.format = PhysicalObject.const_get(:BOX_FORMATS)[index - 1]
+	    po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
             po.box = box
             po.save!
             valid_po.box = box
@@ -150,10 +156,14 @@ describe PhysicalObject do
           valid_po.bin = bin
           expect(valid_po).not_to be_valid
         end
-        specify "can belong to a bin" do
-          valid_po.format = format
+        specify "can belong to a bin if barcode is set" do
+	  valid_po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
           valid_po.bin = bin
           expect(valid_po).to be_valid
+        end
+        specify "cannot belong to a bin if barcode is not set" do
+          valid_po.bin = bin
+          expect(valid_po).not_to be_valid
         end
         unless format.in? PhysicalObject.const_get(:BOX_FORMATS)
           specify "cannot belong to a box" do
@@ -165,6 +175,7 @@ describe PhysicalObject do
         if PhysicalObject.const_get(:BIN_FORMATS).size > 1
           specify "cannot belong to a bin containing other formats" do
             po.format = PhysicalObject.const_get(:BIN_FORMATS)[index - 1]
+	    po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
             po.bin = bin
             po.save!
             valid_po.bin = bin
@@ -174,6 +185,7 @@ describe PhysicalObject do
         specify "cannnot belong to a bin containing boxes" do
           box.bin = bin
           box.save
+	  valid_po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
           valid_po.bin = bin
           expect(valid_po).not_to be_valid
         end

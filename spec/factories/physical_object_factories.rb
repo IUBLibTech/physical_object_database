@@ -8,7 +8,7 @@ FactoryGirl.define do
     unit_id { Unit.all[rand(Unit.all.size)].id }
 
     trait :barcoded do
-      mdpi_barcode BarcodeHelper.valid_mdpi_barcode
+      mdpi_barcode { BarcodeHelper.valid_mdpi_barcode }
     end
 
     trait :cdr do
