@@ -7,6 +7,7 @@ FactoryGirl.define do
   	attention false
   	message "It has begun"
   	options nil
+  	decided nil
   end
 
 end
