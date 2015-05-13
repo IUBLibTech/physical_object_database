@@ -21,7 +21,6 @@
 			<td><%= p.format %></td>
 			<td>
 				<% if choice_header=='Choice' %>
-					<% debugger %>
 					<%= render "decision_form", p: p %>
 				<% elsif choice_header=='Stage' or choice_header = 'Unstage' %>
 					<%= render "staging_form", p: p %>

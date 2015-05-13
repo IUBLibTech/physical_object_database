@@ -5,6 +5,11 @@ class DigitalStatus < ActiveRecord::Base
 	belongs_to :physical_object
 
 	DIGITAL_STATUS_START = "transferred"
+
+	AUDIO_OBJECT_AUTO_ACCEPT = 40
+
+	serialized_empty_hash = "--- {}\n"
+
 	
 	# This scope returns an array of arrays containing all of the current digital statuses
 	# and their respective counts: [['failed', 3], ['queued', 10], etc]
@@ -42,7 +47,27 @@ class DigitalStatus < ActiveRecord::Base
     )
   }
 
+  # This scope takes a status name ('transferred', 'accepted', failed', etc) and returns all
+  # physical objects currently in that state AND which have an undecided action to process
+  scope :current_actionable_status, lambda {|i| 
+    PhysicalObject.preload(:digital_statuses).find_by_sql(
+    	"SELECT physical_objects.*
+			FROM (
+				SELECT ds.physical_object_id as id
+				FROM (
+					SELECT MAX(id) as id
+					FROM digital_statuses
+					GROUP BY physical_object_id
+				) as x INNER JOIN digital_statuses as ds 
+				WHERE ds.id = x.id and state='#{i}' and (options is not null and options != '#{serialized_empty_hash}') and decided is null
+			) as po_ids INNER JOIN physical_objects
+			WHERE physical_objects.id = po_ids.id"
+    )
+  }
+
   scope :action_statuses, -> {
+  	# this MUST be double quoted - otherwise the \n will be presevered as those characters and not treated as a
+  	# carriage return... why does ruby do this?!?!?
   	DigitalStatus.connection.execute(
   		"SELECT state, count(*)
 			FROM (
@@ -52,12 +77,38 @@ class DigitalStatus < ActiveRecord::Base
 					FROM digital_statuses
 					GROUP BY physical_object_id
 				) AS x INNER JOIN digital_statuses AS ds
-				WHERE ds.id = x.max_id and ds.options is not null and ds.decided is null 
+				WHERE ds.id = x.max_id and (ds.options is not null and ds.options != '#{serialized_empty_hash}') and ds.decided is null 
 			) as y INNER JOIN digital_statuses as ds2 
 			WHERE ds2.id = y.y_id
 			GROUP BY state"
 		)
   }
+
+  # the number of hours after digitization start that a video physical object is auto-accepted
+	@@Video_File_Auto_Accept = 30 * 24
+	# the number of hours after digitization start that an audio physical object is auto-accepted
+	@@Aufio_File_Auto_Accept = 40 * 24
+
+	scope :expired_audio_physical_objects, -> {
+		PhysicalObject.find_by_sql(
+			"select physical_objects.*
+			from (
+				SELECT physical_object_id
+				FROM (
+					SELECT max(id) as ds_id
+					FROM digital_statuses
+					GROUP BY physical_object_id
+				) AS ns INNER JOIN digital_statuses as dses
+				WHERE dses.id = ns.ds_id and (options is not null and options != '--- {}\n') and decided is null
+			) as states inner join physical_objects
+			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Aufio_File_Auto_Accept} hour) <= utc_timestamp()
+			order by digital_start"
+		)
+	}
+
+	scope :expired_video_physical_objects, -> {
+		raise "expired_video_physical_objects is not implemented yet!!!"
+	}
 
 	def self.test(*barcode)
 		barcode ||= ["40000000031296"]
