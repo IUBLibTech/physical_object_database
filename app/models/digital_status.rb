@@ -101,13 +101,26 @@ class DigitalStatus < ActiveRecord::Base
 				) AS ns INNER JOIN digital_statuses as dses
 				WHERE dses.id = ns.ds_id and (options is not null and options != '--- {}\n') and decided is null
 			) as states inner join physical_objects
-			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Aufio_File_Auto_Accept} hour) <= utc_timestamp()
+			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Aufio_File_Auto_Accept} hour) <= utc_timestamp() and audio = true
 			order by digital_start"
 		)
 	}
 
 	scope :expired_video_physical_objects, -> {
-		raise "expired_video_physical_objects is not implemented yet!!!"
+		PhysicalObject.find_by_sql(
+			"select physical_objects.*
+			from (
+				SELECT physical_object_id
+				FROM (
+					SELECT max(id) as ds_id
+					FROM digital_statuses
+					GROUP BY physical_object_id
+				) AS ns INNER JOIN digital_statuses as dses
+				WHERE dses.id = ns.ds_id and (options is not null and options != '--- {}\n') and decided is null
+			) as states inner join physical_objects
+			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Video_File_Auto_Accept} hour) <= utc_timestamp() and video = true
+			order by digital_start"
+		)
 	}
 
 	def self.test(*barcode)

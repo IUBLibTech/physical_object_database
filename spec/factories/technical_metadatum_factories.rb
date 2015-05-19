@@ -21,6 +21,10 @@ FactoryGirl.define do
      as_technical_metadatum_type "OpenReelTm"
      association :as_technical_metadatum, factory: :open_reel_tm
    end
+   trait :betacam do
+     as_technical_metadatum_type "BetacamTm"
+     association :as_technical_metadatum, factory: :betacam_tm
+   end
   end
 
   factory :analog_sound_disc_tm, class: AnalogSoundDiscTm do
@@ -102,6 +106,19 @@ FactoryGirl.define do
     one_direction 0
     two_directions 0
     unknown_direction 0
+  end
+
+  factory :betacam_tm, class: BetacamTm do
+    pack_deformation "none"
+    fungus false
+    soft_binder_syndrome false
+    other_contaminants false
+    cassette_size ""
+    recording_standard ""
+    format_duration ""
+    tape_stock_brand ""
+    image_format ""
+    format_version ""
   end
 
 end

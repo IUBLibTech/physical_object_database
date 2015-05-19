@@ -50,7 +50,6 @@ class ApplicationController < ActionController::Base
         @tm = @picklist_specification.create_tm
       end
     end
-
     render(partial: TechnicalMetadatumModule::TM_PARTIALS[f])
   end
 
@@ -94,7 +93,9 @@ class ApplicationController < ActionController::Base
       :diameter, :speed, :groove_size, :groove_orientation, :recording_method, :material, :substrate,
       :coating, :equalization, :country_of_origin, :delamination, :exudation, :oxidation, :cracked,
       :warped, :dirty, :scratched, :worn, :broken, :label,
-      :subtype
+      :subtype,
+      #fields for betacam
+      :format_version, :cassette_size, :recording_standard, :image_format
       )
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150426170454) do
+ActiveRecord::Schema.define(version: 20150518185528) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -53,6 +53,21 @@ ActiveRecord::Schema.define(version: 20150426170454) do
 
   add_index "batches", ["destination"], name: "index_batches_on_destination", using: :btree
   add_index "batches", ["workflow_status"], name: "index_batches_on_workflow_status", using: :btree
+
+  create_table "betacam_tms", force: true do |t|
+    t.string   "pack_deformation"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.string   "cassette_size"
+    t.string   "recording_standard"
+    t.string   "format_duration"
+    t.text     "tape_stock_brand"
+    t.string   "image_format"
+    t.string   "format_version"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "bins", force: true do |t|
     t.integer  "batch_id"
@@ -271,6 +286,8 @@ ActiveRecord::Schema.define(version: 20150426170454) do
     t.boolean  "staged",                              default: false
     t.datetime "digital_start"
     t.datetime "staging_request_timestamp"
+    t.boolean  "audio"
+    t.boolean  "video"
   end
 
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree

@@ -10,7 +10,7 @@ module TechnicalMetadatumModule
     Hash[array.map{ |v| [v.to_s,v.to_s] }]
   end
 
-  TM_FORMAT_ARRAY = [ "CD-R", "DAT", "Open Reel Audio Tape", "LP" ]
+  TM_FORMAT_ARRAY = [ "CD-R", "DAT", "Open Reel Audio Tape", "LP", "Betacam" ]
 
   TM_FORMATS = hashify(TM_FORMAT_ARRAY)
 
@@ -18,27 +18,30 @@ module TechnicalMetadatumModule
 
   BOX_FORMATS = [ "CD-R", "DAT", "LP" ]
 
-  BIN_FORMATS = [ "Open Reel Audio Tape" ]
+  BIN_FORMATS = [ "Open Reel Audio Tape", "Betacam" ]
 
   TM_GENRES = {
     "CD-R" => :audio,
     "DAT" => :audio,
     "Open Reel Audio Tape" => :audio,
-    "LP" => :audio
+    "LP" => :audio,
+    "Betacam" => :video
   }
 
   TM_FORMAT_CLASSES = {
     "CD-R" => CdrTm,
     "DAT" => DatTm,
     "Open Reel Audio Tape" => OpenReelTm,
-    "LP" => AnalogSoundDiscTm
+    "LP" => AnalogSoundDiscTm,
+    "Betacam" => BetacamTm
   }
 
   TM_CLASS_FORMATS = {
     CdrTm => "CD-R",
     DatTm => "DAT",
     OpenReelTm => "Open Reel Audio Tape",
-    AnalogSoundDiscTm => "LP"
+    AnalogSoundDiscTm => "LP",
+    BetacamTm => "Betacam"
   }
 
   TM_PARTIALS = {
@@ -46,21 +49,24 @@ module TechnicalMetadatumModule
     "DAT" => "technical_metadatum/show_dat_tm",
     "Open Reel Audio Tape" => "technical_metadatum/show_open_reel_tape_tm",
     "LP" => "technical_metadatum/show_analog_sound_disc_tm",
+    "Betacam" => "technical_metadatum/show_betacam_tm",
     nil => "technical_metadatum/show_unknown_tm"
   }
 
-  TM_CLASS_PICKLIST_PARTIALS = {
-    CdrTm => "/picklists/cdr_tm",
-    DatTm => "/picklists/dat_tm",
-    OpenReelTm => "/picklists/open_reel_tm",
-    AnalogSoundDiscTm => "/picklists/analog_sound_disc_tm"
-  }
+  # # is this still used?
+  # TM_CLASS_PICKLIST_PARTIALS = {
+  #   CdrTm => "/picklists/cdr_tm",
+  #   DatTm => "/picklists/dat_tm",
+  #   OpenReelTm => "/picklists/open_reel_tm",
+  #   AnalogSoundDiscTm => "/picklists/analog_sound_disc_tm"
+  # }
 
   TM_TABLE_NAMES = {
     "CD-R" => "cdr_tms",
     "DAT" => "dat_tms",
     "Open Reel Audio Tape" => "open_reel_tms",
-    "LP" => "analog_sound_disc_tms"
+    "LP" => "analog_sound_disc_tms",
+    "Betacam" => "betacam_tms"
   }
 
   #default values

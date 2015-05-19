@@ -27,6 +27,10 @@ FactoryGirl.define do
       format "Open Reel Audio Tape"
       association :technical_metadatum, factory: [:technical_metadatum, :open_reel]
     end
+    trait :betacam do
+      format "Betacam"
+      association :technical_metadatum, factory: [:technical_metadatum, :betacam]
+    end
     trait :boxable do
       cdr
     end

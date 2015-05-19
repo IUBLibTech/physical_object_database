@@ -38,10 +38,18 @@ class PhysicalObjectsController < ApplicationController
       @repeat = true
     end
     @tm = @physical_object.ensure_tm
-    saved = @physical_object.save and @tm.update_attributes(tm_params)
+
+    saved = @physical_object.save 
+    #debugger
+    saved = saved and @tm.update_attributes(tm_params)
+    #debugger
     if saved
       flash[:notice] = "Physical Object was successfully created.".html_safe
+    else
+      raise "Failed to save tm..."
     end
+
+
     if @repeat != true and saved
       redirect_to(:action => 'index')
     else

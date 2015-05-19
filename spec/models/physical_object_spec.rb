@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe PhysicalObject do
+  include TechnicalMetadatumModule
 
   let(:po) { FactoryGirl.create :physical_object, :cdr }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
@@ -14,57 +15,69 @@ describe PhysicalObject do
       context "with tm_type: #{tm_type}" do
         let(:valid_po) { FactoryGirl.build :physical_object, tm_type }
         specify "provides a valid object" do
-	  expect(valid_po).to be_valid
-          expect(valid_po.technical_metadatum).to be_valid
-          expect(valid_po.technical_metadatum.as_technical_metadatum).to be_valid
-	end
+         expect(valid_po).to be_valid
+         expect(valid_po.technical_metadatum).to be_valid
+         expect(valid_po.technical_metadatum.as_technical_metadatum).to be_valid
+       end
+     end
+   end
+   specify "provides an invalid object" do
+    expect(invalid_po).to be_valid
+  end
+end
+
+describe "sets proper media type" do
+  [:cdr, :dat, :lp, :open_reel, :betacam].each do |tm_type|
+    context "with tm_type: #{tm_type}" do
+      let(:po) { FactoryGirl.create :physical_object, tm_type }
+      specify "saves proper media type" do
+        expect(po.audio).to eq (TechnicalMetadatumModule::TM_GENRES[po.format] == :audio ? true : nil)
+        expect(po.video).to eq (TechnicalMetadatumModule::TM_GENRES[po.format] == :video ? true : nil)
       end
     end
-    specify "provides an invalid object" do
-      expect(invalid_po).to be_valid
-    end
   end
+end
 
-  describe "has required attributes:" do
-    it "requires a format" do
-      expect(valid_po.format).not_to be_blank
-      valid_po.format = ""
-      expect(valid_po).to be_invalid
-    end
+describe "has required attributes:" do
+  it "requires a format" do
+    expect(valid_po.format).not_to be_blank
+    valid_po.format = ""
+    expect(valid_po).to be_invalid
+  end
   
-    it "requires a format from format list" do
-      valid_po.format = "invalid format"
-      expect(valid_po).to be_invalid
-    end
+  it "requires a format from format list" do
+    valid_po.format = "invalid format"
+    expect(valid_po).to be_invalid
+  end
   
-    it "requires a unit" do
-      expect(valid_po.unit).not_to be_nil
-      valid_po.unit = nil
-      expect(valid_po).to be_invalid
-    end
+  it "requires a unit" do
+    expect(valid_po.unit).not_to be_nil
+    valid_po.unit = nil
+    expect(valid_po).to be_invalid
+  end
   
-    it "requires a group_position" do
-      expect(valid_po.group_position).to be > 0
-      valid_po.group_position = nil
-      expect(valid_po).to be_invalid
-    end
-    it "automatically resolves group_position collisions by advancing other object's position" do
-      po.save
-      dup_po = po.dup
-      expect(dup_po.group_position).to eq 1
-      dup_po.save
-      dup_po.reload
-      po.reload
-      expect(dup_po.group_position).to eq 1
-      expect(po.group_position).to eq 2
-    end
-    it "automatically extends group_key.group_total" do
-      expect(po.group_key.group_total).to eq 1
-      po.group_position = 2
-      po.save
-      po.reload
-      expect(po.group_key.group_total).to eq 2
-    end
+  it "requires a group_position" do
+    expect(valid_po.group_position).to be > 0
+    valid_po.group_position = nil
+    expect(valid_po).to be_invalid
+  end
+  it "automatically resolves group_position collisions by advancing other object's position" do
+    po.save
+    dup_po = po.dup
+    expect(dup_po.group_position).to eq 1
+    dup_po.save
+    dup_po.reload
+    po.reload
+    expect(dup_po.group_position).to eq 1
+    expect(po.group_position).to eq 2
+  end
+  it "automatically extends group_key.group_total" do
+    expect(po.group_key.group_total).to eq 1
+    po.group_position = 2
+    po.save
+    po.reload
+    expect(po.group_key.group_total).to eq 2
+  end
 
     #technical_metadatum: separate section
 
@@ -73,13 +86,13 @@ describe PhysicalObject do
       expect(valid_po).to be_invalid
     end
   end
- 
+
   describe "has optional attributes:" do
-    
+
     it "generates a carrier_stream_index" do
       expect(valid_po.carrier_stream_index).to_not be_blank
     end
-  
+
     it "has no notes by default" do
       expect(valid_po.notes).to be_empty
     end
@@ -99,9 +112,9 @@ describe PhysicalObject do
       end
       specify "can only be true of has_ephemera is true" do
         valid_po.has_ephemera = false
-	valid_po.ephemera_returned = true
-	valid_po.valid?
-	expect(valid_po).not_to be_valid
+        valid_po.ephemera_returned = true
+        valid_po.valid?
+        expect(valid_po).not_to be_valid
       end
     end
   end
@@ -340,10 +353,10 @@ describe PhysicalObject do
     it "#file_bext" do
       expect(valid_po.unit).not_to be_nil
       expect(valid_po.file_bext).to eq "Indiana University-Bloomington. " +
-        valid_po.unit.name + ". " +
-        (valid_po.collection_identifier.nil? ? "" : valid_po.collection_identifier + ". ") +
-        (valid_po.call_number.nil? ? "" : valid_po.call_number + ". ") +
-        "File use: "
+      valid_po.unit.name + ". " +
+      (valid_po.collection_identifier.nil? ? "" : valid_po.collection_identifier + ". ") +
+      (valid_po.call_number.nil? ? "" : valid_po.call_number + ". ") +
+      "File use: "
     end
     it "#file_icmt" do
       expect(valid_po.file_icmt).to eq valid_po.file_bext
@@ -441,113 +454,113 @@ describe PhysicalObject do
           if include_metadata
             specify "includes condition metadata" do
               expect(export_results).to match /\[#{condition_user}, /
-            end
-          else
-            specify "does not includes condition metadata" do
-              expect(export_results).not_to match /\[#{condition_user}, /
-            end
-          end
-        end
-      end
-    end
-    describe "#other_notes" do
-      note_user = "note_user"
-      let!(:external1) { FactoryGirl.create :note, physical_object: po, export: true, body: "External 1", user: note_user }
-      let!(:external2) { FactoryGirl.create :note, physical_object: po, export: true, body: "External 2", user: note_user }
-      let!(:internal1) { FactoryGirl.create :note, physical_object: po, export: false, body: "Internal 1", user: note_user }
-      let!(:internal2) { FactoryGirl.create :note, physical_object: po, export: false, body: "Internal 2", user: note_user }
-      [ { export_flag: false, include_metadata: false },
-        { export_flag: false, include_metadata: true },
-        { export_flag: true, include_metadata: false },
-        { export_flag: false, include_metadata: true } ].each do |params_hash|
-        context "export_flag: #{params_hash[:export_flag].to_s}, include_metadata: #{params_hash[:include_metadata].to_s}" do
-          let!(:export_results) { po.other_notes(params_hash[:export_flag], params_hash[:include_metadata]) }
-          if params_hash[:export_flag]
-            specify "includes external note body text, only" do
-              expect(export_results).to match external1.body
-              expect(export_results).to match external2.body
-              expect(export_results).not_to match internal1.body
-              expect(export_results).not_to match internal2.body
-            end
-          else
-            specify "includes internal note body text, only" do
-              expect(export_results).not_to match external1.body
-              expect(export_results).not_to match external2.body
-              expect(export_results).to match internal1.body
-              expect(export_results).to match internal2.body
-            end
-          end
-          if params_hash[:include_metadata]
-            specify "includes note metadata" do
-              expect(export_results).to match /\[#{note_user}, /
-            end
-          else
-            specify "excludes note metadata" do
-              expect(export_results).not_to match /\[#{note_user}, /
+              end
+            else
+              specify "does not includes condition metadata" do
+                expect(export_results).not_to match /\[#{condition_user}, /
+                end
+              end
             end
           end
         end
-      end
-    end
-    describe "#master_copies" do
-      context "with technical metadatum present" do
-        it "returns values from technical metadatum" do
-	  expect(po.master_copies).to eq po.technical_metadatum.as_technical_metadatum.master_copies
-	end
-      end
-      context "without technical metadatum present" do
-        before(:each) { po.technical_metadatum = nil }
-        it "returns 0" do
-	  expect(po.master_copies).to eq 0
-	end
-      end
-    end
-  end
+        describe "#other_notes" do
+          note_user = "note_user"
+          let!(:external1) { FactoryGirl.create :note, physical_object: po, export: true, body: "External 1", user: note_user }
+          let!(:external2) { FactoryGirl.create :note, physical_object: po, export: true, body: "External 2", user: note_user }
+          let!(:internal1) { FactoryGirl.create :note, physical_object: po, export: false, body: "Internal 1", user: note_user }
+          let!(:internal2) { FactoryGirl.create :note, physical_object: po, export: false, body: "Internal 2", user: note_user }
+          [ { export_flag: false, include_metadata: false },
+            { export_flag: false, include_metadata: true },
+            { export_flag: true, include_metadata: false },
+            { export_flag: false, include_metadata: true } ].each do |params_hash|
+              context "export_flag: #{params_hash[:export_flag].to_s}, include_metadata: #{params_hash[:include_metadata].to_s}" do
+                let!(:export_results) { po.other_notes(params_hash[:export_flag], params_hash[:include_metadata]) }
+                if params_hash[:export_flag]
+                  specify "includes external note body text, only" do
+                    expect(export_results).to match external1.body
+                    expect(export_results).to match external2.body
+                    expect(export_results).not_to match internal1.body
+                    expect(export_results).not_to match internal2.body
+                  end
+                else
+                  specify "includes internal note body text, only" do
+                    expect(export_results).not_to match external1.body
+                    expect(export_results).not_to match external2.body
+                    expect(export_results).to match internal1.body
+                    expect(export_results).to match internal2.body
+                  end
+                end
+                if params_hash[:include_metadata]
+                  specify "includes note metadata" do
+                    expect(export_results).to match /\[#{note_user}, /
+                    end
+                  else
+                    specify "excludes note metadata" do
+                      expect(export_results).not_to match /\[#{note_user}, /
+                      end
+                    end
+                  end
+                end
+              end
+              describe "#master_copies" do
+                context "with technical metadatum present" do
+                  it "returns values from technical metadatum" do
+                   expect(po.master_copies).to eq po.technical_metadatum.as_technical_metadatum.master_copies
+                 end
+               end
+               context "without technical metadatum present" do
+                before(:each) { po.technical_metadatum = nil }
+                it "returns 0" do
+                 expect(po.master_copies).to eq 0
+               end
+             end
+           end
+         end
 
-  describe "#create_tm" do
-    TechnicalMetadatumModule::TM_FORMATS.keys.each do |format|
-      context "with valid format: #{format}" do
-        let(:tm) { valid_po.create_tm(format) }
-        it "creates a new TM" do
-          expect(tm).to be_a_new(TechnicalMetadatumModule::TM_FORMAT_CLASSES[format])
+         describe "#create_tm" do
+          TechnicalMetadatumModule::TM_FORMATS.keys.each do |format|
+            context "with valid format: #{format}" do
+              let(:tm) { valid_po.create_tm(format) }
+              it "creates a new TM" do
+                expect(tm).to be_a_new(TechnicalMetadatumModule::TM_FORMAT_CLASSES[format])
+              end
+            end
+          end
+          context "with invalid format" do
+            let(:tm) { valid_po.create_tm("invalid format") }
+            it "raises an error" do
+              expect{tm}.to raise_error "Unknown format: invalid format"
+            end
+          end
         end
-      end
-    end
-    context "with invalid format" do
-      let(:tm) { valid_po.create_tm("invalid format") }
-      it "raises an error" do
-        expect{tm}.to raise_error "Unknown format: invalid format"
-      end
-    end
-  end
 
-  include_examples "ensure_tm examples" do
-    let(:test_object) { po }
-  end
+        include_examples "ensure_tm examples" do
+          let(:test_object) { po }
+        end
 
-  describe "#ensure_group_key" do
-    it "returns an existing group_key if present" do
-      expect(valid_po.ensure_group_key).to equal valid_po.group_key
-    end
-    it "returns a new, valid group_key if absent" do
-      valid_po.group_key = nil
-      expect(valid_po.ensure_group_key.id).to be_nil
-      expect(valid_po.ensure_group_key).to be_valid
-    end
-    it "runs before validation" do
-      valid_po.group_key = nil
-      valid_po.valid?
-      expect(valid_po.group_key).not_to be_nil
-    end
-  end
+        describe "#ensure_group_key" do
+          it "returns an existing group_key if present" do
+            expect(valid_po.ensure_group_key).to equal valid_po.group_key
+          end
+          it "returns a new, valid group_key if absent" do
+            valid_po.group_key = nil
+            expect(valid_po.ensure_group_key.id).to be_nil
+            expect(valid_po.ensure_group_key).to be_valid
+          end
+          it "runs before validation" do
+            valid_po.group_key = nil
+            valid_po.valid?
+            expect(valid_po.group_key).not_to be_nil
+          end
+        end
 
-  it_behaves_like "includes ConditionStatusModule:" do
-    let(:condition_status) { FactoryGirl.create(:condition_status, :physical_object, physical_object: po) }
-    let(:target_object) { po }
-    let(:class_title) { "Physical Object" }
-  end
+        it_behaves_like "includes ConditionStatusModule:" do
+          let(:condition_status) { FactoryGirl.create(:condition_status, :physical_object, physical_object: po) }
+          let(:target_object) { po }
+          let(:class_title) { "Physical Object" }
+        end
 
-  status_list = ["Unassigned", "On Pick List", "Boxed", "Binned", "Unpacked", "Returned to Unit"] 
+        status_list = ["Unassigned", "On Pick List", "Boxed", "Binned", "Unpacked", "Returned to Unit"] 
   # pass status_list arg here to test previous/next methods
   it_behaves_like "includes Workflow Status Module" do
     let(:object) { valid_po }
