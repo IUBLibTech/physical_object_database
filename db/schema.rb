@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150518185528) do
+ActiveRecord::Schema.define(version: 20150519151440) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -83,7 +83,9 @@ ActiveRecord::Schema.define(version: 20150518185528) do
     t.string   "destination"
   end
 
+  add_index "bins", ["batch_id"], name: "index_bins_on_batch_id", using: :btree
   add_index "bins", ["destination"], name: "index_bins_on_destination", using: :btree
+  add_index "bins", ["picklist_specification_id"], name: "index_bins_on_picklist_specification_id", using: :btree
   add_index "bins", ["spreadsheet_id"], name: "index_bins_on_spreadsheet_id", using: :btree
   add_index "bins", ["workflow_index", "identifier"], name: "index_bins_on_workflow_index_and_identifier", using: :btree
   add_index "bins", ["workflow_status"], name: "index_bins_on_workflow_status", using: :btree
@@ -98,6 +100,7 @@ ActiveRecord::Schema.define(version: 20150518185528) do
     t.text     "description"
   end
 
+  add_index "boxes", ["bin_id"], name: "index_boxes_on_bin_id", using: :btree
   add_index "boxes", ["spreadsheet_id"], name: "index_boxes_on_spreadsheet_id", using: :btree
 
   create_table "cassette_tape_tms", force: true do |t|
@@ -143,7 +146,9 @@ ActiveRecord::Schema.define(version: 20150518185528) do
   end
 
   add_index "condition_statuses", ["bin_id", "condition_status_template_id"], name: "index_cs_on_bin_and_cst", using: :btree
+  add_index "condition_statuses", ["condition_status_template_id"], name: "index_condition_statuses_on_condition_status_template_id", using: :btree
   add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
+  add_index "condition_statuses", ["physical_object_id"], name: "index_condition_statuses_on_physical_object_id", using: :btree
 
   create_table "containers", force: true do |t|
     t.datetime "created_at"
@@ -186,6 +191,8 @@ ActiveRecord::Schema.define(version: 20150518185528) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "digital_statuses", ["physical_object_id"], name: "index_digital_statuses_on_physical_object_id", using: :btree
 
   create_table "group_keys", force: true do |t|
     t.datetime "created_at"
@@ -290,6 +297,9 @@ ActiveRecord::Schema.define(version: 20150518185528) do
     t.boolean  "video"
   end
 
+  add_index "physical_objects", ["bin_id"], name: "index_physical_objects_on_bin_id", using: :btree
+  add_index "physical_objects", ["box_id"], name: "index_physical_objects_on_box_id", using: :btree
+  add_index "physical_objects", ["container_id"], name: "index_physical_objects_on_container_id", using: :btree
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
   add_index "physical_objects", ["picklist_id", "group_key_id", "group_position", "id"], name: "index_physical_objects_on_packing_sort", using: :btree
   add_index "physical_objects", ["spreadsheet_id"], name: "index_physical_objects_on_spreadsheet_id", using: :btree
@@ -326,6 +336,8 @@ ActiveRecord::Schema.define(version: 20150518185528) do
     t.datetime "updated_at"
   end
 
+  add_index "preservation_problems", ["open_reel_tm_id"], name: "index_preservation_problems_on_open_reel_tm_id", using: :btree
+
   create_table "spreadsheets", force: true do |t|
     t.string   "filename"
     t.text     "note"
@@ -345,6 +357,8 @@ ActiveRecord::Schema.define(version: 20150518185528) do
   end
 
   add_index "technical_metadata", ["as_technical_metadatum_id", "as_technical_metadatum_type"], name: "technical_metadata_as_technical_metadatum_index", using: :btree
+  add_index "technical_metadata", ["physical_object_id"], name: "index_technical_metadata_on_physical_object_id", using: :btree
+  add_index "technical_metadata", ["picklist_specification_id"], name: "index_technical_metadata_on_picklist_specification_id", using: :btree
 
   create_table "units", force: true do |t|
     t.string   "abbreviation"
