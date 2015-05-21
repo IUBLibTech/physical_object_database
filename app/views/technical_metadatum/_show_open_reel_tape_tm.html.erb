@@ -169,17 +169,7 @@
 		<tr>
 			<th>Directions recorded</th>
 			<td>
-			<% if @edit_mode %>
-				<table>
-					<tr>
-						<td>1 <%= f.check_box(:one_direction) %></td>
-						<td>2 <%= f.check_box(:two_directions) %></td>
-						<td>Unknown <%= f.check_box(:unknown_direction) %></td>
-					</tr>
-				</table>
-			<% else %>
-				<%= @tm.humanize_boolean_fields("one_direction", "two_directions", "unknown_direction") %>	
-			<% end %>
+				<%= @tm.directions_recorded %>
 			</td>
 		</tr>
 	</table>

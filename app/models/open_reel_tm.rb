@@ -1,6 +1,7 @@
 class OpenReelTm < ActiveRecord::Base
 	acts_as :technical_metadatum
 	after_initialize :default_values
+        before_validation :infer_values
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
 
@@ -10,7 +11,7 @@ class OpenReelTm < ActiveRecord::Base
 		:thirty_ips => "30 ips", :unknown_track => "Unknown", :zero_point5_mils => "0.5 mil",
 		:one_mils => "1.0 mil", :one_point5_mils => "1.5 mil", :unknown_sound_field => "Unknown", 
 		:acetate_base => "Acetate", :polyester_base => "Polyester", :pvc_base => "PVC", :paper_base => "Paper",
-		:unknown_playback_speed => "Unknown", :one_direction => "1", :two_directions => "2", :unknown_direction => "Unknown" 
+		:unknown_playback_speed => "Unknown"
 	}
 	PRESERVATION_PROBLEM_FIELDS = ["fungus", "soft_binder_syndrome", "vinegar_syndrome", "other_contaminants"]
 	PLAYBACK_SPEED_FIELDS = [
@@ -28,19 +29,17 @@ class OpenReelTm < ActiveRecord::Base
 	TAPE_THICKNESS_FIELDS = [ "zero_point5_mils", "one_mils", "one_point5_mils" ]
 	SOUND_FIELD_FIELDS = ["mono","stereo","unknown_sound_field"]
 	TAPE_BASE_FIELDS = ["acetate_base","polyester_base","pvc_base","paper_base"]
-	DIRECTIONS_RECORDED_FIELDS = ["one_direction","two_directions","unknown_direction"]
 
 	REEL_SIZE_VALUES = hashify ["", "3 in.", "4 in.", "5 in.", "6 in.", "7 in.", "10 in.", "10.5 in."] 
 	PACK_DEFORMATION_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
-	SIMPLE_FIELDS = ["pack_deformation", "reel_size", "tape_stock_brand"]
+	SIMPLE_FIELDS = ["pack_deformation", "reel_size", "tape_stock_brand", "directions_recorded"]
 	MULTIVALUED_FIELDSETS = {
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
 	  "Playback speed" => :PLAYBACK_SPEED_FIELDS,
 	  "Track configuration" => :TRACK_CONFIGURATION_FIELDS,
 	  "Tape thickness" => :TAPE_THICKNESS_FIELDS,
 	  "Sound field" => :SOUND_FIELD_FIELDS,
-	  "Tape base" => :TAPE_BASE_FIELDS,
-	  "Directions recorded" => :DIRECTIONS_RECORDED_FIELDS
+	  "Tape base" => :TAPE_BASE_FIELDS
 	}
 
 	validates :pack_deformation, inclusion: { in: PACK_DEFORMATION_VALUES.keys }
@@ -59,6 +58,10 @@ class OpenReelTm < ActiveRecord::Base
 	def default_values
 	  self.pack_deformation ||= "None"
 	  self.reel_size ||= "Unknown"
+	end
+
+	def infer_values
+	  self.directions_recorded = infer_directions_recorded
 	end
 
 	def damage
@@ -85,10 +88,6 @@ class OpenReelTm < ActiveRecord::Base
 	  humanize_boolean_fieldset(:TAPE_BASE_FIELDS)
 	end
 
-	def directions_recorded
-          humanize_boolean_fieldset(:DIRECTIONS_RECORDED_FIELDS)
-	end
-
 	# Note that the checked traits are not mutually exclusive, so the biggest number wins
 	def master_copies
         	if self.unknown_track
@@ -111,6 +110,22 @@ class OpenReelTm < ActiveRecord::Base
 			# if no track specification selected, as per Unknown
 			4
 		end
+	end
+
+	def infer_directions_recorded
+	  if self.unknown_track || self.quarter_track
+	    2
+	  elsif self.half_track
+	    if self.stereo && !self.mono && !self.unknown_sound_field
+	      1
+	    else
+	      2
+	    end
+	  elsif self.full_track
+	    1
+	  else
+	    2
+	  end
 	end
 
 end
