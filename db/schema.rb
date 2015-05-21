@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150426170454) do
+ActiveRecord::Schema.define(version: 20150521145814) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -231,9 +231,7 @@ ActiveRecord::Schema.define(version: 20150426170454) do
     t.boolean  "pvc_base"
     t.boolean  "paper_base"
     t.boolean  "unknown_playback_speed"
-    t.boolean  "one_direction"
-    t.boolean  "two_directions"
-    t.boolean  "unknown_direction"
+    t.integer  "directions_recorded"
   end
 
   create_table "physical_objects", force: true do |t|

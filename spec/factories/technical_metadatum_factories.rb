@@ -99,9 +99,6 @@ FactoryGirl.define do
     pvc_base 0
     paper_base 0
     unknown_playback_speed 0
-    one_direction 0
-    two_directions 0
-    unknown_direction 0
   end
 
 end
