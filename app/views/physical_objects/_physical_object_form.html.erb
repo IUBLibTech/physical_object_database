@@ -9,11 +9,25 @@
   <% end %>
   <%= render(partial: 'physical_objects/physical_object_metadata_fields', locals: {f: f}) %>
   <div class="left">
-    <h2>Digital Files</h2>
-    <% unless @digital_files.nil? %>
-      <% @digital_files.each do |files| %>
-        <%= render(partial: 'media_files/media_file_form', locals: {f: files}) %>
-      <% end %>
+    <% unless @physical_object.digital_statuses.size <= 0 %>
+      <h2>Digital Statuses</h2>
+      <div>
+        <%= @physical_object.mdpi_barcode %>'s digital files were received 
+        <%= @physical_object.digital_start_readable %>.
+        The object will <i>auto-accept</i> on <%= @physical_object.expires %> 
+      </div>
+      <table>
+        <tr>
+          <th>State</th>
+          <th>Date</th>
+        </tr>
+        <% @physical_object.digital_statuses.order(created_at: :desc).each do |s| %>
+          <tr>
+            <td><%= s.state %></td>
+            <td><%= s.created_at.strftime("%l:%M%P %B %-d, %Y") %></td>
+          </tr>
+        <% end %>
+      </table>
     <% end %>
   </div>
   <%# add the submit and close off the form_for %>

@@ -3,12 +3,21 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 require 'csv'
 
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env)
 
+
+# Starts the digital file auto accepting thread 
+
 module Pod
   class Application < Rails::Application
+    require 'digital_file_auto_acceptor'
+    # this fires up the background process that searches for physical objects to automatically move to accepted state
+    # after 30/40 days from digitization start (video/audio)
+    ::DigitalFileAutoAcceptor.instance.start
+    
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
