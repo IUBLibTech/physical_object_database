@@ -10,9 +10,9 @@ describe BinsController do
   let(:bin) { FactoryGirl.create(:bin) }
   let(:sealed) {FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier:"UNIQUE!", current_workflow_status: "Sealed")} 
   let(:box) { FactoryGirl.create(:box, bin: bin) }
-  let(:boxed_object) { FactoryGirl.create(:physical_object, :boxable, box: box) }
-  let(:other_boxed_object) { FactoryGirl.create(:physical_object, :boxable, box: unassigned_box) }
-  let(:binned_object) { FactoryGirl.create(:physical_object, :binnable, bin: bin) }
+  let(:boxed_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: box) }
+  let(:other_boxed_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: unassigned_box) }
+  let(:binned_object) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: bin) }
   let(:unassigned_object) { FactoryGirl.create(:physical_object, :boxable) }
   let(:unassigned_box) { FactoryGirl.create(:box) }
   let(:picklist) { FactoryGirl.create(:picklist) }

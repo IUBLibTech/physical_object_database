@@ -63,6 +63,7 @@ describe Batch do
     it "returns format of first object in first bin" do
       bin
       physical_object.format = "Open Reel Audio Tape"
+      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
       physical_object.bin = bin
       physical_object.save!
       physical_object.reload
@@ -73,6 +74,7 @@ describe Batch do
     it "returns format of first object in first box in in first bin" do
       bin
       box
+      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
       physical_object.box = box
       physical_object.save!
       physical_object.reload

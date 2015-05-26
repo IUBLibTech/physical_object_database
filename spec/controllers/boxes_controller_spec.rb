@@ -6,8 +6,8 @@ describe BoxesController do
   let(:other_bin) { FactoryGirl.create(:bin, identifier: "other " + bin.identifier) }
   let(:box) { FactoryGirl.create(:box) }
   let(:binned_box) { FactoryGirl.create(:box, bin: bin) }
-  let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, box: box) }
-  let(:binned_object) { FactoryGirl.create(:physical_object, :cdr, bin: bin) }
+  let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded, box: box) }
+  let(:binned_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded, bin: bin) }
   let(:picklist) { FactoryGirl.create(:picklist) }
   let!(:complete) {FactoryGirl.create(:picklist, name: 'complete', complete: true)}
   let(:spreadsheet) { FactoryGirl.create(:spreadsheet) }

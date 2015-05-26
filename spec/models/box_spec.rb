@@ -4,8 +4,8 @@ describe Box do
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_box) { FactoryGirl.build :box }
   let(:invalid_box) { FactoryGirl.build :box, :invalid }
-  let(:po) { FactoryGirl.create :physical_object, :cdr, box: box}
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
+  let(:po) { FactoryGirl.create :physical_object, :cdr, :barcoded, box: box}
+  let(:physical_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
 
   describe "FactoryGirl" do
     it "gets a valid object by default" do
@@ -49,13 +49,16 @@ describe Box do
   	  expect(box.physical_objects).not_to be_empty
   	  expect(box.physical_objects_count).to eq 1   	
     end
-    it "can belong to a bin" do
-  	  expect(box.bin).to eq(bin)
-  	  box.bin = nil
-  	  expect(box.bin).to be_nil
-  	  box.save!
-  	  expect(bin.boxes.where(id: box.id).first).to eq nil
+    it "can belong to a bin if barcode is set (which it must be to be valid)" do
+  	  valid_box.bin = bin
+	  expect(valid_box).to be_valid
     end
+    it "cannot belong to a bin if barcode is not set" do
+    	valid_box.mdpi_barcode = "0"
+	valid_box.bin = bin
+	expect(valid_box).not_to be_valid
+    end
+    #FIXME: test against being in a bin containing boxes of different formats
     it "cannot belong to a bin containing physical objects" do
       physical_object.format = "Open Reel Audio Tape"
       physical_object.bin = bin
