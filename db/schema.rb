@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150519151440) do
+ActiveRecord::Schema.define(version: 20150601153913) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -179,6 +179,28 @@ ActiveRecord::Schema.define(version: 20150519151440) do
     t.datetime "updated_at"
   end
 
+  create_table "digital_provenances", force: true do |t|
+    t.string   "digitizing_entity"
+    t.datetime "date"
+    t.text     "comments"
+    t.string   "created_by"
+    t.datetime "cleaning_date"
+    t.string   "player_serial_number"
+    t.string   "player_manufacturer"
+    t.string   "player_model"
+    t.string   "ad_serial_number"
+    t.string   "ad_manufacturer"
+    t.string   "ad_model"
+    t.datetime "baking"
+    t.boolean  "repaired"
+    t.string   "extraction_workstation"
+    t.string   "speed_used"
+    t.integer  "physical_object_id",     limit: 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "cleaning_comment"
+  end
+
   create_table "digital_statuses", force: true do |t|
     t.integer  "physical_object_id"
     t.integer  "physical_object_mdpi_barcode", limit: 8
@@ -253,9 +275,7 @@ ActiveRecord::Schema.define(version: 20150519151440) do
     t.boolean  "pvc_base"
     t.boolean  "paper_base"
     t.boolean  "unknown_playback_speed"
-    t.boolean  "one_direction"
-    t.boolean  "two_directions"
-    t.boolean  "unknown_direction"
+    t.integer  "directions_recorded"
   end
 
   create_table "physical_objects", force: true do |t|
@@ -295,6 +315,7 @@ ActiveRecord::Schema.define(version: 20150519151440) do
     t.datetime "staging_request_timestamp"
     t.boolean  "audio"
     t.boolean  "video"
+    t.boolean  "memnon_qc_completed"
   end
 
   add_index "physical_objects", ["bin_id"], name: "index_physical_objects_on_bin_id", using: :btree

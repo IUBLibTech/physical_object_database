@@ -155,7 +155,7 @@ describe "has required attributes:" do
         end
       end
     end
-    PhysicalObject.const_get(:BIN_FORMATS).each do |format|
+    PhysicalObject.const_get(:BIN_FORMATS).each_with_index do |format, index|
       describe "binnable format: #{format}" do
         before(:each) { valid_po.format = format }
         specify "cannot belong to a bin and box" do

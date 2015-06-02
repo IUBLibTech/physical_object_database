@@ -23,6 +23,7 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :unit
   
   has_one :technical_metadatum, :dependent => :destroy
+  has_one :digital_provenance, :dependent => :destroy
   has_many :digital_files, :dependent => :destroy
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
@@ -337,6 +338,11 @@ class PhysicalObject < ActiveRecord::Base
     self.group_key
   end
 
+  def ensure_digiprov
+    self.digital_provenance ||= DigitalProvenance.new(physical_object_id: self.id) 
+    self.digital_provenance
+  end
+
   def display_workflow_status
     if self.current_workflow_status.in? ["Binned", "Boxed"]
       if self.bin
@@ -479,6 +485,7 @@ class PhysicalObject < ActiveRecord::Base
     self.generation ||= ""
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
+    self.digital_provenance ||= nil
   end
 
   # def open_reel_tm_where(stm)

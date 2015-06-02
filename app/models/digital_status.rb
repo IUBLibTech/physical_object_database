@@ -65,6 +65,7 @@ class DigitalStatus < ActiveRecord::Base
     )
   }
 
+ 	# returns a result set containing pairings of state name and the count of physical objects currently in that state
   scope :action_statuses, -> {
   	# this MUST be double quoted - otherwise the \n will be presevered as those characters and not treated as a
   	# carriage return... why does ruby do this?!?!?
@@ -81,6 +82,26 @@ class DigitalStatus < ActiveRecord::Base
 			) as y INNER JOIN digital_statuses as ds2 
 			WHERE ds2.id = y.y_id
 			GROUP BY state"
+		)
+  }
+
+  # all physical objects whose current state is a decision node (one where user must make a choice) AND the choice
+  # has been made.
+  scope :decided_action_barcodes, -> {
+  	# this MUST be double quoted - otherwise the \n will be presevered as those characters and not treated as a
+  	# carriage return... why does ruby do this?!?!?
+  	DigitalStatus.connection.execute(
+  		"SELECT mdpi_barcode, decided
+			FROM (
+				SELECT physical_object_id, decided
+				FROM (
+					SELECT max(id) as ds_id
+					FROM digital_statuses
+					GROUP BY physical_object_id
+				) AS ns INNER JOIN digital_statuses as dses
+				WHERE dses.id = ns.ds_id and (options is not null and options != '#{serialized_empty_hash}') and decided is not null
+			) as ds INNER JOIN physical_objects
+			WHERE ds.physical_object_id = physical_objects.id"
 		)
   }
 

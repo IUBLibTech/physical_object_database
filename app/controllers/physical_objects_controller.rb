@@ -4,6 +4,7 @@ class PhysicalObjectsController < ApplicationController
   before_action :set_new_physical_object_with_params, only: [:create]
   before_action :set_box_and_bin_by_barcodes, only: [:create, :create_multiple, :update]
   before_action :set_picklists, only: [:edit]
+  before_action :normalize_dates, only: [:create, :update]
   helper :all
 
   def download_spreadsheet_example
@@ -18,6 +19,7 @@ class PhysicalObjectsController < ApplicationController
     format = PhysicalObject.formats["Open Reel Audio Tape"]
     @physical_object.format = format
     @tm = @physical_object.ensure_tm
+    @dp = @physical_object.ensure_digiprov
     @digital_files = []
     @formats = PhysicalObject.formats
     @edit_mode = true
@@ -38,15 +40,12 @@ class PhysicalObjectsController < ApplicationController
       @repeat = true
     end
     @tm = @physical_object.ensure_tm
-
+    @dp = @physical_object.ensure_digiprov
     saved = @physical_object.save 
-    #debugger
     saved = saved and @tm.update_attributes(tm_params)
-    #debugger
+    saved = saved and @dp.update_attributes(dp_params)
     if saved
       flash[:notice] = "Physical Object was successfully created.".html_safe
-    else
-      raise "Failed to save tm..."
     end
 
 
@@ -57,10 +56,13 @@ class PhysicalObjectsController < ApplicationController
       if @repeat and saved
         @physical_object = PhysicalObject.new(physical_object_params)
         @tm = @physical_object.ensure_tm
+        @dp = @physical_object.ensure_digiprov
         @tm.assign_attributes(tm_params)
+        @dp.assign_attributes(dp_params)
       else
         # for failed save, carry over tm attributes
         @tm.assign_attributes(tm_params)
+        @dp.assign_attributes(dp_params)
       end
       @display_assigned = true
       render('new')
@@ -94,8 +96,10 @@ class PhysicalObjectsController < ApplicationController
       if updated
         @physical_object.reload
         @tm = @physical_object.ensure_tm
+        @dp = @physical_object.ensure_digiprov
         #FIXME: we are not checking if this succeeds
         update = @tm.update_attributes(tm_params)
+        update = @dp.update_attributes(dp_params)
       end
 
       if updated 
@@ -230,6 +234,7 @@ class PhysicalObjectsController < ApplicationController
     format = PhysicalObject.formats["CD-R"]
     @physical_object.format = format
     @tm = @physical_object.ensure_tm
+    @dp = @physical_object.ensure_digiprov
     @digital_files = []
     @formats = PhysicalObject.formats
     @edit_mode = true
@@ -354,6 +359,7 @@ class PhysicalObjectsController < ApplicationController
       @digital_files = @physical_object.digital_files
       @tm = @physical_object.technical_metadatum
       @tm = @physical_object.technical_metadatum.as_technical_metadatum unless @tm.nil?
+      @dp = @physical_object.ensure_digiprov
       @bin = @physical_object.bin
       @box = @physical_object.box
       @group_key = @physical_object.group_key
@@ -407,5 +413,21 @@ class PhysicalObjectsController < ApplicationController
       @edit_mode = true
       @picklisting = true
       @display_assigned = true
+    end
+
+    # there is a disconnect between jquery datepicker and how rails parses datetime objects.
+    # probably a better way than intercepting the params hash and normalizing it...
+    def normalize_dates
+      if params[:dp]
+        unless params[:dp][:date].blank?
+          params[:dp][:date] = DateTime.strptime(params[:dp][:date], "%m/%d/%Y").strftime("%d/%m/%Y")
+        end
+        unless params[:dp][:cleaning_date].blank?
+          params[:dp][:cleaning_date] = DateTime.strptime(params[:dp][:cleaning_date], "%m/%d/%Y").strftime("%d/%m/%Y")
+        end
+        unless params[:dp][:baking].blank?
+          params[:dp][:baking] = DateTime.strptime(params[:dp][:baking], "%m/%d/%Y").strftime("%d/%m/%Y")
+        end
+      end
     end
 end

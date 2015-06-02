@@ -99,6 +99,14 @@ class ApplicationController < ActionController::Base
       )
   end
 
+  def dp_params
+    params.require(:dp).permit(
+      :digitizing_entity, :date, :comments, :created_by, :cleaning_date, :cleaning_comment, 
+      :player_serial_number, :player_manufacturer, :player_model, :ad_serial_number, :ad_manufacturer,
+      :ad_model, :baking, :repaired, :extraction_workstation, :speed_used
+    )
+  end
+
   private
   def scope_current_user
     User.current_user = current_user

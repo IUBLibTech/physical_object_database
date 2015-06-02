@@ -9,8 +9,6 @@ class PhysicalObjectValidator < ActiveModel::Validator
     elsif TM_GENRES[record.format] == :video
       record.audio = nil
       record.video = true
-    else
-    	raise "Unknown format #{record.format} for PhysicalObject id: #{record.id}"
     end
     
 		unless 

@@ -263,4 +263,22 @@ describe ResponsesController do
     end
   end
 
+  describe "#push_memnon_qc" do
+    before(:each) do
+      po_requested.memnon_qc_completed = false
+      po_requested.save
+    end
+
+    it "sets memnon qc completed to true" do
+      post :push_memnon_qc, mdpi_barcode: po_requested.mdpi_barcode, done: true
+      po_requested.reload
+      expect(po_requested.memnon_qc_completed).to eq true
+    end
+
+    it "fails on invalid barcode" do
+      post :push_memnon_qc, mdpi_barcode: 1, done: true
+      expect(assigns(:po)).to be_nil
+    end
+  end
+
 end
