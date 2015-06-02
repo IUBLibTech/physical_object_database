@@ -1,0 +1,71 @@
+<%= fields_for :tm do |f| %>
+	<h2>Betacam Technical Metadata</h2>
+	<table>
+		<tr>
+			<th>Format Version</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.select(:format_version, @tm.format_version_values) %>
+				<% else %>
+					<%= f.text_field(:format_version, readonly: true) %>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<th>Pack Deformation</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.select(:pack_deformation, @tm.pack_deformation_values) %>
+				<% else %>
+					<%= f.text_field(:pack_deformation, readonly: true) %>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<th>Cassette Size</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.select(:cassette_size, @tm.cassette_size_values) %>
+				<% else %>
+					<%= f.text_field(:cassette_size, readonly: true) %>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<th>Recording Standard</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.select(:recording_standard, @tm.recording_standard_values) %>
+				<% else %>
+					<%= f.text_field(:recording_standard, readonly: true) %>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<th>Format Duration (min)</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.select(:format_duration, @tm.format_duration_values) %>
+				<% else %>
+					<%= f.text_field(:format_duration, readonly: true) %>
+				<% end %>
+			</td>
+		</tr>
+		<tr>
+			<th>Tape Stock Brand</th>
+			<td>
+				<%= f.text_field(:tape_stock_brand, readonly: !@edit_mode) %>
+			</td>
+		</tr>
+		<tr>
+			<th>Image Format</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.select(:image_format, @tm.image_format_values) %>
+				<% else %>
+					<%= f.text_field(:image_format, readonly: true) %>
+				<% end %>
+			</td>
+		</tr>
+	</table>
+<% end %>

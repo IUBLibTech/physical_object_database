@@ -12,6 +12,7 @@ class SearchController < ApplicationController
     @physical_object = PhysicalObject.new
     @physical_object.format = PhysicalObject.formats["CD-R"]
     @tm = @physical_object.create_tm(@physical_object.format)
+    @dp = @physical_object.ensure_digiprov
     @display_assigned = true
     @edit_mode = true
     @submit_text = "Search"

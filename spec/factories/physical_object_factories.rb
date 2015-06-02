@@ -27,6 +27,10 @@ FactoryGirl.define do
       format "Open Reel Audio Tape"
       association :technical_metadatum, factory: [:technical_metadatum, :open_reel]
     end
+    trait :betacam do
+      format "Betacam"
+      association :technical_metadatum, factory: [:technical_metadatum, :betacam]
+    end
     trait :boxable do
       cdr
     end
@@ -40,10 +44,11 @@ FactoryGirl.define do
     generation ""
     group_position 1
     association :group_key, factory: :group_key
-
+    association :digital_provenance, factory: :digital_provenance
     #at least one must be set of MDPI barcode, IUCAT barcode, title, call number
     title "FactoryGirl object"
     #mdpi_barcode { BarcodeHelper.valid_mdpi_barcode }
+
 
   end
 

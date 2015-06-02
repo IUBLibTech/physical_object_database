@@ -371,6 +371,7 @@ describe PicklistsController do
           request.env['HTTP_REFERER'] = "Foo"
           args[:pack_button] = "Pack"
           args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+          args[:dp] = po2.digital_provenance.attributes
           pack_list
         end
         describe "pack button" do
@@ -407,6 +408,7 @@ describe PicklistsController do
       it "moves to previous object on previous button submission" do
         args[:previous_button] = "Previous"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         expect(assigns(:previous_physical_object)).to eq po3
         expect(assigns(:wrap_previous)).to be true
@@ -424,6 +426,8 @@ describe PicklistsController do
       it "moves to next object on next button submission" do
         args[:next_button] = "Previous"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
+
         pack_list
         expect(assigns(:previous_physical_object)).to eq po2
         expect(assigns(:wrap_previous)).to be_falsey
@@ -442,6 +446,7 @@ describe PicklistsController do
       it "packs a physical object" do
         args[:pack_button] = "Pack"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
@@ -467,6 +472,7 @@ describe PicklistsController do
         po3.save!
         args[:pack_button] = "Pack"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         pack_picklist.reload
         expect(pack_picklist.complete).to eq true
@@ -477,6 +483,7 @@ describe PicklistsController do
         args[:pack_button] = "Pack"
         args[:physical_object] = po2.attributes
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         
         args[:physical_object][:call_number] = changed
         pack_list
@@ -502,6 +509,7 @@ describe PicklistsController do
         args[:pack_button] = "Pack"
         args[:physical_object] = po2.attributes
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         args[:physical_object][:mdpi_barcode] = '0'
         pack_list
         expect(assigns(:physical_object).errors[:mdpi_barcode]).to include("- Must assign a valid MDPI barcode to pack a Physical Object")
@@ -513,6 +521,7 @@ describe PicklistsController do
         args[:pack_button] = "Pack"
         args[:physical_object] = po2.attributes
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         expect(flash[:warning]).to include("The current workflow status of Bin")
       end
@@ -522,6 +531,7 @@ describe PicklistsController do
         po2.save!
         args[:unpack_button] = "Unpack"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po1
@@ -531,6 +541,7 @@ describe PicklistsController do
 
         expect(assigns(:physical_object)).to eq po2
         expect(assigns(:tm)).to eq po2.technical_metadatum.as_technical_metadatum
+
 
         expect(assigns(:next_physical_object)).to eq po3
         expect(assigns(:wrap_next)).to be_falsey
@@ -596,6 +607,7 @@ describe PicklistsController do
       it "moves to previous object on previous button submission" do
         args[:previous_button] = "Previous"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         expect(assigns(:previous_physical_object)).to eq po3
         expect(assigns(:wrap_previous)).to be true
@@ -613,6 +625,7 @@ describe PicklistsController do
       it "moves to next object on next button submission" do
         args[:next_button] = "Previous"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         expect(assigns(:previous_physical_object)).to eq po2
         expect(assigns(:wrap_previous)).to be_falsey
@@ -630,6 +643,7 @@ describe PicklistsController do
       it "packs a physical object" do
         args[:pack_button] = "Pack"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po2
@@ -653,6 +667,7 @@ describe PicklistsController do
         args[:pack_button] = "Pack"
         args[:physical_object] = po2.attributes
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         args[:physical_object][:call_number] = changed
         pack_list
         po2.reload
@@ -676,6 +691,7 @@ describe PicklistsController do
         args[:pack_button] = "Pack"
         args[:physical_object] = po2.attributes
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         args[:physical_object][:mdpi_barcode] = '0'
         pack_list
         expect(assigns(:physical_object).errors[:mdpi_barcode]).to include("- Must assign a valid MDPI barcode to pack a Physical Object")
@@ -686,6 +702,7 @@ describe PicklistsController do
         args[:pack_button] = "Pack"
         args[:physical_object] = po2.attributes
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         expect(flash[:warning]).to include("The current workflow status of Bin")
       end
@@ -694,6 +711,7 @@ describe PicklistsController do
         po2.save!
         args[:unpack_button] = "Unpack"
         args[:tm] = po2.technical_metadatum.as_technical_metadatum.attributes
+        args[:dp] = po2.digital_provenance.attributes
         pack_list
         po2.reload
         expect(assigns(:previous_physical_object)).to eq po1

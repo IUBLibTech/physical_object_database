@@ -65,6 +65,7 @@ class DigitalStatus < ActiveRecord::Base
     )
   }
 
+ 	# returns a result set containing pairings of state name and the count of physical objects currently in that state
   scope :action_statuses, -> {
   	# this MUST be double quoted - otherwise the \n will be presevered as those characters and not treated as a
   	# carriage return... why does ruby do this?!?!?
@@ -81,6 +82,26 @@ class DigitalStatus < ActiveRecord::Base
 			) as y INNER JOIN digital_statuses as ds2 
 			WHERE ds2.id = y.y_id
 			GROUP BY state"
+		)
+  }
+
+  # all physical objects whose current state is a decision node (one where user must make a choice) AND the choice
+  # has been made.
+  scope :decided_action_barcodes, -> {
+  	# this MUST be double quoted - otherwise the \n will be presevered as those characters and not treated as a
+  	# carriage return... why does ruby do this?!?!?
+  	DigitalStatus.connection.execute(
+  		"SELECT mdpi_barcode, decided
+			FROM (
+				SELECT physical_object_id, decided
+				FROM (
+					SELECT max(id) as ds_id
+					FROM digital_statuses
+					GROUP BY physical_object_id
+				) AS ns INNER JOIN digital_statuses as dses
+				WHERE dses.id = ns.ds_id and (options is not null and options != '#{serialized_empty_hash}') and decided is not null
+			) as ds INNER JOIN physical_objects
+			WHERE ds.physical_object_id = physical_objects.id"
 		)
   }
 
@@ -101,13 +122,26 @@ class DigitalStatus < ActiveRecord::Base
 				) AS ns INNER JOIN digital_statuses as dses
 				WHERE dses.id = ns.ds_id and (options is not null and options != '--- {}\n') and decided is null
 			) as states inner join physical_objects
-			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Aufio_File_Auto_Accept} hour) <= utc_timestamp()
+			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Aufio_File_Auto_Accept} hour) <= utc_timestamp() and audio = true
 			order by digital_start"
 		)
 	}
 
 	scope :expired_video_physical_objects, -> {
-		raise "expired_video_physical_objects is not implemented yet!!!"
+		PhysicalObject.find_by_sql(
+			"select physical_objects.*
+			from (
+				SELECT physical_object_id
+				FROM (
+					SELECT max(id) as ds_id
+					FROM digital_statuses
+					GROUP BY physical_object_id
+				) AS ns INNER JOIN digital_statuses as dses
+				WHERE dses.id = ns.ds_id and (options is not null and options != '--- {}\n') and decided is null
+			) as states inner join physical_objects
+			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Video_File_Auto_Accept} hour) <= utc_timestamp() and video = true
+			order by digital_start"
+		)
 	}
 
 	def self.test(*barcode)
