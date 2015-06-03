@@ -21,4 +21,7 @@
       </td>
     </tr>
   </table>
+  <% if @edit_mode %>
+    <%= f.submit(@submit_text) %>
+  <% end %>
 <% end %>
