@@ -82,6 +82,34 @@ describe ResponsesController do
     end
   end
 
+  describe "#full_metadata" do
+    context "with a valid barcode" do
+      before(:each) { get :full_metadata, mdpi_barcode: barcoded_object.mdpi_barcode }
+      it "assigns @physical_object" do
+        expect(assigns(:physical_object)).to eq barcoded_object
+      end
+      it "returns success=true XML" do
+        expect(response.body).to match /<success.*true<\/success>/
+      end
+      it "returns data XML" do
+        expect(response.body).to match /<data>/
+        expect(response.body).to match /<format>#{physical_object.format}<\/format>/
+        expect(response.body).to match /<files>#{physical_object.technical_metadatum.master_copies}<\/files>/
+      end
+      it "returns a 200 status" do
+        expect(response).to have_http_status(200)
+      end
+    end
+    context "with a 0 barcode" do
+      before(:each) { get :full_metadata, mdpi_barcode: physical_object.mdpi_barcode }
+      include_examples "barcode 0"
+    end
+    context "with an unmatched barcode" do
+      before(:each) { get :full_metadata, mdpi_barcode: unmatched_barcode }
+      include_examples "barcode not found"
+    end
+  end
+
   describe "#notify" do
     before(:each) { post :notify, request_xml, content_type: 'application/xml' }
     let(:request_xml) { "<pod><data><message>#{message_text}</message></data></pod>" }

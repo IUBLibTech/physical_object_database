@@ -4,6 +4,10 @@ describe ResponsesController do
       expect(get: "/responses/objects/1/metadata").to route_to("responses#metadata", mdpi_barcode: "1")
     end
 
+    it "routes to #full_metadata" do
+      expect(get: "/responses/objects/1/metadata/full").to route_to("responses#full_metadata", mdpi_barcode: "1")
+    end
+
     it "routes to #notify" do
       expect(post: "/responses/notify/").to route_to("responses#notify")
     end
