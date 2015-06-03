@@ -242,17 +242,13 @@ def pack_list
 							@physical_object.box = @box
 						end
 						if @physical_object.save
-						  #FIXME: make this more efficient by combining with surrounding_physical_objects?
-						  #FIXME: what happens when the last object in the list is packed? 
-						  #FIXME: answer: a bug!  claims to have an empty list
-
-						  #@physical_object = @picklist.physical_objects.unpacked.following_for_packing(@physical_object).packing_sort.first
-						  #FIXME: kludgey workaround for last object but; better fixed by not setting next/previous packables, in first place, if recursive
+						  # catch edge case: final unpacked physical object was just packed
 						  original_object = @physical_object
 						  surrounding_physical_objects
-						  if @next_physical_object
-						  	@physical_object = @next_physical_object
-						  	@physical_object = nil if (@next_packable_physical_object == original_object && @previous_packable_physical_object == original_object)
+						  if @next_packable_physical_object == original_object && @previous_packable_physical_object == original_object
+						    @physical_object = nil
+						  else
+						    @physical_object = @next_physical_object
 						  end
 
 						  if @physical_object
@@ -352,7 +348,8 @@ def pack_list
 				@tm = @physical_object.technical_metadatum.as_technical_metadatum
 				@dp = @physical_object.ensure_digiprov
 				update = @tm.update_attributes(tm_params)
-				update = @dp.update_attributes(dp_params)
+				#FIXME: line below is broken
+				#update = @dp.update_attributes(dp_params)
 			end
 			return updated
 		end
