@@ -8,7 +8,7 @@ class ResponsesController < ActionController::Base
   include BasicAuthenticationHelper
   before_action :authenticate
 
-  before_action :set_physical_object, only: [:metadata, :pull_state, :push_status]
+  before_action :set_physical_object, only: [:metadata, :full_metadata, :pull_state, :push_status]
   before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
@@ -18,6 +18,15 @@ class ResponsesController < ActionController::Base
       @success = true
     end
     render template: 'responses/metadata.xml.builder', layout: false, status: @status
+  end
+
+  # GET /responses/objects/:mdpi_barcode/metadata/full
+  def full_metadata
+    if @physical_object
+      @status = 200
+      @success = true
+    end
+    render template: 'responses/full_metadata.xml.builder', layout: false, status: @status
   end
 
   # POST /responses/notify
@@ -160,8 +169,14 @@ class ResponsesController < ActionController::Base
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?
-      barcode_not_found if @physical_object.nil?
+      if @physical_object.nil?
+        barcode_not_found
+      else
+        @tm = @physical_object.technical_metadatum.as_technical_metadatum unless @physical_object.technical_metadatum.nil?
+	@dp = @physical_object.ensure_digiprov
+      end
     end
+
 
     def set_request_xml
       @request_xml = Nokogiri::XML(request.body.read)

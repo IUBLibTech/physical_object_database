@@ -84,6 +84,7 @@ Pod::Application.routes.draw do
   end
 
   get 'responses/objects/:mdpi_barcode/metadata', to: 'responses#metadata', as: 'metadata_response'
+  get 'responses/objects/:mdpi_barcode/metadata/full', to: 'responses#full_metadata', as: 'full_metadata_response'
   post 'responses/notify', to: 'responses#notify', as: 'notify_response' 
   post 'responses/objects/:mdpi_barcode/state', to: 'responses#push_status', as: 'push_status_response'
   get 'responses/objects/:mdpi_barcode/state', to: "responses#pull_state", as: "pull_state_response"
