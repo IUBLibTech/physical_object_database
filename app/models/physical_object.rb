@@ -44,7 +44,6 @@ class PhysicalObject < ActiveRecord::Base
   EPHEMERA_RETURNED_STATUSES = ["Unpacked", "Returned to Unit"]
 
   scope :packing_sort, lambda { order(:call_number, :group_key_id, :group_position, :id) }
-  scope :following_for_packing, lambda { |po| where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", po.call_number, po.call_number, po.group_key_id, po.group_key_id, po.group_position, po.group_position, po.id) }
   scope :unpacked, lambda { where(bin_id: nil, box_id: nil) }
   scope :unpacked_or_id, lambda { |object_id| where("(bin_id is null and box_id is null) or id = ?", object_id) }
   scope :packed, lambda { where("physical_objects.bin_id > 0 OR physical_objects.box_id > 0") }
