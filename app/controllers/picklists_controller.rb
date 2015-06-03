@@ -109,6 +109,7 @@ def pack_list
 		end	
 		if @physical_object
 			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			@dp = @physical_object.ensure_digiprov
 			@group_key = @physical_object.group_key
 			surrounding_physical_objects
 		end
@@ -253,6 +254,7 @@ def pack_list
 
 						  if @physical_object
 						  	@tm = @physical_object.technical_metadatum.as_technical_metadatum
+						  	@dp = @physical_object.ensure_digiprov
 						  	@group_key = @physical_object.group_key
 						  	surrounding_physical_objects
 						  end
@@ -348,8 +350,7 @@ def pack_list
 				@tm = @physical_object.technical_metadatum.as_technical_metadatum
 				@dp = @physical_object.ensure_digiprov
 				update = @tm.update_attributes(tm_params)
-				#FIXME: line below is broken
-				#update = @dp.update_attributes(dp_params)
+				update = @dp.update_attributes(dp_params)
 			end
 			return updated
 		end
