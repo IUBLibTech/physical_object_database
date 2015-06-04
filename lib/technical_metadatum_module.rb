@@ -117,18 +117,14 @@ module TechnicalMetadatumModule
   # - spoof false/"" for nil values
   # - group technical metadata Boolean fieldsets
   def to_xml(options = {})
-    # spoof in false for nil Boolean attributes, blank strings for nil strings
-    blanks = self.attributes.find_all{|k,v| v.nil? }.map{|k,v| [k,''] }
-    blanks.each do |k, v|
-      if v.nil? && false
-        if self.respond_to?((k.to_s + "?").to_sym)
-          blanks[k] = false
-	else
-	  blanks[k] = ""
-	end
+    # spoof in blank strings for nil strings, false for nil Booleans
+    # exempt *_id fields
+    self.attributes.each do |k, v|
+      if v.nil? && !(k.to_s =~ /_id$/)
+        self.send((k.to_s + "=").to_sym, "")
+        self.send((k.to_s + "=").to_sym, false) if self.send(k).nil?
       end
     end
-    self.attributes = Hash[blanks]
 
     if self.class == PhysicalObject
       super(options)
