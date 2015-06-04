@@ -4,7 +4,7 @@ class BetacamTm < ActiveRecord::Base
 	extend TechnicalMetadatumClassModule
 
 	PRESERVATION_PROBLEM_FIELDS = [
-	  "fungus", "soft binder syndrome", "other contaminants"
+	  "fungus", "soft_binder_syndrome", "other_contaminants"
 	]
 	PACK_DEFORMATION_VALUES = hashify ["", "None", "Minor", "Moderate", "Severe"]
 	CASSETTE_SIZE_VALUES = hashify ["", "small", "large"]
