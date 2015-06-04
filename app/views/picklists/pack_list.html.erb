@@ -81,7 +81,6 @@
 	     <% end %>
      </table>
 	  <%= render(partial: 'physical_objects/physical_object_metadata_fields', locals: {f: f}) %>
-	  <%= render(partial: 'digital_provenance/show_digital_provenance', locals: {f: f}) %>
 	<% end %>
 <% elsif @picklist.physical_objects.any? %>
   All physical objects on this picklist have been packed.

@@ -109,7 +109,6 @@ def pack_list
 		end	
 		if @physical_object
 			@tm = @physical_object.technical_metadatum.as_technical_metadatum
-			@dp = @physical_object.ensure_digiprov
 			@group_key = @physical_object.group_key
 			surrounding_physical_objects
 		end
@@ -195,7 +194,6 @@ def pack_list
 				@physical_object = @next_physical_object
 			end
 			@tm = @physical_object.technical_metadatum.as_technical_metadatum
-			@dp = @physical_object.ensure_digiprov
 			@group_key = @physical_object.group_key
       			# need to recalculate bookend physical objects
       			surrounding_physical_objects
@@ -218,7 +216,6 @@ def pack_list
 				@physical_object = @previous_physical_object
 			end
 			@tm = @physical_object.technical_metadatum.as_technical_metadatum
-			@dp = @physical_object.ensure_digiprov
 			@group_key = @physical_object.group_key
 			# need to recalculate the bookend physical objects
 			surrounding_physical_objects
@@ -254,7 +251,6 @@ def pack_list
 
 						  if @physical_object
 						  	@tm = @physical_object.technical_metadatum.as_technical_metadatum
-						  	@dp = @physical_object.ensure_digiprov
 						  	@group_key = @physical_object.group_key
 						  	surrounding_physical_objects
 						  end
@@ -348,9 +344,7 @@ def pack_list
 			updated = @physical_object.update_attributes(physical_object_params)
 			if updated
 				@tm = @physical_object.technical_metadatum.as_technical_metadatum
-				@dp = @physical_object.ensure_digiprov
 				update = @tm.update_attributes(tm_params)
-				update = @dp.update_attributes(dp_params)
 			end
 			return updated
 		end
