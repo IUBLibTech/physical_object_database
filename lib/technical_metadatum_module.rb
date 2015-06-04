@@ -113,4 +113,49 @@ module TechnicalMetadatumModule
     1
   end
 
+  # customize to_xml output to:
+  # - spoof false/"" for nil values
+  # - group technical metadata Boolean fieldsets
+  def to_xml(options = {})
+    # spoof in false for nil Boolean attributes, blank strings for nil strings
+    blanks = self.attributes.find_all{|k,v| v.nil? }.map{|k,v| [k,''] }
+    blanks.each do |k, v|
+      if v.nil? && false
+        if self.respond_to?((k.to_s + "?").to_sym)
+          blanks[k] = false
+	else
+	  blanks[k] = ""
+	end
+      end
+    end
+    self.attributes = Hash[blanks]
+
+    if self.class == PhysicalObject
+      super(options)
+    else
+      require 'builder'
+      options[:indent] ||= 2
+      xml = options[:builder] ||= ::Builder::XmlMarkup.new(indent: options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      xml.technical_metadata do
+        self.class.const_get(:SIMPLE_FIELDS).map{ |x| x.to_sym }.each do |simple_attribute|
+           xml << "  <#{simple_attribute}>#{self.attributes[simple_attribute]}</#{simple_attribute}>\n"
+        end
+	self.class.const_get(:MULTIVALUED_FIELDSETS).each do |name, fieldset|
+	  name = name.downcase.gsub(" ", "-")
+	  section_string = ""
+	  self.class.const_get(fieldset).map { |x| x.to_sym }.each do |field|
+	    section_string << "    <#{field}>true</#{field}>\n" if self.send((field.to_s + "?").to_sym)
+	  end
+	  if section_string.blank?
+	    section_string = "  <#{name}/>\n"
+	  else
+	    section_string = "  <#{name}>\n" + section_string + "  </#{name}>\n"
+	  end
+	  xml << section_string
+	end
+      end
+    end
+  end
+
 end

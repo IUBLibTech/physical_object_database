@@ -13,6 +13,15 @@ class BetacamTm < ActiveRecord::Base
 	IMAGE_FORMAT_VALUES = hashify ["", "4:3", "16:9", "Unknown"]
 	FORMAT_VERSION_VALUES = hashify ["", "Oxide", "SP", "SX", "IMX 30", "IMX 40", "IMX 50", "Digital"]
 
+        SIMPLE_FIELDS = [
+          "format_version", "pack_deformation", "cassette_size",
+          "recording_standard", "format_duration", "tape_stock_brand",
+          "image_format"
+        ]
+        MULTIVALUED_FIELDSETS = {
+          "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
+        }
+
 	validates :cassette_size, inclusion: { in: CASSETTE_SIZE_VALUES.keys }
 	validates :recording_standard, inclusion: { in: RECORDING_STANDARD_VALUES.keys }
 	validates :format_duration, inclusion: { in: FORMAT_DURATION_VALUES.keys }
