@@ -37,7 +37,7 @@ class DigitalFileAutoAcceptor
 		audio = DigitalStatus.expired_audio_physical_objects
 		audio.each do |po|
 			if po.current_digital_status.state == 'qc_wait'
-				po.current_digital_status.update_attributes(decided: 'to_distribute')
+				po.current_digital_status.update_attributes(decided: 'qc_passed')
 			else
 				po.current_digital_status.update_attributes(decided: 'to_archive')
 			end
@@ -46,7 +46,7 @@ class DigitalFileAutoAcceptor
 		video = DigitalStatus.expired_video_physical_objects
 		video.each do |po|
 			if po.current_digital_status.state == 'qc_wait'
-				po.current_digital_status.update_attributes(decided: 'to_distribute')
+				po.current_digital_status.update_attributes(decided: 'qc_passed')
 			else
 				po.current_digital_status.update_attributes(decided: 'to_archive')
 			end
