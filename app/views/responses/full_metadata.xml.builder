@@ -30,8 +30,6 @@ xml.pod do
          xml.created_at @physical_object.created_at
          xml.updated_at @physical_object.updated_at
        end
-       #FIXME: virtual fields?
-       #FIXME: finish TM fields
        xml.assignment do
          xml.unit @physical_object.unit.abbreviation
 	 xml.group_key @physical_object.group_key.group_identifier
@@ -48,8 +46,105 @@ xml.pod do
 	 end
 	 xml.spreadsheet @physical_object.spreadsheet.filename if @physical_object.spreadsheet
        end
-       xml.technical_metadatum do
-         xml.preservation_problems @tm.preservation_problems
+       xml.technical_metadata do
+         case @physical_object.format
+         when "CD-R"
+           xml.damage @tm.damage
+           xml.preservation_problems do
+             xml.breakdown_of_materials @tm.breakdown_of_materials
+             xml.fungus @tm.fungus
+             xml.other_contaminants @tm.other_contaminants
+           end
+           xml.format_duration @tm.format_duration
+         when "DAT"
+           xml.sample_rate do
+             xml._32k @tm.sample_rate_32k
+             xml._44_1k @tm.sample_rate_44_1_k
+             xml._48k @tm.sample_rate_48k
+             xml._96k @tm.sample_rate_96k
+           end
+           xml.format_duration @tm.format_duration
+           xml.tape_stock_brand @tm.tape_stock_brand
+           xml.preservation_problems do
+             xml.fungus @tm.fungus
+             xml.soft_binder_syndrome @tm.soft_binder_syndrome
+             xml.other_contaminants @tm.other_contaminants
+           end
+         when "Open Reel Audio Tape"
+           xml.pack_deformation @tm.pack_deformation
+           xml.preservation_problems do
+             xml.vinegar_syndrome @tm.vinegar_syndrome
+             xml.fungus @tm.fungus
+             xml.soft_binder_syndrome @tm.soft_binder_syndrome
+             xml.other_contaminants @tm.other_contaminants
+           end
+           xml.reel_size @tm.reel_size
+           xml.playback_speed do
+             xml._0_9375ips @tm.zero_point9375_ips
+             xml._1_875ips @tm.one_point875_ips
+             xml._3_75ips @tm.three_point75_ips
+             xml._7_5ips @tm.seven_point5_ips
+             xml._15ips @tm.fifteen_ips
+             xml._30ips @tm.thirty_ips
+           end
+           xml.track_configuration do
+             xml.full_track @tm.full_track
+             xml.half_track @tm.half_track
+             xml.quarter_track @tm.quarter_track
+             xml.unknown_track @tm.unknown_track
+           end
+           xml.tape_thickness do
+             xml._0_5mil @tm.zero_point5_mils
+             xml._1_0mil @tm.one_mils
+             xml._1_5mil @tm.one_point5_mils
+           end
+           xml.sound_field do
+             xml.mono @tm.mono
+             xml.stereo @tm.stereo
+             xml.unknown_sound_field @tm.unknown_sound_field
+           end
+           xml.tape_stock_brand @tm.tape_stock_brand
+           xml.tape_base do
+             xml.acetate_base @tm.acetate_base
+             xml.polyester_base @tm.polyester_base
+             xml.pvc_base @tm.pvc_base
+             xml.paper_base @tm.paper_base
+           end
+           xml.directions_recorded @tm.directions_recorded
+         when "LP"
+           xml.diameter @tm.diameter
+           xml.speed @tm.speed
+           xml.groove_size @tm.groove_orientation
+           xml.groove_orientation @tm.groove_orientation
+           xml.recording_method @tm.recording_method
+           xml.material @tm.material
+           xml.sound_field @tm.sound_field
+           xml.equalization @tm.equalization
+           xml.country_of_origin @tm.country_of_origin
+           xml.label @tm.label
+           xml.preservation_problems do
+             xml.delamination @tm.delamination
+             xml.exudation @tm.exudation
+             xml.oxidation @tm.oxidation
+           end
+           xml.damage do
+             xml.broken @tm.broken
+             xml.cracked @tm.cracked
+             xml.dirty @tm.dirty
+             xml.fungus @tm.fungus
+             xml.scratched @tm.scratched
+             xml.warped @tm.warped
+             xml.worn @tm.worn
+           end
+         when "Betacam"
+           xml.format_version @tm.format_version
+           xml.pack_deformation @tm.pack_deformation
+           xml.cassette_size @tm.cassette_size
+           xml.recording_standard @tm.recording_standard
+           xml.format_duration @tm.format_duration
+           xml.tape_stock_brand @tm.tape_stock_brand
+           xml.image_format @tm.image_format
+         end
        end
        xml.digital_provenance do
          xml.digitizing_entity @dp.digitizing_entity
