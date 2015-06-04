@@ -2,22 +2,40 @@
 	<h2>Betacam Technical Metadata</h2>
 	<table>
 		<tr>
-			<th>Format Version</th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.select(:format_version, @tm.format_version_values) %>
-				<% else %>
-					<%= f.text_field(:format_version, readonly: true) %>
-				<% end %>
-			</td>
-		</tr>
-		<tr>
 			<th>Pack Deformation</th>
 			<td>
 				<% if @edit_mode %>
 					<%= f.select(:pack_deformation, @tm.pack_deformation_values) %>
 				<% else %>
 					<%= f.text_field(:pack_deformation, readonly: true) %>
+				<% end %>
+			</td>
+		</tr>
+                <tr>
+                        <th>Preservation problems</th>
+                        <td>
+                                <% if @edit_mode %>
+                                        <table>
+                                                        <tr>
+                                                                <td>Fungus <%= f.check_box(:fungus) %></td>
+                                                                <td>Soft binder syndrome <%= f.check_box(:soft_binder_syndrome) %></td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td>Other contaminants <%= f.check_box(:other_contaminants) %></td>
+                                                        </tr>
+                                        </table>
+                                <% else %>
+                                        <%= @tm.humanize_boolean_fields("fungus", "soft_binder_syndrome", "other_contaminants") %>
+                                <% end %>
+                        </td>
+                </tr>
+		<tr>
+			<th>Format Version</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.select(:format_version, @tm.format_version_values) %>
+				<% else %>
+					<%= f.text_field(:format_version, readonly: true) %>
 				<% end %>
 			</td>
 		</tr>
