@@ -134,13 +134,13 @@ module TechnicalMetadatumModule
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(indent: options[:indent])
       xml.instruct! unless options[:skip_instruct]
       xml.technical_metadata do
-        self.class.const_get(:SIMPLE_FIELDS).map{ |x| x.to_sym }.each do |simple_attribute|
+        self.class.const_get(:SIMPLE_FIELDS).each do |simple_attribute|
            xml << "  <#{simple_attribute}>#{self.attributes[simple_attribute]}</#{simple_attribute}>\n"
         end
 	self.class.const_get(:MULTIVALUED_FIELDSETS).each do |name, fieldset|
 	  name = name.downcase.gsub(" ", "-")
 	  section_string = ""
-	  self.class.const_get(fieldset).map { |x| x.to_sym }.each do |field|
+	  self.class.const_get(fieldset).each do |field|
 	    section_string << "    <#{field}>true</#{field}>\n" if self.send((field.to_s + "?").to_sym)
 	  end
 	  if section_string.blank?
