@@ -37,7 +37,16 @@ class DigitalFileAutoAcceptor
 		audio = DigitalStatus.expired_audio_physical_objects
 		audio.each do |po|
 			if po.current_digital_status.state == 'qc_wait'
-				po.current_digital_status.update_attributes(decided: 'to_distribute')
+				po.current_digital_status.update_attributes(decided: 'qc_passed')
+			else
+				po.current_digital_status.update_attributes(decided: 'to_archive')
+			end
+			aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{po.current_digital_status.state} -> #{po.current_digital_status.decided}")
+		end
+		video = DigitalStatus.expired_video_physical_objects
+		video.each do |po|
+			if po.current_digital_status.state == 'qc_wait'
+				po.current_digital_status.update_attributes(decided: 'qc_passed')
 			else
 				po.current_digital_status.update_attributes(decided: 'to_archive')
 			end

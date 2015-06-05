@@ -21,6 +21,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	EQUALIZATION_VALUES = hashify ['', 'RIAA', 'Other', 'Unknown']
 	SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
 	SUBTYPE_VALUES = hashify ['LP']
+	#FIXME: include subtype as simple field?
 	SIMPLE_FIELDS = [
           "diameter", "speed", "groove_size", "groove_orientation",
 	  "recording_method", "material", "substrate", "coating",

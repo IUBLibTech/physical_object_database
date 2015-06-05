@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150426170454) do
+ActiveRecord::Schema.define(version: 20150601153913) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -54,6 +54,21 @@ ActiveRecord::Schema.define(version: 20150426170454) do
   add_index "batches", ["destination"], name: "index_batches_on_destination", using: :btree
   add_index "batches", ["workflow_status"], name: "index_batches_on_workflow_status", using: :btree
 
+  create_table "betacam_tms", force: true do |t|
+    t.string   "pack_deformation"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.string   "cassette_size"
+    t.string   "recording_standard"
+    t.string   "format_duration"
+    t.text     "tape_stock_brand"
+    t.string   "image_format"
+    t.string   "format_version"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "bins", force: true do |t|
     t.integer  "batch_id"
     t.integer  "mdpi_barcode",              limit: 8
@@ -68,7 +83,9 @@ ActiveRecord::Schema.define(version: 20150426170454) do
     t.string   "destination"
   end
 
+  add_index "bins", ["batch_id"], name: "index_bins_on_batch_id", using: :btree
   add_index "bins", ["destination"], name: "index_bins_on_destination", using: :btree
+  add_index "bins", ["picklist_specification_id"], name: "index_bins_on_picklist_specification_id", using: :btree
   add_index "bins", ["spreadsheet_id"], name: "index_bins_on_spreadsheet_id", using: :btree
   add_index "bins", ["workflow_index", "identifier"], name: "index_bins_on_workflow_index_and_identifier", using: :btree
   add_index "bins", ["workflow_status"], name: "index_bins_on_workflow_status", using: :btree
@@ -83,6 +100,7 @@ ActiveRecord::Schema.define(version: 20150426170454) do
     t.text     "description"
   end
 
+  add_index "boxes", ["bin_id"], name: "index_boxes_on_bin_id", using: :btree
   add_index "boxes", ["spreadsheet_id"], name: "index_boxes_on_spreadsheet_id", using: :btree
 
   create_table "cassette_tape_tms", force: true do |t|
@@ -128,7 +146,9 @@ ActiveRecord::Schema.define(version: 20150426170454) do
   end
 
   add_index "condition_statuses", ["bin_id", "condition_status_template_id"], name: "index_cs_on_bin_and_cst", using: :btree
+  add_index "condition_statuses", ["condition_status_template_id"], name: "index_condition_statuses_on_condition_status_template_id", using: :btree
   add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
+  add_index "condition_statuses", ["physical_object_id"], name: "index_condition_statuses_on_physical_object_id", using: :btree
 
   create_table "containers", force: true do |t|
     t.datetime "created_at"
@@ -159,6 +179,28 @@ ActiveRecord::Schema.define(version: 20150426170454) do
     t.datetime "updated_at"
   end
 
+  create_table "digital_provenances", force: true do |t|
+    t.string   "digitizing_entity"
+    t.datetime "date"
+    t.text     "comments"
+    t.string   "created_by"
+    t.datetime "cleaning_date"
+    t.string   "player_serial_number"
+    t.string   "player_manufacturer"
+    t.string   "player_model"
+    t.string   "ad_serial_number"
+    t.string   "ad_manufacturer"
+    t.string   "ad_model"
+    t.datetime "baking"
+    t.boolean  "repaired"
+    t.string   "extraction_workstation"
+    t.string   "speed_used"
+    t.integer  "physical_object_id",     limit: 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "cleaning_comment"
+  end
+
   create_table "digital_statuses", force: true do |t|
     t.integer  "physical_object_id"
     t.integer  "physical_object_mdpi_barcode", limit: 8
@@ -171,6 +213,8 @@ ActiveRecord::Schema.define(version: 20150426170454) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "digital_statuses", ["physical_object_id"], name: "index_digital_statuses_on_physical_object_id", using: :btree
 
   create_table "group_keys", force: true do |t|
     t.datetime "created_at"
@@ -231,9 +275,7 @@ ActiveRecord::Schema.define(version: 20150426170454) do
     t.boolean  "pvc_base"
     t.boolean  "paper_base"
     t.boolean  "unknown_playback_speed"
-    t.boolean  "one_direction"
-    t.boolean  "two_directions"
-    t.boolean  "unknown_direction"
+    t.integer  "directions_recorded"
   end
 
   create_table "physical_objects", force: true do |t|
@@ -271,8 +313,14 @@ ActiveRecord::Schema.define(version: 20150426170454) do
     t.boolean  "staged",                              default: false
     t.datetime "digital_start"
     t.datetime "staging_request_timestamp"
+    t.boolean  "audio"
+    t.boolean  "video"
+    t.boolean  "memnon_qc_completed"
   end
 
+  add_index "physical_objects", ["bin_id"], name: "index_physical_objects_on_bin_id", using: :btree
+  add_index "physical_objects", ["box_id"], name: "index_physical_objects_on_box_id", using: :btree
+  add_index "physical_objects", ["container_id"], name: "index_physical_objects_on_container_id", using: :btree
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
   add_index "physical_objects", ["picklist_id", "group_key_id", "group_position", "id"], name: "index_physical_objects_on_packing_sort", using: :btree
   add_index "physical_objects", ["spreadsheet_id"], name: "index_physical_objects_on_spreadsheet_id", using: :btree
@@ -309,6 +357,8 @@ ActiveRecord::Schema.define(version: 20150426170454) do
     t.datetime "updated_at"
   end
 
+  add_index "preservation_problems", ["open_reel_tm_id"], name: "index_preservation_problems_on_open_reel_tm_id", using: :btree
+
   create_table "spreadsheets", force: true do |t|
     t.string   "filename"
     t.text     "note"
@@ -328,6 +378,8 @@ ActiveRecord::Schema.define(version: 20150426170454) do
   end
 
   add_index "technical_metadata", ["as_technical_metadatum_id", "as_technical_metadatum_type"], name: "technical_metadata_as_technical_metadatum_index", using: :btree
+  add_index "technical_metadata", ["physical_object_id"], name: "index_technical_metadata_on_physical_object_id", using: :btree
+  add_index "technical_metadata", ["picklist_specification_id"], name: "index_technical_metadata_on_picklist_specification_id", using: :btree
 
   create_table "units", force: true do |t|
     t.string   "abbreviation"

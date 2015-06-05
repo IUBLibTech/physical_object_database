@@ -8,7 +8,7 @@ class ResponsesController < ActionController::Base
   include BasicAuthenticationHelper
   before_action :authenticate
 
-  before_action :set_physical_object, only: [:metadata, :pull_state, :push_status]
+  before_action :set_physical_object, only: [:metadata, :full_metadata, :pull_state, :push_status]
   before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
@@ -18,6 +18,15 @@ class ResponsesController < ActionController::Base
       @success = true
     end
     render template: 'responses/metadata.xml.builder', layout: false, status: @status
+  end
+
+  # GET /responses/objects/:mdpi_barcode/metadata/full
+  def full_metadata
+    if @physical_object
+      @status = 200
+      @success = true
+    end
+    render template: 'responses/full_metadata.xml.builder', layout: false, status: @status
   end
 
   # POST /responses/notify
@@ -61,6 +70,32 @@ class ResponsesController < ActionController::Base
     render template: 'responses/push_status.xml.builder', layout: false, status: @status
   end
 
+  # POST /responses/objects/memnon_qc/:mdpi_barcode/:done
+  def push_memnon_qc
+    @po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
+    unless @po.nil?
+      @po.update_attributes(memnon_qc_completed: params[:done])
+      @success = true
+      @message = "Set memnon qc to #{params[:done]} for physical object: #{@po.mdpi_barcode}" 
+    else
+      @success = false
+      @message = "Could not find physical object: #{params[:mdpi_barcode]}"
+    end
+    render template: "responses/notify.xml.builder", layout: false, status: 200
+  end
+  # GET /responses/objects/memnon_qc/:mdpi_barcode/
+  def pull_memnon_qc
+    po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
+    unless po.nil?
+      @success = true
+      @message = "Physical object #{po.mdpi_barcode}: QC #{po.memnon_qc_completed ? 'has' : 'has not'} be done by memnon" 
+    else
+      @success = false
+      @message = "Could not find physical object: #{params[:mdpi_barcode]}"
+    end
+    render template: "responses/notify.xml.builder", layout: false, status: 200
+  end
+
   # GET /responses/objects/:mdpi_barcode/state
   # QC process action to to query the last decision the user made regarding
   # a fork in the qc workflow.
@@ -77,6 +112,13 @@ class ResponsesController < ActionController::Base
       end
     end
     render template: 'responses/pull_state.xml.builder', layout: false, status: @status
+  end
+
+  # GET /responses/objects/states
+  # AQC process to list all barcodes and decisions for objects that are currently in a decision 
+  # state WITH a decision - so Brian can query in bulk rather than item by item
+  def pull_states
+    render template: 'responses/pull_states.xml.builder', layout: false
   end
 
   # NOT IMPLEMENTED YET
@@ -127,8 +169,14 @@ class ResponsesController < ActionController::Base
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?
-      barcode_not_found if @physical_object.nil?
+      if @physical_object.nil?
+        barcode_not_found
+      else
+        @tm = @physical_object.technical_metadatum.as_technical_metadatum unless @physical_object.technical_metadatum.nil?
+	@dp = @physical_object.ensure_digiprov
+      end
     end
+
 
     def set_request_xml
       @request_xml = Nokogiri::XML(request.body.read)

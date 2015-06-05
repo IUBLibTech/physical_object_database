@@ -34,6 +34,12 @@ describe OpenReelTm do
     end
   end
 
+  describe "has read-only fields" do
+    specify "directions recorded" do
+      expect(open_reel_tm).to respond_to :directions_recorded
+    end
+  end
+
   it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:open_reel_tm) 
 
   describe "#master_copies" do
@@ -55,6 +61,22 @@ describe OpenReelTm do
     end
   end
 
+  describe "#directions_recorded" do
+    cases_hash = { { full_track: true } => 1,
+                   { half_track: true, stereo: true } => 1,
+                   { half_track: true, stereo: true, unknown_sound_field: true } => 2,
+                   { half_track: true, mono: true } => 2,
+                   { quarter_track: true } => 2,
+                   { unknown_track: true} => 2
+                 }
+    cases_hash.each do |params, result|
+      it "returns #{result} for #{params.inspect}" do
+        open_reel_tm.update_attributes(**params)
+        open_reel_tm.reload
+        expect(open_reel_tm.directions_recorded).to eq result
+      end
+    end
+  end
 
 end
 

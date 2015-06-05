@@ -82,6 +82,34 @@ describe ResponsesController do
     end
   end
 
+  describe "#full_metadata" do
+    context "with a valid barcode" do
+      before(:each) { get :full_metadata, mdpi_barcode: barcoded_object.mdpi_barcode }
+      it "assigns @physical_object" do
+        expect(assigns(:physical_object)).to eq barcoded_object
+      end
+      it "returns success=true XML" do
+        expect(response.body).to match /<success.*true<\/success>/
+      end
+      it "returns data XML" do
+        expect(response.body).to match /<data>/
+        expect(response.body).to match /<format>#{physical_object.format}<\/format>/
+        expect(response.body).to match /<files>#{physical_object.technical_metadatum.master_copies}<\/files>/
+      end
+      it "returns a 200 status" do
+        expect(response).to have_http_status(200)
+      end
+    end
+    context "with a 0 barcode" do
+      before(:each) { get :full_metadata, mdpi_barcode: physical_object.mdpi_barcode }
+      include_examples "barcode 0"
+    end
+    context "with an unmatched barcode" do
+      before(:each) { get :full_metadata, mdpi_barcode: unmatched_barcode }
+      include_examples "barcode not found"
+    end
+  end
+
   describe "#notify" do
     before(:each) { post :notify, request_xml, content_type: 'application/xml' }
     let(:request_xml) { "<pod><data><message>#{message_text}</message></data></pod>" }
@@ -260,6 +288,24 @@ describe ResponsesController do
     it "a staged object is updated" do
       po_requested.reload
       expect(po_requested.staged).to eq true
+    end
+  end
+
+  describe "#push_memnon_qc" do
+    before(:each) do
+      po_requested.memnon_qc_completed = false
+      po_requested.save
+    end
+
+    it "sets memnon qc completed to true" do
+      post :push_memnon_qc, mdpi_barcode: po_requested.mdpi_barcode, done: true
+      po_requested.reload
+      expect(po_requested.memnon_qc_completed).to eq true
+    end
+
+    it "fails on invalid barcode" do
+      post :push_memnon_qc, mdpi_barcode: 1, done: true
+      expect(assigns(:po)).to be_nil
     end
   end
 

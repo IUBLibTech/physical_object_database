@@ -1,35 +1,35 @@
 class PicklistsController < ApplicationController
-  before_action :set_picklist, only: [:show, :edit, :update, :destroy]
-  before_action :set_counts, only: [:show, :edit]
+	before_action :set_picklist, only: [:show, :edit, :update, :destroy]
+	before_action :set_counts, only: [:show, :edit]
   # before_action :set_packing_picklist, only: :pack_list
 
-	def new
-		@picklist = Picklist.new
-		@edit_mode = true
-		@submit_text = "Create Picklist"
-		@action = 'create'
-	end
+  def new
+  	@picklist = Picklist.new
+  	@edit_mode = true
+  	@submit_text = "Create Picklist"
+  	@action = 'create'
+  end
 
-	def create
-		@picklist = Picklist.new(picklist_params)
-		@edit_mode = true
-		@submit_text = "Create Picklist"
-		@action = 'create'
-		if @picklist.save
-			flash[:notice] = "Successfully created #{@picklist.name}"
-			redirect_to(controller: 'picklist_specifications', action: "index")
-		else
-			render('new')
-		end
-	end
+  def create
+  	@picklist = Picklist.new(picklist_params)
+  	@edit_mode = true
+  	@submit_text = "Create Picklist"
+  	@action = 'create'
+  	if @picklist.save
+  		flash[:notice] = "Successfully created #{@picklist.name}"
+  		redirect_to(controller: 'picklist_specifications', action: "index")
+  	else
+  		render('new')
+  	end
+  end
 
-	def show
-		@edit_mode = false
+  def show
+  	@edit_mode = false
 		#@action = 'show'
 		respond_to do |format|
 			format.html do
 				@physical_objects = @physical_objects.paginate(page: params[:page])
-		  	end
+			end
 			format.csv { send_data PhysicalObject.to_csv(@physical_objects, @picklist) }
 			format.xls
 		end
@@ -39,9 +39,9 @@ class PicklistsController < ApplicationController
 		@edit_mode = true
 		@action = 'update'
 		@submit_text = "Update Picklist"
-                respond_to do |format|
-                  format.html { @physical_objects = @physical_objects.paginate(page: params[:page]) }
-                end
+		respond_to do |format|
+			format.html { @physical_objects = @physical_objects.paginate(page: params[:page]) }
+		end
 	end
 
 	def update
@@ -59,8 +59,8 @@ class PicklistsController < ApplicationController
 			@edit_mode = true
 			@action = 'update'
 			@submit_text = "Update Picklist"
-                        set_counts
-                        @physical_objects = @physical_objects.paginate(page: params[:page])
+			set_counts
+			@physical_objects = @physical_objects.paginate(page: params[:page])
 			render(action: :edit)
 		end
 	end
@@ -85,76 +85,76 @@ class PicklistsController < ApplicationController
 	# 5) after unpacking a physical object - the physical object id, 'unpack', bin and/or box id (as hidden attributes) will also be present
 	# 5) after moving to previous physical object - picklist id, physical object id, bin/box id (as hidden attributes) will be present
 	# 6) after moving to the next physical object - picklist id, physical object id, bin/box id (as hidden attributes) will be present
-	def pack_list
-		@display_assigned = false
-		@edit_mode = true
-		@pack_mode = true
-		@picklisting = true
-		if params[:picklist] && params[:picklist][:id]
-		  redirect_to pack_list_picklist_path(params[:picklist][:id], box_id: params[:box_id], bin_id: params[:bin_id])
-		elsif params[:id]
-			@picklist = Picklist.find(params[:id])
-			if params[:search_button]
-				@physical_object = PhysicalObject.where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
-				if @physical_object.nil?
-				  flash[:warning] = "No matching items found.  Loading first packable item on picklist (if applicable), instead."
-				  @physical_object = @picklist.physical_objects.unpacked.packing_sort.first
-				else
-				  flash[:notice] = "First matching item loaded."
-				end
-			elsif params[:physical_object]
-				@physical_object = PhysicalObject.find(params[:physical_object][:id])
-			else
+def pack_list
+	@display_assigned = false
+	@edit_mode = true
+	@pack_mode = true
+	@picklisting = true
+	if params[:picklist] && params[:picklist][:id]
+		redirect_to pack_list_picklist_path(params[:picklist][:id], box_id: params[:box_id], bin_id: params[:bin_id])
+	elsif params[:id]
+		@picklist = Picklist.find(params[:id])
+		if params[:search_button]
+			@physical_object = PhysicalObject.where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
+			if @physical_object.nil?
+				flash[:warning] = "No matching items found.  Loading first packable item on picklist (if applicable), instead."
 				@physical_object = @picklist.physical_objects.unpacked.packing_sort.first
-			end	
-			if @physical_object
-				@tm = @physical_object.technical_metadatum.as_technical_metadatum
-				@group_key = @physical_object.group_key
-				surrounding_physical_objects
+			else
+				flash[:notice] = "First matching item loaded."
 			end
-			if params[:bin_id]
-				@bin = Bin.find(params[:bin_id])
-			elsif params[:bin_mdpi_barcode]
-				@bin = Bin.where("mdpi_barcode = ?", params[:bin_mdpi_barcode]).first
-			end
-			if @bin and @bin.workflow_statuses.last.past_status?("Created")
-				flash[:warning] = "The current workflow status of Bin <i>#{@bin.identifier}</i> is #{@bin.current_workflow_status}. It cannot be packed.".html_safe
-				render 'pack_list'
-				return
-			end
-
-			if params[:box_id]
-				@box = Box.find(params[:box_id])
-			elsif params[:box_mdpi_barcode]
-				@box = Box.where("mdpi_barcode = ?", params[:box_mdpi_barcode]).first
-			end
-			if @box and @box.full?
-				flash[:warning] = "Box #{@box.mdpi_barcode} is full. It cannot be packed.".html_safe
-				render 'pack_list'
-				return
-			end
-			if params[:pack_bin_button]
-				pack_bin
-			elsif params[:pack_box_button]
-				pack_box
-			elsif params[:pack_button]
-				pack
-			elsif params[:unpack_button]
-				unpack
-			elsif params[:previous_button]
-				previous_po	
-			elsif params[:next_button]
-				next_po
-			elsif params[:previous_unpacked_button]
-				previous_po(true)
-			elsif params[:next_unpacked_button]
-				next_po(true)
-			end
+		elsif params[:physical_object]
+			@physical_object = PhysicalObject.find(params[:physical_object][:id])
 		else
-			flash[:warning] = "A valid Pick List ID was not specified.".html_safe
-			redirect_to picklist_specifications_path 
+			@physical_object = @picklist.physical_objects.unpacked.packing_sort.first
+		end	
+		if @physical_object
+			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			@group_key = @physical_object.group_key
+			surrounding_physical_objects
 		end
-		if @picklist
+		if params[:bin_id]
+			@bin = Bin.find(params[:bin_id])
+		elsif params[:bin_mdpi_barcode]
+			@bin = Bin.where("mdpi_barcode = ?", params[:bin_mdpi_barcode]).first
+		end
+		if @bin and @bin.workflow_statuses.last.past_status?("Created")
+			flash[:warning] = "The current workflow status of Bin <i>#{@bin.identifier}</i> is #{@bin.current_workflow_status}. It cannot be packed.".html_safe
+			render 'pack_list'
+			return
+		end
+
+		if params[:box_id]
+			@box = Box.find(params[:box_id])
+		elsif params[:box_mdpi_barcode]
+			@box = Box.where("mdpi_barcode = ?", params[:box_mdpi_barcode]).first
+		end
+		if @box and @box.full?
+			flash[:warning] = "Box #{@box.mdpi_barcode} is full. It cannot be packed.".html_safe
+			render 'pack_list'
+			return
+		end
+		if params[:pack_bin_button]
+			pack_bin
+		elsif params[:pack_box_button]
+			pack_box
+		elsif params[:pack_button]
+			pack
+		elsif params[:unpack_button]
+			unpack
+		elsif params[:previous_button]
+			previous_po	
+		elsif params[:next_button]
+			next_po
+		elsif params[:previous_unpacked_button]
+			previous_po(true)
+		elsif params[:next_unpacked_button]
+			next_po(true)
+		end
+	else
+		flash[:warning] = "A valid Pick List ID was not specified.".html_safe
+		redirect_to picklist_specifications_path 
+	end
+	if @picklist
 			# handles both pack of last item and upack of a fully packed pick list
 			@picklist.update(complete: @picklist.all_packed?)
 		end
@@ -179,43 +179,43 @@ class PicklistsController < ApplicationController
 
 		# called while packing a picklist (in physical object view mode) to skip to the next physical object in the pick list
 		def next_po(unpacked_flag = false)
-		        if (@wrap_next && !unpacked_flag) || (@wrap_next_packable && unpacked_flag)
-		          flash[:notice] = "Wrapped around start of picklist."
+			if (@wrap_next && !unpacked_flag) || (@wrap_next_packable && unpacked_flag)
+				flash[:notice] = "Wrapped around start of picklist."
 			else
-			  flash[:notice] = ""
+				flash[:notice] = ""
 			end
-      			unless updated?
-      				render 'pack_list'
-      			end
+			unless updated?
+				render 'pack_list'
+			end
 			@physical_object.save
 			if unpacked_flag
-      				@physical_object = @next_packable_physical_object
+				@physical_object = @next_packable_physical_object
 			else
-      				@physical_object = @next_physical_object
+				@physical_object = @next_physical_object
 			end
-      			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			@tm = @physical_object.technical_metadatum.as_technical_metadatum
 			@group_key = @physical_object.group_key
       			# need to recalculate bookend physical objects
       			surrounding_physical_objects
-		end
+      		end
 
 		# called while packing a picklist (in physical object view mode) to move to the previous physical object in the picklist
 		def previous_po(unpacked_flag = false)
-		        if (@wrap_previous && !unpacked_flag) || (@wrap_previous_packable && unpacked_flag)
-		          flash[:notice] = "Wrapped around end of picklist."
+			if (@wrap_previous && !unpacked_flag) || (@wrap_previous_packable && unpacked_flag)
+				flash[:notice] = "Wrapped around end of picklist."
 			else
-			  flash[:notice] = ""
+				flash[:notice] = ""
 			end
-      			unless updated?
-      				render 'pack_list'
-      			end
+			unless updated?
+				render 'pack_list'
+			end
 			@physical_object.save
 			if unpacked_flag
-      				@physical_object = @previous_packable_physical_object
+				@physical_object = @previous_packable_physical_object
 			else
-      				@physical_object = @previous_physical_object
+				@physical_object = @previous_physical_object
 			end
-      			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			@tm = @physical_object.technical_metadatum.as_technical_metadatum
 			@group_key = @physical_object.group_key
 			# need to recalculate the bookend physical objects
 			surrounding_physical_objects
@@ -240,31 +240,27 @@ class PicklistsController < ApplicationController
 							@physical_object.box = @box
 						end
 						if @physical_object.save
-						  #FIXME: make this more efficient by combining with surrounding_physical_objects?
-						  #FIXME: what happens when the last object in the list is packed? 
-						  #FIXME: answer: a bug!  claims to have an empty list
-
-						  #@physical_object = @picklist.physical_objects.unpacked.following_for_packing(@physical_object).packing_sort.first
-						  #FIXME: kludgey workaround for last object but; better fixed by not setting next/previous packables, in first place, if recursive
+						  # catch edge case: final unpacked physical object was just packed
 						  original_object = @physical_object
 						  surrounding_physical_objects
-						  if @next_physical_object
+						  if @next_packable_physical_object == original_object && @previous_packable_physical_object == original_object
+						    @physical_object = nil
+						  else
 						    @physical_object = @next_physical_object
-						    @physical_object = nil if (@next_packable_physical_object == original_object && @previous_packable_physical_object == original_object)
 						  end
 
 						  if @physical_object
-						    @tm = @physical_object.technical_metadatum.as_technical_metadatum
-						    @group_key = @physical_object.group_key
-						    surrounding_physical_objects
+						  	@tm = @physical_object.technical_metadatum.as_technical_metadatum
+						  	@group_key = @physical_object.group_key
+						  	surrounding_physical_objects
 						  end
 						else
-						  flash[:warning] = "Unable to save physical object: #{@physical_object.errors.full_messages}"
-						  if @bin && @box
-						    @bin = nil
-						    @box = nil
-						  end
-						  render 'pack_list'
+							flash[:warning] = "Unable to save physical object: #{@physical_object.errors.full_messages}"
+							if @bin && @box
+								@bin = nil
+								@box = nil
+							end
+							render 'pack_list'
 						end
 					end
 				else
@@ -287,21 +283,21 @@ class PicklistsController < ApplicationController
 		end
 
 		def set_picklist
-		  if request.format.csv? || request.format.xls?
+			if request.format.csv? || request.format.xls?
 		    # special case: picklist_ is spoofed into id value for nice CSV/XLS filenames
-	 	    params[:id] = params[:id].sub(/picklist_/, '')
+		    params[:id] = params[:id].sub(/picklist_/, '')
 		  end
 		  @picklist = Picklist.eager_load(:physical_objects).where("picklists.id = ?", params[:id]).first
 		  @physical_objects = PhysicalObject.includes(:group_key).where("picklist_id = ?", @picklist.id).references(:group_key).packing_sort
 		end
 
 		def set_counts
-                  @total_count = @physical_objects.size
-                  @packed_count = @physical_objects.packed.size
-                  @blocked = @physical_objects.unpacked.blocked
-                  @blocked_count = @blocked.size
-                  @unpacked_count = @total_count - @packed_count
-                  @packable_count = @unpacked_count - @blocked_count
+			@total_count = @physical_objects.size
+			@packed_count = @physical_objects.packed.size
+			@blocked = @physical_objects.unpacked.blocked
+			@blocked_count = @blocked.size
+			@unpacked_count = @total_count - @packed_count
+			@packable_count = @unpacked_count - @blocked_count
 		end
 
 		def picklist_params
@@ -312,7 +308,7 @@ class PicklistsController < ApplicationController
 			if (box or bin)
 				PhysicalObject.transaction do
 				        #FIXME: WHOA THIS WAS SETTING _ID VALUES TO 0 INSTEAD OF NIL, AND THAT'S A PROBLEM
-					physical_object.update_attributes(bin_id: (bin.nil? ? nil : bin.id), box_id: (box.nil? ? nil : box.id))
+				        physical_object.update_attributes(bin_id: (bin.nil? ? nil : bin.id), box_id: (box.nil? ? nil : box.id))
 					# workflow status automatically updated
 				end
 			else
@@ -325,32 +321,32 @@ class PicklistsController < ApplicationController
 				# find immediate neighbors
 				all_candidates = @picklist.physical_objects.packing_sort
 				if all_candidates.any?
-				  index = all_candidates.find_index {|p| p.id == @physical_object.id}
-				  @previous_physical_object = all_candidates[index - 1]
-				  @wrap_previous = ((index - 1) < 0)
-				  @next_physical_object = all_candidates[(index + 1) < all_candidates.size ? index + 1 : 0]
-				  @wrap_next = ((index + 1) >= all_candidates.size)
+					index = all_candidates.find_index {|p| p.id == @physical_object.id}
+					@previous_physical_object = all_candidates[index - 1]
+					@wrap_previous = ((index - 1) < 0)
+					@next_physical_object = all_candidates[(index + 1) < all_candidates.size ? index + 1 : 0]
+					@wrap_next = ((index + 1) >= all_candidates.size)
 				end
 
 				# find surrounding packable neighbors
-                                packable_candidates = @picklist.physical_objects.unpacked_or_id(@physical_object.id).packing_sort
+				packable_candidates = @picklist.physical_objects.unpacked_or_id(@physical_object.id).packing_sort
 				if packable_candidates.any?
-                                  index = packable_candidates.find_index {|p| p.id == @physical_object.id}
-                                  @previous_packable_physical_object = packable_candidates[index - 1]
-				  @wrap_previous_packable = ((index - 1 ) < 0)
-                                  @next_packable_physical_object = packable_candidates[(index + 1) < packable_candidates.size ? index + 1 : 0]
-				  @wrap_next_packable = ((index + 1) >= packable_candidates.size)
+					index = packable_candidates.find_index {|p| p.id == @physical_object.id}
+					@previous_packable_physical_object = packable_candidates[index - 1]
+					@wrap_previous_packable = ((index - 1 ) < 0)
+					@next_packable_physical_object = packable_candidates[(index + 1) < packable_candidates.size ? index + 1 : 0]
+					@wrap_next_packable = ((index + 1) >= packable_candidates.size)
 				end
 			end
 		end
 
 		def updated?
 			updated = @physical_object.update_attributes(physical_object_params)
-      			if updated
-        			@tm = @physical_object.technical_metadatum.as_technical_metadatum
-        			update = @tm.update_attributes(tm_params)
-      			end
-      			return updated
+			if updated
+				@tm = @physical_object.technical_metadatum.as_technical_metadatum
+				update = @tm.update_attributes(tm_params)
+			end
+			return updated
 		end
-	
-end
+
+	end

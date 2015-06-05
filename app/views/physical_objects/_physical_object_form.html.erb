@@ -8,6 +8,7 @@
     <div class="clear" ><%= submit_tag(@submit_text) %></div>
   <% end %>
   <%= render(partial: 'physical_objects/physical_object_metadata_fields', locals: {f: f}) %>
+  <%= render(partial: 'digital_provenance/show_digital_provenance', locals: {f: f}) %>
   <div class="left">
     <% unless @physical_object.digital_statuses.size <= 0 %>
       <h2>Digital Statuses</h2>

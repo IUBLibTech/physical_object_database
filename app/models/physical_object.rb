@@ -23,6 +23,7 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :unit
   
   has_one :technical_metadatum, :dependent => :destroy
+  has_one :digital_provenance, :dependent => :destroy
   has_many :digital_files, :dependent => :destroy
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
@@ -43,7 +44,6 @@ class PhysicalObject < ActiveRecord::Base
   EPHEMERA_RETURNED_STATUSES = ["Unpacked", "Returned to Unit"]
 
   scope :packing_sort, lambda { order(:call_number, :group_key_id, :group_position, :id) }
-  scope :following_for_packing, lambda { |po| where("call_number > ? or (call_number = ? and (group_key_id > ? or (group_key_id = ? and (group_position > ? or (group_position = ? and id > ?)))))", po.call_number, po.call_number, po.group_key_id, po.group_key_id, po.group_position, po.group_position, po.id) }
   scope :unpacked, lambda { where(bin_id: nil, box_id: nil) }
   scope :unpacked_or_id, lambda { |object_id| where("(bin_id is null and box_id is null) or id = ?", object_id) }
   scope :packed, lambda { where("physical_objects.bin_id > 0 OR physical_objects.box_id > 0") }
@@ -337,6 +337,11 @@ class PhysicalObject < ActiveRecord::Base
     self.group_key
   end
 
+  def ensure_digiprov
+    self.digital_provenance ||= DigitalProvenance.new(physical_object_id: self.id) 
+    self.digital_provenance
+  end
+
   def display_workflow_status
     if self.current_workflow_status.in? ["Binned", "Boxed"]
       if self.bin
@@ -410,7 +415,9 @@ class PhysicalObject < ActiveRecord::Base
 
   def validate_bin_container
     if bin
-      if !self.format.in? PhysicalObject.const_get(:BIN_FORMATS)
+      if !ApplicationHelper.real_barcode?(self.mdpi_barcode)
+        errors[:base] << "An object must be assigned a barcode before it can be assigned to a bin."
+      elsif !self.format.in? PhysicalObject.const_get(:BIN_FORMATS)
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a bin."
       elsif bin.boxes.any?
         errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes.  You may only assign a physical object to a bin containing physical objects."
@@ -422,7 +429,10 @@ class PhysicalObject < ActiveRecord::Base
 
   def validate_box_container
     if box
-      if !self.format.in? PhysicalObject.const_get(:BOX_FORMATS)
+      if !ApplicationHelper.real_barcode?(self.mdpi_barcode)
+        errors[:base] << "An object must be assigned a barcode before it can be 
+assigned to a box."
+      elsif !self.format.in? PhysicalObject.const_get(:BOX_FORMATS)
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a box."
       elsif box.physical_objects.any? && box.physical_objects.first.format != self.format
         errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a box containing the matching format (#{self.format})."
@@ -479,6 +489,7 @@ class PhysicalObject < ActiveRecord::Base
     self.generation ||= ""
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
+    self.digital_provenance ||= nil
   end
 
   # def open_reel_tm_where(stm)

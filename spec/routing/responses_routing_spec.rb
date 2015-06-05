@@ -4,6 +4,10 @@ describe ResponsesController do
       expect(get: "/responses/objects/1/metadata").to route_to("responses#metadata", mdpi_barcode: "1")
     end
 
+    it "routes to #full_metadata" do
+      expect(get: "/responses/objects/1/metadata/full").to route_to("responses#full_metadata", mdpi_barcode: "1")
+    end
+
     it "routes to #notify" do
       expect(post: "/responses/notify/").to route_to("responses#notify")
     end
@@ -30,6 +34,10 @@ describe ResponsesController do
 
     it "routes to #transfer_result" do
     	expect(post: "/responses/transfers/1").to route_to("responses#transfer_result", mdpi_barcode: "1")
+    end
+
+    it "routes to #push_memnon_qc" do
+        expect(post: "/responses/objects/memnon_qc/1/true").to route_to("responses#push_memnon_qc", mdpi_barcode: "1", done: "true")
     end
 
   end

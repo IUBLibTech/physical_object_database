@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'debugger'
 
 describe PhysicalObjectsController do
   render_views
@@ -32,7 +33,7 @@ describe PhysicalObjectsController do
     it "assigns the requested physical object to @physical_object" do
       expect(assigns(:physical_object)).to eq physical_object
     end
-      
+
     it "renders the :show template" do
       expect(response).to render_template(:show)
     end
@@ -79,7 +80,7 @@ describe PhysicalObjectsController do
 
   describe "POST create" do
     context "with valid attributes" do
-      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), dp: valid_physical_object.digital_provenance.attributes.symbolize_keys}
       it "saves the new physical object in the database" do
         physical_object
         expect{ creation }.to change(PhysicalObject, :count).by(1)
@@ -88,11 +89,15 @@ describe PhysicalObjectsController do
         creation
         expect(response).to redirect_to(controller: :physical_objects, action: :index) 
       end
+      it "saved digiprov" do
+        physical_object.reload
+        expect(physical_object.digital_provenance).not_to be nil
+      end
     end
 
     context "with invalid attributes" do
       #FIXME: test that invalid object is invalid?
-      let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+      let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), dp: invalid_physical_object.digital_provenance.attributes.symbolize_keys }
       it "does not save the new physical object in the database" do
         physical_object
         expect{ creation }.not_to change(PhysicalObject, :count)
@@ -129,9 +134,9 @@ describe PhysicalObjectsController do
       end
       it "records a new workflow status history entry" do
         original_status, updated_status = physical_object.workflow_statuses[-2..-1]
-	expect(original_status.workflow_status_template_id).to eq updated_status.workflow_status_template_id
-	expect(original_status.has_ephemera).not_to eq updated_status.has_ephemera
-	expect(original_status.ephemera_returned).not_to eq updated_status.ephemera_returned
+        expect(original_status.workflow_status_template_id).to eq updated_status.workflow_status_template_id
+        expect(original_status.has_ephemera).not_to eq updated_status.has_ephemera
+        expect(original_status.ephemera_returned).not_to eq updated_status.ephemera_returned
       end
       it "flashes success notice" do
         expect(flash[:notice]).to match /success/i
@@ -142,7 +147,7 @@ describe PhysicalObjectsController do
   describe "PUT update" do
     context "with valid attributes" do
       before(:each) do
-        put :update, id: physical_object.id, physical_object: FactoryGirl.attributes_for(:physical_object, :cdr, title: "Updated title"), tm: FactoryGirl.attributes_for(:cdr_tm) 
+        put :update, id: physical_object.id, physical_object: FactoryGirl.attributes_for(:physical_object, :cdr, title: "Updated title"), tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
       end
 
       it "locates the requested object" do
@@ -155,6 +160,10 @@ describe PhysicalObjectsController do
       end
       it "redirects to the updated object" do
         expect(response).to redirect_to(controller: :physical_objects, action: :index) 
+      end
+      it "saved digiprov" do
+        physical_object.reload
+        expect(physical_object.digital_provenance).not_to be nil
       end
     end
     context "with invalid attributes" do
@@ -180,23 +189,23 @@ describe PhysicalObjectsController do
       let(:barcoded_params) { { picklist_id: picklist.id, mdpi_barcode: valid_mdpi_barcode } }
 
       specify "Unassigned for empty params" do
-        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "Unassigned"
       end
       specify "On Pick List for picklist assignment" do
-        put :update, id: physical_object.id, physical_object: on_pick_list_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: on_pick_list_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "On Pick List"
       end
       specify "On Pick List for picklist + barcode" do
-        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "On Pick List"
       end
       specify "Reverts to Unassigned after On Pick List" do
-        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
-        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
+        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "Unassigned"
         expect(physical_object.workflow_statuses.size).to be >= 3 # Unassigned, On Pick List, Unassigned
@@ -260,6 +269,7 @@ describe PhysicalObjectsController do
     end
     context "on a boxed object" do
       before(:each) do
+        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = FactoryGirl.create(:box)
         physical_object.save!
         split_show
@@ -269,6 +279,7 @@ describe PhysicalObjectsController do
     context "on a binned object" do
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
+	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.bin = FactoryGirl.create(:bin)
         physical_object.save!
         split_show
@@ -316,6 +327,7 @@ describe PhysicalObjectsController do
       end
       context "on a boxed item" do
         before(:each) do
+	  physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
           physical_object.box = FactoryGirl.create(:box)
           physical_object.save!
         end
@@ -324,6 +336,7 @@ describe PhysicalObjectsController do
       context "on a binned item" do
         before(:each) do
           physical_object.format = "Open Reel Audio Tape"
+	  physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
           physical_object.bin = FactoryGirl.create(:bin)
           physical_object.save!
         end
@@ -353,7 +366,7 @@ describe PhysicalObjectsController do
             it "flashes a success notice" do
               split_update
               expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
-        
+
             end
             it "redirects to :back/group_key/pack_list" do
               split_update
@@ -377,7 +390,7 @@ describe PhysicalObjectsController do
             it "flashes a success notice" do
               split_update
               expect(flash[:notice]).to eq "<i>#{physical_object.title}</i> was successfully split into #{count} records.".html_safe
-    
+
             end
             it "redirects to :back/physical_object/pack_list" do
               split_update
@@ -426,6 +439,7 @@ describe PhysicalObjectsController do
     context "on a boxed item" do
       let(:source_page) { "source_page" }
       before(:each) do
+        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = FactoryGirl.create(:box)
         physical_object.save!
       end
@@ -435,6 +449,7 @@ describe PhysicalObjectsController do
       let(:source_page) { "source_page" }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
+	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.bin = FactoryGirl.create(:bin)
         physical_object.save!
       end
@@ -612,6 +627,7 @@ describe PhysicalObjectsController do
     context "when in a box" do
       let(:box) { FactoryGirl.create(:box) }
       before(:each) do
+        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = box
         physical_object.save!
       end
@@ -637,6 +653,7 @@ describe PhysicalObjectsController do
       let(:bin) { FactoryGirl.create(:bin) }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
+	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = nil
         physical_object.bin = bin
         physical_object.save!
@@ -679,6 +696,7 @@ describe PhysicalObjectsController do
     context "when in a box" do
       let(:box) { FactoryGirl.create(:box) }
       before(:each) do
+        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = box
         physical_object.save!
         post_unbox

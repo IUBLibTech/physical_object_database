@@ -48,6 +48,7 @@ describe Picklist do
       end
       context "when all physical objects are packed" do
         before(:each) do
+	  physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
 	  physical_object.box = box
 	  physical_object.save!
 	end
