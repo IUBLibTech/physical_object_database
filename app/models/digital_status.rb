@@ -90,18 +90,14 @@ class DigitalStatus < ActiveRecord::Base
   scope :decided_action_barcodes, -> {
   	# this MUST be double quoted - otherwise the \n will be presevered as those characters and not treated as a
   	# carriage return... why does ruby do this?!?!?
-  	DigitalStatus.connection.execute(
-  		"SELECT mdpi_barcode, decided
+  	DigitalStatus.find_by_sql(
+  		"SELECT dses.*
 			FROM (
-				SELECT physical_object_id, decided
-				FROM (
-					SELECT max(id) as ds_id
-					FROM digital_statuses
-					GROUP BY physical_object_id
-				) AS ns INNER JOIN digital_statuses as dses
-				WHERE dses.id = ns.ds_id and (options is not null and options != '#{serialized_empty_hash}') and decided is not null
-			) as ds INNER JOIN physical_objects
-			WHERE ds.physical_object_id = physical_objects.id"
+				SELECT max(id) as ds_id
+				FROM digital_statuses
+				GROUP BY physical_object_id
+			) AS ns INNER JOIN digital_statuses as dses
+			WHERE dses.id = ns.ds_id and (options is not null and options != '#{serialized_empty_hash}') and decided is not null"
 		)
   }
 
