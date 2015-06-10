@@ -9,7 +9,7 @@ class ResponsesController < ActionController::Base
   before_action :authenticate
 
   before_action :set_physical_object, only: [:metadata, :full_metadata, :pull_state, :push_status, :push_memnon_qc]
-  before_action :set_request_xml, only: [:notify, :push_status, :transfer_result, :push_memnon_qc]
+  before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
   def metadata
@@ -74,7 +74,7 @@ class ResponsesController < ActionController::Base
   def push_memnon_qc
     @po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
     unless @po.nil?
-      @po.digital_provenance.update_attributes(xml: @request_xml)
+      @po.digital_provenance.update_attributes(xml: request.body.read)
       @success = true
       @message = "Saved memnon digiprov xml for physical object: #{@po.mdpi_barcode}" 
     else
