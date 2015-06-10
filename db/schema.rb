@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150601153913) do
+ActiveRecord::Schema.define(version: 20150610170510) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -169,6 +169,23 @@ ActiveRecord::Schema.define(version: 20150601153913) do
     t.datetime "updated_at"
   end
 
+  create_table "digital_file_provenances", force: true do |t|
+    t.integer  "digital_file_id",        limit: 8
+    t.datetime "date_digitized"
+    t.text     "comment"
+    t.string   "created_by"
+    t.string   "player_serial_number"
+    t.string   "player_manufacturer"
+    t.string   "player_model"
+    t.string   "ad_serial_number"
+    t.string   "ad_manufacturer"
+    t.string   "ad_model"
+    t.string   "extraction_workstation"
+    t.string   "speed_used"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "digital_files", force: true do |t|
     t.integer  "physical_object_id", limit: 8
     t.string   "filename"
@@ -199,6 +216,7 @@ ActiveRecord::Schema.define(version: 20150601153913) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "cleaning_comment"
+    t.text     "xml",                    limit: 2147483647
   end
 
   create_table "digital_statuses", force: true do |t|

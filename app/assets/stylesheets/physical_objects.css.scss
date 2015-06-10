@@ -17,3 +17,21 @@
 #po_list {
   width: 1000px;
 }
+
+#digi_status {
+	width: 100%;
+}
+
+#digi_status > table {
+	layout: fixed;
+	width: 100%
+}
+
+#digi_status > table > th, td {
+	padding: 3px;
+}
+
+.digi_status_date_col {
+	width: 200px;
+}
+
