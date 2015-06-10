@@ -26,6 +26,7 @@ body {
   height: 195px;
   position: fixed;
   top: 0px;
+  z-index: 1;
 }
 
 #content {

@@ -238,8 +238,9 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def expires
-    start = self.digital_statuses.where("state='transferred'").order(created_at: :desc).first.created_at
+    start = self.digital_statuses.where("state='transferred'").order(created_at: :desc).first
     unless start.nil?
+      start = start.created_at
       start += 40.days
     end
     start

@@ -94,7 +94,7 @@ Pod::Application.routes.draw do
   post 'responses/transfers/:mdpi_barcode', to: "responses#transfer_result", as: "transfer_result_response"
   get 'responses/objects/:mdpi_barcode/clear_statuses', to: "responses#clear", as: "clear_statuses"
   get 'responses/objects/clear_all_statuses', to: "responses#clear_all", as: "clear_all_statuses"
-  post 'responses/objects/memnon_qc/:mdpi_barcode/:done', to: "responses#push_memnon_qc", as: "push_memnon_qc"
+  post 'responses/objects/memnon_qc/:mdpi_barcode', to: "responses#push_memnon_qc", as: "push_memnon_qc"
   get 'responses/objects/memnon_qc/:mdpi_barcode/', to: "responses#pull_memnon_qc", as: "pull_memnon_qc"
   get 'responses/objects/states', to: "responses#pull_states", as: "pull_states"
 
