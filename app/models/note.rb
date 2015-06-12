@@ -1,4 +1,6 @@
 class Note < ActiveRecord::Base
+  XML_EXCLUDE = [:physical_object_id]
+  include XMLExportModule
 
   belongs_to :physical_object
 
@@ -11,4 +13,5 @@ class Note < ActiveRecord::Base
     self.export ||= false if self.new_record?
     self.user ||= User.current_user
   end
+
 end

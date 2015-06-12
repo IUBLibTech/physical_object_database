@@ -1,4 +1,7 @@
 class ConditionStatus < ActiveRecord::Base
+  XML_INCLUDE = [:name, :blocks_packing, :condition_note]
+  XML_EXCLUDE = [:condition_status_template_id, :physical_object_id, :bin_id, :notes]
+  include XMLExportModule
 
   belongs_to :condition_status_template
   belongs_to :physical_object
@@ -25,6 +28,16 @@ class ConditionStatus < ActiveRecord::Base
   def default_values
     self.active ||= true if self.new_record?
     self.user ||= User.current_user if self.new_record?
+  end
+
+  def blocks_packing
+    return nil if self.condition_status_template.nil?
+    return self.condition_status_template.blocks_packing?
+  end
+
+  # name spoof for to_xml
+  def condition_note
+    self.notes
   end
 
 end
