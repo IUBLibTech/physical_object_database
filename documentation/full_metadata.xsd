@@ -102,33 +102,25 @@
   <xs:element name="title_control_number" type="xs:string"/>
   <xs:element name="home_location" type="xs:string"/>
   <xs:element name="call_number" type="xs:string"/>
-  <xs:element name="iucat_barcode" type="xs:integer"/>
+  <xs:element name="iucat_barcode" type="xs:string"/>
   <xs:element name="collection_identifier" type="xs:string"/>
   <xs:element name="mdpi_barcode" type="xs:integer"/>
   <xs:element name="has_ephemera" type="xs:boolean"/>
   <xs:element name="created_at" type="xs:dateTime"/>
   <xs:element name="updated_at" type="xs:dateTime"/>
   <xs:element name="author" type="xs:string"/>
-  <xs:element name="catalog_key" type="xs:integer"/>
+  <xs:element name="catalog_key" type="xs:string"/>
   <xs:element name="collection_name" type="xs:string"/>
   <xs:element name="generation" type="xs:string"/>
-  <xs:element name="oclc_number" type="xs:integer"/>
+  <xs:element name="oclc_number" type="xs:string"/>
   <xs:element name="other_copies" type="xs:boolean"/>
-  <xs:element name="year" type="xs:integer"/>
+  <xs:element name="year" type="xs:string"/>
   <xs:element name="group_position" type="xs:integer"/>
   <xs:element name="ephemera_returned" type="xs:boolean"/>
   <xs:element name="staging_requested" type="xs:boolean"/>
   <xs:element name="staged" type="xs:boolean"/>
-  <xs:element name="digital_start">
-    <xs:complexType>
-      <xs:attribute name="nil" type="xs:boolean"/>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="staging_request_timestamp">
-    <xs:complexType>
-      <xs:attribute name="nil" type="xs:boolean"/>
-    </xs:complexType>
-  </xs:element>
+  <xs:element name="digital_start" type="xs:dateTime" nillable="true"/>
+  <xs:element name="staging_request_timestamp" type="xs:dateTime" nillable="true"/>
   <xs:element name="audio" type="xs:boolean"/>
   <xs:element name="video" type="xs:boolean"/>
   <xs:element name="memnon_qc_completed" type="xs:boolean"/>

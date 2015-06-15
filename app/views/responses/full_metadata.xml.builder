@@ -1,6 +1,6 @@
 xml.instruct! :xml, :version=>"1.0"
 
-xml.pod do
+xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
    if @success
      xml.success true
      xml.data do
@@ -25,7 +25,7 @@ xml.pod do
 	   end
 	   xml.spreadsheet @physical_object.spreadsheet.filename if @physical_object.spreadsheet
          end
-	 xml << @physical_object.to_xml(skip_instruct: true, skip_types: true, dasherize: false, root: :details, include: [:workflow_statuses, :notes, :condition_statuses]).gsub(/^/, '      ')
+	 xml << @physical_object.to_xml(skip_instruct: true, skip_types: true, dasherize: false, root: :details, include: [:workflow_statuses, :notes, :condition_statuses]).gsub(/^/, '      ').gsub('nil="true"', 'xsi:nil="true"')
 	 xml << @tm.to_xml(skip_instruct: true, skip_types: true, dasherize: false, root: :technical_metadata).gsub(/^/, '      ')
 	 #xml << @dp.to_xml(skip_instruct: true, skip_types: true, root: :digital_provenance).gsub(/^/, '      ')
 	 xml << "      <digital_provenance/>\n"
