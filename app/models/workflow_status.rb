@@ -1,4 +1,8 @@
 class WorkflowStatus < ActiveRecord::Base
+  XML_INCLUDE = [:name, :sequence_index, :workflow_note]
+  XML_EXCLUDE = [:workflow_status_template_id, :physical_object_id, :bin_id, :batch_id, :notes]
+  include XMLExportModule
+
 	default_scope { order(:id) }
 
         belongs_to :workflow_status_template
@@ -27,6 +31,11 @@ class WorkflowStatus < ActiveRecord::Base
   def sequence_index
     return 0 if self.workflow_status_template.nil?
     return self.workflow_status_template.sequence_index
+  end
+
+  # name spoof for to_xml
+  def workflow_note
+    self.notes
   end
 
   def default_values

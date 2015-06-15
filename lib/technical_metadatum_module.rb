@@ -113,35 +113,33 @@ module TechnicalMetadatumModule
     1
   end
 
-  # customize to_xml output to:
-  # - spoof false/"" for nil values
-  # - group technical metadata Boolean fieldsets
+  # customize to_xml output to group technical metadata Boolean fieldsets
   def to_xml(options = {})
-    # spoof in blank strings for nil strings, false for nil Booleans
-    # exempt *_id fields
-    self.attributes.each do |k, v|
-      if v.nil? && !(k.to_s =~ /_id$/)
-        self.send((k.to_s + "=").to_sym, "")
-        self.send((k.to_s + "=").to_sym, false) if self.send(k).nil?
-      end
-    end
-
     if self.class == PhysicalObject
       super(options)
     else
+      # technical metadata formats
       require 'builder'
       options[:indent] ||= 2
+      options[:dasherize] ||= false
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(indent: options[:indent])
       xml.instruct! unless options[:skip_instruct]
       xml.technical_metadata do
+        xml.format self.technical_metadatum.physical_object.format
+        xml.files self.master_copies
         self.class.const_get(:SIMPLE_FIELDS).each do |simple_attribute|
-           xml << "  <#{simple_attribute}>#{self.attributes[simple_attribute]}</#{simple_attribute}>\n"
+	   spoofed_attribute_name = simple_attribute
+	   spoofed_attribute_name = simple_attribute.gsub("_", "-") if options[:dasherize]
+           xml << "  <#{spoofed_attribute_name}>#{self.attributes[simple_attribute]}</#{spoofed_attribute_name}>\n"
         end
 	self.class.const_get(:MULTIVALUED_FIELDSETS).each do |name, fieldset|
-	  name = name.downcase.gsub(" ", "-")
+	  name = name.downcase.gsub(" ", "_")
+	  name = name.downcase.gsub("_", "-") if options[:dasherize]
 	  section_string = ""
 	  self.class.const_get(fieldset).each do |field|
-	    section_string << "    <#{field}>true</#{field}>\n" if self.send((field.to_s + "?").to_sym)
+	    spoofed_field_name = field.to_s
+	    spoofed_field_name = field.to_s.gsub("_", "-") if options[:dasherize]
+	    section_string << "    <#{spoofed_field_name}>true</#{spoofed_field_name}>\n" if self.send((field.to_s + "?").to_sym)
 	  end
 	  if section_string.blank?
 	    section_string = "  <#{name}/>\n"
