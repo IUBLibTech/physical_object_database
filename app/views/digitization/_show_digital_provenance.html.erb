@@ -1,0 +1,71 @@
+<div class="left">
+	<h2>Physical Object Digital Provenance</h2>
+	<%= nested_form_for(@physical_object) do |pof| %>
+		<%= pof.fields_for :dp do |f| %>
+			<table>
+				<tr>
+					<th>Comments</th>
+					<td>
+						<% if @edit_mode %>
+							<%= f.text_area(:comments) %>
+						<% else %>
+							<%= f.text_area(:comments, readonly: true) %>
+						<% end %>
+					</td>
+				</tr>
+				<tr>
+					<th>Cleaning Date</th>
+					<td>
+						<% if @edit_mode %>
+							<%= f.text_field(:cleaning_date, class: 'date',  value: @dp.cleaning_date.blank? ? "" : @dp.cleaning_date.strftime("%m/%d/%Y")) %>
+						<% else %>
+							<%= f.text_field(:cleaning_date, readonly: true, value: @dp.cleaning_date.blank? ? "" : @dp.cleaning_date.strftime("%m/%d/%Y")) %>
+						<% end %>
+					</td>
+				</tr>
+				<tr>
+					<th>Cleaning Comment</th>
+					<td>
+						<% if @edit_mode %>
+							<%= f.text_area(:cleaning_comment) %>
+						<% else %>
+							<%= f.text_area(:cleaning_comment, readonly: true) %>
+						<% end %>
+					</td>
+
+				</tr>
+				<tr>
+					<th>Baking Date</th>
+					<td>
+						<% if @edit_mode %>
+							<%= f.text_field(:baking, class: 'date', value: @dp.baking.blank? ? "" : @dp.baking.strftime("%m/%d/%Y")) %>
+						<% else %>
+							<%= f.text_field(:baking, readonly: true, value: @dp.baking.blank? ? "" : @dp.baking.strftime("%m/%d/%Y")) %>
+						<% end %>
+					</td>
+				</tr>
+				<tr>
+					<th>Repaired</th>
+					<td>
+						<% if @edit_mode %>
+							<%= f.check_box(:repaired) %>
+						<% else %>
+							<%= f.check_box(:repaired, disabled: !@edit_mode) %>
+						<% end %>
+					</td>
+				</tr>
+			</table>
+		<% end %>
+		<%= pof.fields_for :digital_files do |df| %>
+
+		<% end %>
+		<% if @edit_mode %>
+			<%= pof.link_to_add "Add Digital File", :digital_files %>
+		<% end %>
+	<% end %>
+	<script type='text/javascript'>
+		$(function (){
+			$('.date').datepicker();
+		});
+	</script>
+</div>
