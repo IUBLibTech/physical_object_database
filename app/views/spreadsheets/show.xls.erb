@@ -14,7 +14,7 @@
         <% @column_names += ["Damage", "Preservation problems", "Format duration"] %>
       <% elsif @media_format == "DAT" %>
         <% @column_names += ["Sample rate", "Format duration", "Tape stock brand", "Preservation problems"] %>
-      <% elsif @media_format == "LP" %>
+      <% elsif @media_format.in? ["LP", "Lacquer Disc", "Other Analog Sound Disc"] %>
         <% @column_names += ["Diameter", "Speed", "Groove size", "Groove orientation", "Recording method", "Material", "Substrate", "Coating", "Sound field", "Equalization", "Country of origin", "Label", "Preservation problems", "Damage"] %>
       <% elsif @media_format == "Open Reel Audio Tape" %>
         <% @column_names += ["Pack deformation", "Preservation problems", "Reel size", "Playback speed", "Track configuration", "Tape thickness", "Sound field", "Tape stock brand", "Tape base", "Directions recorded"] %>

@@ -41,9 +41,13 @@ class PhysicalObjectsController < ApplicationController
     end
     @tm = @physical_object.ensure_tm
     @dp = @physical_object.ensure_digiprov
-    saved = @physical_object.save 
-    saved = saved and @tm.update_attributes(tm_params)
-    saved = saved and @dp.update_attributes(dp_params)
+    @tm.assign_attributes(tm_params)
+    @dp.assign_attributes(dp_params)
+    if @physical_object.valid? && @tm.valid? && @dp.valid?
+      saved = @physical_object.save 
+      saved = @tm.update_attributes(tm_params) if saved
+      saved = @dp.update_attributes(dp_params) if saved
+    end
     if saved
       flash[:notice] = "Physical Object was successfully created.".html_safe
     end
@@ -91,15 +95,17 @@ class PhysicalObjectsController < ApplicationController
   def update
     PhysicalObject.transaction do
       # initial save processes bin, box assignment
-      updated = @physical_object.save unless @physical_object.errors.any?
-      updated = @physical_object.update_attributes(physical_object_params) if updated
-      if updated
-        @physical_object.reload
+      @physical_object.assign_attributes(physical_object_params)
+      if @physical_object.valid?
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
-        #FIXME: we are not checking if this succeeds
-        update = @tm.update_attributes(tm_params)
-        update = @dp.update_attributes(dp_params)
+	@tm.assign_attributes(tm_params)
+	@dp.assign_attributes(dp_params)
+      end
+      if @physical_object.valid? && @tm.valid? && @dp.valid?
+        updated = @physical_object.save
+        updated = @tm.update_attributes(tm_params) if updated
+        updated = @dp.update_attributes(dp_params) if updated
       end
 
       if updated 

@@ -438,7 +438,7 @@ assigned to a box."
       elsif !self.format.in? PhysicalObject.const_get(:BOX_FORMATS)
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a box."
       elsif box.physical_objects.any? && box.physical_objects.first.format != self.format
-        errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a box containing the matching format (#{self.format})."
+        errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format (#{box.physical_objects.first.format}).  You may only assign a physical object to a box containing the matching format (#{self.format})."
       end
     end
   end

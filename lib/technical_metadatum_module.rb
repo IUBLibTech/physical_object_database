@@ -10,13 +10,13 @@ module TechnicalMetadatumModule
     Hash[array.map{ |v| [v.to_s,v.to_s] }]
   end
 
-  TM_FORMAT_ARRAY = [ "CD-R", "DAT", "Open Reel Audio Tape", "LP", "Betacam" ]
+  TM_FORMAT_ARRAY = [ "CD-R", "DAT", "Open Reel Audio Tape", "LP", "Lacquer Disc", "Other Analog Sound Disc", "Betacam" ]
 
   TM_FORMATS = hashify(TM_FORMAT_ARRAY)
 
-  TM_SUBTYPES = ["LP"]
+  TM_SUBTYPES = ["LP", "Lacquer Disc", "Other Analog Sound Disc"]
 
-  BOX_FORMATS = [ "CD-R", "DAT", "LP" ]
+  BOX_FORMATS = [ "CD-R", "DAT", "LP", "Lacquer Disc", "Other Analog Sound Disc" ]
 
   BIN_FORMATS = [ "Open Reel Audio Tape", "Betacam" ]
 
@@ -25,6 +25,8 @@ module TechnicalMetadatumModule
     "DAT" => :audio,
     "Open Reel Audio Tape" => :audio,
     "LP" => :audio,
+    "Lacquer Disc" => :audio,
+    "Other Analog Sound DISC" => :audio,
     "Betacam" => :video
   }
 
@@ -33,9 +35,15 @@ module TechnicalMetadatumModule
     "DAT" => DatTm,
     "Open Reel Audio Tape" => OpenReelTm,
     "LP" => AnalogSoundDiscTm,
+    "Lacquer Disc" => AnalogSoundDiscTm,
+    "Other Analog Sound Disc" => AnalogSoundDiscTm,
     "Betacam" => BetacamTm
   }
 
+  # This only maps AnalogSoundDiscTm to one subtype, but that's okay.
+  # In the 2 cases where this is used, it's suffient.
+  # One case is determining valid import CSV headers.
+  # The other case is mapping to partials (see immediately below).
   TM_CLASS_FORMATS = {
     CdrTm => "CD-R",
     DatTm => "DAT",
@@ -49,6 +57,8 @@ module TechnicalMetadatumModule
     "DAT" => "technical_metadatum/show_dat_tm",
     "Open Reel Audio Tape" => "technical_metadatum/show_open_reel_tape_tm",
     "LP" => "technical_metadatum/show_analog_sound_disc_tm",
+    "Lacquer Disc" => "technical_metadatum/show_analog_sound_disc_tm",
+    "Other Analog Sound Disc" => "technical_metadatum/show_analog_sound_disc_tm",
     "Betacam" => "technical_metadatum/show_betacam_tm",
     nil => "technical_metadatum/show_unknown_tm"
   }
@@ -66,6 +76,8 @@ module TechnicalMetadatumModule
     "DAT" => "dat_tms",
     "Open Reel Audio Tape" => "open_reel_tms",
     "LP" => "analog_sound_disc_tms",
+    "Lacquer Disc" => "analog_sound_disc_tms",
+    "Other Analog Sound Disc" => "analog_sound_disc_tms",
     "Betacam" => "betacam_tms"
   }
 

@@ -3,4 +3,6 @@ formats:
 	- "Open Reel Audio Tape"
 	- "DAT"
 	- "LP"
+	- "Lacquer Disc"
+	- "Other Analog Sound Disc"
 	- "Betacam"
