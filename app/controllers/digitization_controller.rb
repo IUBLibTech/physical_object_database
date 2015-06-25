@@ -7,7 +7,7 @@ class DigitizationController < ApplicationController
 	end
 
 	def edit
-
+		@edit_mode = true
 	end
 
 	def update
