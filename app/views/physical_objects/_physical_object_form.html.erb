@@ -8,8 +8,10 @@
     <div class="clear" ><%= submit_tag(@submit_text) %></div>
   <% end %>
   <%= render(partial: 'physical_objects/physical_object_metadata_fields', locals: {f: f}) %>
-  <%= render(partial: 'digital_provenance/show_digital_provenance', locals: {f: f}) %>
-  <div class="left">
+  <div class="clear">
+    <%= render(partial: 'digital_provenance/show_digital_provenance', locals: {f: f}) %>
+  </div>
+  <div id="digi_status">
     <% unless @physical_object.digital_statuses.size <= 0 %>
       <h2>Digital Statuses</h2>
       <div>
@@ -17,15 +19,19 @@
         <%= @physical_object.digital_start_readable %>.
         The object will <i>auto-accept</i> on <%= @physical_object.expires %> 
       </div>
-      <table>
+      <table class="digi_status_table">
         <tr>
           <th>State</th>
-          <th>Date</th>
+          <th class="digi_status_date_col">Date</th>
+          <th>Message</th>
         </tr>
         <% @physical_object.digital_statuses.order(created_at: :desc).each do |s| %>
           <tr>
             <td><%= s.state %></td>
             <td><%= s.created_at.strftime("%l:%M%P %B %-d, %Y") %></td>
+            <td>
+              <%= s.message %>
+            </td>
           </tr>
         <% end %>
       </table>

@@ -8,7 +8,7 @@ class ResponsesController < ActionController::Base
   include BasicAuthenticationHelper
   before_action :authenticate
 
-  before_action :set_physical_object, only: [:metadata, :full_metadata, :pull_state, :push_status]
+  before_action :set_physical_object, only: [:metadata, :full_metadata, :pull_state, :push_status, :push_memnon_qc]
   before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
@@ -74,26 +74,28 @@ class ResponsesController < ActionController::Base
   def push_memnon_qc
     @po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
     unless @po.nil?
-      @po.update_attributes(memnon_qc_completed: params[:done])
+      @po.digital_provenance.update_attributes(xml: request.body.read)
       @success = true
-      @message = "Set memnon qc to #{params[:done]} for physical object: #{@po.mdpi_barcode}" 
+      @message = "Saved memnon digiprov xml for physical object: #{@po.mdpi_barcode}" 
     else
       @success = false
       @message = "Could not find physical object: #{params[:mdpi_barcode]}"
     end
     render template: "responses/notify.xml.builder", layout: false, status: 200
   end
+
   # GET /responses/objects/memnon_qc/:mdpi_barcode/
   def pull_memnon_qc
     po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
-    unless po.nil?
-      @success = true
-      @message = "Physical object #{po.mdpi_barcode}: QC #{po.memnon_qc_completed ? 'has' : 'has not'} be done by memnon" 
-    else
-      @success = false
-      @message = "Could not find physical object: #{params[:mdpi_barcode]}"
-    end
-    render template: "responses/notify.xml.builder", layout: false, status: 200
+    msg = po.digital_provenance.nil? ? "No digiprov model" : po.digital_provenance.xml.nil? ? "No xml digiprov" : po.digital_provenance.xml
+    # unless po.nil?
+    #   @success = true
+    #   @message = "Physical object #{po.mdpi_barcode}: QC #{po.memnon_qc_completed ? 'has' : 'has not'} be done by memnon" 
+    # else
+    #   @success = false
+    #   @message = "Could not find physical object: #{params[:mdpi_barcode]}"
+    # end
+    render plain: msg, status: 200
   end
 
   # GET /responses/objects/:mdpi_barcode/state

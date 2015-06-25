@@ -1,5 +1,7 @@
 class PhysicalObject < ActiveRecord::Base
-
+  XML_INCLUDE = [:group_total, :carrier_stream_index, :current_workflow_status]
+  XML_EXCLUDE = [:container_id, :box_id, :bin_id, :picklist_id, :spreadsheet_id, :unit_id, :workflow_index, :group_key_id, :workflow_status, :format_duration]
+  include XMLExportModule
   include WorkflowStatusModule
   extend WorkflowStatusQueryModule
   include ConditionStatusModule
@@ -238,8 +240,9 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def expires
-    start = self.digital_statuses.where("state='transferred'").order(created_at: :desc).first.created_at
+    start = self.digital_statuses.where("state='transferred'").order(created_at: :desc).first
     unless start.nil?
+      start = start.created_at
       start += 40.days
     end
     start
