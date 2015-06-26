@@ -62,8 +62,8 @@ describe DigitalStatus do
 
 				DigitalFileAutoAcceptor.instance.auto_accept
 
-				expect(po.current_digital_status.decided).to eq "to_distribute"
-				expect(po_vid.current_digital_status.decided).to eq "to_distribute"
+				expect(po.current_digital_status.decided).to eq "qc_passed"
+				expect(po_vid.current_digital_status.decided).to eq "qc_passed"
 			end
 
 			it "is in investigate" do
