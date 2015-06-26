@@ -125,7 +125,13 @@ module TechnicalMetadatumModule
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(indent: options[:indent])
       xml.instruct! unless options[:skip_instruct]
       xml.technical_metadata do
-        xml.format self.technical_metadatum.physical_object.format
+	if options[:format]
+	  xml.format options[:format]
+	elsif self.technical_metadatum.physical_object
+          xml.format self.technical_metadatum.physical_object.format
+	else
+	  xml.format "Unknown"
+	end
         xml.files self.master_copies
         self.class.const_get(:SIMPLE_FIELDS).each do |simple_attribute|
 	   spoofed_attribute_name = simple_attribute
