@@ -46,8 +46,8 @@
     <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
     <Cell><Data ss:Type="String"><%= tm.tape_stock_brand %></Data></Cell>
     <Cell><Data ss:Type="String"><%= tm.preservation_problems %></Data></Cell>
-  <% elsif @media_format == "LP"%>
-  <%# metadata-specific: LP %>
+  <% elsif @media_format.in? ["LP", "Lacquer Disc", "Other Analog Sound Disc"] %>
+  <%# metadata-specific: Analog Sound Disc Formats %>
     <Cell><Data ss:Type="String"><%= tm.diameter %></Data></Cell>
     <Cell><Data ss:Type="String"><%= tm.speed %></Data></Cell>
     <Cell><Data ss:Type="String"><%= tm.groove_size %></Data></Cell>
