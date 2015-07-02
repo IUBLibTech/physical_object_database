@@ -120,6 +120,12 @@
         </td>
       </tr>
       <tr>
+        <th>Year</th>
+        <td>
+          <%= f.text_field(:year, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
         <th>Group key</th>
         <td>
           <% unless @group_key.nil? %>
@@ -234,12 +240,6 @@
             <th>Collection name</th>
             <td>
               <%= f.text_field(:collection_name, readonly: !@edit_mode) %>
-            </td>
-          </tr>
-          <tr>
-            <th>Year</th>
-            <td>
-              <%= f.text_field(:year, readonly: !@edit_mode) %>
             </td>
           </tr>
           <tr>
