@@ -170,4 +170,22 @@ module TechnicalMetadatumModule
     end
   end
 
+  # for spreadsheet, batch export
+  def export_headers
+    headers = self.class.const_get(:SIMPLE_FIELDS).map { |x| self.class.human_attribute_name(x) }
+    headers += self.class.const_get(:MULTIVALUED_FIELDSETS).keys
+  end
+
+  # for spreadsheet, batch export
+  def export_values
+    row_values = []
+    self.class.const_get(:SIMPLE_FIELDS).each do |simple_attribute|
+      row_values << self.attributes[simple_attribute]
+    end
+    self.class.const_get(:MULTIVALUED_FIELDSETS).values.each do |fieldset|
+      row_values << humanize_boolean_fieldset(fieldset)
+    end
+    row_values
+  end
+
 end

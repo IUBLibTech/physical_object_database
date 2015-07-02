@@ -31,6 +31,21 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
     end
   end
 
+  describe "#export_headers" do
+    it "returns a non-empty array of header values" do
+      expect(tm_object.export_headers.size).to be > 0
+    end
+  end
+
+  describe "#export_values" do
+    it "returns a non-empty array of values" do
+      expect(tm_object.export_values.size).to be > 0
+    end
+    it "returns a value for each export header" do
+      expect(tm_object.export_values.size).to eq tm_object.export_headers.size
+    end
+  end
+
   describe "provides class methods" do 
     describe "::valid_headers" do
       it "returns an array of valid headers" do
