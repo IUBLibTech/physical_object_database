@@ -119,6 +119,8 @@ Pod::Application.routes.draw do
     post :search_results, on: :collection
   end
 
+  resources :digitization, only: [:show, :edit, :update]
+
   resources :spreadsheets, except: [:new, :create]
 
   resources :status_templates, only: [:index]

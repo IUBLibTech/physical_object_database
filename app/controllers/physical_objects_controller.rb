@@ -43,7 +43,7 @@ class PhysicalObjectsController < ApplicationController
     @dp = @physical_object.ensure_digiprov
     saved = @physical_object.save 
     saved = saved and @tm.update_attributes(tm_params)
-    saved = saved and @dp.update_attributes(dp_params)
+    # saved = saved and @dp.update_attributes(dp_params)
     if saved
       flash[:notice] = "Physical Object was successfully created.".html_safe
     end
@@ -58,11 +58,11 @@ class PhysicalObjectsController < ApplicationController
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
         @tm.assign_attributes(tm_params)
-        @dp.assign_attributes(dp_params)
+        # @dp.assign_attributes(dp_params)
       else
         # for failed save, carry over tm attributes
         @tm.assign_attributes(tm_params)
-        @dp.assign_attributes(dp_params)
+        # @dp.assign_attributes(dp_params)
       end
       @display_assigned = true
       render('new')
@@ -99,7 +99,7 @@ class PhysicalObjectsController < ApplicationController
         @dp = @physical_object.ensure_digiprov
         #FIXME: we are not checking if this succeeds
         update = @tm.update_attributes(tm_params)
-        update = @dp.update_attributes(dp_params)
+        # update = @dp.update_attributes(dp_params)
       end
 
       if updated 
