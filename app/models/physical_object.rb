@@ -24,7 +24,6 @@ class PhysicalObject < ActiveRecord::Base
   
   has_one :technical_metadatum, :dependent => :destroy
   has_one :digital_provenance, :dependent => :destroy
-  has_many :digital_files, :dependent => :destroy
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
   has_many :notes, :dependent => :destroy
