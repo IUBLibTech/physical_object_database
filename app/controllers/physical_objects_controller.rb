@@ -62,11 +62,11 @@ class PhysicalObjectsController < ApplicationController
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
         @tm.assign_attributes(tm_params)
-        @dp.assign_attributes(dp_params)
+        # @dp.assign_attributes(dp_params)
       else
         # for failed save, carry over tm attributes
         @tm.assign_attributes(tm_params)
-        @dp.assign_attributes(dp_params)
+        # @dp.assign_attributes(dp_params)
       end
       @display_assigned = true
       render('new')

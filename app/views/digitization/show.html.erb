@@ -1,0 +1,13 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Edit", {:action => 'edit', :id => @physical_object.id}, :class => 'action edit') %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Physical Object Metadata", {controller: 'physical_objects', action: 'show', id: @physical_object.id}) %>
+  </div>
+<% end %>
+<h2>
+  Physical object <%= @physical_object.mdpi_barcode %>
+</h2>
+<%= render(partial: 'digitization/show_digital_provenance') %>
+<%= render partial: "digital_statuses" %>
