@@ -68,4 +68,19 @@ class Bin < ActiveRecord::Base
         def spreadsheet_descriptor
           identifier
         end
+
+  def contained_physical_objects
+    return self.physical_objects if self.physical_objects.any?
+    self.boxed_physical_objects
+  end
+
+  def first_object
+    self.contained_physical_objects.first
+  end
+
+  def media_format
+    format_object = first_object
+    format_object ? format_object.format : nil
+  end
+
 end

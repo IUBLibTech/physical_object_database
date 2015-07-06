@@ -4,6 +4,7 @@ class OpenReelTm < ActiveRecord::Base
         before_validation :infer_values
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
+	include YearModule
 
 	# this hash holds the human reable attribute name for this class
 	HUMANIZED_COLUMNS = {:zero_point9375_ips => "0.9375 ips", :one_point875_ips => "1.875 ips", 
@@ -41,6 +42,17 @@ class OpenReelTm < ActiveRecord::Base
 	  "Sound field" => :SOUND_FIELD_FIELDS,
 	  "Tape base" => :TAPE_BASE_FIELDS
 	}
+        MANIFEST_EXPORT = {
+          "Year" => :year,
+          "Tape base" => :TAPE_BASE_FIELDS,
+          "Reel size" => :reel_size,
+          "Track configuration" => :TRACK_CONFIGURATION_FIELDS,
+          "Sound field" => :SOUND_FIELD_FIELDS,
+          "Playback speed" => :PLAYBACK_SPEEDd_FIELDS,
+          "Tape thickness" => :TAPE_THICKNESS_FIELDS,
+          "Tape stock brand" => :tape_stock_brand,
+          "Directions recorded" => :directions_recorded
+        }
 
 	validates :pack_deformation, inclusion: { in: PACK_DEFORMATION_VALUES.keys }
 	validates :reel_size, inclusion: { in: REEL_SIZE_VALUES.keys }

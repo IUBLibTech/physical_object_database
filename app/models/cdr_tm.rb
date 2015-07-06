@@ -13,6 +13,9 @@ class CdrTm < ActiveRecord::Base
 	MULTIVALUED_FIELDSETS = {
 		"Preservation problems" => :PRESERVATION_PROBLEM_FIELDS
 	}
+        MANIFEST_EXPORT = {
+        }
+
 
 	validates :damage, inclusion: { in: DAMAGE_VALUES.keys }
 	validates :format_duration, inclusion: { in: FORMAT_DURATION_VALUES.keys }

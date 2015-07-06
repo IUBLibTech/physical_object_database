@@ -2,6 +2,7 @@ class BetacamTm < ActiveRecord::Base
 	acts_as :technical_metadatum
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
+        include YearModule
 
 	PRESERVATION_PROBLEM_FIELDS = [
 	  "fungus", "soft_binder_syndrome", "other_contaminants"
@@ -21,7 +22,17 @@ class BetacamTm < ActiveRecord::Base
         MULTIVALUED_FIELDSETS = {
           "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
         }
+        MANIFEST_EXPORT = {
+          "Year" => :year,
+          "Recording standard" => :recording_standard,
+          "Image format" => :image_format,
+          "Tape stock brand" => :tape_stock_brand,
+          "Size" => :cassette_size,
+          "Format duration" => :format_duration,
 
+        }
+
+	validates :pack_deformation, inclusion: { in: PACK_DEFORMATION_VALUES.keys }
 	validates :cassette_size, inclusion: { in: CASSETTE_SIZE_VALUES.keys }
 	validates :recording_standard, inclusion: { in: RECORDING_STANDARD_VALUES.keys }
 	validates :format_duration, inclusion: { in: FORMAT_DURATION_VALUES.keys }
@@ -51,5 +62,9 @@ class BetacamTm < ActiveRecord::Base
 	def format_version_values
 		FORMAT_VERSION_VALUES
 	end
+
+  def damage
+    pack_deformation
+  end
 
 end

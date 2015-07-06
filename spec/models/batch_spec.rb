@@ -9,6 +9,8 @@ describe Batch do
   let(:bin) { FactoryGirl.create :bin, batch: batch }
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
+  let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
   describe "FactoryGirl" do
     it "provides a valid batch" do
@@ -46,6 +48,69 @@ describe Batch do
     end
     it "has a default workflow status of Created" do
       expect(batch.current_workflow_status).to eq "Created"
+    end
+  end
+
+  describe "#binned_physical_objects" do
+    context "with no bins" do
+      it "returns an empty collection" do
+        expect(batch.bins).to be_empty
+        expect(batch.binned_physical_objects).to be_empty
+      end
+    end
+    context "with empty bins" do
+      before(:each) { bin }
+      it "returns an empty collection" do
+        expect(batch.bins).not_to be_empty
+        expect(batch.binned_physical_objects).to be_empty
+      end
+    end
+    context "with directly filled bins" do
+      before(:each) { binned_object }
+      it "returns the object collection" do
+        expect(batch.binned_physical_objects).to eq [binned_object]
+      end
+    end
+    context "with box-filled bins" do
+      before(:each) { boxed_object }
+      it "returns the object collection" do
+        expect(batch.binned_physical_objects).to eq [boxed_object]
+      end
+    end
+  end
+
+  describe "#first_object" do
+    it "returns nil if no bins" do
+      expect(batch.bins).to be_empty
+      expect(batch.first_object).to be_nil
+    end
+    it "returns nil if no physical objects" do
+      bin
+      expect(batch.bins).not_to be_empty
+      expect(batch.bins.first.physical_objects).to be_empty
+      expect(batch.first_object).to be nil
+    end
+    it "returns first object in first bin" do
+      bin
+      physical_object.format = "Open Reel Audio Tape"
+      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+      physical_object.bin = bin
+      physical_object.save!
+      physical_object.reload
+      bin.reload
+      expect(bin.boxes).to be_empty
+      expect(batch.first_object).to eq physical_object
+    end
+    it "returns first object in first box in first bin" do
+      bin
+      box
+      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+      physical_object.box = box
+      physical_object.save!
+      physical_object.reload
+      box.reload
+      bin.reload
+      expect(batch.first_object).to eq physical_object
     end
   end
 

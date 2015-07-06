@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
   # this method helps determine which view to use to render
   # a partial for a given technical metadatum type. It is assumed
-  # that this pass value is the subclass (OpenReelTm, CassetteTapeTm, etc)
+  # that this pass value is the subclass (OpenReelTm, CdrTm, etc)
   # and not the super class TechnicalMetadatum
   def tm_partial_path(technical_metadatum)
     TechnicalMetadatumModule::TM_PARTIALS[TechnicalMetadatumModule::TM_CLASS_FORMATS[technical_metadatum.class]]

@@ -16,15 +16,17 @@ class Batch < ActiveRecord::Base
 	  return bins.inject(0) { |sum, bin| sum + bin.physical_objects_count }
 	end
 
+        def binned_physical_objects
+          return bins.inject(PhysicalObject.none) { |collection, bin| collection += bin.contained_physical_objects }
+        end
+
+        def first_object
+          bins.any? ? bins.first.first_object : nil
+        end
+
 	def media_format
-	  if bins.any?
-	    bin = bins.first
-	    if bin.physical_objects.any?
-	      bin.physical_objects.first.format
-	    elsif bin.boxes.any? && bin.boxes.first.physical_objects.any?
-	      bin.boxes.first.physical_objects.first.format
-	    end
-	  end
+          format_object = self.first_object
+          format_object ? format_object.format : nil
 	end
 
 	def packed_status?

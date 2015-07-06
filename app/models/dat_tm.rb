@@ -18,6 +18,10 @@ class DatTm < ActiveRecord::Base
 	  "Sample rate" => :SAMPLE_RATE_FIELDS,
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS
 	}
+        MANIFEST_EXPORT = {
+          "Sample rate" => :SAMPLE_RATE_FIELDS,
+          "Cassette length" => :format_duration
+        }
 
 	def sample_rates
 		humanize_boolean_fieldset(:SAMPLE_RATE_FIELDS)

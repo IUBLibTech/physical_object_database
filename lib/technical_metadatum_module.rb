@@ -86,6 +86,7 @@ module TechnicalMetadatumModule
   HUMANIZED_COLUMNS = {}
   SIMPLE_FIELDS = []
   MULTIVALUED_FIELDSETS = {}
+  MANIFEST_EXPORT = {}
 
   #include instance methods, class methods, default class constants
   def self.included(base)
@@ -102,6 +103,7 @@ module TechnicalMetadatumModule
     self.const_set(:HUMANIZED_COLUMNS, HUMANIZED_COLUMNS) unless self.const_defined?(:HUMANIZED_COLUMNS)
     self.const_set(:SIMPLE_FIELDS, SIMPLE_FIELDS) unless self.const_defined?(:SIMPLE_FIELDS)
     self.const_set(:MULTIVALUED_FIELDSETS, MULTIVALUED_FIELDSETS) unless self.const_defined?(:MULTIVALUED_FIELDSETS)
+    self.const_set(:MANIFEST_EXPORT, MANIFEST_EXPORT) unless self.const_defined?(:MANIFEST_EXPORT)
   end
 
   def humanize_boolean_fields(*field_names)
@@ -170,13 +172,13 @@ module TechnicalMetadatumModule
     end
   end
 
-  # for spreadsheet, batch export
+  # for spreadsheet export
   def export_headers
     headers = self.class.const_get(:SIMPLE_FIELDS).map { |x| self.class.human_attribute_name(x) }
     headers += self.class.const_get(:MULTIVALUED_FIELDSETS).keys
   end
 
-  # for spreadsheet, batch export
+  # for spreadsheet export
   def export_values
     row_values = []
     self.class.const_get(:SIMPLE_FIELDS).each do |simple_attribute|
@@ -184,6 +186,26 @@ module TechnicalMetadatumModule
     end
     self.class.const_get(:MULTIVALUED_FIELDSETS).values.each do |fieldset|
       row_values << humanize_boolean_fieldset(fieldset)
+    end
+    row_values
+  end
+
+  # for shipping manifest export
+  def manifest_headers
+    self.class.const_get(:MANIFEST_EXPORT).keys
+  end
+
+  # for shipping manifest export
+  def manifest_values
+    row_values = []
+    multivalued_fieldsets = self.class.const_get(:MULTIVALUED_FIELDSETS).values
+    fields = self.class.const_get(:MANIFEST_EXPORT).values
+    fields.each do |field|
+      if field.in? multivalued_fieldsets
+        row_values << humanize_boolean_fieldset(field)
+      else
+        row_values << self.send(field)
+      end
     end
     row_values
   end

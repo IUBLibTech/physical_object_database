@@ -6,25 +6,19 @@
   xmlns:html="http://www.w3.org/TR/REC-html40">
   <Worksheet ss:Name="Sheet1">
     <Table>
-      <% @media_format = @batch.media_format %>
+      <% @first_object = @batch.first_object %>
+      <% @media_format = @first_object.format %>
       <% @media_genre = TechnicalMetadatumModule::TM_GENRES[@media_format] %>
       <% @column_names = ["Object Barcode", "Batch number", "Batch description", "Format", "Unit", "IU Object ID - Call number", "IU Object ID - Catalog barcode", "IU Collection ID", "Title", "Carrier Stream Index", "Container barcode", "Container name", "Container description", "Physical Condition – Damage", "Physical Condition - Preservation Problems", "Number of preservation masters expected", "Output file-name prefix"]%>
       <% if @media_genre == :audio %>
         <% @column_names += ["Embedded file info - Bext Chunk - Description", "Embedded file info - Info List - ICMT", "Embedded file info - Info List - IARL"] %>
       <% end %>
       <%# box column %>
-      <% if ["CD-R","DAT","LP", "Lacquer Disc", "Other Analog Sound Disc"].include?(@media_format) %>
+      <% if TechnicalMetadatumModule::BOX_FORMATS.include?(@media_format) %>
         <% @column_names << "Box barcode" %>
       <% end %>
       <%# format-specific columns %>
-      <% if @media_format == "CD-R" %>
-      <% elsif @media_format == "DAT" %>
-        <% @column_names += ["Sample rate", "Cassette length"] %>
-      <% elsif @media_format.in? ["LP", "Lacquer Disc", "Other Analog Sound Disc"] %>
-        <% @column_names += ["Year", "Label", "Diameter in inches", "Recording type", "Groove type", "Playback speed"] %>
-      <% elsif @media_format == "Open Reel Audio Tape" %>
-        <% @column_names += ["Year", "Tape base", "Reel size", "Track configuration", "Sound field", "Playback speed", "Tape thickness", "Tape stock brand", "Directions recorded"] %>
-      <% end %>
+      <% @column_names += first_object.technical_metadatum.as_technical_metadatum.manifest_headers %>
       <%# Conditions and Notes %>
       <% @column_names += ["Condition Notes", "Other Notes"] %>
       <Row>

@@ -3,6 +3,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	after_initialize :default_values
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
+        include YearModule
 
 	PRESERVATION_PROBLEM_FIELDS = [
 	  "delamination", "exudation", "oxidation"
@@ -31,6 +32,15 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
 	  "Damage" => :DAMAGE_FIELDS,
 	}
+        MANIFEST_EXPORT = {
+          "Year" => :year,
+          "Label" => :label,
+          "Diameter in inches" => :diameter,
+          "Recording type" => :groove_orientation,
+          "Groove type" => :groove_size,
+          "Playback speed" => :speed
+        }
+
 
 	validates :diameter, inclusion: { in: DIAMETER_VALUES.keys }
 	validates :speed, inclusion: { in: SPEED_VALUES.keys }

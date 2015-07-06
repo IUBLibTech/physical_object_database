@@ -35,5 +35,11 @@ describe CdrTm do
     end
   end
 
+  describe "manifest export" do
+    specify "has desired headers" do
+      expect(cdr_tm.manifest_headers).to eq []
+    end
+  end
+
 end
 

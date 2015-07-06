@@ -5,7 +5,10 @@ describe Bin do
   let(:batch) {FactoryGirl.create :batch }
   let(:pl) {}
   let(:bin) { FactoryGirl.create :bin, batch: batch }
+  let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_bin) { FactoryGirl.build :bin }
+  let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
   it "gets a valid object from FactoryGirl" do
     expect(valid_bin).to be_valid
@@ -126,6 +129,49 @@ describe Bin do
 	  expect(bin.inferred_workflow_status).to eq status
 	end
       end
+    end
+  end
+  describe "#contained_physical_objects" do
+    it "returns empty collection if no physical objects" do
+      expect(bin.physical_objects).to be_empty
+      expect(bin.boxed_physical_objects).to be_empty
+      expect(bin.contained_physical_objects).to be_empty
+    end
+    it "returns directly contained physical objects" do
+      binned_object
+      expect(bin.contained_physical_objects).to eq [binned_object]
+    end
+    it "returns boxed physical objects" do
+      boxed_object
+      expect(bin.contained_physical_objects).to eq [boxed_object]
+    end
+  end
+  describe "#first_object" do
+    it "returns nil if no physical objects" do
+      expect(bin.physical_objects).to be_empty
+      expect(bin.first_object).to be nil
+    end
+    it "returns first object if present" do
+      binned_object
+      expect(bin.first_object).to eq binned_object
+    end
+    it "returns first object in first box in first bin" do
+      boxed_object
+      expect(bin.first_object).to eq boxed_object
+    end
+  end
+  describe "#media_format" do
+    it "returns nil if no physical objects" do
+      expect(bin.physical_objects).to be_empty
+      expect(bin.media_format).to be nil
+    end
+    it "returns first object format if present" do
+      binned_object
+      expect(bin.media_format).to eq binned_object.format
+    end
+    it "returns first object format in first box in first bin" do
+      boxed_object
+      expect(bin.media_format).to eq boxed_object.format
     end
   end
 
