@@ -34,6 +34,10 @@ class OpenReelTm < ActiveRecord::Base
 	REEL_SIZE_VALUES = hashify ["", "3 in.", "4 in.", "5 in.", "6 in.", "7 in.", "10 in.", "10.5 in."] 
 	PACK_DEFORMATION_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
 	SIMPLE_FIELDS = ["pack_deformation", "reel_size", "tape_stock_brand", "directions_recorded"]
+	SELECT_VALUES = {
+	  "pack_deformation" => PACK_DEFORMATION_VALUES,
+	  "reel_size" => REEL_SIZE_VALUES
+	}
 	MULTIVALUED_FIELDSETS = {
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
 	  "Playback speed" => :PLAYBACK_SPEED_FIELDS,
@@ -41,6 +45,14 @@ class OpenReelTm < ActiveRecord::Base
 	  "Tape thickness" => :TAPE_THICKNESS_FIELDS,
 	  "Sound field" => :SOUND_FIELD_FIELDS,
 	  "Tape base" => :TAPE_BASE_FIELDS
+	}
+	FIELDSET_COLUMNS = {
+	  "Preservation problems" => 2,
+	  "Playback speed" => 2,
+	  "Track configuration" => 2,
+	  "Tape thickness" => 2,
+	  "Sound field" => 3,
+	  "Tape base" => 2
 	}
         MANIFEST_EXPORT = {
           "Year" => :year,

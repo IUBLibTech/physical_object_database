@@ -1,0 +1,44 @@
+<%= fields_for :tm do |f| %>
+<% if @tm.respond_to?(:subtype) %>
+  <%= f.hidden_field(:subtype) %>
+  <h2><%= @tm.subtype %> Technical Metadata</h2>
+<% else %>
+  <h2><%= TechnicalMetadatumModule::TM_CLASS_FORMATS[@tm.class] %> Technical Metadata</h2>
+<% end %>
+<table>
+  <% @tm.class.const_get(:SIMPLE_FIELDS).each do |field| %>
+    <tr>
+      <th><%= @tm.class.human_attribute_name(field) %></th>
+      <% select_values = @tm.class.const_get(:SELECT_FIELDS)[field] %>
+      <% if select_values %>
+        <td><%= f.select(field.to_sym, select_values, {}, disabled: !@edit_mode) %>
+      <% else %>
+      <td><%= f.text_field(field.to_sym, readonly: !@edit_mode) %></td>
+      <% end %>
+    </tr>
+  <% end %>
+  <% @tm.class.const_get(:MULTIVALUED_FIELDSETS).each_pair do |header, fieldset| %>
+  <tr>
+    <th><%= header %></th>
+    <% if @edit_mode %>
+    <td>
+      <table>
+      <% max_columns = @tm.class.const_get(:FIELDSET_COLUMNS)[header] %>
+      <% max_columns ||= 2 %>
+      <% column = 1 %>
+      <% fields = @tm.class.const_get(fieldset) %>
+        <% fields.each do |field| %>
+          <% if column == 1 %></tr><% end %>
+          <td><%= @tm.class.human_attribute_name(field) %> <%= f.check_box(field.to_sym) %></td>
+          <% if (column += 1) > max_columns %></tr><% column = 1 %><% end %>
+        <% end %>
+        </tr>
+      </table>
+    </td>
+    <% else %>
+      <td><%= @tm.humanize_boolean_fieldset(fieldset) %></td>
+    <% end %>
+  </tr>
+  <% end %>
+</table>
+<% end %>

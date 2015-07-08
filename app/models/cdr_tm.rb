@@ -10,9 +10,16 @@ class CdrTm < ActiveRecord::Base
 	DAMAGE_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
 	FORMAT_DURATION_VALUES = hashify ["", "74 min", "80 min", "90 min", "99 min", "Unknown"]
 	SIMPLE_FIELDS = ["damage", "format_duration"]
+	SELECT_FIELDS = {
+		"damage" => DAMAGE_VALUES,
+		"format_duration" => FORMAT_DURATION_VALUES
+	}
 	MULTIVALUED_FIELDSETS = {
 		"Preservation problems" => :PRESERVATION_PROBLEM_FIELDS
 	}
+	FIELDSET_COLUMNS = {
+		"Preservation problems" => 2
+        }
         MANIFEST_EXPORT = {
         }
 

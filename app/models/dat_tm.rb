@@ -18,6 +18,10 @@ class DatTm < ActiveRecord::Base
 	  "Sample rate" => :SAMPLE_RATE_FIELDS,
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS
 	}
+	FIELDSET_COLUMNS = {
+	  "Sample rate" => 2,
+	  "Preservation problems" => 2
+	}
         MANIFEST_EXPORT = {
           "Sample rate" => :SAMPLE_RATE_FIELDS,
           "Cassette length" => :format_duration

@@ -19,8 +19,19 @@ class BetacamTm < ActiveRecord::Base
           "recording_standard", "format_duration", "tape_stock_brand",
           "image_format"
         ]
+	SELECT_FIELDS = {
+	  "format_version" => FORMAT_VERSION_VALUES,
+	  "pack_deformation" => PACK_DEFORMATION_VALUES,
+	  "cassette_size" => CASSETTE_SIZE_VALUES,
+	  "recording_standard" => RECORDING_STANDARD_VALUES,
+	  "format_duration" => FORMAT_DURATION_VALUES,
+	  "image_format" => IMAGE_FORMAT_VALUES
+	}
         MULTIVALUED_FIELDSETS = {
-          "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
+          "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS
+        }
+        FIELDSET_COLUMNS = {
+          "Preservation problems" => 2
         }
         MANIFEST_EXPORT = {
           "Year" => :year,

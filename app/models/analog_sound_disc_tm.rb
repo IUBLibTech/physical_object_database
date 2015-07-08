@@ -28,19 +28,35 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	  "recording_method", "material", "substrate", "coating",
 	  "equalization", "sound_field", "country_of_origin", "label"
 	]
+	SELECT_FIELDS = {
+	  "diameter" => DIAMETER_VALUES,
+	  "speed" => SPEED_VALUES,
+	  "groove_size" => GROOVE_SIZE_VALUES,
+	  "groove_orientation" => GROOVE_ORIENTATION_VALUES,
+	  "recording_method" => RECORDING_METHOD_VALUES,
+	  "material" => MATERIAL_VALUES,
+	  "substrate" => SUBSTRATE_VALUES,
+	  "coating" => COATING_VALUES,
+	  "equalization" => EQUALIZATION_VALUES,
+	  "sound_field" => SOUND_FIELD_VALUES
+	}
+
 	MULTIVALUED_FIELDSETS = {
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
-	  "Damage" => :DAMAGE_FIELDS,
+	  "Damage" => :DAMAGE_FIELDS
+	}
+	FIELDSET_COLUMNS = {
+	  "Preservation problems" => 2,
+	  "Damage" => 2
 	}
         MANIFEST_EXPORT = {
-          "Year" => :year,
-          "Label" => :label,
-          "Diameter in inches" => :diameter,
-          "Recording type" => :groove_orientation,
-          "Groove type" => :groove_size,
-          "Playback speed" => :speed
+	  "Year" => :year,
+	  "Label" => :label,
+	  "Diameter in inches" => :diameter,
+	  "Recording type" => :groove_orientation,
+	  "Groove type" => :groove_size,
+	  "Playback speed" => :speed
         }
-
 
 	validates :diameter, inclusion: { in: DIAMETER_VALUES.keys }
 	validates :speed, inclusion: { in: SPEED_VALUES.keys }
