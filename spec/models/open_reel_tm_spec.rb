@@ -40,6 +40,14 @@ describe OpenReelTm do
     end
   end
 
+  describe "has virtual fields" do
+    specify "#year" do
+      physical_object = FactoryGirl.create(:physical_object, :open_reel, year: 1985)
+      open_reel_tm.technical_metadatum.physical_object = physical_object
+      expect(open_reel_tm.year).to eq 1985
+    end
+  end
+
   it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:open_reel_tm) 
 
   describe "#master_copies" do
@@ -75,6 +83,12 @@ describe OpenReelTm do
         open_reel_tm.reload
         expect(open_reel_tm.directions_recorded).to eq result
       end
+    end
+  end
+
+  describe "manifest export" do
+    specify "has desired headers" do
+      expect(open_reel_tm.manifest_headers).to eq ["Year", "Tape base", "Reel size", "Track configuration", "Sound field", "Playback speed", "Tape thickness", "Tape stock brand", "Directions recorded"]
     end
   end
 

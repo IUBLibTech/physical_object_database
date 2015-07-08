@@ -22,7 +22,7 @@
     <Cell><Data ss:Type="String"><%= po.home_location %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.iucat_barcode %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.oclc_number %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= po.other_copies if po.other_copies %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= po.other_copies? %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.group_identifier %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.group_position %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.group_total %></Data></Cell>
@@ -30,50 +30,12 @@
     <Cell><Data ss:Type="String"><%= po.collection_name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.year %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.generation %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= po.has_ephemera if po.has_ephemera %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= po.has_ephemera? %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.other_notes(false) %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.other_notes(true) %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.condition_notes %></Data></Cell>
-  <% if @media_format == "CD-R" %>
-  <%# metadata-specific: CD-R %>
-    <Cell><Data ss:Type="String"><%= tm.damage %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.preservation_problems %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-
-  <% elsif @media_format == "DAT"%>
-  <%# metadata-specific: DAT %>
-    <Cell><Data ss:Type="String"><%= tm.sample_rates %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.format_duration %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.tape_stock_brand %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.preservation_problems %></Data></Cell>
-  <% elsif @media_format.in? ["LP", "Lacquer Disc", "Other Analog Sound Disc"] %>
-  <%# metadata-specific: Analog Sound Disc Formats %>
-    <Cell><Data ss:Type="String"><%= tm.diameter %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.speed %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.groove_size %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.groove_orientation %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.recording_method %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.material %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.substrate %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.coating %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.sound_field %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.equalization %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.country_of_origin %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.label %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.preservation_problems %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.damage %></Data></Cell>
-  <% elsif @media_format == "Open Reel Audio Tape" %>
-  <%# metadata-specific: Open Reel Audio Tape %>
-    <Cell><Data ss:Type="String"><%= tm.pack_deformation %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.preservation_problems %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.reel_size %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.playback_speed %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.track_configuration %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.tape_thickness %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.sound_field %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.tape_stock_brand %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.tape_base %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= tm.directions_recorded %></Data></Cell>
+  <%# technical metadata info %>
+  <% tm.export_values.each do |value| %>
+    <Cell><Data ss:Type="String"><%= value %></Data></Cell>
   <% end %>
-  <%# metadata-specific: ??? %>
 </Row>
