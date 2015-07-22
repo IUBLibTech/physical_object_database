@@ -36,21 +36,31 @@ class PicklistSpecificationsController < ApplicationController
 
   def update
     PicklistSpecification.transaction do 
+      @original_tm = @ps.technical_metadatum
+      tm_assigned = true
       if ! @ps.update_attributes(picklist_specification_params)
         @edit_mode = true
         flash[:notice] = "Failed to update #{@ps.name}."
         render :edit
-                  else
+      else
         @tm = @ps.ensure_tm
-        if @tm.update_attributes(tm_params)
+	begin
+	  @tm.assign_attributes(tm_params)
+	rescue
+	  tm_assigned = false
+	end
+        if @tm.update_attributes(tm_params) && tm_assigned
           flash[:notice] = "#{@ps.name} successfully updated."
           redirect_to action: :index
         else
-                      @edit_mode = true
+	  if !tm_assigned
+	    @ps.errors[:base] << "Technical Metadata format did not match, which was probably the result of a failed format change.  Verify physical object format and technical metadata, then resubmit."
+	  end
+          @edit_mode = true
           flash[:notice] = "Failed to update #{@ps.name}."
-                      render :edit
+          render :edit
         end
-                  end
+      end
     end
   end
 
