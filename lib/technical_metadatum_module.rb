@@ -256,5 +256,5 @@ module TechnicalMetadatumModule
     end
     row_values
   end
-
+end
 end
