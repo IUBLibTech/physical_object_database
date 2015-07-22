@@ -6,6 +6,8 @@ class ResponsesController < ActionController::Base
   protect_from_forgery with: :null_session
 
   include BasicAuthenticationHelper
+  include QcXmlModule
+
   before_action :authenticate
 
   before_action :set_physical_object, only: [:metadata, :full_metadata, :pull_state, :push_status, :push_memnon_qc]
@@ -70,11 +72,14 @@ class ResponsesController < ActionController::Base
     render template: 'responses/push_status.xml.builder', layout: false, status: @status
   end
 
-  # POST /responses/objects/memnon_qc/:mdpi_barcode/:done
+  # POST /responses/objects/memnon_qc/:mdpi_barcode
   def push_memnon_qc
     @po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
     unless @po.nil?
-      @po.digital_provenance.update_attributes(xml: request.body.read)
+      # @po.digital_provenance.update_attributes(xml: request.body.read)
+      # above call is replaced by parse_qc_xml
+      parse_qc_xml(@po, request.body.read)
+
       @success = true
       @message = "Saved memnon digiprov xml for physical object: #{@po.mdpi_barcode}" 
     else
@@ -88,13 +93,6 @@ class ResponsesController < ActionController::Base
   def pull_memnon_qc
     po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
     msg = po.digital_provenance.nil? ? "No digiprov model" : po.digital_provenance.xml.nil? ? "No xml digiprov" : po.digital_provenance.xml
-    # unless po.nil?
-    #   @success = true
-    #   @message = "Physical object #{po.mdpi_barcode}: QC #{po.memnon_qc_completed ? 'has' : 'has not'} be done by memnon" 
-    # else
-    #   @success = false
-    #   @message = "Could not find physical object: #{params[:mdpi_barcode]}"
-    # end
     render plain: msg, status: 200
   end
 
@@ -175,7 +173,7 @@ class ResponsesController < ActionController::Base
         barcode_not_found
       else
         @tm = @physical_object.technical_metadatum.as_technical_metadatum unless @physical_object.technical_metadatum.nil?
-	@dp = @physical_object.ensure_digiprov
+        @dp = @physical_object.ensure_digiprov
       end
     end
 
@@ -196,6 +194,28 @@ class ResponsesController < ActionController::Base
       else
         @status = 200
         @message = "MDPI Barcode #{params[:mdpi_barcode]} does not exist"
+      end
+    end
+
+    # checks to see if the passed node values is either "Yes or No"
+    def yes_no?(node_val)
+      node_val == "Yes" or node_val == "No"
+    end
+
+    # returns a boolean based on "Yes"/"No' values passed, or nil if a non-yes/no value is passed
+    def yes_no(val)
+      if yes_no?(val)
+        val == "Yes" ? true : false
+      else
+        return nil
+      end
+    end
+
+    def date_parse(val)
+      unless val.nil? or val.length == 0
+        val.to_datetime
+      else
+        nil
       end
     end
 end

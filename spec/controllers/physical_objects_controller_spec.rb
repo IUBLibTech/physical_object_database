@@ -80,7 +80,7 @@ describe PhysicalObjectsController do
 
   describe "POST create" do
     context "with valid attributes" do
-      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), dp: valid_physical_object.digital_provenance.attributes.symbolize_keys}
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm)}
       it "saves the new physical object in the database" do
         physical_object
         expect{ creation }.to change(PhysicalObject, :count).by(1)
@@ -97,7 +97,7 @@ describe PhysicalObjectsController do
 
     context "with invalid attributes" do
       #FIXME: test that invalid object is invalid?
-      let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), dp: invalid_physical_object.digital_provenance.attributes.symbolize_keys }
+      let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
       it "does not save the new physical object in the database" do
         physical_object
         expect{ creation }.not_to change(PhysicalObject, :count)
@@ -147,7 +147,7 @@ describe PhysicalObjectsController do
   describe "PUT update" do
     context "with valid attributes" do
       before(:each) do
-        put :update, id: physical_object.id, physical_object: FactoryGirl.attributes_for(:physical_object, :cdr, title: "Updated title"), tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
+        put :update, id: physical_object.id, physical_object: FactoryGirl.attributes_for(:physical_object, :cdr, title: "Updated title"), tm: FactoryGirl.attributes_for(:cdr_tm)
       end
 
       it "locates the requested object" do
@@ -189,23 +189,23 @@ describe PhysicalObjectsController do
       let(:barcoded_params) { { picklist_id: picklist.id, mdpi_barcode: valid_mdpi_barcode } }
 
       specify "Unassigned for empty params" do
-        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
+        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm)
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "Unassigned"
       end
       specify "On Pick List for picklist assignment" do
-        put :update, id: physical_object.id, physical_object: on_pick_list_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
+        put :update, id: physical_object.id, physical_object: on_pick_list_params, tm: FactoryGirl.attributes_for(:cdr_tm)
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "On Pick List"
       end
       specify "On Pick List for picklist + barcode" do
-        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
+        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "On Pick List"
       end
       specify "Reverts to Unassigned after On Pick List" do
-        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
-        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm), dp: physical_object.digital_provenance.attributes.symbolize_keys
+        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm)
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "Unassigned"
         expect(physical_object.workflow_statuses.size).to be >= 3 # Unassigned, On Pick List, Unassigned

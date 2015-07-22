@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150625185943) do
+ActiveRecord::Schema.define(version: 20150722125831) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -170,7 +170,6 @@ ActiveRecord::Schema.define(version: 20150625185943) do
   end
 
   create_table "digital_file_provenances", force: true do |t|
-    t.integer  "digital_file_id",        limit: 8
     t.datetime "date_digitized"
     t.text     "comment"
     t.string   "created_by"
@@ -184,39 +183,25 @@ ActiveRecord::Schema.define(version: 20150625185943) do
     t.string   "speed_used"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "digital_provenance_id",  limit: 8
+    t.string   "filename",                         null: false
   end
 
-  create_table "digital_files", force: true do |t|
-    t.integer  "physical_object_id", limit: 8
-    t.string   "filename"
-    t.string   "role"
-    t.string   "format"
-    t.text     "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
+  add_index "digital_file_provenances", ["filename"], name: "index_digital_file_provenances_on_filename", unique: true, using: :btree
 
   create_table "digital_provenances", force: true do |t|
     t.string   "digitizing_entity"
     t.datetime "date"
     t.text     "comments"
-    t.string   "created_by"
     t.datetime "cleaning_date"
-    t.string   "player_serial_number"
-    t.string   "player_manufacturer"
-    t.string   "player_model"
-    t.string   "ad_serial_number"
-    t.string   "ad_manufacturer"
-    t.string   "ad_model"
     t.datetime "baking"
     t.boolean  "repaired"
-    t.string   "extraction_workstation"
-    t.string   "speed_used"
-    t.integer  "physical_object_id",     limit: 8
+    t.integer  "physical_object_id", limit: 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "cleaning_comment"
-    t.text     "xml",                    limit: 2147483647
+    t.text     "xml",                limit: 2147483647
+    t.string   "duration"
   end
 
   create_table "digital_statuses", force: true do |t|

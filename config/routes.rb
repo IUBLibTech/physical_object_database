@@ -52,7 +52,6 @@ Pod::Application.routes.draw do
     post :unpick, on: :member
     patch :update_ephemera, on: :member
 
-    #resources :digital_files
   end
 
   resources :picklist_specifications do
@@ -95,7 +94,7 @@ Pod::Application.routes.draw do
   get 'responses/objects/:mdpi_barcode/clear_statuses', to: "responses#clear", as: "clear_statuses"
   get 'responses/objects/clear_all_statuses', to: "responses#clear_all", as: "clear_all_statuses"
   post 'responses/objects/memnon_qc/:mdpi_barcode', to: "responses#push_memnon_qc", as: "push_memnon_qc"
-  get 'responses/objects/memnon_qc/:mdpi_barcode/', to: "responses#pull_memnon_qc", as: "pull_memnon_qc"
+  get 'responses/objects/memnon_qc/:mdpi_barcode', to: "responses#pull_memnon_qc", as: "pull_memnon_qc"
   get 'responses/objects/states', to: "responses#pull_states", as: "pull_states"
 
   get 'quality_control/statuses/:status', to: "quality_control#index", as: "quality_control_status"
@@ -118,6 +117,8 @@ Pod::Application.routes.draw do
     post :advanced_search, on: :collection
     post :search_results, on: :collection
   end
+
+  resources :digital_provenance, only: [:show, :edit, :update]
 
   resources :spreadsheets, except: [:new, :create]
 

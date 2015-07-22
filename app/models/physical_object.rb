@@ -26,7 +26,6 @@ class PhysicalObject < ActiveRecord::Base
   
   has_one :technical_metadatum, :dependent => :destroy
   has_one :digital_provenance, :dependent => :destroy
-  has_many :digital_files, :dependent => :destroy
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
   has_many :notes, :dependent => :destroy
@@ -493,6 +492,7 @@ assigned to a box."
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
     self.digital_provenance ||= nil
+    self.digital_provenance ||= DigitalProvenance.new(physical_object_id: self.id)
   end
 
   # def open_reel_tm_where(stm)

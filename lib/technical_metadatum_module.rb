@@ -3,9 +3,12 @@
 #
 module TechnicalMetadatumModule
 
+  TMM_ERROR_CODE = 1000
+
   def hashify(array)
     Hash[array.map{ |v| [v.to_s,v.to_s] }]
   end
+
   def TechnicalMetadatumModule.hashify(array)
     Hash[array.map{ |v| [v.to_s,v.to_s] }]
   end
@@ -126,6 +129,47 @@ module TechnicalMetadatumModule
     humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS)
   end
 
+  # passes in a Nokogiri XML document object, decision branch to parse the technical metadatum portion of the xml
+  # which hands off to the correct parse_<format type>_xml methods
+  def parse_qc_xml(xml)
+    case self
+    when OpenReelTm
+      parse_open_reel_xml(xml)
+    when DatTm
+      raise 'DAT technical metadata cannot currently be parsed: no specification provided by memnon'
+    when CdrTm
+      raise 'CDT technical metadata cannot currently be parsed: no specification provided by memnon'
+    when AnalogSoundDiscTm
+      raise 'Analog Sound Disc metadata cannot currently be parsed: no specification provided by memnon'
+    when Betacam
+      raise 'Betacam Technical metadata cannot currently be parsed: no specification provided by memnon'
+    else
+      raise "Unsupported format class type: #{self.class}"
+    end
+  end
+
+  # parses the open reel tape technical metadata portion of the xml
+  def parse_open_reel_xml(xml)
+    self.send(xml.css_at("IU Carrier Configuration Track").parameterize.underscore.to_sym, true)
+    self.send(xml.css_at("IU Carrier Configuration SoundField").parameterize.underscore.to_sym, true)
+    # speed needs a little massaging first
+    speed = xml.css_at("IU Carrier Configuration Speed")
+    sym = OpenReelTm::HUMANIZED_COLUMNS[speed]
+    if sym.nil?
+      raise "#{TMM_ERROR_CODE}: Invalid controlled vocabulary in Open Reel Tape XML - #{speed}"
+    else
+      self.send(sym, true)
+    end
+
+    self.send(:tape_stock_brand, xml.css_at("IU Carrier Brand"))
+    self.send(:directions_recorded, xml.css_at("IU Carrier Brand"))
+    val = xml.css_at("IU Carrier PhysicalCondition Damage")
+    unless OpenReelTm::PACK_DEFORMATION_VALUES.key(val)
+      raise "#{TMM_ERROR_CODE}: Invalid controlled vocabulary in Open Reel Tape XML - #{damage}, expecting it to match pack deformation values"
+    end
+    self.send(:pack_deformation, val)
+  end
+
   #override when needed
   def master_copies
     1
@@ -143,35 +187,34 @@ module TechnicalMetadatumModule
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(indent: options[:indent])
       xml.instruct! unless options[:skip_instruct]
       xml.technical_metadata do
-	if options[:format]
-	  xml.format options[:format]
-	elsif self.technical_metadatum.physical_object
+        if options[:format]
+          xml.format options[:format]
+        elsif self.technical_metadatum.physical_object
           xml.format self.technical_metadatum.physical_object.format
-	else
-	  xml.format "Unknown"
-	end
-        xml.files self.master_copies
-        self.class.const_get(:SIMPLE_FIELDS).each do |simple_attribute|
-	   spoofed_attribute_name = simple_attribute
-	   spoofed_attribute_name = simple_attribute.gsub("_", "-") if options[:dasherize]
-           xml << "  <#{spoofed_attribute_name}>#{self.attributes[simple_attribute]}</#{spoofed_attribute_name}>\n"
+        else
+         xml.format "Unknown"
+       end
+       xml.files self.master_copies
+       self.class.const_get(:SIMPLE_FIELDS).each do |simple_attribute|
+        spoofed_attribute_name = simple_attribute
+        spoofed_attribute_name = simple_attribute.gsub("_", "-") if options[:dasherize]
+        xml << "  <#{spoofed_attribute_name}>#{self.attributes[simple_attribute]}</#{spoofed_attribute_name}>\n"
+      end
+      self.class.const_get(:MULTIVALUED_FIELDSETS).each do |name, fieldset|
+        name = name.downcase.gsub(" ", "_")
+        name = name.downcase.gsub("_", "-") if options[:dasherize]
+        section_string = ""
+        self.class.const_get(fieldset).each do |field|
+          spoofed_field_name = field.to_s
+          spoofed_field_name = field.to_s.gsub("_", "-") if options[:dasherize]
+          section_string << "    <#{spoofed_field_name}>true</#{spoofed_field_name}>\n" if self.send((field.to_s + "?").to_sym)
         end
-	self.class.const_get(:MULTIVALUED_FIELDSETS).each do |name, fieldset|
-	  name = name.downcase.gsub(" ", "_")
-	  name = name.downcase.gsub("_", "-") if options[:dasherize]
-	  section_string = ""
-	  self.class.const_get(fieldset).each do |field|
-	    spoofed_field_name = field.to_s
-	    spoofed_field_name = field.to_s.gsub("_", "-") if options[:dasherize]
-	    section_string << "    <#{spoofed_field_name}>true</#{spoofed_field_name}>\n" if self.send((field.to_s + "?").to_sym)
-	  end
-	  if section_string.blank?
-	    section_string = "  <#{name}/>\n"
-	  else
-	    section_string = "  <#{name}>\n" + section_string + "  </#{name}>\n"
-	  end
-	  xml << section_string
-	end
+        if section_string.blank?
+         section_string = "  <#{name}/>\n"
+        else
+         section_string = "  <#{name}>\n" + section_string + "  </#{name}>\n"
+        end
+        xml << section_string
       end
     end
   end

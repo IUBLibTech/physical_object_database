@@ -11,6 +11,9 @@ gem "acts_as_relation"
 #nested_form handles form fields for the has_many objects associated to the main form object
 gem "nested_form"
 
+
+#gem "thin", "1.6.2"
+
 #simple_enum handles the enumerated values for technical metadata fields (open reel tape size for instance)
 #gem 'simple_enum'
 

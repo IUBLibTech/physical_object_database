@@ -21,6 +21,9 @@
   <div class="contextMenuItem">
     <%= link_to("Edit Ephemera Status", {:controller => 'physical_objects', :action => 'edit_ephemera', :id => @physical_object.id}, :class => 'action edit') %>
   </div>
+  <div class="contextMenuItem">
+    <%= link_to("Digital Workflow", {:controller => 'digital_provenance', :action => 'show', :id => @physical_object.id}, :class => 'action edit' ) %>
+  </div>
 <% end %>
 
 <%= render partial: "physical_object_form" %>
