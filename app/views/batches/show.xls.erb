@@ -7,38 +7,42 @@
   <Worksheet ss:Name="Sheet1">
     <Table>
       <% @first_object = @batch.first_object %>
-      <% @media_format = @first_object.format %>
-      <% @media_genre = TechnicalMetadatumModule::TM_GENRES[@media_format] %>
-      <% @column_names = ["Object Barcode", "Batch number", "Batch description", "Format", "Unit", "IU Object ID - Call number", "IU Object ID - Catalog barcode", "IU Collection ID", "Title", "Carrier Stream Index", "Container barcode", "Container name", "Container description", "Physical Condition – Damage", "Physical Condition - Preservation Problems", "Number of preservation masters expected", "Output file-name prefix"]%>
-      <% if @media_genre == :audio %>
-        <% @column_names += ["Embedded file info - Bext Chunk - Description", "Embedded file info - Info List - ICMT", "Embedded file info - Info List - IARL"] %>
-      <% end %>
-      <%# box column %>
-      <% if TechnicalMetadatumModule::BOX_FORMATS.include?(@media_format) %>
-        <% @column_names << "Box barcode" %>
-      <% end %>
-      <%# format-specific columns %>
-      <% @column_names += first_object.technical_metadatum.as_technical_metadatum.manifest_headers %>
-      <%# Conditions and Notes %>
-      <% @column_names += ["Condition Notes", "Other Notes"] %>
-      <Row>
-      <% @column_names.each do |column_name| %>
-        <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
-      <% end %>
-      </Row>
-      <% if @bins.any? %>
-        <% @bins.each do |bin| %>
-          <%# LOOP THROUGH BOXES FIRST %>
-          <% bin.boxes.each do |box| %>
-            <% box.physical_objects.each do |po| %>
-	      <%= render 'shipping_manifest_physical_object', bin: bin, box: box, po: po %>
+      <% if @first_object %>
+        <% @media_format = @first_object.format %>
+        <% @media_genre = TechnicalMetadatumModule::TM_GENRES[@media_format] %>
+        <% @column_names = ["Object Barcode", "Batch number", "Batch description", "Format", "Unit", "IU Object ID - Call number", "IU Object ID - Catalog barcode", "IU Collection ID", "Title", "Carrier Stream Index", "Container barcode", "Container name", "Container description", "Physical Condition – Damage", "Physical Condition - Preservation Problems", "Number of preservation masters expected", "Output file-name prefix"]%>
+        <% if @media_genre == :audio %>
+          <% @column_names += ["Embedded file info - Bext Chunk - Description", "Embedded file info - Info List - ICMT", "Embedded file info - Info List - IARL"] %>
+        <% end %>
+        <%# box column %>
+        <% if TechnicalMetadatumModule::BOX_FORMATS.include?(@media_format) %>
+          <% @column_names << "Box barcode" %>
+        <% end %>
+        <%# format-specific columns %>
+        <% @column_names += @first_object.technical_metadatum.as_technical_metadatum.manifest_headers %>
+        <%# Conditions and Notes %>
+        <% @column_names += ["Condition Notes", "Other Notes"] %>
+        <Row>
+        <% @column_names.each do |column_name| %>
+          <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
+        <% end %>
+        </Row>
+        <% if @bins.any? %>
+          <% @bins.each do |bin| %>
+            <%# LOOP THROUGH BOXES FIRST %>
+            <% bin.boxes.each do |box| %>
+              <% box.physical_objects.each do |po| %>
+	        <%= render 'shipping_manifest_physical_object', bin: bin, box: box, po: po %>
+              <% end %>
+            <% end %>
+            <%# LIST UNBOXED ITEMS LAST %>
+            <% bin.physical_objects.each do |po| %>
+	      <%= render 'shipping_manifest_physical_object', bin: bin, box: nil, po: po %>
             <% end %>
           <% end %>
-          <%# LIST UNBOXED ITEMS LAST %>
-          <% bin.physical_objects.each do |po| %>
-	    <%= render 'shipping_manifest_physical_object', bin: bin, box: nil, po: po %>
-          <% end %>
         <% end %>
+      <% else %>
+        <Row><Cell><Data ss:Type="String">No objects in batch</Data></Cell></Row>
       <% end %>
     </Table>
   </Worksheet>
