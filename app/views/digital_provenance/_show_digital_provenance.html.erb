@@ -1,0 +1,85 @@
+<div class="left">
+	<%= nested_form_for(@dp, url: {controller: 'digital_provenance', action: 'update'}) do |dp| %>
+		<div>
+			<h2>Digital Provenance</h2>
+				<% if @edit_mode %>
+					<%= dp.submit "Update Digital Provenance" %>
+				<% end %>
+			<%= dp.hidden_field :digitizing_entity, value: "IU Media Digitization Studios" %>
+			<table>
+				<tr>
+					<th rowspan="3">Comments</th>
+					<td rowspan="3">
+						<% if @edit_mode %>
+							<%= dp.text_area(:comments, rows: "4") %>
+						<% else %>
+							<%= dp.text_area(:comments, rows: "4", readonly: true) %>
+						<% end %>
+					</td>
+					<th rowspan="3">Cleaning Comment</th>
+					<td rowspan="3">
+						<% if @edit_mode %>
+							<%= dp.text_area(:cleaning_comment, rows: "4") %>
+						<% else %>
+							<%= dp.text_area(:cleaning_comment, rows: "4", readonly: true) %>
+						<% end %>
+					</td>
+					<th>Cleaning Date</th>
+					<td>
+						<% if @edit_mode %>
+							<%= dp.text_field(:cleaning_date, class: 'date',  value: @dp.cleaning_date.blank? ? "" : @dp.cleaning_date.strftime("%m/%d/%Y")) %>
+						<% else %>
+							<%= dp.text_field(:cleaning_date, readonly: true, value: @dp.cleaning_date.blank? ? "" : @dp.cleaning_date.strftime("%m/%d/%Y")) %>
+						<% end %>
+					</td>
+				</tr>
+				<tr>
+					<th>Baking Date</th>
+					<td>
+						<% if @edit_mode %>
+							<%= dp.text_field(:baking, class: 'date', value: @dp.baking.blank? ? "" : @dp.baking.strftime("%m/%d/%Y")) %>
+						<% else %>
+							<%= dp.text_field(:baking, readonly: true, value: @dp.baking.blank? ? "" : @dp.baking.strftime("%m/%d/%Y")) %>
+						<% end %>
+					</td>
+				</tr>
+				<tr>
+					<th>Repaired</th>
+					<td>
+						<% if @edit_mode %>
+							<%= dp.check_box(:repaired) %>
+						<% else %>
+							<%= dp.check_box(:repaired, disabled: !@edit_mode) %>
+						<% end %>
+					</td>
+					
+				</tr>
+			</table>				
+		</div>
+		<%# the fields for kluge %>
+		<% dp.fields_for :digital_file_provenances do |df| %>
+		<% end %>
+		<div>
+			<h2>Digital Files</h2>
+			<% if @dp.digital_file_provenances.size == 0 and !@edit_mode %>
+				Digital files have not been received yet...
+			<% else %>
+				<%= dp.fields_for :digital_file_provenances do |df| %>
+					<%= render 'digital_provenance/digital_file_provenance', f: df %>
+				<% end %>
+				<% if @edit_mode %>
+					<%= dp.link_to_add "Add Digital File", :digital_file_provenances %>
+				<% end %>
+			<% end %>
+		</div>
+	<% end %>
+	<div class="clear">
+		<h2>Digital Statuses</h2>
+	</div>
+
+	<script type='text/javascript'>
+		$(function (){
+			$('.date').datepicker();
+		});
+	</script>
+</div>

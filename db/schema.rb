@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150625185943) do
+ActiveRecord::Schema.define(version: 20150722125831) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -184,7 +184,10 @@ ActiveRecord::Schema.define(version: 20150625185943) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "digital_provenance_id",  limit: 8
+    t.string   "filename",                         null: false
   end
+
+  add_index "digital_file_provenances", ["filename"], name: "index_digital_file_provenances_on_filename", unique: true, using: :btree
 
   create_table "digital_provenances", force: true do |t|
     t.string   "digitizing_entity"
@@ -198,6 +201,7 @@ ActiveRecord::Schema.define(version: 20150625185943) do
     t.datetime "updated_at"
     t.text     "cleaning_comment"
     t.text     "xml",                limit: 2147483647
+    t.string   "duration"
   end
 
   create_table "digital_statuses", force: true do |t|

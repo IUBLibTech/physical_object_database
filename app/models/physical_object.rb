@@ -35,7 +35,6 @@ class PhysicalObject < ActiveRecord::Base
   accepts_nested_attributes_for :notes, allow_destroy: true
   # below line supports kludge workaround for bug POD-648
   accepts_nested_attributes_for :workflow_statuses, allow_destroy: false
-  accepts_nested_attributes_for :digital_files, allow_destroy: true
 
   # default per_page value can be overriden in a request
   self.per_page = 50
@@ -493,6 +492,7 @@ assigned to a box."
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
     self.digital_provenance ||= nil
+    self.digital_provenance ||= DigitalProvenance.new(physical_object_id: self.id)
   end
 
   # def open_reel_tm_where(stm)

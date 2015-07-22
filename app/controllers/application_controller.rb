@@ -100,11 +100,34 @@ class ApplicationController < ActionController::Base
   end
 
   def dp_params
-    params.require(:dp).permit(
+    params.require(:digital_provenance).permit(
       :digitizing_entity, :date, :comments, :created_by, :cleaning_date, :cleaning_comment, 
-      :player_serial_number, :player_manufacturer, :player_model, :ad_serial_number, :ad_manufacturer,
-      :ad_model, :baking, :repaired, :extraction_workstation, :speed_used
+      :baking, :repaired, :duration, digital_file_provenances_attributes: [
+        :id, :filename, :comment, :date_digitized, :created_by, :player_serial_number, :player_manufacturer, :player_model,
+        :ad_serial_number, :ad_manufacturer, :ad_model, :extraction_workstation, :speed_used, :_destroy]
     )
+  end
+
+  # there is a disconnect between jquery datepicker and how rails parses datetime objects.
+  # probably a better way than intercepting the params hash and normalizing it...
+  def normalize_dates
+    unless params[:digital_provenance].nil?
+      if params[:digital_provenance][:cleaning_date]
+        unless params[:digital_provenance][:cleaning_date].blank?
+          params[:digital_provenance][:cleaning_date] = DateTime.strptime(params[:digital_provenance][:cleaning_date], "%m/%d/%Y")
+        end
+        unless params[:digital_provenance][:baking].blank?
+          params[:digital_provenance][:baking] = DateTime.strptime(params[:digital_provenance][:baking], "%m/%d/%Y")
+        end
+        unless params[:digital_provenance][:digital_file_provenances_attributes].blank?
+          params[:digital_provenance][:digital_file_provenances_attributes].each do |key, val|
+            unless val[:date_digitized].blank?
+              params[:digital_provenance][:digital_file_provenances_attributes][key][:date_digitized] = DateTime.strptime(val[:date_digitized], "%m/%d/%Y")
+            end
+          end
+        end
+      end
+    end
   end
 
   private
