@@ -8,20 +8,20 @@
 			<%= dp.hidden_field :digitizing_entity, value: "IU Media Digitization Studios" %>
 			<table>
 				<tr>
-					<th rowspan="3">Comments</th>
-					<td rowspan="3">
+					<th rowspan="4">Comments</th>
+					<td rowspan="4">
 						<% if @edit_mode %>
-							<%= dp.text_area(:comments, rows: "4") %>
+							<%= dp.text_area(:comments, rows: "6") %>
 						<% else %>
-							<%= dp.text_area(:comments, rows: "4", readonly: true) %>
+							<%= dp.text_area(:comments, rows: "6", readonly: true) %>
 						<% end %>
 					</td>
-					<th rowspan="3">Cleaning Comment</th>
-					<td rowspan="3">
+					<th rowspan="4">Cleaning Comment</th>
+					<td rowspan="4">
 						<% if @edit_mode %>
-							<%= dp.text_area(:cleaning_comment, rows: "4") %>
+							<%= dp.text_area(:cleaning_comment, rows: "6") %>
 						<% else %>
-							<%= dp.text_area(:cleaning_comment, rows: "4", readonly: true) %>
+							<%= dp.text_area(:cleaning_comment, rows: "6", readonly: true) %>
 						<% end %>
 					</td>
 					<th>Cleaning Date</th>
@@ -52,7 +52,12 @@
 							<%= dp.check_box(:repaired, disabled: !@edit_mode) %>
 						<% end %>
 					</td>
-					
+				</tr>
+				<tr>
+					<th>Duration</th>
+					<td>
+						<%= dp.text_field(:duration, readonly: !@edit_mode) %>
+					</td>
 				</tr>
 			</table>				
 		</div>
