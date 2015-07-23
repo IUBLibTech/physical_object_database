@@ -1,6 +1,6 @@
 class AnalogSoundDiscTm < ActiveRecord::Base
 	acts_as :technical_metadatum
-	after_initialize :default_values
+	after_initialize :default_values, if: :new_record?
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
         include YearModule

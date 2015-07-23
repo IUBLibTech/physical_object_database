@@ -1,6 +1,6 @@
 class GroupKey < ActiveRecord::Base
   has_many :physical_objects
-  after_initialize :set_defaults
+  after_initialize :set_defaults, if: :new_record?
   before_destroy :ungroup_objects
 
   validates :group_total, presence: true, numericality: { greater_than_or_equal_to: 0 }

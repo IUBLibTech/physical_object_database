@@ -9,8 +9,8 @@ class PhysicalObject < ActiveRecord::Base
   include TechnicalMetadatumModule
   extend TechnicalMetadatumClassModule
 
-  after_initialize :default_values
-  after_initialize :assign_default_workflow_status
+  after_initialize :default_values, if: :new_record?
+  after_initialize :assign_default_workflow_status, if: :new_record?
   before_validation :ensure_tm
   before_validation :ensure_group_key
   before_save :assign_inferred_workflow_status
@@ -499,7 +499,6 @@ assigned to a box."
     self.generation ||= ""
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
-    self.digital_provenance ||= nil
     self.digital_provenance ||= DigitalProvenance.new(physical_object_id: self.id)
   end
 

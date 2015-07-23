@@ -7,7 +7,7 @@ class Batch < ActiveRecord::Base
         include DestinationModule
 
 	#FIXME: resolve issue with FactoryGirl and after_initialize callbacks
-	after_initialize :assign_default_workflow_status
+	after_initialize :assign_default_workflow_status, if: :new_record?
 
 	validates :identifier, presence: true, uniqueness: true
 	validates :workflow_status, presence: true
