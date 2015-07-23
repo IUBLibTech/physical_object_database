@@ -1,0 +1,16 @@
+<h2>Move a Physical Object into this Group:</h2>
+<%= flash[:warning] %>
+<%= form_for(@group_key, url: { action: :include }) do |f| %>
+  <table>
+    <tr>
+      <th>MDPI barcode</th>
+      <td><%= text_field_tag :mdpi_barcode, "", class: "mdpi" %></td>
+    </tr>
+    <tr>
+      <th>Position</th>
+      <td><%= number_field_tag :group_position, 1 %></td>
+    </tr>
+  </table>
+  <%= submit_tag("Submit") %>
+<% end %>
+

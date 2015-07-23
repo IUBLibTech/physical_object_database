@@ -1,5 +1,5 @@
 class GroupKeysController < ApplicationController
-  before_action :set_group_key, only: [:show, :edit, :update, :destroy, :reorder]
+  before_action :set_group_key, only: [:show, :edit, :update, :destroy, :reorder, :include]
 
   # GET /group_keys
   # GET /group_keys.json
@@ -107,6 +107,30 @@ class GroupKeysController < ApplicationController
         flash[:notice] = "Errors encountered reordering objects."
       else
         flash[:notice] = "Objects were successfully reordered."
+      end
+    end
+    redirect_to :back
+  end
+
+  def include
+    mdpi_barcode = params[:mdpi_barcode].to_i
+    mdpi_barcode ||= 0
+    group_position = params[:group_position].to_i
+    group_position ||= 1
+    if mdpi_barcode.zero?
+      flash[:warning] = "You must specify a valid, non-zero MPDI barcode."
+    else
+      physical_object = PhysicalObject.where(mdpi_barcode: mdpi_barcode).first
+      if physical_object
+        physical_object.group_key = @group_key
+	physical_object.group_position = group_position
+        if physical_object.save
+	  flash[:notice] = "Physical object was successfully moved into specificed position within this Group Key."
+	else
+	  flash[:warning] = "Problem saving Physical Object."
+	end
+      else
+        flash[:warning] = "No matching physical object was found."
       end
     end
     redirect_to :back

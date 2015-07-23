@@ -305,14 +305,23 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def ungroup
+    original_group = @physical_object.group_key
     @physical_object.group_position = 1
     @physical_object.group_key = nil
     if @physical_object.save
-      flash[:notice] = "The Physical Object was removed from this Group Key."
+      # original_group.destroyed? check is not working for some reason
+      if GroupKey.where(id: original_group.id).empty?
+        flash[:notice] = "The Physical Object was removed from its former Group Key, and that Group Key (containing no objects) has been deleted.  The Physical Object has automatically been assigned to a new Group Key."
+        redirect_to @physical_object
+      else
+        flash[:notice] = "The Physical Object was removed from this Group Key.  (It has automatically been assigned to a new Group Key.)"
+        redirect_to :back
+      end
     else
       flash[:notice] = "An error occurred.  Physical Object was NOT removed from this Group Key."
+      redirect_to :back
     end
-    redirect_to :back
+
   end
 
   # ajax method to determine if a physical object has emphemera - returns plain text true/false

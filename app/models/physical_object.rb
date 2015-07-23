@@ -15,6 +15,8 @@ class PhysicalObject < ActiveRecord::Base
   before_validation :ensure_group_key
   before_save :assign_inferred_workflow_status
   after_save :resolve_group_position
+  after_update :destroy_empty_group
+  after_destroy :destroy_empty_group
 
   belongs_to :box
   belongs_to :bin
@@ -386,6 +388,13 @@ class PhysicalObject < ActiveRecord::Base
         self.group_key.group_total = self.group_position
         self.group_key.save
       end
+    end
+  end
+
+  def destroy_empty_group
+    old_group_key = GroupKey.where(id: group_key_id_was).first
+    if old_group_key
+      old_group_key.destroy if old_group_key.physical_objects.count.zero?
     end
   end
 
