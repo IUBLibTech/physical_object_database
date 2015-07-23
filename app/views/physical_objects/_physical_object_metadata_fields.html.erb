@@ -133,10 +133,6 @@
           <% else %>
             Not assigned
           <% end %>
-          <% if @edit_mode %>
-            <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
-            <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
-          <% end %>
         </td>
       </tr>
       <tr>

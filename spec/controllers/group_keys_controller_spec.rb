@@ -7,7 +7,7 @@ describe GroupKeysController do
   let(:invalid_group_key) { FactoryGirl.build(:invalid_group_key) }
   let(:group_key) { FactoryGirl.create(:group_key) }
   let(:group_keyed_object) { FactoryGirl.create(:physical_object, :cdr, group_key: group_key) }
-  let(:ungrouped_object) { FactoryGirl.create(:physical_object, :cdr, group_key: nil) }
+  let(:ungrouped_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded, group_key: nil) }
 
   describe "FactoryGirl creation" do
     specify "makes a valid group key" do
@@ -198,6 +198,72 @@ describe GroupKeysController do
     it "redirects to :back" do
       patch :reorder, id: group_key.id
       expect(response).to redirect_to "source_page"
+    end
+  end
+
+  describe "PATCH include" do
+    before(:each) { request.env["HTTP_REFERER"] = "source_page" }
+    let(:patch_include) { patch :include, id: group_key.id, mdpi_barcode: mdpi_barcode, group_position: group_position }
+    let(:group_position) { 42 }
+    context "with a blank barcode" do
+      let(:mdpi_barcode) { "" }
+      it "flashes a failure warning" do
+        patch_include
+	expect(flash[:warning]).not_to be_blank
+      end
+      it "redirects to :back" do
+        patch_include
+        expect(response).to redirect_to "source_page"
+      end
+    end
+    context "with a non-matching barcode" do
+      let(:mdpi_barcode) { 42 }
+      it "flashes a failure warning" do
+        patch_include
+	expect(flash[:warning]).not_to be_blank
+      end
+      it "redirects to :back" do
+        patch_include
+        expect(response).to redirect_to "source_page"
+      end
+    end
+    context "with a matching barcode" do
+      let(:mdpi_barcode) { ungrouped_object.mdpi_barcode }
+      context "emptying the former group" do
+        it "changes the object's group and position" do
+	  patch_include
+	  ungrouped_object.reload
+	  expect(ungrouped_object.group_key).to eq group_key
+	  expect(ungrouped_object.group_position).to eq group_position
+	end
+        it "destroys the original group" do
+	  group_keyed_object
+	  ungrouped_object
+	  expect{ patch_include }.to change(GroupKey, :count).by(-1)
+	end
+        it "redirects to :back" do
+	  patch_include
+	  expect(response).to redirect_to "source_page"
+	end
+      end
+      context "NOT emptying the former group" do
+        let!(:sibling_object) { FactoryGirl.create :physical_object, :cdr, group_key: ungrouped_object.group_key }
+        it "changes the object's group and position" do
+          patch_include
+          ungrouped_object.reload
+          expect(ungrouped_object.group_key).to eq group_key
+          expect(ungrouped_object.group_position).to eq group_position
+        end
+        it "does NOT destroy the original group" do
+          group_keyed_object
+          ungrouped_object
+          expect{ patch_include }.not_to change(GroupKey, :count)
+        end
+        it "redirects to :back" do
+          patch_include
+          expect(response).to redirect_to "source_page"
+        end
+      end
     end
   end
   

@@ -28,6 +28,7 @@ Pod::Application.routes.draw do
 
   resources :group_keys do
     patch :reorder, on: :member
+    patch :include, on: :member
 
     resources :physical_objects, only: [:new]
   end

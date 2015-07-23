@@ -798,12 +798,12 @@ describe PhysicalObjectsController do
   end
 
   describe "POST ungroup" do
+    let!(:original_group) { physical_object.group_key }
     let(:ungroup) {
       request.env["HTTP_REFERER"] = "source_page"
       post :ungroup, id: physical_object.id
     }
     it "removes the existing group key association" do
-      original_group = physical_object.group_key
       ungroup
       physical_object.reload
       expect(physical_object.group_key).not_to eq original_group
@@ -819,9 +819,33 @@ describe PhysicalObjectsController do
       physical_object.reload
       expect(physical_object.group_position).to eq 1
     end
-    it "redirects to :back" do
-      ungroup
-      expect(response).to redirect_to "source_page"
+    context "when original group is now empty" do
+      before(:each) do
+        expect(original_group.physical_objects.size).to eq 1
+      end
+      specify "destroys the original group" do
+        ungroup
+        expect(GroupKey.where(id: original_group.id)).to be_empty
+      end
+      specify "redirects to physical object" do
+        ungroup
+        expect(response).to redirect_to physical_object
+      end
+    end
+    context "when the original group is not empty" do
+      before(:each) do
+        grouped_object = FactoryGirl.create(:physical_object, :cdr, group_key: physical_object.group_key)
+        original_group.reload
+        expect(original_group.physical_objects.size).to eq 2
+      end
+      specify "does NOT destroy the original group" do
+        ungroup
+        expect(GroupKey.where(id: original_group.id)).not_to be_empty
+      end
+      it "redirects to :back" do
+        ungroup
+        expect(response).to redirect_to "source_page"
+      end
     end
   end
 
