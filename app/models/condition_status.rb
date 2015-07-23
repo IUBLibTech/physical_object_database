@@ -11,7 +11,7 @@ class ConditionStatus < ActiveRecord::Base
   validates :user, presence: true
   validates :physical_object, presence: true, on: :update
 
-  after_initialize :default_values
+  after_initialize :default_values, if: :new_record?
 
   scope :blocking, lambda { where(active: true, condition_status_template_id: ConditionStatusTemplate.blocking_ids) }
 
@@ -26,8 +26,8 @@ class ConditionStatus < ActiveRecord::Base
   end
 
   def default_values
-    self.active ||= true if self.new_record?
-    self.user ||= User.current_user if self.new_record?
+    self.active ||= true
+    self.user ||= User.current_user
   end
 
   def blocks_packing

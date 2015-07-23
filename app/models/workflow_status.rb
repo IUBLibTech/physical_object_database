@@ -15,7 +15,7 @@ class WorkflowStatus < ActiveRecord::Base
         validates :workflow_status_template_id, presence: true
         validates :user, presence: true
 
-	after_initialize :default_values
+	after_initialize :default_values, if: :new_record?
 	before_save :set_ephemera_values, if: :physical_object_id
 
   def name

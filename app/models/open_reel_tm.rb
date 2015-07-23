@@ -1,6 +1,6 @@
 class OpenReelTm < ActiveRecord::Base
 	acts_as :technical_metadatum
-	after_initialize :default_values
+	after_initialize :default_values, if: :new_record?
         before_validation :infer_values
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
