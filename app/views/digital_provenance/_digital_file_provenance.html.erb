@@ -14,7 +14,7 @@
 		<tr>
 			<th>Date Digitized</th>
 			<td>
-				<%= f.text_field :date_digitized, readonly: !@edit_mode, class: @readonly ? "" : "date" %>
+				<%= f.text_field :display_date_digitized, readonly: !@edit_mode, class: !@edit_mode ? "" : "date" %>
 			</td>
 		</tr>
 		<tr>
