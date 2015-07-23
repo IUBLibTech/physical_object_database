@@ -6,7 +6,7 @@
 			<th>Diameter</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:diameter, @tm.diameter_values) %>
+					<%= f.select(:diameter, @tm.diameter_values, {include_blank: 'Select a value...'}) %>
 				<% else %>
 					<%= f.text_field(:diameter, readonly: true) %>
 				<% end %>
@@ -16,7 +16,7 @@
 			<th>Speed</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:speed, @tm.speed_values) %>
+					<%= f.select(:speed, @tm.speed_values, {include_blank: 'Select a value...'}) %>
 				<% else %>
 					<%= f.text_field(:speed, readonly: true) %>
 				<% end %>
@@ -26,7 +26,7 @@
 			<th>Groove size</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:groove_size, @tm.groove_size_values) %>
+					<%= f.select(:groove_size, @tm.groove_size_values, {include_blank: 'Select a value...'}) %>
 				<% else %>
 					<%= f.text_field(:groove_size, readonly: true) %>
 				<% end %>
@@ -36,7 +36,7 @@
 			<th>Groove orientation</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:groove_orientation, @tm.groove_orientation_values) %>
+					<%= f.select(:groove_orientation, @tm.groove_orientation_values, {include_blank: 'Select a value...'}) %>
 				<% else %>
 					<%= f.text_field(:groove_orientation, readonly: true) %>
 				<% end %>
@@ -54,7 +54,7 @@
 			<th>Recording method</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:recording_method, @tm.recording_method_values) %>
+					<%= f.select(:recording_method, @tm.recording_method_values, {include_blank: 'Select a value...'}) %>
 				<% else %>
 					<%= f.text_field(:recording_method, readonly: true) %>
 				<% end %>
@@ -65,7 +65,7 @@
 			<th>Material</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:material, @tm.material_values) %>
+					<%= f.select(:material, @tm.material_values, {include_blank: 'Select a value...'}) %>
 				<% else %>
 					<%= f.text_field(:material, readonly: true) %>
 				<% end %>
@@ -75,7 +75,7 @@
 			<th>Substrate</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:substrate, @tm.substrate_values) %>
+					<%= f.select(:substrate, @tm.substrate_values, {include_blank: 'Select a value...'}) %>
 				<% else %>
 					<%= f.text_field(:substrate, readonly: true) %>
 				<% end %>
@@ -85,7 +85,7 @@
 			<th>Coating</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.select(:coating, @tm.coating_values) %>
+					<%= f.select(:coating, @tm.coating_values, {include_blank: 'Select a value...'}) %>
 				<% else %>
 					<%= f.text_field(:coating, readonly: true) %>
 				<% end %>
@@ -95,7 +95,7 @@
                         <th>Sound field</th>
                         <td>
                                 <% if @edit_mode %>
-                                        <%= f.select(:sound_field, @tm.sound_field_values) %>
+                                        <%= f.select(:sound_field, @tm.sound_field_values, {include_blank: 'Select a value...'}) %>
                                 <% else %>
                                         <%= f.text_field(:sound_field, readonly: true) %>
                                 <% end %>

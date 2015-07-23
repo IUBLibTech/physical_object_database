@@ -10,7 +10,7 @@ class Bin < ActiveRecord::Base
         has_many :boxes
         has_many :workflow_statuses, :dependent => :destroy
         after_initialize :assign_default_workflow_status
-	      before_save :assign_inferred_workflow_status
+	before_save :assign_inferred_workflow_status
         include WorkflowStatusModule
         extend WorkflowStatusQueryModule
         has_many :condition_statuses, :dependent => :destroy
@@ -68,4 +68,19 @@ class Bin < ActiveRecord::Base
         def spreadsheet_descriptor
           identifier
         end
+
+  def contained_physical_objects
+    return self.physical_objects if self.physical_objects.any?
+    self.boxed_physical_objects
+  end
+
+  def first_object
+    self.contained_physical_objects.first
+  end
+
+  def media_format
+    format_object = first_object
+    format_object ? format_object.format : nil
+  end
+
 end

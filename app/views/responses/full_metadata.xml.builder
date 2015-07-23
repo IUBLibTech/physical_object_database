@@ -26,9 +26,9 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
 	   xml.spreadsheet @physical_object.spreadsheet.filename if @physical_object.spreadsheet
          end
 	 xml << @physical_object.to_xml(skip_instruct: true, skip_types: true, dasherize: false, root: :details, include: [:workflow_statuses, :notes, :condition_statuses]).gsub(/^/, '      ').gsub('nil="true"', 'xsi:nil="true"')
-	 xml << @tm.to_xml(skip_instruct: true, skip_types: true, dasherize: false, root: :technical_metadata).gsub(/^/, '      ')
-	 #xml << @dp.to_xml(skip_instruct: true, skip_types: true, root: :digital_provenance).gsub(/^/, '      ')
-	 xml << "      <digital_provenance/>\n"
+	 xml << @tm.to_xml(format: @physical_object.format, skip_instruct: true, skip_types: true, dasherize: false, root: :technical_metadata).gsub(/^/, '      ')
+	 xml << @dp.to_xml(skip_instruct: true, skip_types: true, dasherize: false, root: :digital_provenance, include: [:digital_file_provenances], except: [:created_at, :updated_at, :date, :physical_object_id]).gsub(/^/, '      ').gsub('nil="true"', 'xsi:nil="true"')
+	 #xml << "      <digital_provenance/>\n"
        end
      end
    else

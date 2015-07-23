@@ -120,16 +120,18 @@
         </td>
       </tr>
       <tr>
+        <th>Year</th>
+        <td>
+          <%= f.text_field(:year, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
         <th>Group key</th>
         <td>
           <% unless @group_key.nil? %>
             <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id), target: "_blank") %>
           <% else %>
             Not assigned
-          <% end %>
-          <% if @edit_mode %>
-            <%= @group_key.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
-            <%= f.collection_select :group_key_id, GroupKey.order('id ASC'), :id, :group_identifier, {include_blank: 'New Group Key'} %>
           <% end %>
         </td>
       </tr>
@@ -234,12 +236,6 @@
             <th>Collection name</th>
             <td>
               <%= f.text_field(:collection_name, readonly: !@edit_mode) %>
-            </td>
-          </tr>
-          <tr>
-            <th>Year</th>
-            <td>
-              <%= f.text_field(:year, readonly: !@edit_mode) %>
             </td>
           </tr>
           <tr>

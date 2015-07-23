@@ -66,6 +66,20 @@ describe AnalogSoundDiscTm do
     end
   end
 
+  describe "has virtual fields" do
+    specify "#year" do
+      physical_object = FactoryGirl.create(:physical_object, :lp, year: 1985)
+      analog_sound_disc_tm.technical_metadatum.physical_object = physical_object
+      expect(analog_sound_disc_tm.year).to eq 1985
+    end
+  end
+
+  describe "manifest export" do
+    specify "has desired headers" do
+      expect(analog_sound_disc_tm.manifest_headers).to eq ["Year", "Label", "Diameter in inches", "Recording type", "Groove type", "Playback speed"]
+    end
+  end
+
   it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:analog_sound_disc_tm) 
 
   describe "#master_copies" do

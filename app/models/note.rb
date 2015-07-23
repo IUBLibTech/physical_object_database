@@ -7,10 +7,10 @@ class Note < ActiveRecord::Base
   validates :user, presence: true
   validates :physical_object, presence: true, on: :update
 
-  after_initialize :default_values
+  after_initialize :default_values, if: :new_record?
 
   def default_values
-    self.export ||= false if self.new_record?
+    self.export ||= false
     self.user ||= User.current_user
   end
 

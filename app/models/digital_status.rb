@@ -187,6 +187,8 @@ class DigitalStatus < ActiveRecord::Base
 		self
 	end
 
+	# this no longer appears to be in use... the overrided versions with signature from_xml(mdpi_barcode, xml)
+	# appears to have replaced this one.
   def from_xml(xml)
     self.physical_object_mdpi_barcode = xml.xpath("/pod/data/id").text
     po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first

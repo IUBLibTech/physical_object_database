@@ -1,6 +1,6 @@
 class CdrTm < ActiveRecord::Base
 	acts_as :technical_metadatum
-	after_initialize :default_values
+	after_initialize :default_values, if: :new_record?
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
 
@@ -10,9 +10,19 @@ class CdrTm < ActiveRecord::Base
 	DAMAGE_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
 	FORMAT_DURATION_VALUES = hashify ["", "74 min", "80 min", "90 min", "99 min", "Unknown"]
 	SIMPLE_FIELDS = ["damage", "format_duration"]
+	SELECT_FIELDS = {
+		"damage" => DAMAGE_VALUES,
+		"format_duration" => FORMAT_DURATION_VALUES
+	}
 	MULTIVALUED_FIELDSETS = {
 		"Preservation problems" => :PRESERVATION_PROBLEM_FIELDS
 	}
+	FIELDSET_COLUMNS = {
+		"Preservation problems" => 2
+        }
+        MANIFEST_EXPORT = {
+        }
+
 
 	validates :damage, inclusion: { in: DAMAGE_VALUES.keys }
 	validates :format_duration, inclusion: { in: FORMAT_DURATION_VALUES.keys }

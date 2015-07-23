@@ -106,7 +106,7 @@ FactoryGirl.define do
   end
 
   factory :betacam_tm, class: BetacamTm do
-    pack_deformation "none"
+    pack_deformation "None"
     fungus false
     soft_binder_syndrome false
     other_contaminants false
@@ -116,6 +116,12 @@ FactoryGirl.define do
     tape_stock_brand ""
     image_format ""
     format_version ""
+
+    trait :invalid do
+      pack_deformation "invalid value"
+    end
+    trait :valid do
+    end
   end
 
 end

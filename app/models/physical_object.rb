@@ -9,12 +9,14 @@ class PhysicalObject < ActiveRecord::Base
   include TechnicalMetadatumModule
   extend TechnicalMetadatumClassModule
 
-  after_initialize :default_values
-  after_initialize :assign_default_workflow_status
+  after_initialize :default_values, if: :new_record?
+  after_initialize :assign_default_workflow_status, if: :new_record?
   before_validation :ensure_tm
   before_validation :ensure_group_key
   before_save :assign_inferred_workflow_status
   after_save :resolve_group_position
+  after_update :destroy_empty_group
+  after_destroy :destroy_empty_group
 
   belongs_to :box
   belongs_to :bin
@@ -26,7 +28,6 @@ class PhysicalObject < ActiveRecord::Base
   
   has_one :technical_metadatum, :dependent => :destroy
   has_one :digital_provenance, :dependent => :destroy
-  has_many :digital_files, :dependent => :destroy
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
   has_many :notes, :dependent => :destroy
@@ -327,7 +328,6 @@ class PhysicalObject < ActiveRecord::Base
   def ensure_tm
     if TechnicalMetadatumModule::TM_FORMATS[self.format]
       if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule::TM_FORMAT_CLASSES[self.format].to_s
-        self.technical_metadatum.destroy unless self.technical_metadatum.nil?
         @tm = create_tm(self.format, physical_object: self)
       else
         @tm = self.technical_metadatum.as_technical_metadatum
@@ -390,6 +390,13 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
+  def destroy_empty_group
+    old_group_key = GroupKey.where(id: group_key_id_was).first
+    if old_group_key
+      old_group_key.destroy if old_group_key.physical_objects.count.zero?
+    end
+  end
+
   def condition_notes(include_metadata = false)
     active_conditions = self.condition_statuses.where(active: true).order(updated_at: :desc) 
     export_text = "" 
@@ -438,7 +445,7 @@ assigned to a box."
       elsif !self.format.in? PhysicalObject.const_get(:BOX_FORMATS)
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a box."
       elsif box.physical_objects.any? && box.physical_objects.first.format != self.format
-        errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a box containing the matching format (#{self.format})."
+        errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format (#{box.physical_objects.first.format}).  You may only assign a physical object to a box containing the matching format (#{self.format})."
       end
     end
   end
@@ -492,7 +499,7 @@ assigned to a box."
     self.generation ||= ""
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
-    self.digital_provenance ||= nil
+    self.digital_provenance ||= DigitalProvenance.new(physical_object_id: self.id)
   end
 
   # def open_reel_tm_where(stm)

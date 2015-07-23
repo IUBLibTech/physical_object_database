@@ -29,5 +29,11 @@ describe DatTm do
     end
   end
 
+  describe "manifest export" do
+    specify "has desired headers" do
+      expect(dat_tm.manifest_headers).to eq ["Sample rate", "Cassette length"]
+    end
+  end
+
 end
 

@@ -20,7 +20,6 @@ class PhysicalObjectsController < ApplicationController
     @physical_object.format = format
     @tm = @physical_object.ensure_tm
     @dp = @physical_object.ensure_digiprov
-    @digital_files = []
     @formats = PhysicalObject.formats
     @edit_mode = true
     @action = "create"
@@ -41,9 +40,11 @@ class PhysicalObjectsController < ApplicationController
     end
     @tm = @physical_object.ensure_tm
     @dp = @physical_object.ensure_digiprov
-    saved = @physical_object.save 
-    saved = saved and @tm.update_attributes(tm_params)
-    saved = saved and @dp.update_attributes(dp_params)
+    @tm.assign_attributes(tm_params)
+    if @physical_object.valid? && @tm.valid? && @dp.valid?
+      saved = @physical_object.save 
+      saved = @tm.update_attributes(tm_params) if saved
+    end
     if saved
       flash[:notice] = "Physical Object was successfully created.".html_safe
     end
@@ -58,11 +59,9 @@ class PhysicalObjectsController < ApplicationController
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
         @tm.assign_attributes(tm_params)
-        @dp.assign_attributes(dp_params)
       else
         # for failed save, carry over tm attributes
         @tm.assign_attributes(tm_params)
-        @dp.assign_attributes(dp_params)
       end
       @display_assigned = true
       render('new')
@@ -91,15 +90,28 @@ class PhysicalObjectsController < ApplicationController
   def update
     PhysicalObject.transaction do
       # initial save processes bin, box assignment
-      updated = @physical_object.save unless @physical_object.errors.any?
-      updated = @physical_object.update_attributes(physical_object_params) if updated
-      if updated
-        @physical_object.reload
+      @original_tm = @physical_object.technical_metadatum
+      @physical_object.assign_attributes(physical_object_params)
+      tm_assigned = true
+      if @physical_object.valid?
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
-        #FIXME: we are not checking if this succeeds
-        update = @tm.update_attributes(tm_params)
-        update = @dp.update_attributes(dp_params)
+	begin
+          @tm.assign_attributes(tm_params)
+	rescue
+	  tm_assigned = false
+        end
+      end
+      if @physical_object.valid? && @tm.valid? && @dp.valid? && tm_assigned
+        updated = @physical_object.save
+        updated = @tm.update_attributes(tm_params) if updated
+        @tm.reload
+        if @original_tm && @original_tm.id != @tm.technical_metadatum.id
+          @original_tm.destroy
+        end
+      end
+      if !tm_assigned
+        @physical_object.errors[:base] << "Technical Metadata format did not match, which was probably the result of a failed format change.  Verify physical object format and technical metadata, then resubmit."
       end
 
       if updated 
@@ -235,7 +247,6 @@ class PhysicalObjectsController < ApplicationController
     @physical_object.format = format
     @tm = @physical_object.ensure_tm
     @dp = @physical_object.ensure_digiprov
-    @digital_files = []
     @formats = PhysicalObject.formats
     @edit_mode = true
     @action = "create"
@@ -307,14 +318,23 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def ungroup
+    original_group = @physical_object.group_key
     @physical_object.group_position = 1
     @physical_object.group_key = nil
     if @physical_object.save
-      flash[:notice] = "The Physical Object was removed from this Group Key."
+      # original_group.destroyed? check is not working for some reason
+      if GroupKey.where(id: original_group.id).empty?
+        flash[:notice] = "The Physical Object was removed from its former Group Key, and that Group Key (containing no objects) has been deleted.  The Physical Object has automatically been assigned to a new Group Key."
+        redirect_to @physical_object
+      else
+        flash[:notice] = "The Physical Object was removed from this Group Key.  (It has automatically been assigned to a new Group Key.)"
+        redirect_to :back
+      end
     else
       flash[:notice] = "An error occurred.  Physical Object was NOT removed from this Group Key."
+      redirect_to :back
     end
-    redirect_to :back
+
   end
 
   # ajax method to determine if a physical object has emphemera - returns plain text true/false
@@ -356,7 +376,6 @@ class PhysicalObjectsController < ApplicationController
   private
     def set_physical_object
       @physical_object = PhysicalObject.find(params[:id])
-      @digital_files = @physical_object.digital_files
       @tm = @physical_object.technical_metadatum
       @tm = @physical_object.technical_metadatum.as_technical_metadatum unless @tm.nil?
       @dp = @physical_object.ensure_digiprov
@@ -415,19 +434,4 @@ class PhysicalObjectsController < ApplicationController
       @display_assigned = true
     end
 
-    # there is a disconnect between jquery datepicker and how rails parses datetime objects.
-    # probably a better way than intercepting the params hash and normalizing it...
-    def normalize_dates
-      if params[:dp]
-        unless params[:dp][:date].blank?
-          params[:dp][:date] = DateTime.strptime(params[:dp][:date], "%m/%d/%Y").strftime("%d/%m/%Y")
-        end
-        unless params[:dp][:cleaning_date].blank?
-          params[:dp][:cleaning_date] = DateTime.strptime(params[:dp][:cleaning_date], "%m/%d/%Y").strftime("%d/%m/%Y")
-        end
-        unless params[:dp][:baking].blank?
-          params[:dp][:baking] = DateTime.strptime(params[:dp][:baking], "%m/%d/%Y").strftime("%d/%m/%Y")
-        end
-      end
-    end
 end

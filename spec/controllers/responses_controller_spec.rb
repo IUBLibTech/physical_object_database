@@ -149,7 +149,7 @@ describe ResponsesController do
     end
     context "invalid xml" do
       let(:request_xml) { "<pod><data></data></pod>" }
-      pending "FIXME: digital status objects need validations before an invalid request can be made..." do
+      skip "FIXME: digital status objects need validations before an invalid request can be made..." do
         it "renders failure XML" do
           expect(response.body).to match /<success>false/
         end
@@ -291,20 +291,101 @@ describe ResponsesController do
     end
   end
 
+  # FIXME: PENDING rewrite
   describe "#push_memnon_qc" do
+    let(:memnon_xml) {
+      "<IU xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+      <Carrier type=\"OpenReel\">
+        <Identifier>12079</Identifier>
+        <Barcode>#{po_requested.mdpi_barcode}</Barcode>
+        <Configuration>
+          <Track>Half track</Track>
+          <SoundField>Stereo</SoundField>
+          <Speed>7.5 ips</Speed>
+        </Configuration>
+        <Brand>Scotch 208</Brand>
+        <Thickness>1.5</Thickness>
+        <DirectionsRecorded>1</DirectionsRecorded>
+        <PhysicalCondition>
+          <Damage>None</Damage>
+          <PreservationProblem />
+        </PhysicalCondition>
+        <Repaired>No</Repaired>
+        <Preview>
+          <Comments>Some Random Comments</Comments>
+        </Preview>
+        <Cleaning>
+          <Date>2015-02-02 22:05:22</Date>
+        </Cleaning>
+        <Baking>
+          <Date>2015-02-03 22:05:22</Date>
+        </Baking>
+        <Parts>
+          <DigitizingEntity>Memnon Archiving Services Inc</DigitizingEntity>
+          <Part Side=\"1\">
+            <Ingest>
+              <Date>2015-06-02</Date>
+              <Comments />
+              <Created_by>kgweinbe</Created_by>
+              <Player_serial_number>12553</Player_serial_number>
+              <Player_manufacturer>Studer</Player_manufacturer>
+              <Player_model>A807MK2</Player_model>
+              <AD_serial_number />
+              <AD_manufacturer>Noa Audio Solutions</AD_manufacturer>
+              <AD_model>N6191</AD_model>
+              <Extraction_workstation>NoaRec-01</Extraction_workstation>
+              <Speed_used>7.5 ips</Speed_used>
+            </Ingest>
+            <ManualCheck>Yes</ManualCheck>
+            <Files>
+              <File>
+                <FileName>MDPI_40000000089666_01_pres.wav</FileName>
+                <CheckSum>5A84DE3449226CF23FF3807D3B567E21</CheckSum>
+              </File>
+              <File>
+                <FileName>MDPI_40000000089666_01_prod.wav</FileName>
+                <CheckSum>71D5785DD374F082D7203DB459579949</CheckSum>
+              </File>
+              <File>
+                <FileName>MDPI_40000000089666_01_access.mp4</FileName>
+                <CheckSum>27978E7AEF4EA41FD8E8F7A6F61E507E</CheckSum>
+              </File>
+            </Files>
+          </Part>
+        </Parts>
+      </Carrier>
+    </IU>"
+    }
     before(:each) do
       po_requested.memnon_qc_completed = false
+      #po_requested.ensure_tm
       po_requested.save
+      post :push_memnon_qc, memnon_xml, mdpi_barcode: po_requested.mdpi_barcode, content_type: 'application/xml'
     end
 
-    it "sets memnon qc completed to true" do
-      post :push_memnon_qc, mdpi_barcode: po_requested.mdpi_barcode, done: true
+    it "sets memnon xml" do
       po_requested.reload
       expect(po_requested.memnon_qc_completed).to eq true
+      expect(po_requested.digital_provenance.repaired).to eq false
+      expect(po_requested.digital_provenance.comments).to eq "Some Random Comments"
+      expect(po_requested.digital_provenance.cleaning_date.to_s).to eq "2015-02-02 17:05:22 -0500"
+      expect(po_requested.digital_provenance.baking.to_s).to eq "2015-02-03 17:05:22 -0500"
+      expect(po_requested.digital_provenance.digital_file_provenances.size).to eq 1
+      expect(po_requested.digital_provenance.digital_file_provenances.first.filename).to eq "MDPI_40000000089666_01_pres.wav"
+      expect(po_requested.digital_provenance.digital_file_provenances.first.created_by).to eq "kgweinbe"
+      expect(po_requested.digital_provenance.digital_file_provenances.first.player_serial_number).to eq "12553"
+
+      expect(po_requested.digital_provenance.digital_file_provenances.first.player_manufacturer).to eq "Studer"
+      expect(po_requested.digital_provenance.digital_file_provenances.first.player_model).to eq "A807MK2"
+      expect(po_requested.digital_provenance.digital_file_provenances.first.ad_serial_number).to eq ""
+      expect(po_requested.digital_provenance.digital_file_provenances.first.ad_manufacturer).to eq "Noa Audio Solutions"
+      expect(po_requested.digital_provenance.digital_file_provenances.first.ad_model).to eq "N6191"
+      expect(po_requested.digital_provenance.digital_file_provenances.first.extraction_workstation).to eq "NoaRec-01"
+      expect(po_requested.digital_provenance.digital_file_provenances.first.speed_used).to eq "7.5 ips"
     end
 
     it "fails on invalid barcode" do
-      post :push_memnon_qc, mdpi_barcode: 1, done: true
+      post :push_memnon_qc,memnon_xml, mdpi_barcode: 1, content_type: 'application/xml'
       expect(assigns(:po)).to be_nil
     end
   end

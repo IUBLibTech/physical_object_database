@@ -1,8 +1,9 @@
 class AnalogSoundDiscTm < ActiveRecord::Base
 	acts_as :technical_metadatum
-	after_initialize :default_values
+	after_initialize :default_values, if: :new_record?
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
+        include YearModule
 
 	PRESERVATION_PROBLEM_FIELDS = [
 	  "delamination", "exudation", "oxidation"
@@ -20,17 +21,42 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	COATING_VALUES = hashify ['None', 'Lacquer', 'N/A']
 	EQUALIZATION_VALUES = hashify ['', 'RIAA', 'Other', 'Unknown']
 	SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
-	SUBTYPE_VALUES = hashify ['LP']
+	SUBTYPE_VALUES = hashify ['LP', 'Lacquer Disc', 'Other Analog Sound Disc']
 	#FIXME: include subtype as simple field?
 	SIMPLE_FIELDS = [
           "diameter", "speed", "groove_size", "groove_orientation",
 	  "recording_method", "material", "substrate", "coating",
 	  "equalization", "sound_field", "country_of_origin", "label"
 	]
+	SELECT_FIELDS = {
+	  "diameter" => DIAMETER_VALUES,
+	  "speed" => SPEED_VALUES,
+	  "groove_size" => GROOVE_SIZE_VALUES,
+	  "groove_orientation" => GROOVE_ORIENTATION_VALUES,
+	  "recording_method" => RECORDING_METHOD_VALUES,
+	  "material" => MATERIAL_VALUES,
+	  "substrate" => SUBSTRATE_VALUES,
+	  "coating" => COATING_VALUES,
+	  "equalization" => EQUALIZATION_VALUES,
+	  "sound_field" => SOUND_FIELD_VALUES
+	}
+
 	MULTIVALUED_FIELDSETS = {
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
-	  "Damage" => :DAMAGE_FIELDS,
+	  "Damage" => :DAMAGE_FIELDS
 	}
+	FIELDSET_COLUMNS = {
+	  "Preservation problems" => 2,
+	  "Damage" => 2
+	}
+        MANIFEST_EXPORT = {
+	  "Year" => :year,
+	  "Label" => :label,
+	  "Diameter in inches" => :diameter,
+	  "Recording type" => :groove_orientation,
+	  "Groove type" => :groove_size,
+	  "Playback speed" => :speed
+        }
 
 	validates :diameter, inclusion: { in: DIAMETER_VALUES.keys }
 	validates :speed, inclusion: { in: SPEED_VALUES.keys }
@@ -56,6 +82,28 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 			  coating: "N/A",
 			  material: "Plastic",
 			  equalization: ""
+			},
+		"Lacquer Disc" => { diameter: nil,
+			  speed: nil,
+			  groove_size: nil,
+			  groove_orientation: "Lateral",
+			  sound_field: "Mono",
+			  recording_method: "Cut",
+			  substrate: "Aluminum",
+			  coating: "Lacquer",
+			  material: "N/A",
+			  equalization: "Other"
+			},
+		"Other Analog Sound Disc" => { diameter: nil,
+			  speed: nil,
+			  groove_size: nil,
+			  groove_orientation: nil,
+			  sound_field: nil,
+			  recording_method: nil,
+			  substrate: nil,
+			  coating: nil,
+			  material: nil,
+			  equalization: nil
 			}
 	}
 

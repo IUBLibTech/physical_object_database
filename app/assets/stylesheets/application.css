@@ -40,6 +40,11 @@ h2 {
   color: #7D110C;
 }
 
+.fields {
+  float: left;
+  width: 490px;
+}
+
 table {
   border-collapse:collapse;
 }
@@ -55,6 +60,10 @@ table.blocked>tbody>tr>td>ul {
 }
 table.blocked>tbody>tr>td>ul>li {
  
+}
+
+table.digiprov {
+  
 }
 
 .ui-accordion-content > table {

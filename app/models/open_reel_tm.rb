@@ -1,9 +1,10 @@
 class OpenReelTm < ActiveRecord::Base
 	acts_as :technical_metadatum
-	after_initialize :default_values
+	after_initialize :default_values, if: :new_record?
         before_validation :infer_values
 	include TechnicalMetadatumModule
 	extend TechnicalMetadatumClassModule
+	include YearModule
 
 	# this hash holds the human reable attribute name for this class
 	HUMANIZED_COLUMNS = {:zero_point9375_ips => "0.9375 ips", :one_point875_ips => "1.875 ips", 
@@ -33,6 +34,10 @@ class OpenReelTm < ActiveRecord::Base
 	REEL_SIZE_VALUES = hashify ["", "3 in.", "4 in.", "5 in.", "6 in.", "7 in.", "10 in.", "10.5 in."] 
 	PACK_DEFORMATION_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
 	SIMPLE_FIELDS = ["pack_deformation", "reel_size", "tape_stock_brand", "directions_recorded"]
+	SELECT_VALUES = {
+	  "pack_deformation" => PACK_DEFORMATION_VALUES,
+	  "reel_size" => REEL_SIZE_VALUES
+	}
 	MULTIVALUED_FIELDSETS = {
 	  "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,
 	  "Playback speed" => :PLAYBACK_SPEED_FIELDS,
@@ -41,6 +46,25 @@ class OpenReelTm < ActiveRecord::Base
 	  "Sound field" => :SOUND_FIELD_FIELDS,
 	  "Tape base" => :TAPE_BASE_FIELDS
 	}
+	FIELDSET_COLUMNS = {
+	  "Preservation problems" => 2,
+	  "Playback speed" => 2,
+	  "Track configuration" => 2,
+	  "Tape thickness" => 2,
+	  "Sound field" => 3,
+	  "Tape base" => 2
+	}
+        MANIFEST_EXPORT = {
+          "Year" => :year,
+          "Tape base" => :TAPE_BASE_FIELDS,
+          "Reel size" => :reel_size,
+          "Track configuration" => :TRACK_CONFIGURATION_FIELDS,
+          "Sound field" => :SOUND_FIELD_FIELDS,
+          "Playback speed" => :PLAYBACK_SPEEDd_FIELDS,
+          "Tape thickness" => :TAPE_THICKNESS_FIELDS,
+          "Tape stock brand" => :tape_stock_brand,
+          "Directions recorded" => :directions_recorded
+        }
 
 	validates :pack_deformation, inclusion: { in: PACK_DEFORMATION_VALUES.keys }
 	validates :reel_size, inclusion: { in: REEL_SIZE_VALUES.keys }

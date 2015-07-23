@@ -8,17 +8,10 @@
     <Table>
       <% @media_format = @physical_objects.first.format if @physical_objects and @physical_objects.any? %>
       <% @media_format ||= "" %>
+      <% @metadata_headers = @physical_objects.first.technical_metadatum.as_technical_metadatum.export_headers if @physical_objects && @physical_objects.any? && @physical_objects.first.technical_metadatum && @physical_objects.first.technical_metadatum.as_technical_metadatum %>
+      <% @metadata_headers ||= [] %>
       <% @column_names = ["Bin barcode", "Bin identifier", "Box barcode", "MDPI barcode", "Format", "Unit", "Title", "Author", "Title control number", "Call number", "Catalog key", "Home location", "IUCAT barcode", "OCLC number", "Other copies", "Group key", "Group position", "Group total", "Collection identifier", "Collection name", "Year", "Generation", "Has ephemera", "Internal Notes", "External Notes", "Conditions"] %>
-      <%# format-specific columns %>
-      <% if @media_format == "CD-R" %>
-        <% @column_names += ["Damage", "Preservation problems", "Format duration"] %>
-      <% elsif @media_format == "DAT" %>
-        <% @column_names += ["Sample rate", "Format duration", "Tape stock brand", "Preservation problems"] %>
-      <% elsif @media_format == "LP" %>
-        <% @column_names += ["Diameter", "Speed", "Groove size", "Groove orientation", "Recording method", "Material", "Substrate", "Coating", "Sound field", "Equalization", "Country of origin", "Label", "Preservation problems", "Damage"] %>
-      <% elsif @media_format == "Open Reel Audio Tape" %>
-        <% @column_names += ["Pack deformation", "Preservation problems", "Reel size", "Playback speed", "Track configuration", "Tape thickness", "Sound field", "Tape stock brand", "Tape base", "Directions recorded"] %>
-      <% end %>
+      <% @column_names += @metadata_headers %>
       <Row>
       <% @column_names.each do |column_name| %>
         <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
