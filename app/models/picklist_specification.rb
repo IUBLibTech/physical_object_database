@@ -17,7 +17,6 @@ class PicklistSpecification < ActiveRecord::Base
 	def ensure_tm
 		if TechnicalMetadatumModule::TM_FORMATS[self.format]
 			if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule::TM_FORMAT_CLASSES[self.format].to_s
-				self.technical_metadatum.destroy unless self.technical_metadatum.nil? 
 				@tm = PhysicalObject.new.create_tm(self.format, picklist_specification: self)
                         else
 				@tm = self.technical_metadatum.as_technical_metadatum

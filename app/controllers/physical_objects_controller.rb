@@ -90,15 +90,28 @@ class PhysicalObjectsController < ApplicationController
   def update
     PhysicalObject.transaction do
       # initial save processes bin, box assignment
+      @original_tm = @physical_object.technical_metadatum
       @physical_object.assign_attributes(physical_object_params)
+      tm_assigned = true
       if @physical_object.valid?
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
-        @tm.assign_attributes(tm_params)
+	begin
+          @tm.assign_attributes(tm_params)
+	rescue
+	  tm_assigned = false
+        end
       end
-      if @physical_object.valid? && @tm.valid? && @dp.valid?
+      if @physical_object.valid? && @tm.valid? && @dp.valid? && tm_assigned
         updated = @physical_object.save
         updated = @tm.update_attributes(tm_params) if updated
+        @tm.reload
+        if @original_tm.id != @tm.technical_metadatum.id
+          @original_tm.destroy
+        end
+      end
+      if !tm_assigned
+        @physical_object.errors[:base] << "Technical Metadata format did not match, which was probably the result of a failed format change.  Verify physical object format and technical metadata, then resubmit."
       end
 
       if updated 
