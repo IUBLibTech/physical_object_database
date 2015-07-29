@@ -157,7 +157,7 @@ module TechnicalMetadatumModule
         self.class.const_get(:SIMPLE_FIELDS).each do |simple_attribute|
           spoofed_attribute_name = simple_attribute
           spoofed_attribute_name = simple_attribute.gsub("_", "-") if options[:dasherize]
-          xml << "  <#{spoofed_attribute_name}>#{self.attributes[simple_attribute]}</#{spoofed_attribute_name}>\n"
+          xml << "  <#{spoofed_attribute_name}>#{self.attributes[simple_attribute].to_s.encode(xml: :text)}</#{spoofed_attribute_name}>\n"
         end
         self.class.const_get(:MULTIVALUED_FIELDSETS).each do |name, fieldset|
           name = name.downcase.gsub(" ", "_")
