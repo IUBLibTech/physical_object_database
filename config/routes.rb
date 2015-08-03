@@ -44,6 +44,7 @@ Pod::Application.routes.draw do
     get :has_ephemera, on: :collection
     get :create_multiple, on: :collection
     get :edit_ephemera, on: :member
+    get :contained, on: :collection
 
     patch :split_update, on: :member
     post :upload_update, on: :collection
@@ -124,6 +125,8 @@ Pod::Application.routes.draw do
   resources :spreadsheets, except: [:new, :create]
 
   resources :status_templates, only: [:index]
+
+  resources :reports, only: [:index]
 
   match '/signin', to: 'sessions#new', via: :get
   match '/signout', to: 'sessions#destroy', via: :delete

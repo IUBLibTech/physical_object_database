@@ -1,0 +1,22 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Cancel", controller: 'reports', action: 'index') %>
+  </div>
+<% end %>
+<div>
+  <h2>Contained Physical Objects Report</h2>
+  Report produces an Excel file of physical objects binned or boxed within the specified date range (inclusive).
+  <%= form_for(:physical_object, url: { action: :contained, format: :xls }, method: :get) do |f| %>
+    <table>
+      <tr>
+        <th>Start date</th>
+        <td><%= f.date_field :start_date %></td>
+      </tr>
+      <tr>
+        <th>End date</th>
+        <td><%= f.date_field :end_date %></td>
+      </tr>
+    </table>
+    <%= submit_tag("Get Excel Report") %>
+  <% end %>
+</div>
