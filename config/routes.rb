@@ -104,6 +104,9 @@ Pod::Application.routes.draw do
   get 'quality_control/staging', to: "quality_control#staging_index", as: 'quality_control_staging_index_path'
   post 'quality_control/staging', to: 'quality_control#staging_post', as: 'quality_control_staging_post_path'
 
+  get 'invoice/index', to: 'invoice#index', as: 'invoice_controller'
+  post 'invoice/index', to: 'invoice#submit', as: 'invoice_controller_submit'
+
   resources :returns, only: [:index] do
     get :return_bins, on: :member
     get :return_bin, on: :member

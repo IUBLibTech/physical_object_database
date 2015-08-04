@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150723153950) do
+ActiveRecord::Schema.define(version: 20150804135159) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -68,6 +68,13 @@ ActiveRecord::Schema.define(version: 20150723153950) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "billable_physical_objects", force: true do |t|
+    t.integer  "mdpi_barcode",  limit: 8
+    t.datetime "delivery_date"
+  end
+
+  add_index "billable_physical_objects", ["mdpi_barcode"], name: "index_billable_physical_objects_on_mdpi_barcode", unique: true, using: :btree
 
   create_table "bins", force: true do |t|
     t.integer  "batch_id"
@@ -314,6 +321,9 @@ ActiveRecord::Schema.define(version: 20150723153950) do
     t.boolean  "audio"
     t.boolean  "video"
     t.boolean  "memnon_qc_completed"
+    t.boolean  "billed",                              default: false
+    t.datetime "date_billed"
+    t.string   "spread_sheet_filename"
   end
 
   add_index "physical_objects", ["bin_id"], name: "index_physical_objects_on_bin_id", using: :btree
@@ -321,6 +331,7 @@ ActiveRecord::Schema.define(version: 20150723153950) do
   add_index "physical_objects", ["container_id"], name: "index_physical_objects_on_container_id", using: :btree
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
   add_index "physical_objects", ["picklist_id", "group_key_id", "group_position", "id"], name: "index_physical_objects_on_packing_sort", using: :btree
+  add_index "physical_objects", ["spread_sheet_filename"], name: "index_physical_objects_on_spread_sheet_filename", using: :btree
   add_index "physical_objects", ["spreadsheet_id"], name: "index_physical_objects_on_spreadsheet_id", using: :btree
   add_index "physical_objects", ["unit_id"], name: "index_physical_objects_on_unit_id", using: :btree
   add_index "physical_objects", ["workflow_status"], name: "index_physical_objects_on_workflow_status", using: :btree

@@ -69,7 +69,7 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def index
-    @physical_objects = PhysicalObject.includes(:group_key).all.references(:group_key).packing_sort
+    @physical_objects = PhysicalObject.eager_load(:group_key, :unit, :bin, :box).all.references(:group_key).packing_sort
     if request.format.html?
       @physical_objects = @physical_objects.paginate(page: params[:page])
     end

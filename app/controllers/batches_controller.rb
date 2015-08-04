@@ -86,7 +86,7 @@ class BatchesController < ApplicationController
 
     def set_batch
       # remove batch_ prefix, if present, for csv and xls requests
-      @batch = Batch.find(params[:id].to_s.sub(/^batch_/, ''))
+      @batch = Batch.eager_load(:bins).find(params[:id].to_s.sub(/^batch_/, ''))
     end
   
 end

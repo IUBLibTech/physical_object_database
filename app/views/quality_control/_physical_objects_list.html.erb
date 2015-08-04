@@ -20,9 +20,9 @@
 			<td><%=	p.title %></td>
 			<td><%= p.format %></td>
 			<td>
-				<% if choice_header=='Choice' %>
+				<% if choice_header =='Choice' %>
 					<%= render "decision_form", p: p %>
-				<% elsif choice_header=='Stage' or choice_header = 'Unstage' %>
+				<% elsif choice_header=='Stage' or choice_header == 'Unstage' %>
 					<%= render "staging_form", p: p %>
 				<% end %>
 			</td>
