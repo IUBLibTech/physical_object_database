@@ -119,11 +119,12 @@ class PhysicalObject < ActiveRecord::Base
 
   # selects all physical objects whose staging_requested_timestamp is less than *hours_old*
   scope :staging_requested, lambda{|hours_old|
-    PhysicalObject.find_by_sql(
-      "SELECT *
-      FROM physical_objects
-      WHERE staging_requested = true AND staged = false "
-    )
+    PhysicalObject.eager_load(:unit).where(staging_requested: true, staged: false)
+    # PhysicalObject.find_by_sql(
+    #   "SELECT *
+    #   FROM physical_objects
+    #   WHERE staging_requested = true AND staged = false "
+    # )
   }
 
 
@@ -304,7 +305,8 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def current_digital_status
-    DigitalStatus.where("physical_object_id = #{self.id}").order(:id).last
+    #DigitalStatus.where("physical_object_id = #{self.id}").order(:id).last
+    self.digital_statuses.last
   end
   
   # omit_picklisted is a boolean specifying whether physical objects that have been added to
@@ -388,6 +390,10 @@ class PhysicalObject < ActiveRecord::Base
         self.group_key.save
       end
     end
+  end
+
+  def display_date_billed
+    date_billed.in_time_zone.strftime("%m/%d/%Y")
   end
 
   def destroy_empty_group

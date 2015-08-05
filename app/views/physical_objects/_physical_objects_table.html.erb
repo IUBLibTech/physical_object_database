@@ -57,11 +57,7 @@
         <% elsif !@box.nil? %>
           <%= link_to("Remove", unbox_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Box?'}) %>
         <% elsif !@picklist.nil? %>
-	  <% if po.group_key.physical_objects_count <= 1 %>
-            <%= link_to("Remove", unpick_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Picklist?'})%>
-	  <% else %>
-            <%= link_to("Remove All", unpick_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object, and all other objects in the same Group Key, from the Picklist?'})%>
-	  <% end %>
+          <%= link_to("Remove", unpick_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object, and all other objects in the same Group Key, from the Picklist?'})%>
 	<% elsif !@group_key.nil? %>
           <%= link_to("Remove", ungroup_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Group Key?'})%>
 	

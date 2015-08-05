@@ -7,8 +7,8 @@ describe Unit do
   let(:duplicate) { FactoryGirl.build :unit }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, unit: unit }
   describe "should be seeded with data:" do
-    it "77 values" do
-      expect(Unit.all.size).to eq 77
+    it "78 values" do
+      expect(Unit.all.size).to eq 78
     end
   end
   describe "FactoryGirl object generation" do

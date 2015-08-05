@@ -4,7 +4,7 @@ class BinsController < ApplicationController
   before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
 	def index
-		@bins = Bin.all
+		@bins = Bin.eager_load([:physical_objects, :boxes]).all
 	end
 
 	def new
@@ -125,7 +125,7 @@ class BinsController < ApplicationController
 			@bin.save
 			flash[:notice] = "Bin <i>#{@bin.identifier}</i> was marked as Sealed.".html_safe
 		else 
-			flash[:warning] = "Cannot Seal Bin <i>#{@bin.identifier}</i>. It's current workflow status is aready #{@bin.current_workflow_status}"
+			flash[:warning] = "Cannot Seal Bin <i>#{@bin.identifier}</i>. It's current workflow status is already #{@bin.current_workflow_status}"
 		end
 		redirect_to bin_path
 	end

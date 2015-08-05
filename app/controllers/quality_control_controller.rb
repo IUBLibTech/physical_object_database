@@ -5,6 +5,7 @@ class QualityControlController < ApplicationController
 	def index
 		if params[:status]
 			@physical_objects = DigitalStatus.current_actionable_status(params[:status])
+			ActiveRecord::Associations::Preloader.new.preload(@physical_objects, [:unit, :digital_statuses])
 		end
 	end
 
@@ -45,8 +46,11 @@ class QualityControlController < ApplicationController
 			end
 		end
 		@unstaged = PhysicalObject.unstaged_by_date(date)
+		ActiveRecord::Associations::Preloader.new.preload(@unstaged, :unit)
+		debugger
 		@staging_requested = PhysicalObject.staging_requested(PhysicalObject::STAGING_UNDO)
-		@staged = PhysicalObject.where(staged: true).order(:updated_at)
+		debugger
+		@staged = PhysicalObject.eager_load(:unit).where(staged: true).order(:updated_at)
 	end
 
 
