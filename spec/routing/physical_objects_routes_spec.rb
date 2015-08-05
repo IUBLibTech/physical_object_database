@@ -56,4 +56,8 @@ describe "physical_objects" do
     expect(patch: "/physical_objects/1/update_ephemera").to route_to("physical_objects#update_ephemera", id: "1")
   end
 
+  it "routes to contained" do
+    expect(get "/physical_objects/contained").to route_to action: "contained", controller: "physical_objects"
+  end
+
 end
