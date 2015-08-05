@@ -50,7 +50,7 @@ feature "Physical Object management" do
       within('#menu'){expect(page).to have_link('Bins')}
       within('#menu'){expect(page).to have_link('Pick Lists')}
       within('#menu'){expect(page).to have_link('Statuses')}
-      within('#menu'){expect(page).to have_link('Advanced Search')}
+      within('#menu'){expect(page).to have_link('Reports')}
       within('#menu'){expect(page).to have_text('Search')}
       within('#basic_search_form'){expect(page).to have_field('identifier')}
     end
