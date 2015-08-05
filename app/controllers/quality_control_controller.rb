@@ -46,11 +46,10 @@ class QualityControlController < ApplicationController
 			end
 		end
 		@unstaged = PhysicalObject.unstaged_by_date(date)
-		ActiveRecord::Associations::Preloader.new.preload(@unstaged, :unit)
-		debugger
+		ActiveRecord::Associations::Preloader.new.preload(@unstaged, :digital_provenance)
 		@staging_requested = PhysicalObject.staging_requested(PhysicalObject::STAGING_UNDO)
-		debugger
-		@staged = PhysicalObject.eager_load(:unit).where(staged: true).order(:updated_at)
+		ActiveRecord::Associations::Preloader.new.preload(@staging_requested, :digital_provenance)
+		@staged = PhysicalObject.eager_load(:digital_provenance).where(staged: true).order(:updated_at)
 	end
 
 

@@ -98,7 +98,7 @@ class PhysicalObject < ActiveRecord::Base
   }
 
   scope :unstaged_by_date, lambda {|date|
-    date_sql = date.nil? ? "" : "AND created_at > '#{date}'"
+    	date_sql = date.nil? ? "" : "AND DATEDIFF(created_at, '#{date}') = 0"
     PhysicalObject.find_by_sql(
       "SELECT physical_objects.*
       FROM physical_objects
