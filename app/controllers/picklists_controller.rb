@@ -95,7 +95,7 @@ def pack_list
 	elsif params[:id]
 		@picklist = Picklist.eager_load(:physical_objects).find(params[:id])
 		if params[:search_button]
-			@physical_object = PhysicalObject.eager_load(:group_key, :bins, :boxes, :unit).where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
+			@physical_object = PhysicalObject.eager_load(:group_key, :bin, :box, :unit).where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
 			if @physical_object.nil?
 				flash[:warning] = "No matching items found.  Loading first packable item on picklist (if applicable), instead."
 				@physical_object = @picklist.physical_objects.unpacked.packing_sort.first
@@ -103,7 +103,7 @@ def pack_list
 				flash[:notice] = "First matching item loaded."
 			end
 		elsif params[:physical_object]
-			@physical_object = PhysicalObject.eager_load(:group_key, :bins, :boxes, :unit).find(params[:physical_object][:id])
+			@physical_object = PhysicalObject.eager_load(:group_key, :bin, :box, :unit).find(params[:physical_object][:id])
 		else
 			@physical_object = @picklist.physical_objects.unpacked.packing_sort.first
 		end	
@@ -124,9 +124,9 @@ def pack_list
 		end
 
 		if params[:box_id]
-			@box = Box.find(params[:box_id]).eager_load(:physical_objects)
+			@box = Box.eager_load(:physical_objects).find(params[:box_id])
 		elsif params[:box_mdpi_barcode]
-			@box = Box.where("mdpi_barcode = ?", params[:box_mdpi_barcode]).eager_load(:physical_objects).first
+			@box = Box.where("boxes.mdpi_barcode = ?", params[:box_mdpi_barcode]).eager_load(:physical_objects).first
 		end
 		if @box and @box.full?
 			flash[:warning] = "Box #{@box.mdpi_barcode} is full. It cannot be packed.".html_safe

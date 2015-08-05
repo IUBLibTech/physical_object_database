@@ -17,6 +17,7 @@ RSpec.describe InvoiceController, type: :controller do
 
 	it "does not re-bill a physical object" do
 		post :submit, xls_file: @file
+		post :submit, xls_file: @file
 		expect(response).to render_template(:failed)
 	end
 
