@@ -1,8 +1,8 @@
 <%= render 'context_menu' %>
 <%= form_tag url_for(:controller => 'quality_control', :action => 'staging_index') do %>
 	Date
-	<%= text_field_tag :date %>
-	<%= submit_tag "Filter Unstaged Since Date" %>
+	<%= text_field_tag :date, params[:date] %>
+	<%= submit_tag "Filter Unstaged On Date" %>
 <% end %>
 <script type='text/javascript'>
 	$(function (){
@@ -10,7 +10,7 @@
 	});
 </script>
 <div >
-	<h2>Unstaged Physical Objects</h2>
+	<h2>Unstaged Physical Objects: <%= @unstaged.size %></h2>
 	<% if @unstaged.size > 0 %>
 		<%= form_tag quality_control_staging_post_path_path do %>
 		<%= submit_tag "Stage Selected Objects" %>
@@ -20,7 +20,7 @@
 </div>
 <br>
 <div>
-	<h2>Staging Requested Physical Objects</h2>
+	<h2>Staging Requested Physical Objects: <%= @staging_requested.size %></h2>
 	<% if @staging_requested.size > 0 %>
 		<%= form_tag quality_control_staging_post_path_path do %>
 		<%= submit_tag "Unstage Selected Objects" %>
@@ -30,6 +30,6 @@
 </div>
 <br>
 <div >
-	<h2>Staged Physical Objects</h2>
+	<h2>Staged Physical Objects: <%= @staged.size %></h2>
 	<%= render 'physical_objects_list', physical_objects: @staged , choice_header: "Unstage" %>	
 </div>
