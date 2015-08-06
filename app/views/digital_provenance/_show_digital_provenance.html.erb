@@ -10,47 +10,27 @@
 				<tr>
 					<th rowspan="4">Comments</th>
 					<td rowspan="4">
-						<% if @edit_mode %>
-							<%= dp.text_area(:comments, rows: "6") %>
-						<% else %>
-							<%= dp.text_area(:comments, rows: "6", readonly: true) %>
-						<% end %>
+						<%= dp.text_area(:comments, rows: "6", readonly: !@edit_mode) %>
 					</td>
 					<th rowspan="4">Cleaning Comment</th>
 					<td rowspan="4">
-						<% if @edit_mode %>
-							<%= dp.text_area(:cleaning_comment, rows: "6") %>
-						<% else %>
-							<%= dp.text_area(:cleaning_comment, rows: "6", readonly: true) %>
-						<% end %>
+						<%= dp.text_area(:cleaning_comment, rows: "6", readonly: !@edit_mode) %>
 					</td>
 					<th>Cleaning Date</th>
 					<td>
-						<% if @edit_mode %>
-							<%= dp.text_field(:cleaning_date, class: 'date',  value: @dp.cleaning_date.blank? ? "" : @dp.cleaning_date.strftime("%m/%d/%Y")) %>
-						<% else %>
-							<%= dp.text_field(:cleaning_date, readonly: true, value: @dp.cleaning_date.blank? ? "" : @dp.cleaning_date.strftime("%m/%d/%Y")) %>
-						<% end %>
+						<%= dp.text_field(:cleaning_date, readonly: !@edit_mode, class: @edit_mode ? "date" : "", value: @dp.cleaning_date.blank? ? "" : @dp.cleaning_date.in_time_zone("UTC").strftime("%m/%d/%Y")) %>
 					</td>
 				</tr>
 				<tr>
 					<th>Baking Date</th>
 					<td>
-						<% if @edit_mode %>
-							<%= dp.text_field(:baking, class: 'date', value: @dp.baking.blank? ? "" : @dp.baking.strftime("%m/%d/%Y")) %>
-						<% else %>
-							<%= dp.text_field(:baking, readonly: true, value: @dp.baking.blank? ? "" : @dp.baking.strftime("%m/%d/%Y")) %>
-						<% end %>
+						<%= dp.text_field(:baking, readonly: !@edit_mode, class: @edit_mode ? "date" : "", value: @dp.baking.blank? ? "" : @dp.baking.in_time_zone("UTC").strftime("%m/%d/%Y")) %>
 					</td>
 				</tr>
 				<tr>
 					<th>Repaired</th>
 					<td>
-						<% if @edit_mode %>
-							<%= dp.check_box(:repaired) %>
-						<% else %>
-							<%= dp.check_box(:repaired, disabled: !@edit_mode) %>
-						<% end %>
+						<%= dp.check_box(:repaired, disabled: !@edit_mode) %>
 					</td>
 				</tr>
 				<tr>
