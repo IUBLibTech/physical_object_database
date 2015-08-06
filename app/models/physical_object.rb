@@ -50,7 +50,7 @@ class PhysicalObject < ActiveRecord::Base
   scope :unpacked, lambda { where(bin_id: nil, box_id: nil) }
   scope :unpacked_or_id, lambda { |object_id| where("(bin_id is null and box_id is null) or id = ?", object_id) }
   scope :packed, lambda { where("physical_objects.bin_id > 0 OR physical_objects.box_id > 0") }
-  scope :blocked, lambda { joins(:condition_statuses).where("condition_statuses.active is true and condition_statuses.condition_status_template_id in (?)", ConditionStatusTemplate.blocking_ids).includes(:condition_statuses) }
+  scope :blocked, lambda { joins(:condition_statuses).where(condition_statuses: {active: true, condition_status_template_id: ConditionStatusTemplate.blocking_ids}).includes(:condition_statuses) }
 
   # needs to be declared before the validation that uses it
   def self.formats
@@ -97,35 +97,16 @@ class PhysicalObject < ActiveRecord::Base
     po.physical_object_query(false)
   }
 
-  scope :unstaged_by_date, lambda {|date|
-    	date_sql = date.nil? ? "" : "AND DATEDIFF(created_at, '#{date}') = 0"
-    PhysicalObject.find_by_sql(
-      "SELECT physical_objects.*
-      FROM physical_objects
-      WHERE physical_objects.staged = false AND staging_requested = false AND physical_objects.id in 
-      (
-        SELECT physical_object_id
-        FROM (
-          SELECT max(id) as ds_id
-          FROM digital_statuses
-          WHERE state = '#{DigitalStatus::DIGITAL_STATUS_START}' #{date_sql}
-          GROUP BY physical_object_id
-        ) as ns_ids INNER JOIN digital_statuses as dses
-        WHERE ns_ids.ds_id = dses.id
-      )
-      ORDER BY digital_start"
-    )
-  }
+  scope :unstaged_by_date, lambda { |date|
+    date_sql = date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
+    PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
+      ON digital_statuses.physical_object_id = ds2.physical_object_id
+      AND digital_statuses.state = ds2.state
+      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staged: false, staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(date_sql)
 
-  # selects all physical objects whose staging_requested_timestamp is less than *hours_old*
-  scope :staging_requested, lambda{|hours_old|
-    PhysicalObject.eager_load(:unit).where(staging_requested: true, staged: false)
-    # PhysicalObject.find_by_sql(
-    #   "SELECT *
-    #   FROM physical_objects
-    #   WHERE staging_requested = true AND staged = false "
-    # )
   }
+  scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
+  scope :staged, lambda { where(staged: true) }
 
 
   attr_accessor :generation_values
