@@ -45,8 +45,11 @@
       <div class="menuItem">
         <%= link_to("Quality Control", quality_control_index_path) %>
       </div>
+      <!-- <div class="menuItem"> -->
+        <%# link_to("Advanced Search", :controller => 'search', :action => 'index') %>
+      <!-- </div> -->
       <div class="menuItem">
-        <%= link_to("Advanced Search", :controller => 'search', :action => 'index') %>
+        <%= link_to("Reports", controller: :reports, action: :index) %>
       </div>
       <div class="left">
         <%= form_tag "/search/search_results", id: "basic_search_form" do %>

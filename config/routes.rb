@@ -44,6 +44,7 @@ Pod::Application.routes.draw do
     get :has_ephemera, on: :collection
     get :create_multiple, on: :collection
     get :edit_ephemera, on: :member
+    get :contained, on: :collection
 
     patch :split_update, on: :member
     post :upload_update, on: :collection
@@ -104,6 +105,9 @@ Pod::Application.routes.draw do
   get 'quality_control/staging', to: "quality_control#staging_index", as: 'quality_control_staging_index_path'
   post 'quality_control/staging', to: 'quality_control#staging_post', as: 'quality_control_staging_post_path'
 
+  get 'invoice/index', to: 'invoice#index', as: 'invoice_controller'
+  post 'invoice/index', to: 'invoice#submit', as: 'invoice_controller_submit'
+
   resources :returns, only: [:index] do
     get :return_bins, on: :member
     get :return_bin, on: :member
@@ -124,6 +128,8 @@ Pod::Application.routes.draw do
   resources :spreadsheets, except: [:new, :create]
 
   resources :status_templates, only: [:index]
+
+  resources :reports, only: [:index]
 
   match '/signin', to: 'sessions#new', via: :get
   match '/signout', to: 'sessions#destroy', via: :delete

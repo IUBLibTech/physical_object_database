@@ -1,7 +1,7 @@
 <table class="status full_width">
 	<tr>
 		<th>Digitization Start</th>
-		<th>Unit</th>
+		<th>Digitizing Entity</th>
 		<th>MDPI Barcode</th>
 		<th>Title</th>
 		<th>Format</th>
@@ -15,14 +15,14 @@
 			<tr class="odd">
 		<% end %>
 			<td><%= p.digital_start_readable %></td>
-			<td><%= p.unit.abbreviation %></td>
+			<td><%= p.digital_provenance ? (p.digital_provenance.digitizing_entity.blank? ? "Not set..." : (p.digital_provenance.digitizing_entity == "IU Media Digitization Studios" ? "I" : "M") ) : "No Digital Provenance Data" %></td>
 			<td><%= link_to("#{p.mdpi_barcode}", physical_object_path(p.id), target: "_blank") %></td>
 			<td><%=	p.title %></td>
 			<td><%= p.format %></td>
 			<td>
-				<% if choice_header=='Choice' %>
+				<% if choice_header =='Choice' %>
 					<%= render "decision_form", p: p %>
-				<% elsif choice_header=='Stage' or choice_header = 'Unstage' %>
+				<% elsif choice_header=='Stage' or choice_header == 'Unstage' %>
 					<%= render "staging_form", p: p %>
 				<% end %>
 			</td>

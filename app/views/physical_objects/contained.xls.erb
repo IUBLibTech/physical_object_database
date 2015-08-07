@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Start Date</Data></Cell>
+        <Cell><Data ss:Type="String"><%= @start_date %></Data></Cell>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="String">End Date</Data></Cell>
+        <Cell><Data ss:Type="String"><%= @end_date %></Data></Cell>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="String">Unit</Data></Cell>
+        <Cell><Data ss:Type="String">Format</Data></Cell>
+        <Cell><Data ss:Type="String">Picklist</Data></Cell>
+        <Cell><Data ss:Type="String">MDPI Barcode</Data></Cell>
+        <Cell><Data ss:Type="String">Call Number</Data></Cell>
+        <Cell><Data ss:Type="String">Title</Data></Cell>
+        <Cell><Data ss:Type="String">Workflow Status</Data></Cell>
+        <Cell><Data ss:Type="String">Box Barcode</Data></Cell>
+        <Cell><Data ss:Type="String">Bin Barcode</Data></Cell>
+      </Row>
+      <% @physical_objects.each do |po| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= po.unit.abbreviation %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.format %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.picklist ? po.picklist.name : '' %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.mdpi_barcode %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.call_number %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.title %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.workflow_status %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.box ? po.box.mdpi_barcode : '' %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.bin ? po.bin.mdpi_barcode : '' %></Data></Cell>
+      </Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

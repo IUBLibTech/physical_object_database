@@ -888,4 +888,16 @@ describe PhysicalObjectsController do
     pending "FIXME: needs tests"
   end
 
+  describe "GET contained" do
+    before(:each) { get :contained, format: :xls }
+    it "sets @physical_objects" do
+      expect(assigns(:physical_objects)).to respond_to :size
+    end
+    it "renders :contained template" do
+      expect(response).to render_template :contained
+    end
+    pending "sets @physical_objects to empty set if missing either date parameter"
+    pending "returns only physical_objects set to binned/boxed in provided date range"
+  end
+
 end

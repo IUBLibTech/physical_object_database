@@ -50,7 +50,7 @@ class DigitalStatus < ActiveRecord::Base
   # This scope takes a status name ('transferred', 'accepted', failed', etc) and returns all
   # physical objects currently in that state AND which have an undecided action to process
   scope :current_actionable_status, lambda {|i| 
-    PhysicalObject.preload(:digital_statuses).find_by_sql(
+    PhysicalObject.eager_load(:units).find_by_sql(
     	"SELECT physical_objects.*
 			FROM (
 				SELECT ds.physical_object_id as id

@@ -1,0 +1,18 @@
+<div>
+	<h2>Billing Validation</h2>
+	<p>Use this page to submit an invoice for billing validation</p>
+	<%= form_for(@file) do |f| %>
+		<table>
+			<tr>
+				<td>
+					<%= f.file_field :xls_file %>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<%= f.submit "Upload Invoice" %>
+				</td>
+			</tr>
+		</table>
+	<% end %>
+</div>

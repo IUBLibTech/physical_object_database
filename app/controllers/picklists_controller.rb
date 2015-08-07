@@ -28,7 +28,7 @@ class PicklistsController < ApplicationController
 		#@action = 'show'
 		respond_to do |format|
 			format.html do
-				@physical_objects = @physical_objects.paginate(page: params[:page])
+				@physical_objects = @physical_objects.eager_load(:group_key).paginate(page: params[:page])
 			end
 			format.csv { send_data PhysicalObject.to_csv(@physical_objects, @picklist) }
 			format.xls
@@ -93,9 +93,9 @@ def pack_list
 	if params[:picklist] && params[:picklist][:id]
 		redirect_to pack_list_picklist_path(params[:picklist][:id], box_id: params[:box_id], bin_id: params[:bin_id])
 	elsif params[:id]
-		@picklist = Picklist.find(params[:id])
+		@picklist = Picklist.eager_load(:physical_objects).find(params[:id])
 		if params[:search_button]
-			@physical_object = PhysicalObject.where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
+			@physical_object = PhysicalObject.eager_load(:group_key, :bin, :box, :unit).where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
 			if @physical_object.nil?
 				flash[:warning] = "No matching items found.  Loading first packable item on picklist (if applicable), instead."
 				@physical_object = @picklist.physical_objects.unpacked.packing_sort.first
@@ -103,7 +103,7 @@ def pack_list
 				flash[:notice] = "First matching item loaded."
 			end
 		elsif params[:physical_object]
-			@physical_object = PhysicalObject.find(params[:physical_object][:id])
+			@physical_object = PhysicalObject.eager_load(:group_key, :bin, :box, :unit).find(params[:physical_object][:id])
 		else
 			@physical_object = @picklist.physical_objects.unpacked.packing_sort.first
 		end	
@@ -124,9 +124,9 @@ def pack_list
 		end
 
 		if params[:box_id]
-			@box = Box.find(params[:box_id])
+			@box = Box.eager_load(:physical_objects).find(params[:box_id])
 		elsif params[:box_mdpi_barcode]
-			@box = Box.where("mdpi_barcode = ?", params[:box_mdpi_barcode]).first
+			@box = Box.where("boxes.mdpi_barcode = ?", params[:box_mdpi_barcode]).eager_load(:physical_objects).first
 		end
 		if @box and @box.full?
 			flash[:warning] = "Box #{@box.mdpi_barcode} is full. It cannot be packed.".html_safe
@@ -288,7 +288,7 @@ def pack_list
 		    params[:id] = params[:id].sub(/picklist_/, '')
 		  end
 		  @picklist = Picklist.eager_load(:physical_objects).where("picklists.id = ?", params[:id]).first
-		  @physical_objects = PhysicalObject.includes(:group_key).where("picklist_id = ?", @picklist.id).references(:group_key).packing_sort
+		  @physical_objects = PhysicalObject.eager_load(:group_key).where("picklist_id = ?", @picklist.id).references(:group_key).packing_sort
 		end
 
 		def set_counts

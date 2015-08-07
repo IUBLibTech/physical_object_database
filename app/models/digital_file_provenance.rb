@@ -7,13 +7,13 @@ class DigitalFileProvenance < ActiveRecord::Base
 		if date_digitized.blank?
 			""
 		else
-			date_digitized.in_time_zone.strftime("%m/%d/%Y")
+			date_digitized.in_time_zone("UTC").strftime("%m/%d/%Y")
 		end
 	end
 
 	def display_date_digitized=(date)
 		unless date.blank?
-			self.date_digitized = DateTime.strptime(date, "%m/%d/%Y") + 12.hours
+			self.date_digitized = DateTime.strptime(date, "%m/%d/%Y")
 		end
 	end
 end
