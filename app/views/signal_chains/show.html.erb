@@ -9,5 +9,13 @@
     <%= link_to "Signal chains Index", signal_chains_path %>
   </div>
 <% end %>
-
+<h2>Signal chain</h2>
 <%= render partial: 'signal_chain' %>
+<h2>Processing steps</h2>
+<%= render partial: 'processing_steps' %>
+<h2>Add a Processing step</h2>
+New steps are added to the end of the current chain.
+<%= render partial: 'add_processing_step' %>
+<h2>Reorder Processing steps</h2>
+Any gaps created by removing intermediate steps will be eliminated after submission if dragged to the final position.
+<%= render partial: 'reorder_processing_steps' %>

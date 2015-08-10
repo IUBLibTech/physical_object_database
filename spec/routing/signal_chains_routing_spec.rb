@@ -31,5 +31,13 @@ RSpec.describe SignalChainsController, type: :routing do
       expect(:delete => "/signal_chains/1").to route_to("signal_chains#destroy", :id => "1")
     end
 
+    it "routes to #include" do
+      expect(:patch => "/signal_chains/1/include").to route_to("signal_chains#include", id: "1")
+    end
+
+    it "routes to #reorder" do
+      expect(:patch => "/signal_chains/1/reorder").to route_to("signal_chains#include", id: "1")
+    end
+
   end
 end

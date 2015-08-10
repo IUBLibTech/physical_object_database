@@ -132,4 +132,12 @@ describe SignalChainsController do
     end
   end
 
+  describe "#include" do
+    pending
+  end
+
+  describe "#reorder" do
+    pending
+  end
+
 end

@@ -12,6 +12,15 @@ describe SignalChain do
     end
   end
 
+  describe "has relationships:" do
+    specify "processing steps" do
+      expect(valid_signal_chain.processing_steps.size).to be > -1
+    end
+    specify "machines" do
+      expect(valid_signal_chain.machines.size).to be > -1
+    end
+  end
+
   describe "has attributes:" do
     [:name].each do |attr|
       specify "#{attr}" do

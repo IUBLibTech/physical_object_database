@@ -3,7 +3,7 @@
   <table>
     <tr>
       <th>Name</th>
-      <td><%= f.text_field :name %></td>
+      <td><%= @edit_mode ? f.text_field(:name) : @signal_chain.name %></td>
     </tr>
   
   </table>

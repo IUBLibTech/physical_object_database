@@ -12,6 +12,15 @@ describe Machine do
     end
   end
 
+  describe "has relationships:" do
+    specify "processing steps" do
+      expect(valid_machine.processing_steps.size).to be > -1
+    end
+    specify "signal chains" do
+      expect(valid_machine.signal_chains.size).to be > -1
+    end
+  end
+
   describe "has attributes:" do
     [:category, :serial, :manufacturer, :model].each do |attr|
       specify "#{attr}" do

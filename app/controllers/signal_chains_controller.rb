@@ -1,5 +1,5 @@
 class SignalChainsController < ApplicationController
-  before_action :set_signal_chain, only: [:show, :edit, :update, :destroy]
+  before_action :set_signal_chain, only: [:show, :edit, :update, :destroy, :include, :reorder]
 
   # GET /signal_chains
   # GET /signal_chains.json
@@ -49,6 +49,44 @@ class SignalChainsController < ApplicationController
         format.json { render json: @signal_chain.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def include
+    step = @signal_chain.processing_steps.new(machine_id: params[:machine_id], position: params[:position])
+    if step.save
+      flash[:notice] = "Processing step was successfully added."
+    else
+      flash[:warning] = "Error adding processing step: #{step.errors.full_messages}"
+    end
+    redirect_to :back
+  end
+
+  def reorder
+    reorder_param = params[:reorder_submission]
+    if reorder_param.nil? || reorder_param.blank?
+      flash[:notice] = "No changes submitted."
+    else
+      reorder_ids = reorder_param.split(",")
+      objects = []
+      errors = false
+      reorder_ids.each_with_index do |step_id, index|
+        processing_step = ProcessingStep.where(id: step_id, signal_chain_id: @signal_chain.id)[0]
+        unless processing_step.nil?
+          processing_step.position = index + 1
+          objects << processing_step
+        end
+      end
+      #loop in reverse order to minimize resolve_group_position effects
+      objects.reverse_each do |step|
+        errors = step.errors unless step.save(validate: false)
+      end
+      if errors
+        flash[:notice] = "Errors encountered reordering objects: #{errors.full_messages}"
+      else
+        flash[:notice] = "Objects were successfully reordered."
+      end
+    end
+    redirect_to :back
   end
 
   # DELETE /signal_chains/1
