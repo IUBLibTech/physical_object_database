@@ -1,0 +1,33 @@
+<%% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%%= link_to "Create <%= singular_table_name.titleize.downcase.camelize %>", new_<%= singular_table_name %>_path %>
+  </div>
+<%% end %>
+<div>
+  <h2><%= plural_table_name.titleize.downcase.camelize %></h2>
+  <%%# render 'table' %>
+
+<table>
+  <tr class="header">
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+      <th><%= attribute.human_name %></th>
+<% end -%>
+    <th>Actions</th>
+  </tr>
+  <%% count = 0 %>
+  <%% @<%= plural_table_name %>.each do |<%= singular_table_name %>| %>
+    <%% count += 1 %>
+    <tr class=<%%= count.odd? ? 'odd' : 'even'%>>
+    <% attributes.reject(&:password_digest?).each do |attribute| -%>
+      <td><%%= <%= singular_table_name %>.<%= attribute.name %> %></td>
+    <% end -%>
+      <td>
+        <%%= link_to "Show", <%= singular_table_name %> %>
+        <%%= link_to "Edit", edit_<%= singular_table_name %>_path(<%= singular_table_name %>) %>
+        <%%= link_to "Delete", <%= singular_table_name %>, method: :delete, data: { confirm: 'Are you sure you want to delete this <%= singular_table_name.camelize %>?' } %>
+      </td>
+    </tr>
+  <%% end %>
+</table>
+
+</div>

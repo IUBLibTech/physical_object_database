@@ -1,0 +1,13 @@
+<%% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%%= link_to "Cancel", <%= singular_table_name %>_path(@<%= @singular_table_name %>) %>
+  </div>
+<%% end %>
+
+<div>
+  <h2>Edit <%= singular_table_name.titleize.downcase.camelize %></h2>
+  <%% @edit_mode = true %>
+  <%% @action = "update" %>
+  <%% @submit_text = "Update <%= singular_table_name.titleize.downcase.camelize %>" %>
+  <%%= render 'form' %>
+</div>

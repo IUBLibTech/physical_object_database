@@ -1,0 +1,9 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to "Create Signal chain", new_signal_chain_path %>
+  </div>
+<% end %>
+<div>
+  <h2>Signal chains</h2>
+  <%= render 'signal_chains_table' %>
+</div>

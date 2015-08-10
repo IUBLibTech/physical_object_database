@@ -1,0 +1,15 @@
+<%= error_messages_for(@signal_chain) %>
+<%= form_for(@signal_chain) do |f| %>
+  <table>
+    <tr>
+      <th>Name</th>
+      <td><%= @edit_mode ? f.text_field(:name) : @signal_chain.name %></td>
+    </tr>
+  
+  </table>
+  <% if @edit_mode %>
+    <div class="actions">
+      <%= f.submit(@submit_text) %>
+    </div>
+  <% end %>
+<% end %>

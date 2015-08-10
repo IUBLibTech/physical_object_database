@@ -1,0 +1,21 @@
+<%= form_for(@signal_chain, url: { action: :reorder }) do |f| %>
+  <ul id="sortable">
+  <% expected_position = 1 %>
+  <% @signal_chain.processing_steps.eager_load(:machine).each do |step| %>
+    <% if step.position > expected_position %>
+      <% (expected_position...step.position).each do |position| %>
+        <li id="_missing_<%= position %>" class="ui-state-default ui-sortable-handle">
+          <%= "#{position}. --" %>
+        </li>
+      <% end %>
+    <% end %>
+    <li id="<%= step.id %>" class="ui-state-default ui-sortable-handle">
+      <%= "#{step.position}. #{step.machine.category} | #{step.machine.serial} | #{step.machine.manufacturer} | #{step.machine.model}" %>
+    </li>
+    <% expected_position = step.position + 1 %>
+  <% end %>
+  </ul>
+  <input id="reorder_submission" name="reorder_submission" type="hidden" value="">
+  <%= f.submit "Reorder steps" %>
+<% end %>
+

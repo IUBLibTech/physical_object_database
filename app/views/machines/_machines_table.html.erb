@@ -1,0 +1,25 @@
+<table>
+  <tr class="header">
+    <th>Category</th>
+    <th>Serial</th>
+    <th>Manufacturer</th>
+    <th>Model</th>
+    <th>Actions</th>
+  </tr>
+  <% count = 0 %>
+  <% @machines.each do |machine| %>
+    <% count += 1 %>
+    <tr class=<%= count.odd? ? 'odd' : 'even'%>>
+      <td><%= machine.category %></td>
+      <td><%= machine.serial %></td>
+      <td><%= machine.manufacturer %></td>
+      <td><%= machine.model %></td>
+      <td>
+        <%= link_to "Show", machine_path(machine) %>
+        <%= link_to "Edit", edit_machine_path(machine) %>
+        <%= link_to "Delete", machine_path(machine), method: :delete, data: { confirm: 'Are you sure you want to delete this Machine?' } %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+

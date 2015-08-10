@@ -1,0 +1,14 @@
+<%= flash.now[:warning] %>
+<%= form_for(@signal_chain, url: { action: :include }) do |f| %>
+  <table>
+    <tr>
+      <th>Machine</th>
+      <td>
+        <%= select_tag :machine_id, options_for_select(Machine.all.map { |m| ["#{m.category} | #{m.serial} | #{m.manufacturer} | #{m.model}", m.id ] }), { prompt: "Select a machine..." } %></td>
+       <%= hidden_field_tag :position, @signal_chain.processing_steps.any? ? @signal_chain.processing_steps.last.position + 1 : 1, readonly: true %>
+      </td>
+    </tr>
+  </table>
+  <%= submit_tag("Submit") %>
+<% end %>
+
