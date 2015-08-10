@@ -1,0 +1,40 @@
+describe SignalChain do
+  let(:signal_chain) { FactoryGirl.create :signal_chain }
+  let(:valid_signal_chain) { FactoryGirl.build :signal_chain }
+  let(:invalid_signal_chain) { FactoryGirl.build :signal_chain, :invalid }
+
+  describe "FactoryGirl object generation" do
+    it "returns a valid object" do
+      expect(valid_signal_chain).to be_valid
+    end
+    it "returns an invalid object" do
+      expect(invalid_signal_chain).not_to be_valid
+    end
+  end
+
+  describe "has attributes:" do
+    [:name].each do |attr|
+      specify "#{attr}" do
+        expect(valid_signal_chain).to respond_to(attr)
+        expect(valid_signal_chain.attributes.keys).to include(attr.to_s)
+      end
+    end
+    describe "has required attributes:" do
+      [:name].each do |attr|
+        specify "#{attr}" do
+          valid_signal_chain.send((attr.to_s + "=").to_sym, nil)
+          expect(valid_signal_chain).not_to be_valid
+        end
+      end
+    end
+    describe "requires unique values:" do
+      specify "name" do
+        valid_signal_chain.name = signal_chain.name + "different"
+        expect(valid_signal_chain).to be_valid
+        valid_signal_chain.name = signal_chain.name
+        expect(valid_signal_chain).not_to be_valid
+      end
+    end
+  end
+
+end

@@ -5,11 +5,11 @@ FactoryGirl.define do
     serial "serial"
     manufacturer "manufacturer"
     model "model"
-  end
 
-  trait :invalid do
-    category nil
-    serial nil
+    trait :invalid do
+      category nil
+      serial nil
+    end
   end
 
 end

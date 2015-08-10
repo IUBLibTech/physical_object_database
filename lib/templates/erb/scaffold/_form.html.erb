@@ -1,0 +1,31 @@
+<%%= error_messages_for(@<%= singular_table_name %>) %>
+<%%= form_for(@<%= singular_table_name %>) do |f| %>
+  <table>
+  <% attributes.each do |attribute| -%>
+  <tr>
+    <% if attribute.password_digest? -%>
+  <th>Password</th>
+      <td><%%= f.password_field :password %></td>
+    </tr>
+  
+    <tr>
+      <th>Password confirmation</th>
+      <td><%%= f.password_field :password_confirmation %></td>
+    <% else -%>
+  <th><%= attribute.name.titleize.downcase.camelize %></th>
+      <%- if attribute.reference? -%>
+      <td><%%= f.collection_select :<%= attribute.column_name %>, <%= attribute.name.titleize.downcase.camelize %>.all, :id, :name, {include_blank: 'None', prompt: "Please specify a <%= attribute.name.titleize.downcase.camelize %>"}, disabled: !@edit_mode %></td>
+      <%- else -%>
+      <td><%%= f.<%= attribute.field_type %> :<%= attribute.name %> %></td>
+      <%- end -%>
+    <% end -%>
+</tr>
+  
+  <% end -%>
+</table>
+  <%% if @edit_mode %>
+    <div class="actions">
+      <%%= f.submit(@submit_text) %>
+    </div>
+  <%% end %>
+<%% end %>

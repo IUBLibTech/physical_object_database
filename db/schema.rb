@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150810023838) do
+ActiveRecord::Schema.define(version: 20150810053851) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -376,6 +376,12 @@ ActiveRecord::Schema.define(version: 20150810023838) do
   end
 
   add_index "preservation_problems", ["open_reel_tm_id"], name: "index_preservation_problems_on_open_reel_tm_id", using: :btree
+
+  create_table "signal_chains", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "spreadsheets", force: true do |t|
     t.string   "filename"
