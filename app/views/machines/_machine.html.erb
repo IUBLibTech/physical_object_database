@@ -1,0 +1,24 @@
+<%= error_messages_for(@machine) %>
+<%= form_for(@machine) do |f| %>
+  <table>
+  <tr>
+    <th>Category</th>
+    <td><%= @edit_mode ? f.text_field(:category) : @machine.category %></td>
+  </tr>
+  <tr>
+    <th>Serial</th>
+    <td><%= @edit_mode ? f.text_field(:serial) : @machine.serial %></td>
+  </tr>
+  <tr>
+    <th>Manufacturer</th>
+    <td><%= @edit_mode ? f.text_field(:manufacturer) : @machine.manufacturer %></td>
+  </tr>
+  <tr>
+    <th>Model</th>
+    <td><%= @edit_mode ? f.text_field(:model) : @machine.model %></td>
+  </tr>
+  </table>
+  <% if @edit_mode %>
+    <%= f.submit(@submit_text) %>
+  <% end %>
+<% end %>

@@ -33,6 +33,8 @@ Pod::Application.routes.draw do
     resources :physical_objects, only: [:new]
   end
 
+  resources :machines
+
   resources :messages
 
   resources :physical_objects do

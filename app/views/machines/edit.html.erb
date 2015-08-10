@@ -1,0 +1,12 @@
+<% content_for :context_menu do %>  
+  <div class="contextMenuItem">
+    <%= link_to "Cancel", machine_path(@machine) %>
+  </div>
+<% end %>
+<div>
+  <h2>Edit Machine</h2>
+  <% @edit_mode = true %>
+  <% @action = "update" %>
+  <% @submit_text = "Update Machine" %>
+  <%= render 'machine' %>
+</div>
