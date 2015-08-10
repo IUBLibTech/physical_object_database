@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe InvoiceController, type: :controller do
 	render_views
-	let!(:po) { FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000102782) }
+	let!(:po) { FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000102782, digital_start: Time.now) }
 	
 	before(:each) { 
 		sign_in 
@@ -18,6 +18,11 @@ RSpec.describe InvoiceController, type: :controller do
 	it "does not re-bill a physical object" do
 		post :submit, xls_file: @file
 		post :submit, xls_file: @file
+		expect(response).to render_template(:failed)
+	end
+
+	it "catches bad mdpi barcode" do
+		post :submit, xls_file: fixture_file_upload("bad_memnon_test.xlsx")
 		expect(response).to render_template(:failed)
 	end
 
