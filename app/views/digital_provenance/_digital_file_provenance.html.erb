@@ -30,51 +30,19 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Player Serial Number</th>
-			<td>
-				<%= f.text_field :player_serial_number %>
-			</td>
-		</tr>
-		<tr>
-			<th>Player Manufacturer</th>
-			<td>
-					<%= f.text_field :player_manufacturer %>
-			</td>
-		</tr>
-		<tr>
-			<th>Player Model</th>
-			<td>
-				<%= f.text_field :player_model %>
-			</td>
-		</tr>
-		<tr>
-			<th>AD Serial Number</th>
-			<td>
-				<%= f.text_field :ad_serial_number %>
-			</td>
-		</tr>
-		<tr>
-			<th>AD Manufacturer</th>
-			<td>
-				<%= f.text_field :ad_manufacturer %>
-			</td>
-		</tr>
-		<tr>
-			<th>AD Model</th>
-			<td>
-				<%= f.text_field :ad_model %>
-			</td>
-		</tr>
-		<tr>
-			<th>Extraction Workstation</th>
-			<td>
-				<%= f.text_field :extraction_workstation %>
-			</td>
-		</tr>
-		<tr>
 			<th>Speed Used</th>
 			<td>
 				<%= f.text_field :speed_used %>
+			</td>
+		</tr>
+		<tr>
+			<th>Signal Chain</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.collection_select(:signal_chain_id, SignalChain.order('name'), :id, :name, {include_blank: true}, disabled: !@edit_mode) %>
+				<% else %>
+					<%= f.object.signal_chain ? f.object.signal_chain.name : "Not assigned" %>
+				<% end %>
 			</td>
 		</tr>
 	<%# end %>
