@@ -131,6 +131,7 @@ Pod::Application.routes.draw do
     patch :include, on: :member
     patch :reorder, on: :member
   end
+  get "signal_chains/ajax_show/:id", to: "signal_chains#ajax_show", as: 'signal_chain_ajax_show'
 
   resources :digital_provenance, only: [:show, :edit, :update]
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150810061125) do
+ActiveRecord::Schema.define(version: 20150811180906) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -180,21 +180,16 @@ ActiveRecord::Schema.define(version: 20150810061125) do
     t.datetime "date_digitized"
     t.text     "comment"
     t.string   "created_by"
-    t.string   "player_serial_number"
-    t.string   "player_manufacturer"
-    t.string   "player_model"
-    t.string   "ad_serial_number"
-    t.string   "ad_manufacturer"
-    t.string   "ad_model"
-    t.string   "extraction_workstation"
     t.string   "speed_used"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "digital_provenance_id",  limit: 8
-    t.string   "filename",                         null: false
+    t.integer  "digital_provenance_id", limit: 8
+    t.string   "filename",                        null: false
+    t.integer  "signal_chain_id",       limit: 8
   end
 
   add_index "digital_file_provenances", ["filename"], name: "index_digital_file_provenances_on_filename", unique: true, using: :btree
+  add_index "digital_file_provenances", ["signal_chain_id"], name: "index_digital_file_provenances_on_signal_chain_id", using: :btree
 
   create_table "digital_provenances", force: true do |t|
     t.string   "digitizing_entity"

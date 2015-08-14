@@ -1,6 +1,8 @@
 class DigitalFileProvenance < ActiveRecord::Base
 	belongs_to :digital_provenance
 
+	belongs_to :signal_chain
+
 	attr_accessor :display_date_digitized
 
 	def display_date_digitized

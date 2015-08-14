@@ -99,6 +99,11 @@ class SignalChainsController < ApplicationController
     end
   end
 
+  def ajax_show
+    @signal_chain = SignalChain.find(params[:id])
+    render(partial: 'ajax_show_signal_chain')
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_signal_chain
