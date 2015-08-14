@@ -23,15 +23,19 @@ class InvoiceController < ApplicationController
 
 		#spreadsheet first row index is #1 so total count is last_row - 1
 		@total_pos = xlsx.last_row - 1
-		@billable = Array.new(@total_pos)
+		@billable = Hash.new
 		((xlsx.first_row + 1)..(xlsx.last_row)).each do |row|
 			#date_delivered = xlsx.row(row)[headers['Delivery check date']]
 			barcode = xlsx.row(row)[headers['Object barcode']].to_i
 
 			# -2 because the first row index is 1 AND the first row is header values
-			@billable[row - 2] = barcode
+			@billable[barcode] = barcode
+		end
+		
+		@billable.keys.each do |barcode|
 			BillablePhysicalObject.new(mdpi_barcode: barcode, delivery_date: time).save
 		end
+
 		@failed = PhysicalObject.find_by_sql(
 			"SELECT physical_objects.mdpi_barcode, physical_objects.spread_sheet_filename, physical_objects.date_billed 
 			FROM physical_objects, billable_physical_objects
@@ -46,13 +50,17 @@ class InvoiceController < ApplicationController
 				PhysicalObject.transaction do
 					@billable.each do |barcode|
 						#update_attributes will not throw and exception (the only thing that triggers a rollback in rails) - must use update_attributes!
-						PhysicalObject.where(mdpi_barcode: barcode).where.not(digital_start: nil).first.update_attributes!(billed: true, spread_sheet_filename: upload.original_filename, date_billed: time)
+						po = PhysicalObject.where(mdpi_barcode: barcode).where.not(digital_start: nil).first
+						unless po.nil?
+							po.update_attributes!(billed: true, spread_sheet_filename: upload.original_filename, date_billed: time)
+						else
 					end
 					flash.now[:notice] = "All #{@total_pos} Physical Objects for #{upload.original_filename} have been marked as billed."
 					@file = ""
 					render 'index'
 				end
 			rescue => error
+				debugger
 				error.backtrace
 				flash.now[:warning] = "An unexpected error occurred while processing the invoice - <b>No records were marked as billed </b>".html_safe
 				@file = ""
