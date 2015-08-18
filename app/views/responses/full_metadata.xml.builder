@@ -45,12 +45,14 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
                 xml.created_by dfp.created_by
                 xml.speed_used dfp.speed_used
                 xml.signal_chain do
-                  dfp.signal_chain.machines.each do |device|
-                    xml.device do
-                      xml.device_type device.category
-                      xml.serial_number device.serial
-                      xml.manufacturer device.manufacturer
-                      xml.model device.model
+                  unless dfp.signal_chain.nil?
+                    dfp.signal_chain.machines.each do |device|
+                      xml.device do
+                        xml.device_type device.category
+                        xml.serial_number device.serial
+                        xml.manufacturer device.manufacturer
+                        xml.model device.model
+                      end
                     end
                   end
                 end
