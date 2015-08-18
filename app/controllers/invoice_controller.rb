@@ -61,7 +61,6 @@ class InvoiceController < ApplicationController
 					end
 				end
 			rescue => error
-				debugger
 				error.backtrace
 				flash.now[:warning] = "An unexpected error occurred while processing the invoice - <b>No records were marked as billed </b>".html_safe
 				@file = ""

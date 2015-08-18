@@ -5,12 +5,14 @@ $(document).ready(function() {
 		$('.date').datepicker();
 	});
 	$(function() {
-		$("[id^=signal_chain_select_]").change(
+		$("[id^=signal_chain_select]").change(
 			function() {
 				signal_chain_id = $(this).val();
-				table_id = $(this).parent().parent().parent().parent().attr("id")
+				table = $(this).parent().parent().parent().parent();
+				url = (signal_chain_id.length > 0 ? "../../signal_chains/ajax_show/"+signal_chain_id : "../../signal_chains/ajax_show/none");
+				alert(url);
 				$.ajax({
-					url: "../../signal_chains/ajax_show/"+signal_chain_id,
+					url: url,
 					async: false,
 					data: {},
 					type: "GET",
@@ -18,9 +20,7 @@ $(document).ready(function() {
 					success: function( text ) {
 						bad = $(".signal_chain_tr");
 						bad.remove();
-						parent = $("#"+table_id);
-						parent.append(text);
-
+						table.append(text);
 					},
 					error: function( xhr, status, errorThrown ) {
 						alert("Oops! Html status: "+status)
