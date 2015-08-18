@@ -27,10 +27,11 @@ class ReturnsController < ApplicationController
 
 	def physical_object_returned
 		po = PhysicalObject.find_by(mdpi_barcode: params[:mdpi_barcode])
+		container_bin = po.container_bin unless po.nil?
 
 		if po.nil?
 			flash[:warning] = "No Physical Object with barcode #{params[:mdpi_barcode]} was found."
-		elsif po.bin.nil? or po.bin != @bin
+		elsif container_bin.nil? || container_bin != @bin
 			flash[:warning] = "Physical Object with barcode <a href='#{physical_object_path(po.id)}' target='_blank'>#{po.mdpi_barcode}</a> was not originally shipped with this bin!".html_safe
 		elsif po.current_workflow_status.in? ['Unpacked', 'Returned to Unit']
 			flash[:notice] = "This physical object had already been returned.  No action taken."

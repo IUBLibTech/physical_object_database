@@ -443,6 +443,10 @@ assigned to a box."
     end
   end
 
+  def container_bin
+    self.box ? self.box.bin : self.bin
+  end
+
   private
   def physical_object_where_clause
     sql = " "
