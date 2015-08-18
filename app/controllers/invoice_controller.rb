@@ -54,10 +54,11 @@ class InvoiceController < ApplicationController
 						unless po.nil?
 							po.update_attributes!(billed: true, spread_sheet_filename: upload.original_filename, date_billed: time)
 						else
+						end
+						flash.now[:notice] = "All #{@total_pos} Physical Objects for #{upload.original_filename} have been marked as billed."
+						@file = ""
+						render 'index'
 					end
-					flash.now[:notice] = "All #{@total_pos} Physical Objects for #{upload.original_filename} have been marked as billed."
-					@file = ""
-					render 'index'
 				end
 			rescue => error
 				debugger
