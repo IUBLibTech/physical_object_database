@@ -1,5 +1,6 @@
 <div class="left">
-	<table id="digi_file_<%= f.object.id %>" class="digiprov">
+	<%# need to generate a unique id for use in the table and select %>
+	<table class="digiprov">
 	<%#= fields_for :digital_file_provenance do |f|%>
 		<% if @edit_mode %>
 		<tr>
@@ -18,7 +19,7 @@
 		<tr>
 			<th>Date Digitized</th>
 			<td>
-				<%= f.text_field :display_date_digitized, readonly: !@edit_mode, class: !@edit_mode ? "" : "date" %>
+				<%= f.text_field :display_date_digitized, readonly: !@edit_mode, class: "date" %>
 			</td>
 		</tr>
 		<tr>
@@ -43,14 +44,37 @@
 			<th>Signal Chain</th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.collection_select(:signal_chain_id, SignalChain.order('name'), :id, :name, {include_blank: true}, {disabled: !@edit_mode, id: "signal_chain_select_#{f.object.id}"}) %>
+					<%= f.collection_select(:signal_chain_id, SignalChain.order('name'), :id, :name, {include_blank: true}, {disabled: !@edit_mode, class: "signal_chain_select"}) %>
 				<% else %>
 					<%= f.object.signal_chain ? f.object.signal_chain.name : "Not assigned" %>
 				<% end %>
 			</td>
 		</tr>
+		<script type="text/javascript">
+			$(function() {
+				$(".signal_chain_select").change(
+					function() {
+						signal_chain_id = $(this).val();
+						table = $(this).parent().parent().parent().parent()
+						$.ajax({
+							url: "../../signal_chains/ajax_show/"+signal_chain_id,
+							async: false,
+							data: {},
+							type: "GET",
+							dataType : "text",
+							success: function( text ) {
+								bad = table.find(".signal_chain_tr");
+								bad.remove();
+								table.append(text);
+							},
+							error: function( xhr, status, errorThrown ) {
+								alert("Oops! Html status: "+status)
+							}
+						})
+					});
+			});
+		</script>
 		<% @signal_chain = f.object.signal_chain %>
 		<%= render 'signal_chains/ajax_show_signal_chain' %>
-	<%# end %>
 </table>
 </div>

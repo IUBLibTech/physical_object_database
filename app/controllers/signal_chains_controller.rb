@@ -100,7 +100,11 @@ class SignalChainsController < ApplicationController
   end
 
   def ajax_show
-    @signal_chain = SignalChain.find(params[:id])
+    # regex to make sure that the passed in value is an INTEGER (so it can be looked up) - if the select on the form is 
+    # left blank "No Select Value" will be in the params[:id] slot
+    if !!(params[:id] =~ /\A[-+]?[0-9]+\z/)
+      @signal_chain = SignalChain.where(id: params[:id]).first
+    end
     render(partial: 'ajax_show_signal_chain')
   end
 
