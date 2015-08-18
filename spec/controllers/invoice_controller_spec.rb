@@ -22,8 +22,9 @@ RSpec.describe InvoiceController, type: :controller do
 	end
 
 	it "catches bad mdpi barcode" do
-		post :submit, xls_file: fixture_file_upload("bad_memnon_test.xlsx")
-		expect(response).to render_template(:failed)
+		@bad_file = fixture_file_upload("bad_memnon_test.xlsx")
+		post :submit, xls_file: @bad_file
+		expect(response).to render_template(:not_found)
 	end
 
 end
