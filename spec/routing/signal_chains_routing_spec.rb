@@ -36,7 +36,7 @@ RSpec.describe SignalChainsController, type: :routing do
     end
 
     it "routes to #reorder" do
-      expect(:patch => "/signal_chains/1/reorder").to route_to("signal_chains#include", id: "1")
+      expect(:patch => "/signal_chains/1/reorder").to route_to("signal_chains#reorder", id: "1")
     end
 
   end

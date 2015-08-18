@@ -41,10 +41,17 @@ class InvoiceController < ApplicationController
 			FROM physical_objects, billable_physical_objects
 			WHERE physical_objects.mdpi_barcode = billable_physical_objects.mdpi_barcode AND physical_objects.billed = true"
 		)
-		
+		@not_found = BillablePhysicalObject.find_by_sql(
+			"SELECT billable_physical_objects.mdpi_barcode
+			FROM billable_physical_objects LEFT JOIN physical_objects ON billable_physical_objects.mdpi_barcode = physical_objects.mdpi_barcode
+			WHERE physical_objects.id IS NULL"
+		)
 		if @failed.size > 0
 			flash.now[:warning] = "Billing failed because #{@failed.size} of the #{@total_pos} Physical Objects have already been billed:"
 			render 'failed'
+		elsif @not_found.size > 0
+			flash.now[:warning] = "Billing failed because #{@not_found.size} of the #{@total_pos} MDPI barcodes submitted did not find matching Physical Objects:"
+			render 'not_found'
 		else
 			begin 
 				PhysicalObject.transaction do
