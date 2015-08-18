@@ -46,12 +46,12 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
                 xml.speed_used dfp.speed_used
                 xml.signal_chain do
                   unless dfp.signal_chain.nil?
-                    dfp.signal_chain.machines.each do |device|
+                    dfp.signal_chain.processing_steps.each do |device|
                       xml.device do
-                        xml.device_type device.category
-                        xml.serial_number device.serial
-                        xml.manufacturer device.manufacturer
-                        xml.model device.model
+                        xml.device_type device.machine.category
+                        xml.serial_number device.machine.serial
+                        xml.manufacturer device.machine.manufacturer
+                        xml.model device.machine.model
                       end
                     end
                   end
