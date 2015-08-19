@@ -1,0 +1,10 @@
+<% unless @signal_chain.nil? %>
+	<% @signal_chain.machines.each do |device| %>
+	<tr class="signal_chain_tr">
+		<th></th>
+		<td>
+			<%= device.full_name %>
+		</td>
+	</tr>
+	<% end %>
+<% end %>

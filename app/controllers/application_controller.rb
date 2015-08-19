@@ -103,8 +103,8 @@ class ApplicationController < ActionController::Base
     params.require(:digital_provenance).permit(
       :digitizing_entity, :date, :comments, :created_by, :cleaning_date, :cleaning_comment, 
       :baking, :repaired, :duration, digital_file_provenances_attributes: [
-        :id, :filename, :comment, :date_digitized, :display_date_digitized, :created_by, :player_serial_number, :player_manufacturer, :player_model,
-        :ad_serial_number, :ad_manufacturer, :ad_model, :extraction_workstation, :speed_used, :_destroy]
+        :id, :filename, :comment, :date_digitized, :display_date_digitized, :created_by,
+        :speed_used, :signal_chain_id, :_destroy]
     )
   end
 

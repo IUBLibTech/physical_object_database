@@ -6,8 +6,10 @@ describe ReturnsController do
   let(:batch) { FactoryGirl.create :batch, identifier: "Created Batch" }
   let(:created_batch) { FactoryGirl.create :batch, identifier: "Returned Batch" }
   let(:bin) { FactoryGirl.create :bin, batch: batch }
+  let(:other_bin) { FactoryGirl.create :bin, batch: batch, identifier: "other bin" }
   let(:box) { FactoryGirl.create :box, bin: bin }
-  let(:physical_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
   before(:each) do
     batch.current_workflow_status = "Returned"
@@ -152,139 +154,164 @@ describe ReturnsController do
   end
 
   describe "PATCH physical_object_returned (on member)" do
-    let(:patch_action) { patch :physical_object_returned, id: bin.id, mdpi_barcode: physical_object.mdpi_barcode, ephemera_returned: { ephemera_returned: 0 } }
-    context "physical object not found" do
-      before(:each) do
-        patch :physical_object_returned, id: bin.id, mdpi_barcode: '1234'
+    let(:patch_action) { patch :physical_object_returned, id: bin.id, mdpi_barcode: target_object.mdpi_barcode, ephemera_returned: { ephemera_returned: 0 } }
+    shared_examples "physical_object_returned behaviors" do
+      context "failure cases:" do
+        context "physical object not found" do
+          before(:each) do
+            patch :physical_object_returned, id: bin.id, mdpi_barcode: '1234'
+          end
+          it "flashes a 'not found' warning" do
+            expect(flash[:warning]).to match /No Physical Object.*was found/
+          end
+          it "redirects to return_bin action" do
+            expect(response).to redirect_to return_bin_return_path(bin.id)
+          end
+        end
+        context "physical object not associated to bin" do
+          before(:each) do
+            binned_object.bin = nil
+            binned_object.save
+            box.bin = nil
+            box.save
+	    target_object.reload
+	    expect(target_object.container_bin).to be_nil
+            patch_action
+          end
+          it "flashes a 'not originally shipped with this bin' warning" do
+            expect(flash[:warning]).to match /not originally shipped.*with this bin/
+          end
+          it "redirects to return_bin action" do
+            expect(response).to redirect_to return_bin_return_path(bin.id)
+          end
+        end
+        context "physical object associated to different bin" do
+          before(:each) do
+	    if target_object.bin
+              target_object.bin = other_bin
+              target_object.save
+	    elsif target_object.box
+	      box.bin = other_bin
+	      box.save
+	    end
+	    target_object.reload
+	    expect(target_object.container_bin).to eq other_bin
+            patch_action
+          end
+          it "flashes a 'not originally shipped with this bin' warning" do
+            expect(flash[:warning]).to match /not originally shipped.*with this bin/
+          end
+          it "redirects to return_bin action" do
+            expect(response).to redirect_to return_bin_return_path(bin.id)
+          end
+        end
       end
-      it "flashes a 'not found' warning" do
-        expect(flash[:warning]).to match /No Physical Object.*was found/
-      end
-      it "redirects to return_bin action" do
-        expect(response).to redirect_to return_bin_return_path(bin.id)
+      context "physical object found and associated to bin" do
+        context "already returned" do
+          before(:each) do
+	    target_object.current_workflow_status = "Unpacked"
+	    target_object.save
+	    patch_action
+          end
+          it "flashes an inaction notice" do
+            expect(flash[:notice]).to match /already.*returned/
+          end
+          it "redirects to return_bin action" do
+            expect(response).to redirect_to return_bin_return_path(bin.id)
+          end
+        end
+	context "not already returned" do
+          context "without ephemera" do
+            before(:each) do
+              target_object.has_ephemera = false
+              target_object.save
+              patch_action
+            end
+            it "assigns @bin" do
+              expect(assigns(:bin)).to eq bin
+            end
+            it "updates the workflow status" do
+              expect(target_object.current_workflow_status).not_to eq "Unpacked"
+              target_object.reload
+              expect(target_object.current_workflow_status).to eq "Unpacked"
+            end
+            it "sets ephemera_returned field to false" do
+              target_object.reload
+              expect(target_object.ephemera_returned).to be false
+            end
+            it "flashes a success message" do
+              expect(flash[:notice]).to match /Physical Object.*was successfully returned/
+            end
+            it "redirects to return_bin action" do
+              expect(response).to redirect_to return_bin_return_path(bin.id)
+            end
+          end
+	  context "with ephemera," do
+            before(:each) do
+              target_object.has_ephemera = true
+              target_object.save
+	    end
+            context "returned" do
+	      before(:each) do
+                patch :physical_object_returned, id: bin.id, mdpi_barcode: target_object.mdpi_barcode, ephemera_returned: { ephemera_returned: 1 }
+	      end
+              it "assigns @bin" do
+                expect(assigns(:bin)).to eq bin
+              end
+              it "updates the workflow status to Unpacked" do
+                target_object.reload
+                expect(target_object.current_workflow_status).to eq "Unpacked"
+              end
+              it "updates the ephemera returned field" do
+                target_object.reload
+                expect(target_object.ephemera_returned).to be true
+              end
+              it "flashes a success message" do
+                expect(flash[:notice]).to match /Physical Object.*was successfully returned/
+              end
+              it "flashes an 'ephemera returned' message" do
+                expect(flash[:notice]).to match /ephemera was also returned/
+              end
+              it "redirects to return_bin action" do
+                expect(response).to redirect_to return_bin_return_path(bin.id)
+              end
+            end
+            context "not returned" do
+              before(:each) do
+                patch_action
+              end
+              it "assigns @bin" do
+                expect(assigns(:bin)).to eq bin
+              end
+              it "updates the workflow status to Unpacked" do
+                target_object.reload
+                expect(target_object.current_workflow_status).to eq "Unpacked"
+              end
+              it "updates the ephemera returned field" do
+                target_object.reload
+                expect(target_object.ephemera_returned).to be false
+              end
+              it "flashes a success message" do
+                expect(flash[:notice]).to match /Physical Object.*was successfully returned/
+              end
+              it "flashes an 'ephemera NOT returned' message" do
+                expect(flash[:notice]).to match /ephemera was NOT returned/
+              end
+              it "redirects to return_bin action" do
+                expect(response).to redirect_to return_bin_return_path(bin.id)
+              end
+	    end
+          end
+	end
       end
     end
-    context "physical object not associated to bin" do
-      before(:each) do
-        bin.save
-        physical_object.bin = nil
-        physical_object.save
-        patch_action
-      end
-      it "flashes a 'not originally shipped with this bin' warning" do
-        expect(flash[:warning]).to match /not originally shipped.*with this bin/
-      end
-      it "redirects to return_bin action" do
-        expect(response).to redirect_to return_bin_return_path(bin.id)
-      end
+    context "on a binned object" do
+      let(:target_object) { binned_object }
+      include_examples "physical_object_returned behaviors"
     end
-    context "physical object associated to different bin" do
-      before(:each) do
-        bin.save
-        physical_object.bin = FactoryGirl.create :bin, identifier: "other bin"
-        physical_object.save
-        patch_action
-      end
-      it "flashes a 'not originally shipped with this bin' warning" do
-        expect(flash[:warning]).to match /not originally shipped.*with this bin/
-      end
-      it "redirects to return_bin action" do
-        expect(response).to redirect_to return_bin_return_path(bin.id)
-      end
-    end
-    context "physical object associated to bin" do
-      context "already returned" do
-        before(:each) do
-	  physical_object.current_workflow_status = "Unpacked"
-	  physical_object.save
-	  patch_action
-        end
-        it "flashes an inaction notice" do
-          expect(flash[:notice]).to match /already.*returned/
-        end
-        it "redirects to return_bin action" do
-          expect(response).to redirect_to return_bin_return_path(bin.id)
-        end
-      end
-      context "without ephemera" do
-        before(:each) do
-          physical_object.has_ephemera = false
-          physical_object.save
-          patch_action
-        end
-        it "assigns @bin" do
-          expect(assigns(:bin)).to eq bin
-        end
-        it "updates the workflow status" do
-          expect(physical_object.current_workflow_status).not_to eq "Unpacked"
-          physical_object.reload
-          expect(physical_object.current_workflow_status).to eq "Unpacked"
-        end
-        it "sets ephemera_returned field to false" do
-          physical_object.reload
-          expect(physical_object.ephemera_returned).to be false
-        end
-        it "flashes a success message" do
-          expect(flash[:notice]).to match /Physical Object.*was successfully returned/
-        end
-        it "redirects to return_bin action" do
-          expect(response).to redirect_to return_bin_return_path(bin.id)
-        end
-      end
-      context "with ephemera, returned" do
-        before(:each) do
-          physical_object.has_ephemera = true
-          physical_object.save
-          patch :physical_object_returned, id: bin.id, mdpi_barcode: physical_object.mdpi_barcode, ephemera_returned: { ephemera_returned: 1 }
-        end
-        it "assigns @bin" do
-          expect(assigns(:bin)).to eq bin
-        end
-        it "updates the workflow status to Unpacked" do
-          physical_object.reload
-          expect(physical_object.current_workflow_status).to eq "Unpacked"
-        end
-        it "updates the ephemera returned field" do
-          physical_object.reload
-          expect(physical_object.ephemera_returned).to be true
-        end
-        it "flashes a success message" do
-          expect(flash[:notice]).to match /Physical Object.*was successfully returned/
-        end
-        it "flashes an 'ephemera returned' message" do
-          expect(flash[:notice]).to match /ephemera was also returned/
-        end
-        it "redirects to return_bin action" do
-          expect(response).to redirect_to return_bin_return_path(bin.id)
-        end
-      end
-      context "with ephemera, not returned" do
-        before(:each) do
-          physical_object.has_ephemera = true
-          physical_object.save
-          patch_action
-        end
-        it "assigns @bin" do
-          expect(assigns(:bin)).to eq bin
-        end
-        it "updates the workflow status to Unpacked" do
-          physical_object.reload
-          expect(physical_object.current_workflow_status).to eq "Unpacked"
-        end
-        it "updates the ephemera returned field" do
-          physical_object.reload
-          expect(physical_object.ephemera_returned).to be false
-        end
-        it "flashes a success message" do
-          expect(flash[:notice]).to match /Physical Object.*was successfully returned/
-        end
-        it "flashes an 'ephemera NOT returned' message" do
-          expect(flash[:notice]).to match /ephemera was NOT returned/
-        end
-        it "redirects to return_bin action" do
-          expect(response).to redirect_to return_bin_return_path(bin.id)
-        end
-      end
+    context "on a boxed object" do
+      let(:target_object) { boxed_object }
+      include_examples "physical_object_returned behaviors"
     end
   end
 
@@ -372,8 +399,8 @@ describe ReturnsController do
       end
       context "all objects Unpacked" do
         before(:each) do
-          physical_object.current_workflow_status = "Unpacked"
-          physical_object.save
+          binned_object.current_workflow_status = "Unpacked"
+          binned_object.save
           patch_action
         end
         it "assigns @bin" do
@@ -390,7 +417,7 @@ describe ReturnsController do
       context "not all objects Unpacked" do
         context "remainder unprocessed" do
           before(:each) do
-            physical_object.save
+            binned_object.save
             patch_action
           end
           it "assigns @bin" do
@@ -405,7 +432,7 @@ describe ReturnsController do
         end
         context "remainder marked Missing (inactive)" do
           before(:each) do
-            FactoryGirl.create :condition_status, physical_object: physical_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id, active: false
+            FactoryGirl.create :condition_status, physical_object: binned_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id, active: false
             patch_action
           end
           it "assigns @bin" do
@@ -420,7 +447,7 @@ describe ReturnsController do
         end
         context "remainder marked Missing (active)" do
           before(:each) do
-            FactoryGirl.create :condition_status, physical_object: physical_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id
+            FactoryGirl.create :condition_status, physical_object: binned_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id
             patch_action
           end
           it "assigns @bin" do

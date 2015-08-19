@@ -1,0 +1,24 @@
+<table>
+  <tr class="header">
+    <th>Position</th>
+    <th>Category</th>
+    <th>Serial</th>
+    <th>Manufacturer</th>
+    <th>Model</th>
+    <th>Actions</th>
+  </tr>
+  <% count = 0 %>
+  <% @signal_chain.processing_steps.eager_load(:machine).each do |step| %>
+    <% count += 1 %>
+    <tr class=<%= count.odd? ? 'odd' : 'even'%>>
+          <td><%= step.position %></td>
+          <td><%= step.machine.category %></td>
+          <td><%= step.machine.serial %></td>
+          <td><%= step.machine.manufacturer %></td>
+          <td><%= step.machine.model %></td>
+          <td>
+        <%= link_to "Remove", step, method: :delete, data: { confirm: 'Are you sure you want to remove this step of the signal chain?' } %>
+      </td>
+    </tr>
+  <% end %>
+</table>

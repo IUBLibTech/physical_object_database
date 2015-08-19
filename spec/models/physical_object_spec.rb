@@ -5,6 +5,9 @@ describe PhysicalObject do
 
   let(:po) { FactoryGirl.create :physical_object, :cdr }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
+  let(:boxable_po) { FactoryGirl.build :physical_object, :boxable }
+  let(:binnable_po) { FactoryGirl.build :physical_object, :binnable }
+  let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:invalid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:picklist) { FactoryGirl.create :picklist }
   let(:box) { FactoryGirl.create :box }
@@ -344,6 +347,35 @@ describe "has required attributes:" do
   describe "provides virtual attributes:" do
     it "#carrier_stream_index" do
       expect(valid_po.carrier_stream_index).to eq valid_po.group_identifier + "_1_1"
+    end
+    describe "#container_bin" do
+      context "when boxed" do
+        before(:each) do
+	  box.bin = bin
+	  box.save
+	  boxable_po.box = box
+	end
+	it "returns the box's bin" do
+	  expect(boxable_po.container_bin).to eq bin
+	end
+      end
+      context "when binned" do
+        before(:each) do
+	  binnable_po.bin = bin
+	end
+	it "returns the bin" do
+	  expect(binnable_po.container_bin).to eq bin
+	end
+      end
+      context "when uncontained" do
+        before(:each) do
+	  valid_po.box = nil
+	  valid_po.bin = nil
+	end
+	it "returns nil" do
+	  expect(valid_po.container_bin).to be_nil
+	end
+      end
     end
     describe "#container_id" do
       it "returns nil if uncontained" do

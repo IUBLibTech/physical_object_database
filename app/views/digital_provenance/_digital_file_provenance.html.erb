@@ -1,10 +1,15 @@
 <div class="left">
+	<%# need to generate a unique id for use in the table and select %>
 	<table class="digiprov">
 	<%#= fields_for :digital_file_provenance do |f|%>
+		<% if @edit_mode %>
 		<tr>
 			<td></td>
-			<td><%= f.link_to_remove("Delete Digital File", data: {confirm: 'Are you sure you want to delete this Digital File? The file will be deleted when you submit the form.'}) %></td>
+			<td>
+				<%= f.link_to_remove("Delete Digital File", data: {confirm: 'Are you sure you want to delete this Digital File? The file will be deleted when you submit the form.'}) %>
+			</td>
 		</tr>
+		<% end %>
 		<tr>
 			<th>Filename</th>
 			<td>
@@ -14,7 +19,7 @@
 		<tr>
 			<th>Date Digitized</th>
 			<td>
-				<%= f.text_field :display_date_digitized, readonly: !@edit_mode, class: !@edit_mode ? "" : "date" %>
+				<%= f.text_field :display_date_digitized, readonly: !@edit_mode, class: "date" %>
 			</td>
 		</tr>
 		<tr>
@@ -30,58 +35,46 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Player Serial Number</th>
-			<td>
-				<%= f.text_field :player_serial_number %>
-			</td>
-		</tr>
-		<tr>
-			<th>Player Manufacturer</th>
-			<td>
-					<%= f.text_field :player_manufacturer %>
-			</td>
-		</tr>
-		<tr>
-			<th>Player Model</th>
-			<td>
-				<%= f.text_field :player_model %>
-			</td>
-		</tr>
-		<tr>
-			<th>AD Serial Number</th>
-			<td>
-				<%= f.text_field :ad_serial_number %>
-			</td>
-		</tr>
-		<tr>
-			<th>AD Manufacturer</th>
-			<td>
-				<%= f.text_field :ad_manufacturer %>
-			</td>
-		</tr>
-		<tr>
-			<th>AD Model</th>
-			<td>
-				<%= f.text_field :ad_model %>
-			</td>
-		</tr>
-		<tr>
-			<th>Extraction Workstation</th>
-			<td>
-				<%= f.text_field :extraction_workstation %>
-			</td>
-		</tr>
-		<tr>
 			<th>Speed Used</th>
 			<td>
 				<%= f.text_field :speed_used %>
 			</td>
 		</tr>
-	<%# end %>
+		<tr>
+			<th>Signal Chain</th>
+			<td>
+				<% if @edit_mode %>
+					<%= f.collection_select(:signal_chain_id, SignalChain.order('name'), :id, :name, {include_blank: true}, {disabled: !@edit_mode, class: "signal_chain_select"}) %>
+				<% else %>
+					<%= f.object.signal_chain ? f.object.signal_chain.name : "Not assigned" %>
+				<% end %>
+			</td>
+		</tr>
+		<script type="text/javascript">
+			$(function() {
+				$(".signal_chain_select").change(
+					function() {
+						signal_chain_id = $(this).val();
+						table = $(this).parent().parent().parent().parent()
+						$.ajax({
+							url: "../../signal_chains/ajax_show/"+signal_chain_id,
+							async: false,
+							data: {},
+							type: "GET",
+							dataType : "text",
+							success: function( text ) {
+								bad = table.find(".signal_chain_tr");
+								bad.remove();
+								table.append(text);
+							},
+							error: function( xhr, status, errorThrown ) {
+								alert("Oops! Html status: "+status)
+							}
+						})
+					});
+			});
+		</script>
+		<% @signal_chain = f.object.signal_chain %>
+		<%= render 'signal_chains/ajax_show_signal_chain' %>
 </table>
 </div>
-	<script type='text/javascript'>
-		$(function (){
-			$('.date').datepicker();
-		});
-	</script>

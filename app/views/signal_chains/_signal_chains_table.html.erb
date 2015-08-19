@@ -1,0 +1,18 @@
+<table>
+  <tr class="header">
+      <th>Name</th>
+    <th>Actions</th>
+  </tr>
+  <% count = 0 %>
+  <% @signal_chains.each do |signal_chain| %>
+    <% count += 1 %>
+    <tr class=<%= count.odd? ? 'odd' : 'even'%>>
+          <td><%= signal_chain.name %></td>
+          <td>
+        <%= link_to "Show", signal_chain %>
+        <%= link_to "Edit", edit_signal_chain_path(signal_chain) %>
+        <%= link_to "Delete", signal_chain, method: :delete, data: { confirm: 'Are you sure you want to delete this SignalChain?' } %>
+      </td>
+    </tr>
+  <% end %>
+</table>

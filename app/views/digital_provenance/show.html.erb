@@ -2,8 +2,14 @@
   <div class="contextMenuItem">
     <%= link_to("Edit", {:action => 'edit', :id => @physical_object.id}, :class => 'action edit') %>
   </div>
+    <div class="contextMenuItem">
+    <%= link_to("Signal Chains", signal_chains_path) %>
+  </div>
   <div class="contextMenuItem">
     <%= link_to("Physical Object Metadata", {controller: 'physical_objects', action: 'show', id: @physical_object.id}) %>
+  </div>
+  <div class="contextMenuItem">
+  	
   </div>
 <% end %>
 <h2>

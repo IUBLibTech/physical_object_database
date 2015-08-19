@@ -33,6 +33,8 @@ Pod::Application.routes.draw do
     resources :physical_objects, only: [:new]
   end
 
+  resources :machines
+
   resources :messages
 
   resources :physical_objects do
@@ -84,6 +86,8 @@ Pod::Application.routes.draw do
 
   end
 
+  resources :processing_steps, only: [:destroy]
+
   get 'responses/objects/:mdpi_barcode/metadata', to: 'responses#metadata', as: 'metadata_response'
   get 'responses/objects/:mdpi_barcode/metadata/full', to: 'responses#full_metadata', as: 'full_metadata_response'
   post 'responses/notify', to: 'responses#notify', as: 'notify_response' 
@@ -122,6 +126,12 @@ Pod::Application.routes.draw do
     post :advanced_search, on: :collection
     post :search_results, on: :collection
   end
+
+  resources :signal_chains do
+    patch :include, on: :member
+    patch :reorder, on: :member
+  end
+  get "signal_chains/ajax_show/:id", to: "signal_chains#ajax_show", as: 'signal_chain_ajax_show'
 
   resources :digital_provenance, only: [:show, :edit, :update]
 
