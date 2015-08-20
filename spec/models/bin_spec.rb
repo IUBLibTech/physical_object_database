@@ -58,6 +58,12 @@ describe Bin do
     it "has many physical objects" do
       expect(bin.physical_objects.size).to eq 0
     end
+    it "updates physical objects workflow status when destroyed" do
+      expect(binned_object.workflow_status).to eq "Binned"
+      bin.destroy
+      binned_object.reload
+      expect(binned_object.workflow_status).not_to eq "Binned"
+    end
     it "has many boxed_physical_objects" do
       expect(bin.boxed_physical_objects.size).to eq 0
     end

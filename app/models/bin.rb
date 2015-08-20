@@ -11,6 +11,7 @@ class Bin < ActiveRecord::Base
         has_many :workflow_statuses, :dependent => :destroy
         after_initialize :assign_default_workflow_status
 	before_save :assign_inferred_workflow_status
+	before_destroy :remove_physical_objects
         include WorkflowStatusModule
         extend WorkflowStatusQueryModule
         has_many :condition_statuses, :dependent => :destroy
@@ -81,6 +82,13 @@ class Bin < ActiveRecord::Base
   def media_format
     format_object = first_object
     format_object ? format_object.format : nil
+  end
+
+  def remove_physical_objects
+    self.physical_objects.each do |po|
+      po.bin = nil
+      po.save
+    end
   end
 
 end
