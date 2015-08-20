@@ -1,5 +1,5 @@
 class Bin < ActiveRecord::Base
-	default_scope { order(:workflow_index, :identifier) }
+	default_scope { order(:identifier) }
         
         belongs_to :batch
         belongs_to :picklist_specification
@@ -24,7 +24,7 @@ class Bin < ActiveRecord::Base
         validates :workflow_status, presence: true
 
         scope :available_bins, -> {
-                where(['batch_id = 0 OR batch_id is null'])
+                where(batch_id: [0, nil])
         }
 
         def display_workflow_status
