@@ -40,8 +40,16 @@ describe Batch do
     it "provides a physical object count" do
       expect(batch.physical_objects_count).to eq 0 
     end
-    it "has many bins" do
-      expect(batch.bins.size).to eq 0
+    describe "bins" do
+      it "has many bins" do
+        expect(batch.bins.size).to eq 0
+      end
+      it "resets bins workflow status to Sealed if destroyed" do
+        expect(bin.workflow_status).to eq "Batched"
+	batch.destroy
+	bin.reload
+	expect(bin.workflow_status).to eq "Sealed"
+      end
     end
     it "can have workflow statuses" do
       expect(batch.workflow_statuses.size).to be >= 0

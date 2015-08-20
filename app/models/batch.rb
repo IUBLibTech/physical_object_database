@@ -8,6 +8,7 @@ class Batch < ActiveRecord::Base
 
 	#FIXME: resolve issue with FactoryGirl and after_initialize callbacks
 	after_initialize :assign_default_workflow_status, if: :new_record?
+	before_destroy :remove_bins
 
 	validates :identifier, presence: true, uniqueness: true
 	validates :workflow_status, presence: true
@@ -37,4 +38,10 @@ class Batch < ActiveRecord::Base
 	  "This batch cannot have additional bins assigned to it.<br/>To enable bin assignment, the workflow status must be set to \"Created\".".html_safe
 	end
 
+	def remove_bins
+	  self.bins.all.each do |bin|
+	    bin.batch = nil
+	    bin.save
+	  end
+	end
 end

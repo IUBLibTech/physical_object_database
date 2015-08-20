@@ -1,5 +1,7 @@
 describe SignalChain do
   let(:signal_chain) { FactoryGirl.create :signal_chain }
+  let(:machine) { FactoryGirl.create :machine }
+  let(:processing_step) { FactoryGirl.create :processing_step, signal_chain: signal_chain, machine: machine }
   let(:valid_signal_chain) { FactoryGirl.build :signal_chain }
   let(:invalid_signal_chain) { FactoryGirl.build :signal_chain, :invalid }
 
@@ -15,6 +17,10 @@ describe SignalChain do
   describe "has relationships:" do
     specify "processing steps" do
       expect(valid_signal_chain.processing_steps.size).to be > -1
+    end
+    specify "processing steps destroyed if signal chain is destroyed" do
+      processing_step
+      expect { signal_chain.destroy }.to change(ProcessingStep, :count).by(-1)
     end
     specify "machines" do
       expect(valid_signal_chain.machines.size).to be > -1
