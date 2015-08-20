@@ -6,6 +6,7 @@ describe Box do
   let(:invalid_box) { FactoryGirl.build :box, :invalid }
   let(:po) { FactoryGirl.create :physical_object, :cdr, :barcoded, box: box}
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
+  let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
   describe "FactoryGirl" do
     it "gets a valid object by default" do
@@ -48,6 +49,12 @@ describe Box do
   	  po # a reference to the physcical object is necessary to "load" it into the rspec framework
   	  expect(box.physical_objects).not_to be_empty
   	  expect(box.physical_objects_count).to eq 1   	
+    end
+    it "updates physical objects workflow status when destroyed" do
+      expect(boxed_object.workflow_status).to eq "Boxed"
+      box.destroy
+      boxed_object.reload
+      expect(boxed_object.workflow_status).not_to eq "Boxed"
     end
     it "can belong to a bin if barcode is set (which it must be to be valid)" do
   	  valid_box.bin = bin
