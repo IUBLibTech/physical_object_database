@@ -361,7 +361,7 @@ class PhysicalObjectsController < ApplicationController
       if po.current_workflow_status.in? ['Unpacked', 'Returned to Unit']
         has_it = 'returned'
       else
-        has_it = po.has_ephemera
+        has_it = po.has_ephemera?
       end
     else
       has_it = "unknown physical Object"

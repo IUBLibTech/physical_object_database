@@ -857,8 +857,14 @@ describe PhysicalObjectsController do
       post_has_ephemera
       expect(response.body).to eq "true"
     end
-    it "returns 'false' when ephemera not present" do
+    it "returns 'false' when ephemera not present (false)" do
       barcoded_object.has_ephemera = false
+      barcoded_object.save!
+      post_has_ephemera
+      expect(response.body).to eq "false"
+    end
+    it "returns 'false' when ephemera not present (nil)" do
+      barcoded_object.has_ephemera = nil
       barcoded_object.save!
       post_has_ephemera
       expect(response.body).to eq "false"

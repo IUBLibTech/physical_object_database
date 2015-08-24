@@ -181,9 +181,9 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def file_bext
-    file_iarl + " " +
-    (collection_identifier.nil? ? "" : collection_identifier + ". ") +
-    (call_number.nil? ? "" : call_number + ". ") +
+    (file_iarl.blank? ? "" : file_iarl + " ") +
+    (collection_identifier.blank? ? "" : collection_identifier + ". ") +
+    (call_number.blank? ? "" : call_number + ". ") +
     "File use: "
   end
 
