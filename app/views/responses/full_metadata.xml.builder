@@ -4,7 +4,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
   if @success
     xml.success true
     xml.data do
-      xml.object do
+      xml.object("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
         xml.basics do
           xml.format @physical_object.format
           xml.files @physical_object.technical_metadatum.master_copies
@@ -27,20 +27,38 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
         end
         xml << @physical_object.to_xml(skip_instruct: true, skip_types: true, dasherize: false, root: :details, include: [:workflow_statuses, :notes, :condition_statuses]).gsub(/^/, '      ').gsub('nil="true"', 'xsi:nil="true"')
         xml << @tm.to_xml(format: @physical_object.format, skip_instruct: true, skip_types: true, dasherize: false, root: :technical_metadata).gsub(/^/, '      ')
-        
         xml.digital_provenance do
-          xml.digitizing_entity @physical_object.digital_provenance.digitizing_entity
-          xml.comments @physical_object.digital_provenance.comments
-          xml.cleaning_date @physical_object.digital_provenance.cleaning_date
-          xml.baking @physical_object.digital_provenance.baking
-          xml.repaired @physical_object.digital_provenance.repaired
-          xml.cleaning_comment @physical_object.digital_provenance.cleaning_comment
-          xml.digitization_time @physical_object.digital_provenance.duration
+          dp = @physical_object.digital_provenance
+          dp.attributes.each do |k,v|
+            if v.nil?
+              dp.send((k.to_s + "=").to_sym, "")
+              dp.send((k.to_s + "=").to_sym, false) if dp.send(k).nil?
+            end
+          end
+          xml.digitizing_entity dp.digitizing_entity
+          xml.comments dp.comments
+          if dp.cleaning_date
+            xml.cleaning_date dp.cleaning_date.to_s.sub(" ", "T").sub(" ","").sub("0400", "04:00")
+          else
+            xml.cleaning_date("xsi:nil" => "true")
+          end
+          if dp.baking
+            xml.baking dp.baking.to_s.sub(" ", "T").sub(" ","").sub("0400", "04:00")
+          else
+            xml.baking("xsi:nil" => "true")
+          end
+          xml.repaired dp.repaired
+          xml.cleaning_comment dp.cleaning_comment
+          xml.digitization_time dp.duration
           xml.digital_files do
-            @physical_object.digital_provenance.digital_file_provenances.each do |dfp|
+            dp.digital_file_provenances.each do |dfp|
               xml.digital_file_provenance do
                 xml.filename dfp.filename
-                xml.date_digitized dfp.date_digitized
+                if dfp.date_digitized
+                  xml.date_digitized dfp.date_digitized.to_s.sub(" ", "T").sub(" ","").sub("0400", "04:00")
+                else
+                  xml.date_digitized("xsi:nil" => "true")
+                end
                 xml.comment dfp.comment
                 xml.created_by dfp.created_by
                 xml.speed_used dfp.speed_used
