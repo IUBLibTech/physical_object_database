@@ -10,6 +10,7 @@ class QualityControlController < ApplicationController
 	end
 
 	def staging_index
+		
 		render "staging"
 	end
 
@@ -37,17 +38,18 @@ class QualityControlController < ApplicationController
 	end
 
 	def set_staging
+		now = Time.now
 		if params[:date]
-			begin
-				date = DateTime.strptime(params[:date], "%m/%d/%Y")
-			rescue
-				flash[:warning] = "Invalid date - Please select from the Calendar or use mm/dd/yyyy"
-				date = nil
-			end
+			@date = params[:date].blank? ? Time.new(now.year, now.month, now.day) : DateTime.strptime(params[:date], "%m/%d/%Y")
+		else
+			@date = Time.new(now.year, now.month, now.day)
 		end
-		@unstaged = PhysicalObject.unstaged_by_date(date).eager_load(:digital_provenance).order(:digital_start)
-		@staging_requested = PhysicalObject.staging_requested.eager_load(:digital_provenance)
-		@staged = PhysicalObject.staged.eager_load(:digital_provenance).order(:updated_at)
+
+		formats = PhysicalObject.unstaged_by_date_formats(@date)
+		@format_to_physical_objects = ActiveSupport::OrderedHash.new
+		formats.each do |format|
+			@format_to_physical_objects[format] = PhysicalObject.unstaged_by_date_by_format(@date, format)
+		end
 	end
 
 

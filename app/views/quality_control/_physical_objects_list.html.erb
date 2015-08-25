@@ -23,7 +23,7 @@
 				<% if choice_header =='Choice' %>
 					<%= render "decision_form", p: p %>
 				<% elsif choice_header=='Stage' or choice_header == 'Unstage' %>
-					<%= render "staging_form", p: p %>
+					<%= render "staging_form", p: p, checked: !(i >= (physical_objects.size * 0.1).floor) %>
 				<% end %>
 			</td>
 		</tr>
