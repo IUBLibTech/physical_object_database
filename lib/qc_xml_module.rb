@@ -30,13 +30,14 @@ module QcXmlModule
       df.filename = part.css("Files File").first.css("FileName").first.content
       df.comment = part.css("Ingest Comments").first.content
       df.created_by = part.css("Ingest Created_by").first.content
-      df.player_serial_number = part.css("Ingest Player_serial_number").first.content
-      df.player_manufacturer = part.css("Ingest Player_manufacturer").first.content
-      df.player_model = part.css("Ingest Player_model").first.content
-      df.ad_serial_number = part.css("Ingest AD_serial_number").first.content
-      df.ad_manufacturer = part.css("Ingest AD_manufacturer").first.content
-      df.ad_model = part.css("Ingest AD_model").first.content
-      df.extraction_workstation = part.css("Ingest Extraction_workstation").first.content
+      # FIXME: commented out to get qc pushing working
+      # df.player_serial_number = part.css("Ingest Player_serial_number").first.content
+      # df.player_manufacturer = part.css("Ingest Player_manufacturer").first.content
+      # df.player_model = part.css("Ingest Player_model").first.content
+      # df.ad_serial_number = part.css("Ingest AD_serial_number").first.content
+      # df.ad_manufacturer = part.css("Ingest AD_manufacturer").first.content
+      # df.ad_model = part.css("Ingest AD_model").first.content
+      # df.extraction_workstation = part.css("Ingest Extraction_workstation").first.content
       df.speed_used = part.css("Ingest Speed_used").first.content
       df.save
       checked = yes_no(part.css("ManualCheck").first.content)
