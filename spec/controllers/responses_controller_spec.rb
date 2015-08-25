@@ -373,14 +373,6 @@ describe ResponsesController do
       expect(po_requested.digital_provenance.digital_file_provenances.size).to eq 1
       expect(po_requested.digital_provenance.digital_file_provenances.first.filename).to eq "MDPI_40000000089666_01_pres.wav"
       expect(po_requested.digital_provenance.digital_file_provenances.first.created_by).to eq "kgweinbe"
-      expect(po_requested.digital_provenance.digital_file_provenances.first.player_serial_number).to eq "12553"
-
-      expect(po_requested.digital_provenance.digital_file_provenances.first.player_manufacturer).to eq "Studer"
-      expect(po_requested.digital_provenance.digital_file_provenances.first.player_model).to eq "A807MK2"
-      expect(po_requested.digital_provenance.digital_file_provenances.first.ad_serial_number).to eq ""
-      expect(po_requested.digital_provenance.digital_file_provenances.first.ad_manufacturer).to eq "Noa Audio Solutions"
-      expect(po_requested.digital_provenance.digital_file_provenances.first.ad_model).to eq "N6191"
-      expect(po_requested.digital_provenance.digital_file_provenances.first.extraction_workstation).to eq "NoaRec-01"
       expect(po_requested.digital_provenance.digital_file_provenances.first.speed_used).to eq "7.5 ips"
     end
 
