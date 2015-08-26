@@ -97,17 +97,32 @@ class PhysicalObject < ActiveRecord::Base
     po.physical_object_query(false)
   }
 
-  scope :unstaged_by_date, lambda { |date|
-    date_sql = date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
+  scope :unstaged_by_date, lambda { |date| 
     PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
       ON digital_statuses.physical_object_id = ds2.physical_object_id
       AND digital_statuses.state = ds2.state
-      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staged: false, staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(date_sql)
+      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date))
 
   }
+
+  scope :unstaged_by_date_formats, lambda { |date|
+    PhysicalObject.uniq.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
+      ON digital_statuses.physical_object_id = ds2.physical_object_id
+      AND digital_statuses.state = ds2.state
+      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).pluck(:format)
+  }
+
+  scope :unstaged_by_date_by_format, lambda { |date, format| 
+    PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
+      ON digital_statuses.physical_object_id = ds2.physical_object_id
+      AND digital_statuses.state = ds2.state
+      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, format: format, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).eager_load(:digital_provenance).order("RAND()")
+  }
+
   scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
   scope :staged, lambda { where(staged: true) }
 
+  
 
   attr_accessor :generation_values
   def generation_values
@@ -445,6 +460,10 @@ assigned to a box."
 
   def container_bin
     self.box ? self.box.bin : self.bin
+  end
+
+  def self.datesql(date)
+    date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
   end
 
   private

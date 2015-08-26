@@ -18,7 +18,7 @@ describe User do
 
   describe "should be seeded with data" do
     specify "18 values" do
-      expect(User.all.size).to eq 18
+      expect(User.all.size).to be >= 18
     end
   end
 

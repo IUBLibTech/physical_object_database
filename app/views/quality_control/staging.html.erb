@@ -10,26 +10,14 @@
 	});
 </script>
 <div >
-	<h2>Unstaged Physical Objects: <%= @unstaged.size %></h2>
-	<% if @unstaged.size > 0 %>
-		<%= form_tag quality_control_staging_post_path_path do %>
-		<%= submit_tag "Stage Selected Objects" %>
-		<%= render 'physical_objects_list', physical_objects: @unstaged, choice_header: "Stage" %>	
-		<% end %>
+	<h2>Unstaged Physical Objects for <%= @date.strftime("%m/%d/%Y") %> </h2>	
+	<%= form_tag quality_control_staging_post_path_path do %>
+	<%= submit_tag "Stage Selected Objects" %>
+	<% @format_to_physical_objects.keys.each do |key| %>
+		<h2><%= key %> [<%= @format_to_physical_objects[key].size %> items]</h2>
+		<%= render 'physical_objects_list', physical_objects: @format_to_physical_objects[key], choice_header: "Stage" %>	
 	<% end %>
+	<% end %>
+
 </div>
 <br>
-<div>
-	<h2>Staging Requested Physical Objects: <%= @staging_requested.size %></h2>
-	<% if @staging_requested.size > 0 %>
-		<%= form_tag quality_control_staging_post_path_path do %>
-		<%= submit_tag "Unstage Selected Objects" %>
-		<%= render 'physical_objects_list', physical_objects: @staging_requested , choice_header: "Unstage" %>
-		<% end %>
-	<% end %>
-</div>
-<br>
-<div >
-	<h2>Staged Physical Objects: <%= @staged.size %></h2>
-	<%= render 'physical_objects_list', physical_objects: @staged , choice_header: "Unstage" %>	
-</div>
