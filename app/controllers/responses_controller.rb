@@ -197,25 +197,4 @@ class ResponsesController < ActionController::Base
       end
     end
 
-    # checks to see if the passed node values is either "Yes or No"
-    def yes_no?(node_val)
-      node_val == "Yes" or node_val == "No"
-    end
-
-    # returns a boolean based on "Yes"/"No' values passed, or nil if a non-yes/no value is passed
-    def yes_no(val)
-      if yes_no?(val)
-        val == "Yes" ? true : false
-      else
-        return nil
-      end
-    end
-
-    def date_parse(val)
-      unless val.nil? or val.length == 0
-        val.to_datetime
-      else
-        nil
-      end
-    end
 end
