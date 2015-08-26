@@ -9,14 +9,14 @@ module QcXmlModule
     # parse the DigitalProvenance items first
     dp = po.digital_provenance
     dp.xml = xml
-    if yes_no?(doc.at_css("IU Carrier Repaired").content)
+    if doc.at_css("IU Carrier Repaired") && yes_no?(doc.at_css("IU Carrier Repaired").content)
       dp.repaired = yes_no(doc.at_css("IU Carrier Repaired").content)
     else
       return false
     end
-    dp.comments = doc.at_css("IU Carrier Preview Comments").content
-    dp.cleaning_date = date_parse(doc.at_css("IU Carrier Cleaning Date").content)
-    dp.baking = date_parse(doc.at_css("IU Carrier Baking Date").content)
+    dp.comments = comments(doc)
+    dp.cleaning_date = cleaning_date(doc)
+    dp.baking = baking_date(doc)
     dp.save
 
     # parse technical metadata values next
@@ -40,7 +40,7 @@ module QcXmlModule
       # df.extraction_workstation = part.css("Ingest Extraction_workstation").first.content
       # df.speed_used = part.css("Ingest Speed_used").first.content
       # df.save
-      checked = yes_no(part.css("ManualCheck").first.content)
+      checked = yes_no(part.css("ManualCheck").first.content) if part.css("ManualCheck").first
       po.memnon_qc_completed ||= checked
     end
     dp.save
@@ -66,15 +66,27 @@ module QcXmlModule
   end
 
   def comments(doc)
-    doc.at_css("IU Carrier Preview Comments").content
+    if doc.at_css("IU Carrier Preview Comments")
+      doc.at_css("IU Carrier Preview Comments").content
+    else
+      ""
+    end
   end
 
   def cleaning_date(doc)
-    date_parse(doc.at_css("IU Carrier Cleaning Date").content)
+    if doc.at_css("IU Carrier Cleaning Date")
+      date_parse(doc.at_css("IU Carrier Cleaning Date").content)
+    else
+      nil
+    end
   end
 
   def baking_date(doc)
-    date_parse(doc.at_css("IU Carrier Baking Date").content)
+    if doc.at_css("IU Carrier Baking Date")
+      date_parse(doc.at_css("IU Carrier Baking Date").content)
+    else
+      nil
+    end
   end
 
   def repaired(doc)

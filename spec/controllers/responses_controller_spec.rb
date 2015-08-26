@@ -294,67 +294,86 @@ describe ResponsesController do
   # FIXME: PENDING rewrite
   describe "#push_memnon_qc" do
     let(:memnon_xml) {
-      "<IU xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
-      <Carrier type=\"OpenReel\">
-        <Identifier>12079</Identifier>
-        <Barcode>#{po_requested.mdpi_barcode}</Barcode>
-        <Configuration>
-          <Track>Half track</Track>
-          <SoundField>Stereo</SoundField>
-          <Speed>7.5 ips</Speed>
-        </Configuration>
-        <Brand>Scotch 208</Brand>
-        <Thickness>1.5</Thickness>
-        <DirectionsRecorded>1</DirectionsRecorded>
-        <PhysicalCondition>
-          <Damage>None</Damage>
-          <PreservationProblem />
-        </PhysicalCondition>
-        <Repaired>No</Repaired>
-        <Preview>
-          <Comments>Some Random Comments</Comments>
-        </Preview>
-        <Cleaning>
-          <Date>2015-02-02 22:05:22</Date>
-        </Cleaning>
-        <Baking>
-          <Date>2015-02-03 22:05:22</Date>
-        </Baking>
-        <Parts>
-          <DigitizingEntity>Memnon Archiving Services Inc</DigitizingEntity>
-          <Part Side=\"1\">
-            <Ingest>
-              <Date>2015-06-02</Date>
-              <Comments />
-              <Created_by>kgweinbe</Created_by>
-              <Player_serial_number>12553</Player_serial_number>
-              <Player_manufacturer>Studer</Player_manufacturer>
-              <Player_model>A807MK2</Player_model>
-              <AD_serial_number />
-              <AD_manufacturer>Noa Audio Solutions</AD_manufacturer>
-              <AD_model>N6191</AD_model>
-              <Extraction_workstation>NoaRec-01</Extraction_workstation>
-              <Speed_used>7.5 ips</Speed_used>
-            </Ingest>
-            <ManualCheck>Yes</ManualCheck>
-            <Files>
-              <File>
-                <FileName>MDPI_40000000089666_01_pres.wav</FileName>
-                <CheckSum>5A84DE3449226CF23FF3807D3B567E21</CheckSum>
-              </File>
-              <File>
-                <FileName>MDPI_40000000089666_01_prod.wav</FileName>
-                <CheckSum>71D5785DD374F082D7203DB459579949</CheckSum>
-              </File>
-              <File>
-                <FileName>MDPI_40000000089666_01_access.mp4</FileName>
-                <CheckSum>27978E7AEF4EA41FD8E8F7A6F61E507E</CheckSum>
-              </File>
-            </Files>
-          </Part>
-        </Parts>
-      </Carrier>
-    </IU>"
+      '<?xml version="1.0" encoding="utf-8"?>
+<IU xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Carrier xsi:type="VinylsCarrier" type="Vinyls">
+    <Identifier>EHRET LP-S ZAe.286</Identifier>
+    <Barcode>' + po_requested.mdpi_barcode.to_s + '</Barcode>
+    <PhysicalCondition>
+      <Damage />
+      <PreservationProblem />
+    </PhysicalCondition>
+    <Parts>
+      <DigitizingEntity>Memnon Archiving Services Inc</DigitizingEntity>
+      <Part Side="1">
+        <Ingest xsi:type="VinylsIngest">
+          <Date>2015-08-12</Date>
+          <Comments>Signal - Very large number of clicks;</Comments>
+          <Created_by>chmalex</Created_by>
+          <Player_serial_number>GE2JY001246</Player_serial_number>
+          <Player_manufacturer>Technics</Player_manufacturer>
+          <Player_model>SL-1210 MKII</Player_model>
+          <Extraction_workstation>BL-UITS-DCDT027</Extraction_workstation>
+          <AD_serial_number>01504-0906-025</AD_serial_number>
+          <AD_manufacturer>Mytek</AD_manufacturer>
+          <AD_model>8X192 ADDA</AD_model>
+          <Preamp_serial_number>MD123058</Preamp_serial_number>
+          <Preamp_manufacturer>Vad Lyd</Preamp_manufacturer>
+          <Preamp_model>MD12 MK3</Preamp_model>
+          <Speed_used>33.3 rpm</Speed_used>
+        </Ingest>
+        <ManualCheck>Yes</ManualCheck>
+        <QcComment>Significant clicks due to scratch; Missing material (00:50-02:52)</QcComment>
+        <Files>
+          <File>
+            <FileName>MDPI_40000000527434_01_pres.wav</FileName>
+            <CheckSum>31C7502AE276EDEB30E0A492233BF54F</CheckSum>
+          </File>
+          <File>
+            <FileName>MDPI_40000000527434_01_prod.wav</FileName>
+            <CheckSum>F31C44FCFB29541CA874CAD345C6C32E</CheckSum>
+          </File>
+          <File>
+            <FileName>MDPI_40000000527434_01_access.mp4</FileName>
+            <CheckSum>B01FEC101B4B4283F99A7B9558834845</CheckSum>
+          </File>
+        </Files>
+      </Part>
+      <Part Side="2">
+        <Ingest xsi:type="VinylsIngest">
+          <Date>2015-08-11</Date>
+          <Comments>Disc - Physical defect disabling (continuous) playback;Disc - Stylus jump;</Comments>
+          <Created_by>chmalex</Created_by>
+          <Player_serial_number>GE2JY001246</Player_serial_number>
+          <Player_manufacturer>Technics</Player_manufacturer>
+          <Player_model>SL-1210 MKII</Player_model>
+          <Extraction_workstation>BL-UITS-DCDT027</Extraction_workstation>
+          <AD_serial_number>01504-0906-025</AD_serial_number>
+          <AD_manufacturer>Mytek</AD_manufacturer>
+          <AD_model>8X192 ADDA</AD_model>
+          <Preamp_serial_number>MD123058</Preamp_serial_number>
+          <Preamp_manufacturer>Vad Lyd</Preamp_manufacturer>
+          <Preamp_model>MD12 MK3</Preamp_model>
+          <Speed_used>33.3 rpm</Speed_used>
+        </Ingest>
+        <ManualCheck>Yes</ManualCheck>
+        <QcComment />
+        <Files />
+      </Part>
+    </Parts>
+    <Configuration xsi:type="ConfigurationVinyls">
+      <Speed>33.3 rpm</Speed>
+      <RecordingType>Lateral</RecordingType>
+    </Configuration>
+    <Cleaning>
+      <Date>2015-08-11</Date>
+      <Comment />
+    </Cleaning>
+    <Preview>
+      <Comments />
+    </Preview>
+  </Carrier>
+</IU>'
     }
     before(:each) do
       po_requested.memnon_qc_completed = false
