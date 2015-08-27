@@ -1,4 +1,10 @@
 <div id="advanced_search_div">
-	<h2>Search</h2>
-	<%= render(partial: "physical_objects/physical_objects_table")	%>
+  <h2>Physical Objects: <%= @physical_objects.size %></h2>
+  <%= render(partial: "physical_objects/physical_objects_table") %>
+  <% if params[:po_search] == "false" %>
+    <h2>Bins: <%= @bins.size %></h2>
+    <%= render(partial: "bins/bins_table") %>
+    <h2>Boxes: <%= @boxes.size %></h2>
+    <%= render(partial: "boxes/boxes_table") %>
+  <% end %>
 </div>

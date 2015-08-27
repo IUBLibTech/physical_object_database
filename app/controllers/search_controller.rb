@@ -1,10 +1,14 @@
 class SearchController < ApplicationController
   def search_results
     term = params[:identifier]
-    @physical_objects = PhysicalObject.search_by_barcode_title_call_number(term)
-    flash[:notice] = @physical_objects.size == 0 ? "No results for barcode #{term}" : "Search Results for <i>#{term}</i>".html_safe
-    if @physical_objects.nil?
-      redirect_to(action: 'index')
+    limit = 1000
+    @physical_objects = PhysicalObject.search_by_barcode_title_call_number(term).limit(limit)
+    if params[:po_search] == "false"
+      @bins = Bin.where("mdpi_barcode LIKE ?", "%#{term}%").limit(limit)
+      @boxes = Box.where("mdpi_barcode LIKE ?", "%#{term}%").limit(limit)
+      flash.now[:notice] = "Search results:"
+    else
+      flash.now[:notice] = @physical_objects.size == 0 ? "No results for search term: #{term}" : "Search Results for <i>#{term}</i>".html_safe
     end
   end
 
