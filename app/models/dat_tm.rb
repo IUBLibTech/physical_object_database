@@ -33,4 +33,8 @@ class DatTm < ActiveRecord::Base
 
 	# master_copies default of 1
 
+	def damage
+	  return ""
+	end
+
 end

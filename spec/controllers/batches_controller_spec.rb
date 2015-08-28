@@ -5,6 +5,9 @@ describe BatchesController do
   before(:each) { sign_in }
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin) }
+  let(:batched_bin) { FactoryGirl.create(:bin, batch: batch) }
+  let(:binned_box) { FactoryGirl.create(:box, bin: batched_bin) }
+  let(:po_dat) { FactoryGirl.create(:physical_object, :barcoded, :dat, box: binned_box) }
   let(:valid_batch) { FactoryGirl.build(:batch) }
   let(:invalid_batch) { FactoryGirl.build(:invalid_batch) }
 
@@ -22,14 +25,24 @@ describe BatchesController do
   end
 
   describe "GET show" do
-    before(:each) { get :show, id: batch.id }
-
-    it "assigns the requested object to @batch" do
-      expect(assigns(:batch)).to eq batch
+    before(:each) { po_dat }
+    context "in HTML format" do
+      before(:each) { get :show, id: batch.id }
+      it "assigns the requested object to @batch" do
+        expect(assigns(:batch)).to eq batch
+      end
+      it "renders the :show template" do
+        expect(response).to render_template(:show)
+      end
     end
-      
-    it "renders the :show template" do
-      expect(response).to render_template(:show)
+    context "in XLS format" do
+      before(:each) { get :show, id: "batch_#{batch.id}.xls", format: "xls" }
+      it "assigns the requested object to @batch" do
+        expect(assigns(:batch)).to eq batch
+      end
+      it "renders the :show template" do
+        expect(response).to render_template(:show)
+      end
     end
   end
 

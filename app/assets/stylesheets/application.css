@@ -205,6 +205,9 @@ tr.even {
   width: 790px;
  }
 
+.half {
+  width: 48%;
+}
 
 .dialog {
   display: none

@@ -96,6 +96,11 @@ class PhysicalObjectsController < ApplicationController
     @action = "show"
     @edit_mode = false;
     @display_assigned = true
+    if request.referer.to_s.include? "quality_control"
+      redirect_to digital_provenance_path(params[:id])
+    else
+      render 'show'
+    end
   end
 
   def edit

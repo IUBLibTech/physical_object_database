@@ -23,7 +23,8 @@
 				<% if choice_header =='Choice' %>
 					<%= render "decision_form", p: p %>
 				<% elsif choice_header=='Stage' or choice_header == 'Unstage' %>
-					<%= render "staging_form", p: p, checked: !(i >= (physical_objects.size * 0.1).floor) %>
+					<%# convoluted way of choosing at least 1 item in the checked: bit... brain still not wrapped around ruby%>
+					<%= render "staging_form", p: p, checked: !(i >= Array.new([1,(physical_objects.size * 0.1).round]).max) %>
 				<% end %>
 			</td>
 		</tr>
