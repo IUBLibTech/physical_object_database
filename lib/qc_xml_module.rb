@@ -7,8 +7,12 @@ module QcXmlModule
     # other methods may rely on namespaces so only remove them in a local document
     doc = Nokogiri::XML(xml).remove_namespaces!
     # parse the DigitalProvenance items first
-    dp = po.digital_provenance
+    dp = po.ensure_digiprov
     dp.xml = xml
+    # Hotfix: just stash xml until we resolve parsing
+    dp.save
+    return
+    # end Hotfix
     if doc.at_css("IU Carrier Repaired") && yes_no?(doc.at_css("IU Carrier Repaired").content)
       dp.repaired = yes_no(doc.at_css("IU Carrier Repaired").content)
     else
