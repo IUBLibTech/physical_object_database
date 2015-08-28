@@ -108,6 +108,8 @@ Pod::Application.routes.draw do
   patch "quality_control/decide/:id", to: "quality_control#decide", as: "quality_control_decide"
   get 'quality_control/staging', to: "quality_control#staging_index", as: 'quality_control_staging_index_path'
   post 'quality_control/staging', to: 'quality_control#staging_post', as: 'quality_control_staging_post_path'
+  post 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage'
+  get 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage_get'
 
   get 'invoice/index', to: 'invoice#index', as: 'invoice_controller'
   post 'invoice/index', to: 'invoice#submit', as: 'invoice_controller_submit'

@@ -325,6 +325,9 @@ tr.packed {
     margin-left: auto;
     margin-right: auto;
 }
+.inline {
+  display: inline;
+}
 
 .ephemera {
   width: 24px;
