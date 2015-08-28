@@ -1,6 +1,5 @@
 <div id="digi_status">
   <% unless @physical_object.digital_statuses.size <= 0 %>
-    <h2>Digital Statuses</h2>
     <div>
       <%= @physical_object.mdpi_barcode %>'s digital files were received 
       <%= @physical_object.digital_start_readable %>.
@@ -9,12 +8,14 @@
     <table class="digi_status_table">
       <tr>
         <th>State</th>
+        <th>Decision</th>
         <th class="digi_status_date_col">Date</th>
         <th>Message</th>
       </tr>
       <% @physical_object.digital_statuses.order(created_at: :desc).each do |s| %>
         <tr>
           <td><%= s.state %></td>
+          <td><%= s.decided unless s.decided.blank? %></td>
           <td><%= s.created_at.strftime("%l:%M%P %B %-d, %Y") %></td>
           <td>
             <%= s.message %>
