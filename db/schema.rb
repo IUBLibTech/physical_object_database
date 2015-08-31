@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150811180906) do
+ActiveRecord::Schema.define(version: 20150831130743) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -234,6 +234,14 @@ ActiveRecord::Schema.define(version: 20150811180906) do
     t.string   "model"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "memnon_invoice_submissions", force: true do |t|
+    t.string   "filename"
+    t.datetime "submission_date"
+    t.boolean  "successful_validation"
+    t.text     "error_message"
+    t.integer  "validation_completion_percent"
   end
 
   create_table "messages", force: true do |t|
