@@ -21,25 +21,31 @@ describe SpreadsheetsController do
   end
 
   describe "GET show" do
-    before(:each) { get :show, id: spreadsheet.id }
-    it "assigns the requested spreadsheet as @spreadsheet" do
-      expect(assigns(:spreadsheet)).to eq spreadsheet 
+    shared_examples "spreadsheet SHOW behavior" do
+      it "assigns the requested spreadsheet as @spreadsheet" do
+        expect(assigns(:spreadsheet)).to eq spreadsheet 
+      end
+      it "assigns associated bins objects as @bins" do
+        expect(assigns(:bins)).to eq []
+      end
+      it "assigns associated physical objects as @boxes" do
+        expect(assigns(:boxes)).to eq []
+      end
+      it "assigns associated physical objects as @physical_objects" do
+        expect(assigns(:physical_objects)).to eq []
+      end
+      it "renders the :show template" do
+        expect(response).to render_template :show
+      end
     end
-    it "assigns associated bins objects as @bins" do
-      expect(assigns(:bins)).to eq []
+    context "in HTML format" do
+      before(:each) { get :show, id: spreadsheet.id }
+      include_examples "spreadsheet SHOW behavior"
+      include_examples "provides pagination", :physical_objects
     end
-    it "assigns associated physical objects as @boxes" do
-      expect(assigns(:boxes)).to eq []
-    end
-    it "assigns associated physical objects as @physical_objects" do
-      expect(assigns(:physical_objects)).to eq []
-    end
-    include_examples "provides pagination", :physical_objects
-    it "renders the :show template" do
-      expect(response).to render_template :show
-    end
-    it "provides XLS export" do
-      skip "XLS rendering broken?"
+    context "in XLS format" do
+      before(:each) { get :show, id: "spreadsheet_#{spreadsheet.id}.xls", format: "xls" }
+      include_examples "spreadsheet SHOW behavior"
     end
   end
 
