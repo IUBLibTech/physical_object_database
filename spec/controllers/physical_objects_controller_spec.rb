@@ -895,7 +895,7 @@ describe PhysicalObjectsController do
   end
 
   describe "GET contained" do
-    before(:each) { get :contained, format: :xls }
+    before(:each) { get :contained, format: "xls" }
     it "sets @physical_objects" do
       expect(assigns(:physical_objects)).to respond_to :size
     end
