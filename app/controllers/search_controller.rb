@@ -1,8 +1,8 @@
 class SearchController < ApplicationController
   def search_results
-    term = params[:identifier]
+    term = params[:identifier].to_s
     limit = 1000
-    if term.to_s.blank?
+    if term.blank?
       @physical_objects = PhysicalObject.none
       @bins = Bin.none
       @boxes = Box.none
