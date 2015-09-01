@@ -1,9 +1,5 @@
         <%= form_tag "/search/search_results", id: "basic_search_form" do %>
           <%= label_tag :search, nil, class: 'white' %>
           <%= text_field_tag :identifier, params[:identifier] %>
-	  <div id="basic_search_options">
-            <%= radio_button_tag :po_search, true, params[:po_search] != "false" %>Objects only</br>
-            <%= radio_button_tag :po_search, false, params[:po_search] == "false" %>All barcodes
-	  </div>
           <input type="submit" value="Search" style="position: absolute; left: -999px; height: 0px; width: 0px; border: none; padding: 0px;" hidefocus="true" tabindex="-1"/>
         <%end%>

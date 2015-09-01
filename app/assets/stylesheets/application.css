@@ -152,14 +152,10 @@ tr.faded {
 }
 
 #basic_search_form {
-  padding: 10px 0 0 10px;
+  padding: 10px 0 0 30px;
   color: white;
 }
-#basic_search_options {
-  float: right;
-  font-size: 0.7em;
-  margin-top: -8px;
-}
+
 .white {
   color: white;
 }
