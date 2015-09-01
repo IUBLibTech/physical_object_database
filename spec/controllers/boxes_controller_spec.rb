@@ -184,6 +184,12 @@ describe BoxesController do
       boxed_object.reload
       expect(boxed_object.box).to be_nil
     end
+    it "resets remaining physical objects workflow status" do
+      expect(boxed_object.workflow_status).to eq "Boxed"
+      deletion
+      boxed_object.reload
+      expect(boxed_object.workflow_status).not_to eq "Boxed"
+    end
   end
 
   describe "PUT unbin" do
