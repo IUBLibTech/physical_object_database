@@ -1,10 +1,18 @@
 class SearchController < ApplicationController
   def search_results
-    term = params[:identifier]
-    @physical_objects = PhysicalObject.search_by_barcode_title_call_number(term)
-    flash[:notice] = @physical_objects.size == 0 ? "No results for barcode #{term}" : "Search Results for <i>#{term}</i>".html_safe
-    if @physical_objects.nil?
-      redirect_to(action: 'index')
+    term = params[:identifier].to_s
+    limit = 1000
+    if term.blank?
+      @physical_objects = PhysicalObject.none
+      @bins = Bin.none
+      @boxes = Box.none
+      flash.now[:warning] = "No search term was entered."
+    else
+      @physical_objects = PhysicalObject.search_by_barcode_title_call_number(term).limit(limit)
+      @bins = Bin.where("mdpi_barcode LIKE ?", "%#{term}%").limit(limit)
+      @boxes = Box.where("mdpi_barcode LIKE ?", "%#{term}%").limit(limit)
+      flash.now[:notice] = "Search results for term: <em>#{term}</em>".html_safe
+      flash.now[:warning] = "Search results limit of #{limit} reached.  Some search results may not be listed." if @physical_objects.size >= limit || @bins.size >= limit || @boxes.size >= limit
     end
   end
 
