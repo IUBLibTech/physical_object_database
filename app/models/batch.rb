@@ -8,7 +8,7 @@ class Batch < ActiveRecord::Base
 
 	#FIXME: resolve issue with FactoryGirl and after_initialize callbacks
 	after_initialize :assign_default_workflow_status, if: :new_record?
-	before_destroy :remove_bins
+	before_destroy :remove_bins, prepend: true
 
 	validates :identifier, presence: true, uniqueness: true
 	validates :workflow_status, presence: true

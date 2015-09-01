@@ -193,6 +193,12 @@ describe BinsController do
       binned_object.reload
       expect(binned_object.bin).to be_nil
     end
+    it "resets remaining physical objects workflow status when destroyed" do
+      expect(binned_object.workflow_status).to eq "Binned"
+      deletion
+      binned_object.reload
+      expect(binned_object.workflow_status).not_to eq "Binned"
+    end
   end
 
   describe "POST add_barcode_item" do

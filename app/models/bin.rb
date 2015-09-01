@@ -11,7 +11,7 @@ class Bin < ActiveRecord::Base
         has_many :workflow_statuses, :dependent => :destroy
         after_initialize :assign_default_workflow_status
 	before_save :assign_inferred_workflow_status
-	before_destroy :remove_physical_objects
+	before_destroy :remove_physical_objects, prepend: true
         include WorkflowStatusModule
         extend WorkflowStatusQueryModule
         has_many :condition_statuses, :dependent => :destroy

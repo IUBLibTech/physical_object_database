@@ -155,6 +155,12 @@ describe BatchesController do
       deletion
       expect(response).to redirect_to batches_path
     end
+    it "resets bins workflow status to Sealed" do
+      expect(batched_bin.workflow_status).to eq "Batched"
+      deletion
+      batched_bin.reload
+      expect(batched_bin.workflow_status).to eq "Sealed"
+    end
   end
 
   describe "PATCH add_bin" do
