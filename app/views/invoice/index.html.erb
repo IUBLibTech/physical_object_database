@@ -16,3 +16,22 @@
 		</table>
 	<% end %>
 </div>
+<div>
+	<h2>Previous Invoice Submissions</h2>
+	<table>
+		<tr>
+			<th>Invoice Filename</th>
+			<th>Submission Date</th>
+		</tr>
+		<% @submissions.each_with_index do |s, i| %>
+			<tr class=<%= i.odd? ? "odd" : "even" %>>
+				<td>
+					<%= s.filename %>
+				</td>
+				<td>
+					<%= s.submission_date.strftime("%m/%d/%Y") %>
+				</td>
+			</tr>
+		<% end %>
+	</table>
+</div>

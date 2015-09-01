@@ -1,7 +1,4 @@
 class InvoiceController < ApplicationController
-	require 'roo'
-	include 'InvoiceHelper'
-
 	before_action :set_submissions
 
 	def index
@@ -10,13 +7,14 @@ class InvoiceController < ApplicationController
 
 	def submit
 		upload = params[:xls_file]
-		invoice = MemnonInvoiceSubmission.find_by(filename: upload.original_filename, success: true)
+		invoice = MemnonInvoiceSubmission.find_by(filename: upload.original_filename, successful_validation: true)
 		if invoice
 			flash.now[:warning] = "#{upload.original_filename} was previously submitted successfully on #{invoice.submission_date}! Validation aborted..."
 		else
-			parse_invoice(upload)
+			InvoiceHelper.parse_invoice(upload)
 			flash.now[:notice] = "#{upload.original_filename} has been queued for validation. Refresh page to monitor status."
 		end
+		redirect_to invoice_controller_path
 	end
 	
 

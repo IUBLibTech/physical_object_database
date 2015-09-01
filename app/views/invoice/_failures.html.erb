@@ -49,4 +49,17 @@
 		</tr>
 	<% end %>
 <% end %>
+
+<% if @preservation_file_copies.size > 0 %>
+	<tr>
+		<td colspan='3'>The following Preservation Master files appear more than once in the invoice</td>
+	</tr>
+	<% @preservation_file_copies.each_with_index do |f, i| %>
+		<tr class=<%= i.odd? ? "odd" : "even" %>>
+			<td>
+				<%= f %>
+			</td>
+		</tr>
+	<% end %>
+<% end %>
 </table>
