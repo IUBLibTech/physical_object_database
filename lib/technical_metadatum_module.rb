@@ -13,13 +13,13 @@ module TechnicalMetadatumModule
     Hash[array.map{ |v| [v.to_s,v.to_s] }]
   end
 
-  TM_FORMAT_ARRAY = [ "CD-R", "DAT", "Open Reel Audio Tape", "LP", "Lacquer Disc", "Other Analog Sound Disc", "Betacam" ]
+  TM_FORMAT_ARRAY = [ "CD-R", "DAT", "Open Reel Audio Tape", "LP", "Lacquer Disc", "45", "78", "Other Analog Sound Disc", "Betacam" ]
 
   TM_FORMATS = hashify(TM_FORMAT_ARRAY)
 
-  TM_SUBTYPES = ["LP", "Lacquer Disc", "Other Analog Sound Disc"]
+  TM_SUBTYPES = ["LP", "Lacquer Disc", "45", "78", "Other Analog Sound Disc"]
 
-  BOX_FORMATS = [ "CD-R", "DAT", "LP", "Lacquer Disc", "Other Analog Sound Disc" ]
+  BOX_FORMATS = [ "CD-R", "DAT", "LP", "Lacquer Disc", "45", "78", "Other Analog Sound Disc" ]
 
   BIN_FORMATS = [ "Open Reel Audio Tape", "Betacam" ]
 
@@ -29,7 +29,9 @@ module TechnicalMetadatumModule
     "Open Reel Audio Tape" => :audio,
     "LP" => :audio,
     "Lacquer Disc" => :audio,
-    "Other Analog Sound DISC" => :audio,
+    "45" => :audio,
+    "78" => :audio,
+    "Other Analog Sound Disc" => :audio,
     "Betacam" => :video
   }
 
@@ -39,6 +41,8 @@ module TechnicalMetadatumModule
     "Open Reel Audio Tape" => OpenReelTm,
     "LP" => AnalogSoundDiscTm,
     "Lacquer Disc" => AnalogSoundDiscTm,
+    "45" => AnalogSoundDiscTm,
+    "78" => AnalogSoundDiscTm,
     "Other Analog Sound Disc" => AnalogSoundDiscTm,
     "Betacam" => BetacamTm
   }
@@ -61,6 +65,8 @@ module TechnicalMetadatumModule
     "Open Reel Audio Tape" => "technical_metadatum/show_open_reel_tape_tm",
     "LP" => "technical_metadatum/show_analog_sound_disc_tm",
     "Lacquer Disc" => "technical_metadatum/show_analog_sound_disc_tm",
+    "45" => "technical_metadatum/show_analog_sound_disc_tm",
+    "78" => "technical_metadatum/show_analog_sound_disc_tm",
     "Other Analog Sound Disc" => "technical_metadatum/show_analog_sound_disc_tm",
     "Betacam" => "technical_metadatum/show_betacam_tm",
     nil => "technical_metadatum/show_unknown_tm"
@@ -80,6 +86,8 @@ module TechnicalMetadatumModule
     "Open Reel Audio Tape" => "open_reel_tms",
     "LP" => "analog_sound_disc_tms",
     "Lacquer Disc" => "analog_sound_disc_tms",
+    "45" => "analog_sound_disc_tms",
+    "78" => "analog_sound_disc_tms",
     "Other Analog Sound Disc" => "analog_sound_disc_tms",
     "Betacam" => "betacam_tms"
   }
