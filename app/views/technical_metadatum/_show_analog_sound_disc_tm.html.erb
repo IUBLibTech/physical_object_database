@@ -175,9 +175,13 @@
 					$("#tm_substrate option, #tm_coating option").filter(function() { return $(this).text() == "N/A"; }).prop('selected', true);
 					$("#substrate_row, #coating_row").css("display", "none");
 					//set default material select based on format
-					if (f == "LP") {
+					if (f == "LP" || f == "45") {
 						$("#tm_material option").filter(function() {
 					    return $(this).text() == "Plastic"; 
+						}).prop('selected', true);
+					} else if (f == "78") {
+						$("#tm_material option").filter(function() {
+					    return $(this).text() == "Shellac"; 
 						}).prop('selected', true);
 					}
 					
