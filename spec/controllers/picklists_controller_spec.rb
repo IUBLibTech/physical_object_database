@@ -56,21 +56,16 @@ describe PicklistsController do
       include_examples "provides pagination", :physical_objects
     end
     context "csv format" do
-      let(:show_csv) { get :show, id: picklist.id, format: :csv }
+      let(:show_csv) { get :show, id: "picklist_#{picklist.id}.csv", format: "csv" }
       it "sends a csv file" do
         expect(controller).to receive(:send_data).with(PhysicalObject.to_csv(picklist.physical_objects, picklist)) { controller.render nothing: true }
         show_csv
       end
-      include_examples "does not provide pagination", :physical_objects
     end
     context "xls format" do
-      let(:show_xls) { get :show, id: picklist.id, format: :xls }
+      before(:each) { get :show, id: "picklist_#{picklist.id}.xls", format: "xls" }
       it "renders the :show template" do
-        skip "test should pass for Excel template, but fails"
-        #expect(response).to render_template(:show)
-      end
-      it "contains the correct Excel file content" do
-        skip "TODO: test Excel file content"
+        expect(response).to render_template(:show)
       end
       include_examples "does not provide pagination", :physical_objects
     end

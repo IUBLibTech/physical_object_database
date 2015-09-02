@@ -8,7 +8,7 @@ class Box < ActiveRecord::Base
 	validates :mdpi_barcode, mdpi_barcode: true, numericality: { greater_than: 0 }
         validate :validate_bin_container
 	before_save :default_values
-	before_destroy :remove_physical_objects
+	before_destroy :remove_physical_objects, prepend: true
 
         def packed_status?
           !self.bin.nil?

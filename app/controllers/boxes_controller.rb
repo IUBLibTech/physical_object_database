@@ -65,8 +65,6 @@ class BoxesController < ApplicationController
 
   def destroy
     if @box.destroy
-      #manually dissociate physical objects
-      PhysicalObject.where(box_id: @box.id).update_all(box_id: nil)
       flash[:notice] = "Successfully deleted Box: #{@box.mdpi_barcode}"
       redirect_to bins_path
     else

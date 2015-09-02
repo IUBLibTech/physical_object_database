@@ -52,11 +52,7 @@
         <%= link_to("Reports", controller: :reports, action: :index) %>
       </div>
       <div class="left">
-        <%= form_tag "/search/search_results", id: "basic_search_form" do %>
-          <%= label_tag :search, nil, class: 'white' %>
-          <%= text_field_tag :identifier, params[:identifier] %>
-          <input type="submit" value="Search" style="position: absolute; left: -999px; height: 0px; width: 0px; border: none; padding: 0px;" hidefocus="true" tabindex="-1"/>
-        <%end%>
+        <%= render 'search/basic_search_form' %>
       </div>
     </div>
     <div id="contextMenu">
