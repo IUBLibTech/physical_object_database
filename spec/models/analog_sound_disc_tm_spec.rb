@@ -88,5 +88,18 @@ describe AnalogSoundDiscTm do
     end
   end
 
+  describe "has subtypes" do
+    ['LP', 'Lacquer Disc', 'Other Analog Sound Disc', '45', '78'].each do |subtype|
+      describe subtype do
+        it "is a listed subtype option" do
+	  expect(AnalogSoundDiscTm::SUBTYPE_VALUES.keys).to include subtype
+	end
+	it "has associated default values" do
+	  expect(AnalogSoundDiscTm::DEFAULT_VALUES.keys).to include subtype
+	end
+      end
+    end
+  end
+
 end
 

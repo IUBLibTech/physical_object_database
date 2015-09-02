@@ -21,7 +21,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 	COATING_VALUES = hashify ['None', 'Lacquer', 'N/A']
 	EQUALIZATION_VALUES = hashify ['', 'RIAA', 'Other', 'Unknown']
 	SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
-	SUBTYPE_VALUES = hashify ['LP', 'Lacquer Disc', 'Other Analog Sound Disc']
+	SUBTYPE_VALUES = hashify ['LP', 'Lacquer Disc', '45', '78', 'Other Analog Sound Disc']
 	#FIXME: include subtype as simple field?
 	SIMPLE_FIELDS = [
           "diameter", "speed", "groove_size", "groove_orientation",
@@ -92,6 +92,28 @@ class AnalogSoundDiscTm < ActiveRecord::Base
 			  substrate: "Aluminum",
 			  coating: "Lacquer",
 			  material: "N/A",
+			  equalization: "Other"
+			},
+		"45" => { diameter: "7",
+			  speed: "45",
+			  groove_size: "Micro",
+			  groove_orientation: "Lateral",
+			  sound_field: "Unknown",
+			  recording_method: "Pressed",
+			  substrate: "N/A",
+			  coating: "N/A",
+			  material: "Plastic",
+			  equalization: ""
+			},
+		"78" => { diameter: "10",
+			  speed: "78",
+			  groove_size: "Coarse",
+			  groove_orientation: "Lateral",
+			  sound_field: "Mono",
+			  recording_method: "Pressed",
+			  substrate: "N/A",
+			  coating: "N/A",
+			  material: "Shellac",
 			  equalization: "Other"
 			},
 		"Other Analog Sound Disc" => { diameter: nil,
