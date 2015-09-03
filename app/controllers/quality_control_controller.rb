@@ -25,6 +25,19 @@ class QualityControlController < ApplicationController
 		render "staging"
 	end
 
+	def stage
+		begin
+			po = PhysicalObject.find(params[:id])
+			po.update_attributes(staging_requested: true)
+			@success = true
+			@msg = "Staging was successfully requested for PhysicalObject #{po.mdpi_barcode}."
+		rescue ActiveRecord::RecordNotFound
+			@success = false
+			@msg = "ERROR: Could not find a record with id: #{params[:id]}."
+		end
+		render json: [@success, @msg]
+	end
+
 	def decide
 		@ds = DigitalStatus.find(params[:id])
 		@ds.update_attributes(decided: params[:decided])
