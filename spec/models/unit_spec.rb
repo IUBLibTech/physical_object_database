@@ -4,16 +4,20 @@ describe Unit do
 
   let(:unit) { FactoryGirl.create :unit }
   let(:valid_unit) { FactoryGirl.build :unit }
+  let(:invalid_unit) { FactoryGirl.build :unit, :invalid }
   let(:duplicate) { FactoryGirl.build :unit }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, unit: unit }
   describe "should be seeded with data:" do
     it "78 values" do
-      expect(Unit.all.size).to eq 78
+      expect(Unit.all.size).to be >= 78
     end
   end
   describe "FactoryGirl object generation" do
     it "returns a valid unit" do
       expect(valid_unit).to be_valid
+    end
+    it "returns an invalid unit" do
+      expect(invalid_unit).not_to be_valid
     end
   end
   describe "has required fields:" do
@@ -27,7 +31,7 @@ describe Unit do
       expect(duplicate).to be_valid
       unit
       expect(duplicate).to be_invalid
-      unit.destroy
+      unit.destroy!
     end
   
     it "requires a name" do
@@ -40,7 +44,7 @@ describe Unit do
       expect(duplicate).to be_valid
       unit
       expect(duplicate).to be_invalid
-      unit.destroy
+      unit.destroy!
     end
   end
 
@@ -60,8 +64,17 @@ describe Unit do
       expect(unit.physical_objects).to be_empty
       physical_object
       expect(unit.physical_objects).not_to be_empty
-      unit.destroy
+      physical_object.destroy!
+      unit.destroy!
     end
+
+    it "cannot be destroyed if it has associated physical objects" do
+      physical_object
+      expect(unit.destroy).to eq false
+      physical_object.destroy!
+      unit.destroy!
+    end
+
   end
 
   describe "has virtual fields:" do

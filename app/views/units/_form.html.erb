@@ -1,0 +1,50 @@
+<%= error_messages_for(@unit) %>
+<%= form_for(@unit) do |f| %>
+  <table>
+    <tr>
+      <th>Abbreviation</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.text_field :abbreviation %>
+	<% else %>
+          <%= @unit.abbreviation %>
+	<% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.text_field :name %>
+	<% else %>
+          <%= @unit.name %>
+	<% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Institution</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.text_field :institution %>
+	<% else %>
+          <%= @unit.institution %>
+	<% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Campus</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.text_field :campus %>
+	<% else %>
+          <%= @unit.campus %>
+	<% end %>
+      </td>
+    </tr>
+  </table>
+  <% if @edit_mode %>
+    <div class="actions">
+      <%= f.submit(@submit_text) %>
+    </div>
+  <% end %>
+<% end %>

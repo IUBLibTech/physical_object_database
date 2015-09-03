@@ -1,0 +1,13 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to "Cancel", unit_path(@unit) %>
+  </div>
+<% end %>
+
+<div>
+  <h2>Edit Unit</h2>
+  <% @edit_mode = true %>
+  <% @action = "update" %>
+  <% @submit_text = "Update Unit" %>
+  <%= render 'form' %>
+</div>

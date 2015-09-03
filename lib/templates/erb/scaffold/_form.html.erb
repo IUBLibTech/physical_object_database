@@ -19,7 +19,7 @@
         <%% if @edit_mode %>
           <%%= f.<%= attribute.field_type %> :<%= attribute.name %> %>
 	<%% else %>
-          <%%= @<%= attribute.field_type %>.<%= attribute.name %> %>
+          <%%= @<%= singular_table_name %>.<%= attribute.name %> %>
 	<%% end %>
       </td>
       <%- end -%>
