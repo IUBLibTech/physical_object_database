@@ -1,0 +1,18 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to "Edit", edit_unit_path(@unit) %>
+  </div>
+  <div class="contextMenuItem">
+  <%= link_to "Delete", unit_path(@unit), method: :delete, data: { confirm: 'Are you sure you want to delete this Unit?' } %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to "Units Index", units_path %>
+  </div>
+<% end %>
+
+<%= render partial: 'form' %>
+
+<% if @show_dependents %>
+  <h2>Dependent Physical Objects: <%= @physical_objects ? @physical_objects.size : 'ERROR: attempting to display physical objects table without setting variable' %></h2>
+  <%= render partial: 'physical_objects/physical_objects_table' if @physical_objects %>
+<% end %>

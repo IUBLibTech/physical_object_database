@@ -152,6 +152,8 @@ Pod::Application.routes.draw do
     get :validate_login, on: :collection
   end
 
+  resources :units
+
   resources :users
 
   resources :workflow_status_templates
