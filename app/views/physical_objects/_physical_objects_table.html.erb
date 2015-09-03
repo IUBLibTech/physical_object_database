@@ -2,18 +2,18 @@
 <% title_limit=42 %>
 <%# add pagination links only if @physical_objects has been paginated %>
 <% if @physical_objects.respond_to?(:total_pages) %>
-  <div class="pagination">
-    <div class="page_info">
-      <%= page_entries_info @physical_objects, model: "records" %> 
-    </div>
-    <%= will_paginate @physical_objects, container: false %>
+<div class="pagination">
+  <div class="page_info">
+    <%= page_entries_info @physical_objects, model: "records" %> 
   </div>
+  <%= will_paginate @physical_objects, container: false %>
+</div>
 <% end %>
 <table id="po_list">
   <tr class="header">
     <% unless @group_key.nil? %>
-      <th>Position</th>
-      <th>Picklist</th>
+    <th>Position</th>
+    <th>Picklist</th>
     <% end %>
     <th>Current Status</th>
     <th>MDPI barcode</th>
@@ -24,48 +24,59 @@
   </tr>
   <% count = 1 %>
   <% unless @physical_objects.nil? %>
-    <% @physical_objects.each do |po| %>
-      <% css_class = "#{(po.bin or po.box) ? (count.odd? ? 'faded odd' : 'faded even') : (count.odd? ? 'odd' : 'even')}" %>
-      <tr class='<%= css_class %>'>
+  <% @physical_objects.each do |po| %>
+  <% css_class = "#{(po.bin or po.box) ? (count.odd? ? 'faded odd' : 'faded even') : (count.odd? ? 'odd' : 'even')}" %>
+  <tr class='<%= css_class %>'>
 
-      <% unless @group_key.nil? %>
-        <td><%= po.group_position %></td>
-        <td>
-	  <% unless po.picklist.nil? %>
-	    <%= po.picklist.name %>
-	    <%= link_to "Remove", unpick_physical_object_path(po.id), method: :post, data: { confirm: "This will remove the physical object, and all other physical objects in the same Group Key, from the picklist.  Are you sure?"} %>
-	  <% end %>
-	</td>
-      <% end %>
-      <td><%= po.display_workflow_status %></td>
-      <td><%= po.mdpi_barcode %></td>
-      <td><%= po.call_number %></td>
-      <td title="<%= po.title.to_s.length <= title_limit ? "" : po.title %>"><%= po.title.to_s.length <= title_limit ? po.title : po.title[0,title_limit - 3] + '...'%></td>
-      <td><%= po.format %></td>
-      <td>
-        <%= link_to("Show", po, class: 'action show') %>
-        <% if @bin.nil? && @box.nil? && @picklist.nil? && @group_key.nil? %>
-          <%= link_to("Edit", edit_physical_object_path(po), :class => 'action edit') %>
-	  <% if po.box.nil? && po.bin.nil? %>
-            <%= link_to("Split", split_show_physical_object_path(po), :class => 'action split')%>
-	  <% else %>
-	    <strong><strike>Split</strike></strong>
-	  <% end %>
-          <%= link_to("Delete", physical_object_path(po.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Physical Object?'})%>
-        <% elsif (!@bin.nil? and po.box.nil?) %>
-          <%= link_to("Remove", unbin_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Bin?'}) %>
-        <% elsif !@box.nil? %>
-          <%= link_to("Remove", unbox_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Box?'}) %>
-        <% elsif !@picklist.nil? %>
-          <%= link_to("Remove", unpick_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object, and all other objects in the same Group Key, from the Picklist?'})%>
-	<% elsif !@group_key.nil? %>
-          <%= link_to("Remove", ungroup_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Group Key?'})%>
-	
-        <% end %>
-        </td>
-      </tr>
-      <% count += 1 %>
+    <% unless @group_key.nil? %>
+    <td><%= po.group_position %></td>
+    <td>
+     <% unless po.picklist.nil? %>
+     <%= po.picklist.name %>
+     <%= link_to "Remove", unpick_physical_object_path(po.id), method: :post, data: { confirm: "This will remove the physical object, and all other physical objects in the same Group Key, from the picklist.  Are you sure?"} %>
+     <% end %>
+   </td>
+   <% end %>
+   <td><%= po.display_workflow_status %></td>
+   <td><%= po.mdpi_barcode %></td>
+   <td><%= po.call_number %></td>
+   <td title="<%= po.title.to_s.length <= title_limit ? "" : po.title %>"><%= po.title.to_s.length <= title_limit ? po.title : po.title[0,title_limit - 3] + '...'%></td>
+   <td><%= po.format %></td>
+   <td>
+    <%= link_to("Show", po, class: 'action show') %>
+    <% if @bin.nil? && @box.nil? && @picklist.nil? && @group_key.nil? %>
+      <%= link_to("Edit", edit_physical_object_path(po), :class => 'action edit') %>
+    <% if po.box.nil? && po.bin.nil? %>
+    <%= link_to("Split", split_show_physical_object_path(po), :class => 'action split')%>
+    <% else %>
+    <strong><strike>Split</strike></strong>
     <% end %>
-  <% end %>
+    <%= link_to("Delete", physical_object_path(po.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Physical Object?'})%>
+    <% elsif (!@bin.nil? and po.box.nil?) %>
+    <%= link_to("Remove", unbin_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Bin?'}) %>
+    <% elsif !@box.nil? %>
+    <%= link_to("Remove", unbox_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Box?'}) %>
+    <% elsif !@picklist.nil? %>
+    <%= link_to("Remove", unpick_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object, and all other objects in the same Group Key, from the Picklist?'})%>
+    <% elsif !@group_key.nil? %>
+    <%= link_to("Remove", ungroup_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Group Key?'})%>
+    <% end %>
+    <% if (@search && !po.staging_requested) %>
+    <div id='div_<%= "stage_#{po.id}" %>' class="inline">| <%= link_to("Stage",  quality_control_ajax_stage_path(po.id), method: :post, remote: true, id: "stage_#{po.id}", class: 'stage_link', data: { type: :json }) %></div>
+    <% end %>
+  </td>
+</tr>
+<% count += 1 %>
+<% end %>
+<% end %>
 </table>
+<script type="text/javascript">
+  $('.stage_link').bind('ajax:complete', function(event, xhr, settings) {
+    alert(xhr.responseJSON[1]);
+    if (xhr.responseJSON[0] == true) {
+      sel = "#div_"+$(this).attr("id")
+      $(sel).remove();
+    }
+  });
+</script>
 <%= will_paginate @physical_objects if @physical_objects.respond_to?(:total_pages) %>

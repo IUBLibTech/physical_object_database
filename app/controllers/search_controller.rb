@@ -1,5 +1,6 @@
 class SearchController < ApplicationController
   def search_results
+	@search = true
     term = params[:identifier].to_s
     limit = 1000
     if term.blank?
