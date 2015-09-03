@@ -1,5 +1,6 @@
 class SearchController < ApplicationController
   def search_results
+    
     @search = true
     term = params[:identifier]
     @physical_objects = PhysicalObject.search_by_barcode_title_call_number(term)
