@@ -906,4 +906,15 @@ describe PhysicalObjectsController do
     pending "returns only physical_objects set to binned/boxed in provided date range"
   end
 
+  describe "GET generate_filename" do
+    let(:sequence) { 42 }
+    let(:use) { "use" }
+    let(:extension) { "ext" }
+    before(:each) { get :generate_filename, id: physical_object.id, sequence: 42, use: use, extension: ext }
+    it "sets @physical_object" do
+      expect(assigns(:physical_object)).to eq physical_object
+    end
+    it "returns valid results"
+  end
+
 end

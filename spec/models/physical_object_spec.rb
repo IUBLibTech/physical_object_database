@@ -436,6 +436,47 @@ describe "has required attributes:" do
     it "#file_iarl" do
       expect(valid_po.file_iarl).to eq "Indiana University-Bloomington. #{valid_po.unit.name}."
     end
+    describe "#generate_filename" do
+      describe "infers extension from format" do
+        specify ".wav for audio format" do
+	  valid_po.format = "CD-R"
+	  expect(valid_po.generate_filename).to match /\.wav$/
+	end
+	specify ".mp4 for video format" do
+	  valid_po.format = "Betacam"
+	  expect(valid_po.generate_filename).to match /\.mp4$/
+	end
+	specify "defaults to .wav" do
+	  valid_po.format = "Unknown format"
+	  expect(valid_po.generate_filename).to match /\.wav$/
+	end
+      end
+      context "with specified sequence, use, extension" do
+        it "uses specified sequence, use, extension values" do
+	  expect(valid_po.generate_filename(sequence: 42, use: 'use', extension: 'ext')).to eq "MDPI_#{valid_po.mdpi_barcode}_42_use.ext"
+	end
+      end
+      context "with single-digit sequence" do
+        it "pads sequence value" do
+	  expect(valid_po.generate_filename(sequence: 4)).to eq "MDPI_#{valid_po.mdpi_barcode}_04_pres.wav"
+	end
+      end
+      context "with more than 2-digit sequence" do
+        it "uses full sequence value provided" do
+	  expect(valid_po.generate_filename(sequence: 420)).to eq "MDPI_#{valid_po.mdpi_barcode}_420_pres.wav"
+	end
+      end
+      context "with no arguments" do
+        it "uses default sequence, use, extension values" do
+          expect(valid_po.generate_filename).to eq "MDPI_#{valid_po.mdpi_barcode}_01_pres.wav"
+	end
+      end
+      context "with nil arguments" do
+        it "uses default sequence, use, extension values" do
+          expect(valid_po.generate_filename(sequence: nil, use: nil, extension: nil)).to eq "MDPI_#{valid_po.mdpi_barcode}_01_pres.wav"
+	end
+      end
+    end
     it "#group_identifier" do
       expect(valid_po.group_identifier).to eq valid_po.group_key.group_identifier
     end

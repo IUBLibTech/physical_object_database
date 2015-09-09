@@ -60,4 +60,8 @@ describe "physical_objects" do
     expect(get "/physical_objects/contained").to route_to action: "contained", controller: "physical_objects"
   end
 
+  it "routes to generate_filename" do
+   expect(get "/physical_objects/1/generate_filename").to route_to("physical_objects#generate_filename", id: "1")
+  end
+
 end

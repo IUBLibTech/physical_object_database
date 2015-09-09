@@ -1,5 +1,5 @@
 class PhysicalObjectsController < ApplicationController
-  before_action :set_physical_object, only: [:show, :edit, :edit_ephemera, :update, :update_ephemera, :destroy, :workflow_history, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup]  
+  before_action :set_physical_object, only: [:show, :edit, :edit_ephemera, :update, :update_ephemera, :destroy, :workflow_history, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup, :generate_filename]  
   before_action :set_new_physical_object, only: [:new, :create_multiple]
   before_action :set_new_physical_object_with_params, only: [:create]
   before_action :set_box_and_bin_by_barcodes, only: [:create, :create_multiple, :update]
@@ -393,6 +393,10 @@ class PhysicalObjectsController < ApplicationController
         format.json { render json: @physical_object.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def generate_filename
+    render plain: @physical_object.generate_filename(sequence: params[:sequence], use: params[:use], extension: params[:extension]), layout: false
   end
   
   private

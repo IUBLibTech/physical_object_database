@@ -13,7 +13,7 @@
 		<tr>
 			<th>Filename</th>
 			<td>
-				<%= f.text_field :filename %>
+				<%= f.text_field :filename, { class: "filename" } %>
 			</td>
 		</tr>
 		<tr>
@@ -53,6 +53,20 @@
 		<script type="text/javascript">
 			$(function (){
 				$('.date').datepicker();
+                                $.ajax({
+                                        url: "../../physical_objects/<%= @physical_object.id %>/generate_filename",
+                                        async: false,
+                                        data: {},
+                                        type: "GET",
+                                        dataType : "text",
+                                        success: function( text ) {
+                                                $('.filename').val(text);
+                                        },
+                                        error: function( xhr, status, errorThrown ) {
+                                                alert("Error automatically populating filename field: "+status)
+                                        }
+                                })
+
 			});
 			$(function() {
 				$(".signal_chain_select").change(

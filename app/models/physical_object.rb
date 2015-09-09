@@ -466,6 +466,28 @@ assigned to a box."
     date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
   end
 
+  # File Uses:
+  # pres for preservation master
+  # prod for audio production master
+  # mezz for video mezzanine file
+  # access for access file
+  # pres-int for preservation master-intermediate files
+  def generate_filename(sequence: 1, use: 'pres', extension: nil)
+    sequence ||= 1
+    use ||= 'pres'
+    if extension.blank?
+      case TechnicalMetadatumModule::TM_GENRES[self.format]
+      when :audio
+        extension = 'wav'
+      when :video
+        extension = 'mp4'
+      else
+        extension = 'wav'
+      end
+    end
+    "MDPI_#{self.mdpi_barcode}_#{sequence.to_s.rjust(2, "0")}_#{use}.#{extension}"
+  end
+
   private
   def physical_object_where_clause
     sql = " "
