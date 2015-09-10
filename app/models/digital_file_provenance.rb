@@ -4,6 +4,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 	belongs_to :signal_chain
 
 	attr_accessor :display_date_digitized
+	validates :filename, presence: true, uniqueness: true
 
 	def display_date_digitized
 		if date_digitized.blank?
