@@ -7,6 +7,7 @@ describe GroupKeysController do
   let(:invalid_group_key) { FactoryGirl.build(:invalid_group_key) }
   let(:group_key) { FactoryGirl.create(:group_key) }
   let(:group_keyed_object) { FactoryGirl.create(:physical_object, :cdr, group_key: group_key) }
+  let(:second_keyed_object) { FactoryGirl.create(:physical_object, :cdr, group_key: group_key, group_position: 2) }
   let(:ungrouped_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded, group_key: nil) }
 
   describe "FactoryGirl creation" do
@@ -170,29 +171,25 @@ describe GroupKeysController do
       expect(flash[:notice]).to match /no change/i
     end
     it "reorders the objects" do
-      group_keyed_object
-      second_object = group_keyed_object.dup
-      second_object.group_position = 2
-      second_object.save
-      reorder_submission = "#{second_object.id},#{group_keyed_object.id}"
+      reorder_submission = "#{second_keyed_object.id},#{group_keyed_object.id}"
       patch :reorder, id: group_key.id, reorder_submission: reorder_submission
       group_keyed_object.reload
-      second_object.reload
+      second_keyed_object.reload
       expect(flash[:notice]).to match /success/i
-      expect(second_object.group_position).to eq 1
+      expect(second_keyed_object.group_position).to eq 1
       expect(group_keyed_object.group_position).to eq 2
     end
     it "retains gaps" do
       group_keyed_object
-      second_object = group_keyed_object.dup
-      second_object.group_position = 3
-      second_object.save
-      reorder_submission = "#{second_object.id},,#{group_keyed_object.id}"
+      second_keyed_object
+      second_keyed_object.group_position = 3
+      second_keyed_object.save
+      reorder_submission = "#{second_keyed_object.id},,#{group_keyed_object.id}"
       patch :reorder, id: group_key.id, reorder_submission: reorder_submission
       group_keyed_object.reload
-      second_object.reload
+      second_keyed_object.reload
       expect(flash[:notice]).to match /success/i
-      expect(second_object.group_position).to eq 1
+      expect(second_keyed_object.group_position).to eq 1
       expect(group_keyed_object.group_position).to eq 3
     end
     it "redirects to :back" do

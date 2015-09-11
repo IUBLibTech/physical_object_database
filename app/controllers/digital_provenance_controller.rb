@@ -15,7 +15,21 @@ class DigitalProvenanceController < ApplicationController
 	end
 
 	def update
-		if @dp.update_attributes(dp_params)
+		success_flag = true
+		@dp.assign_attributes(dp_params)
+		@dp.digital_file_provenances.each do |dfp|
+		  if dfp.valid? && dfp.save
+		    # do nothing
+		  else
+		    succes_flag = false
+		  end
+		end
+		if @dp.valid? && @dp.save
+		  # do nothing
+		else
+		  success_flag = false
+		end
+		if success_flag
 			redirect_to action: :show
 		else
 			@edit_mode = true

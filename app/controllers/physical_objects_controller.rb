@@ -183,6 +183,7 @@ class PhysicalObjectsController < ApplicationController
         po = @physical_object.dup
         po.assign_default_workflow_status
         po.mdpi_barcode = 0
+	po.ensure_digiprov
 	if split_grouped
           po.group_position = @physical_object.group_position + i
 	else

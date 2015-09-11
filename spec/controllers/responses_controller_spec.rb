@@ -334,7 +334,7 @@ describe ResponsesController do
             <CheckSum>F31C44FCFB29541CA874CAD345C6C32E</CheckSum>
           </File>
           <File>
-            <FileName>MDPI_40000000527434_01_access.mp4</FileName>
+            <FileName>MDPI_40000000527434_01_access.mkv</FileName>
             <CheckSum>B01FEC101B4B4283F99A7B9558834845</CheckSum>
           </File>
         </Files>

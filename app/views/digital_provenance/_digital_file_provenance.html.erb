@@ -1,4 +1,5 @@
 <div class="left">
+	<%= error_messages_for(f.object) %>
 	<%# need to generate a unique id for use in the table and select %>
 	<table class="digiprov">
 	<%#= fields_for :digital_file_provenance do |f|%>
@@ -51,6 +52,7 @@
 			</td>
 		</tr>
 		<script type="text/javascript">
+			<% if @edit_mode %>
 			$(function (){
 				$('.date').datepicker();
                                 $.ajax({
@@ -60,14 +62,15 @@
                                         type: "GET",
                                         dataType : "text",
                                         success: function( text ) {
+						//FIXME: need to only set value if blank! currently overriding
                                                 $('.filename').val(text);
                                         },
                                         error: function( xhr, status, errorThrown ) {
                                                 alert("Error automatically populating filename field: "+status)
                                         }
                                 })
-
 			});
+			<% end %>
 			$(function() {
 				$(".signal_chain_select").change(
 					function() {

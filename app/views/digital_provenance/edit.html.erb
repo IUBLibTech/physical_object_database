@@ -12,5 +12,6 @@
 <h2>
   Physical object <%= @physical_object.mdpi_barcode %>
 </h2>
+<%= error_messages_for(@dp) %>
 <%= render(partial: 'digital_provenance/show_digital_provenance') %>
 <%= render partial: "digital_statuses" %>
