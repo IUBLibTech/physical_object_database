@@ -4,7 +4,7 @@ class MemnonInvoiceSubmission < ActiveRecord::Migration
   		t.string :filename
   		t.datetime :submission_date
   		t.boolean :successful_validation
-  		t.text :error_message
+  		t.text :error_message,:limit => 4294967295
   		t.integer :validation_completion_percent
   	end
   end

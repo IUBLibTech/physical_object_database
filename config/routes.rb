@@ -111,6 +111,7 @@ Pod::Application.routes.draw do
 
   get 'invoice/index', to: 'invoice#index', as: 'invoice_controller'
   post 'invoice/index', to: 'invoice#submit', as: 'invoice_controller_submit'
+  get 'invoice/failed_message/:id', to: "invoice#failed_message", as: 'invoice_failed_message_ajax'
 
   get 'xml_tester', to: 'xml_tester#index', as: 'xml_tester_index'
   post 'xml_tester_submit', to: 'xml_tester#submit', as: 'xml_tester_submit'
