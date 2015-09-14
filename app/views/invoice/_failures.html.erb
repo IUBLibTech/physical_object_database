@@ -1,65 +1,62 @@
-<table>
-	<tr>
-		<th>MDPI Barcode</th>
-		<th>Invoice Filename</th>
-		<th>Date Successfully Billed</th>
-	</tr>
-
-<% if @already_billed.size > 0 %>
-	<tr>
-		<td colspan='3'>The following records have be billed previously in other spreadsheets</td>
-	</tr>
-	<% @already_billed.each_with_index do |p, i| %>
-	<tr class=<%= i.odd? ? "odd" : "even" %>>
-		<td>
-			<%= p.mdpi_barcode %>
-		</td>
-		<td>
-			<%= p.spread_sheet_filename %>
-		</td>
-		<td>
-			<%= p.date_billed.strftime("%m/%d/%Y") %>
-		</td>
-	</tr>
-	<% end %>
-<% end %>
-
-<% if @not_found.size > 0 %>
-	<tr>
-		<td colspan='3'>The following MDPI bardcodes were not found in the POD</td>
-	</tr>
-	<% @not_found.each_with_index do |p, i| %>
-		<tr class=<%= i.odd? ? "odd" : "even" %>>
-			<td>
-				<%= p.mdpi_barcode %>
-			</td>
+<% if @mis.already_billed.size > 0 %>
+	<h2>The following records have been previously billed in other spreadsheets </h2>
+	<table>
+		<tr>
+			<th>MDPI Barcode</th>
+			<th>Invoice Filename</th>
+			<th>Date Successfully Billed</th>
 		</tr>
-	<% end %>
+		<% @mis.already_billed.each_with_index do |p, i| %>
+			<tr class=<%= i.odd? ? "odd" : "even" %>>
+				<td>
+					<%= p[0]%>
+				</td>
+				<td>
+					<%= p[1] %>
+				</td>
+				<td>
+					<%= p[2].blank? ? "" : p[2].strftime("%m/%d/%Y %l:%M%P") %>
+				</td>
+			</tr>
+		<% end %>
+	</table>
 <% end %>
 
-<% if @not_on_sda.size > 0 %>
-	<tr>
-		<td colspan='3'>The following MDPI bardcodes are not on SDA yet</td>
-	</tr>
-	<% @not_found.each_with_index do |p, i| %>
-		<tr class=<%= i.odd? ? "odd" : "even" %>>
-			<td>
-				<%= p.mdpi_barcode %>
-			</td>
-		</tr>
-	<% end %>
+<% if @mis.not_found.size > 0 %>
+	<h2>The following MDPI bardcodes were not found in the POD</h2>
+	<table>
+		<% @mis.not_found.each_with_index do |p, i| %>
+			<tr class=<%= i.odd? ? "odd" : "even" %>>
+				<td>
+					<%= p %>
+				</td>
+			</tr>
+		<% end %>
+	</table>
 <% end %>
 
-<% if @preservation_file_copies.size > 0 %>
-	<tr>
-		<td colspan='3'>The following Preservation Master files appear more than once in the invoice</td>
-	</tr>
-	<% @preservation_file_copies.each_with_index do |f, i| %>
-		<tr class=<%= i.odd? ? "odd" : "even" %>>
-			<td>
-				<%= f %>
-			</td>
-		</tr>
-	<% end %>
+<% if @mis.not_on_sda.size > 0 %>
+	<h2>The following MDPI bardcodes are not on SDA yet</h2>
+	<table>
+		<% @mis.not_on_sda.each_with_index do |p, i| %>
+			<tr class=<%= i.odd? ? "odd" : "even" %>>
+				<td>
+					<%= p %>
+				</td>
+			</tr>
+		<% end %>
+	</table>
 <% end %>
-</table>
+
+<% if @mis.preservation_file_copies.size > 0 %>
+	<h2>The following Preservation Master files appear more than once in the invoice</h2>
+	<table>
+		<% @mis.preservation_file_copies.each_with_index do |f, i| %>
+			<tr class=<%= i.odd? ? "odd" : "even" %>>
+				<td>
+					<%= f %>
+				</td>
+			</tr>
+		<% end %>
+	</table>
+<% end %>
