@@ -1,46 +1,37 @@
 class CdrTm < ActiveRecord::Base
-	acts_as :technical_metadatum
-	after_initialize :default_values, if: :new_record?
-	include TechnicalMetadatumModule
-	extend TechnicalMetadatumClassModule
+  acts_as :technical_metadatum
+  after_initialize :default_values, if: :new_record?
+  extend TechnicalMetadatumClassModule
+  #TM module constants
+  TM_FORMAT = ['CD-R']
+  TM_SUBTYPE = false
+  TM_GENRE = :audio
+  TM_PARTIAL = 'show_cdr_tm'
+  BOX_FORMAT = true
+  BIN_FORMAT = false
+  # TM simple fields
+  SIMPLE_FIELDS = ["damage", "format_duration"]
+  DAMAGE_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
+  FORMAT_DURATION_VALUES = hashify ["", "74 min", "80 min", "90 min", "99 min", "Unknown"]
+  # TM Boolean fieldsets
+  PRESERVATION_PROBLEM_FIELDS = ["breakdown_of_materials", "fungus", "other_contaminants"]
+  MULTIVALUED_FIELDSETS = {
+    "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS
+  }
+  # TM display and export
+  FIELDSET_COLUMNS = {
+    "Preservation problems" => 2
+  }
+  HUMANIZED_COLUMNS = {}
+  MANIFEST_EXPORT = {}
+  include TechnicalMetadatumModule
 
-	# this hash holds the human readable attribute name for this class
-	HUMANIZED_COLUMNS = {}
-	PRESERVATION_PROBLEM_FIELDS = ["breakdown_of_materials", "fungus", "other_contaminants"]
-	DAMAGE_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
-	FORMAT_DURATION_VALUES = hashify ["", "74 min", "80 min", "90 min", "99 min", "Unknown"]
-	SIMPLE_FIELDS = ["damage", "format_duration"]
-	SELECT_FIELDS = {
-		"damage" => DAMAGE_VALUES,
-		"format_duration" => FORMAT_DURATION_VALUES
-	}
-	MULTIVALUED_FIELDSETS = {
-		"Preservation problems" => :PRESERVATION_PROBLEM_FIELDS
-	}
-	FIELDSET_COLUMNS = {
-		"Preservation problems" => 2
-        }
-        MANIFEST_EXPORT = {
-        }
+  def default_values
+    self.damage ||= "None"
+    self.format_duration ||= "Unknown"
+  end
 
+  # damage field
 
-	validates :damage, inclusion: { in: DAMAGE_VALUES.keys }
-	validates :format_duration, inclusion: { in: FORMAT_DURATION_VALUES.keys }
-
-	attr_accessor :damage_values
-	def damage_values
-	  DAMAGE_VALUES
-	end
-
-	attr_accessor :format_duration_values
-	def format_duration_values
-	  FORMAT_DURATION_VALUES
-	end
-
-	def default_values
-	  self.damage ||= "None"
-	  self.format_duration ||= "Unknown"
-	end
-
-	# master_copies default of 1
+  # master_copies default of 1
 end

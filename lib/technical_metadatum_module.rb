@@ -1,6 +1,9 @@
 # Provides instance methods and class constants for physical objects,
 # technical metadatum types.
 #
+# Including classes update the instance variables, which must be set
+# as constants by calling set_tm_constants.
+# The last 2 lines of config/environment.rb take care of this.
 module TechnicalMetadatumModule
 
   TMM_ERROR_CODE = 1000
@@ -13,86 +16,36 @@ module TechnicalMetadatumModule
     Hash[array.map{ |v| [v.to_s,v.to_s] }]
   end
 
-  TM_FORMAT_ARRAY = [ "CD-R", "DAT", "Open Reel Audio Tape", "LP", "Lacquer Disc", "45", "78", "Other Analog Sound Disc", "Betacam" ]
-
-  TM_FORMATS = hashify(TM_FORMAT_ARRAY)
-
-  TM_SUBTYPES = ["LP", "Lacquer Disc", "45", "78", "Other Analog Sound Disc"]
-
-  BOX_FORMATS = [ "CD-R", "DAT", "LP", "Lacquer Disc", "45", "78", "Other Analog Sound Disc" ]
-
-  BIN_FORMATS = [ "Open Reel Audio Tape", "Betacam" ]
-
-  TM_GENRES = {
-    "CD-R" => :audio,
-    "DAT" => :audio,
-    "Open Reel Audio Tape" => :audio,
-    "LP" => :audio,
-    "Lacquer Disc" => :audio,
-    "45" => :audio,
-    "78" => :audio,
-    "Other Analog Sound Disc" => :audio,
-    "Betacam" => :video
-  }
-
-  TM_FORMAT_CLASSES = {
-    "CD-R" => CdrTm,
-    "DAT" => DatTm,
-    "Open Reel Audio Tape" => OpenReelTm,
-    "LP" => AnalogSoundDiscTm,
-    "Lacquer Disc" => AnalogSoundDiscTm,
-    "45" => AnalogSoundDiscTm,
-    "78" => AnalogSoundDiscTm,
-    "Other Analog Sound Disc" => AnalogSoundDiscTm,
-    "Betacam" => BetacamTm
-  }
-
-  # This only maps AnalogSoundDiscTm to one subtype, but that's okay.
-  # In the 2 cases where this is used, it's suffient.
+  # For module: constants to track values from included classes
+  @tm_formats_array = []
+  @tm_formats_hash = {}
+  @tm_subtypes = []
+  @box_formats = []
+  @bin_formats = []
+  @tm_genres = {}
+  @tm_format_classes = {}
+  # This only maps a class to one subtype, but that's okay.
+  # In the 2 cases where this is used, it's suffient, as the subtypes should behave equivalently.
   # One case is determining valid import CSV headers.
   # The other case is mapping to partials (see immediately below).
-  TM_CLASS_FORMATS = {
-    CdrTm => "CD-R",
-    DatTm => "DAT",
-    OpenReelTm => "Open Reel Audio Tape",
-    AnalogSoundDiscTm => "LP",
-    BetacamTm => "Betacam"
-  }
+  @tm_class_formats = {}
+  @tm_partials = { nil => 'show_unknown_tm' }
+  @tm_table_names = {}
 
-  TM_PARTIALS = {
-    "CD-R" => "technical_metadatum/show_cdr_tm",
-    "DAT" => "technical_metadatum/show_dat_tm",
-    "Open Reel Audio Tape" => "technical_metadatum/show_open_reel_tape_tm",
-    "LP" => "technical_metadatum/show_analog_sound_disc_tm",
-    "Lacquer Disc" => "technical_metadatum/show_analog_sound_disc_tm",
-    "45" => "technical_metadatum/show_analog_sound_disc_tm",
-    "78" => "technical_metadatum/show_analog_sound_disc_tm",
-    "Other Analog Sound Disc" => "technical_metadatum/show_analog_sound_disc_tm",
-    "Betacam" => "technical_metadatum/show_betacam_tm",
-    nil => "technical_metadatum/show_unknown_tm"
-  }
+  def TechnicalMetadatumModule.set_tm_constants
+    const_set(:TM_FORMATS_ARRAY, @tm_formats_array)
+    const_set(:TM_FORMATS_HASH, hashify(TM_FORMATS_ARRAY))
+    const_set(:TM_SUBTYPES, @tm_subtypes)
+    const_set(:BOX_FORMATS, @box_formats)
+    const_set(:BIN_FORMATS, @bin_formats)
+    const_set(:TM_GENRES, @tm_genres)
+    const_set(:TM_FORMAT_CLASSES, @tm_format_classes)
+    const_set(:TM_CLASS_FORMATS, @tm_class_formats)
+    const_set(:TM_PARTIALS, @tm_partials)
+    const_set(:TM_TABLE_NAMES, @tm_table_names)
+  end
 
-  # # is this still used?
-  # TM_CLASS_PICKLIST_PARTIALS = {
-  #   CdrTm => "/picklists/cdr_tm",
-  #   DatTm => "/picklists/dat_tm",
-  #   OpenReelTm => "/picklists/open_reel_tm",
-  #   AnalogSoundDiscTm => "/picklists/analog_sound_disc_tm"
-  # }
-
-  TM_TABLE_NAMES = {
-    "CD-R" => "cdr_tms",
-    "DAT" => "dat_tms",
-    "Open Reel Audio Tape" => "open_reel_tms",
-    "LP" => "analog_sound_disc_tms",
-    "Lacquer Disc" => "analog_sound_disc_tms",
-    "45" => "analog_sound_disc_tms",
-    "78" => "analog_sound_disc_tms",
-    "Other Analog Sound Disc" => "analog_sound_disc_tms",
-    "Betacam" => "betacam_tms"
-  }
-
-  #default values
+  # For including classes: set empty default values, which class can override
   PRESERVATION_PROBLEM_FIELDS = [] # common boolean fieldset
   HUMANIZED_COLUMNS = {} # optionally overrides humanized fieldname
   SIMPLE_FIELDS = [] # lists single-valued fields (selects, text entry)
@@ -101,24 +54,52 @@ module TechnicalMetadatumModule
   FIELDSET_COLUMNS = {} # sets boolean fields shown per row
   MANIFEST_EXPORT = {} # configures headers, fields for shipping manifest export
 
-  #include instance methods, class methods, default class constants
+  # Track values from including classes
   def self.included(base)
-    #base.extend(ClassMethods)
-    self.const_set(:TM_FORMATS, TM_FORMATS) unless self.const_defined?(:TM_FORMATS)
-    self.const_set(:TM_SUBTYPES, TM_SUBTYPES) unless self.const_defined?(:TM_SUBTYPES)
-    self.const_set(:TM_GENRES, TM_GENRES) unless self.const_defined?(:TM_GENRES)
-    self.const_set(:TM_FORMAT_CLASSES, TM_FORMAT_CLASSES) unless self.const_defined?(:TM_FORMAT_CLASSES)
-    self.const_set(:TM_CLASS_FORMATS, TM_CLASS_FORMATS) unless self.const_defined?(:TM_CLASS_FORMATS)
-    self.const_set(:TM_PARTIALS, TM_PARTIALS) unless self.const_defined?(:TM_PARTIALS)
-    self.const_set(:TM_TABLE_NAMES, TM_TABLE_NAMES) unless self.const_defined?(:TM_TABLE_NAMES)
-    #default empty values
-    self.const_set(:PRESERVATION_PROBLEM_FIELDS, PRESERVATION_PROBLEM_FIELDS) unless self.const_defined?(:PRESERVATION_PROBLEM_FIELDS)
-    self.const_set(:HUMANIZED_COLUMNS, HUMANIZED_COLUMNS) unless self.const_defined?(:HUMANIZED_COLUMNS)
-    self.const_set(:SIMPLE_FIELDS, SIMPLE_FIELDS) unless self.const_defined?(:SIMPLE_FIELDS)
-    self.const_set(:SELECT_FIELDS, SELECT_FIELDS) unless self.const_defined?(:SELECT_FIELDS)
-    self.const_set(:MULTIVALUED_FIELDSETS, MULTIVALUED_FIELDSETS) unless self.const_defined?(:MULTIVALUED_FIELDSETS)
-    self.const_set(:FIELDSET_COLUMNS, FIELDSET_COLUMNS) unless self.const_defined?(:FIELDSET_COLUMNS)
-    self.const_set(:MANIFEST_EXPORT, MANIFEST_EXPORT) unless self.const_defined?(:MANIFEST_EXPORT)
+    if base.const_defined?(:TM_FORMAT)
+      # Update module constants to track class values
+      tm_formats = base.const_get(:TM_FORMAT)
+      @tm_formats_array += tm_formats
+      @tm_subtypes += tm_formats if base.const_defined?(:TM_SUBTYPE) && base.const_get(:TM_SUBTYPE)
+      @box_formats += tm_formats if base.const_defined?(:BOX_FORMAT) && base.const_get(:BOX_FORMAT)
+      @bin_formats += tm_formats if base.const_defined?(:BIN_FORMAT) && base.const_get(:BIN_FORMAT)
+      @tm_class_formats = @tm_class_formats.merge({ base => tm_formats.first })
+      tm_formats.each do |tm_format|
+        @tm_genres = @tm_genres.merge({ tm_format => base.const_get(:TM_GENRE)}) if base.const_defined?(:TM_GENRE)
+        if base.const_defined?(:TM_PARTIAL)
+          @tm_partials = @tm_partials.merge({ tm_format => base.const_get(:TM_PARTIAL)})
+	else
+          @tm_partials = @tm_partials.merge({ tm_format => 'show_generic_tm'})  
+	end
+	@tm_format_classes = @tm_format_classes.merge({ tm_format => base })
+        @tm_table_names = @tm_table_names.merge({ tm_format => base.table_name})
+      end
+
+      # Update class
+      # Select values: object values list methods, validations
+      base.constants.map { |c| c.to_s }.select { |c| c.match /^.*_VALUES$/ }.each do |values_constant|
+        fieldname = values_constant.match(/^(.*)_VALUES/)[1].downcase
+        base.class_eval do
+	  # Select values method on object
+	  define_method(values_constant.downcase) do
+	    self.class.const_get(values_constant.to_sym)
+	  end
+	  # Select values validation
+	  validates fieldname.to_sym, inclusion: { in: base.const_get(values_constant.to_sym).keys }
+        end
+      end
+      # SELECT_FIELDS constant on class
+      base.const_set(:SELECT_FIELDS, Hash[base.constants.map { |c| c.to_s }.select { |c| c.match /^.*_VALUES$/ }.map{ |v| [v.match(/^(.*)_VALUES/)[1].downcase,base.const_get(v.to_sym)] }])
+      # Boolean fieldsets: display methods for fieldsets
+      base.constants.map { |c| c.to_s }.select { |c| c.match /^.*_FIELDS$/ }.each do |values_constant|
+        fieldset = values_constant.match(/^(.*)_FIELDS/)[1].downcase
+	base.class_eval do
+	  define_method(fieldset) do
+	    humanize_boolean_fieldset(values_constant.to_sym)
+	  end
+	end
+      end
+    end
   end
 
   def humanize_boolean_fields(*field_names)
