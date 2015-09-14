@@ -34,9 +34,13 @@
 					</td>
 				</tr>
 				<tr>
-					<th>Digitization Time</th>
+					<th>Digitization Time (in minutes)</th>
 					<td>
-						<%= dp.text_field(:duration, readonly: !@edit_mode) %>
+						<% if @edit_mode %>
+						  <%= dp.number_field(:duration, readonly: !@edit_mode) %>
+						<% else %>
+						  <%= dp.text_field(:duration, readonly: !@edit_mode) %>
+						<% end %>
 					</td>
 				</tr>
 			</table>				
