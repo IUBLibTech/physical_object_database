@@ -236,6 +236,19 @@ ActiveRecord::Schema.define(version: 20150902203335) do
     t.datetime "updated_at"
   end
 
+  create_table "memnon_invoice_submissions", force: true do |t|
+    t.string   "filename"
+    t.datetime "submission_date"
+    t.boolean  "successful_validation"
+    t.integer  "validation_completion_percent"
+    t.text     "already_billed",                limit: 2147483647
+    t.text     "not_found",                     limit: 2147483647
+    t.text     "not_on_sda",                    limit: 2147483647
+    t.text     "preservation_file_copies",      limit: 2147483647
+    t.boolean  "bad_headers",                                      default: false
+    t.text     "other_error",                   limit: 2147483647
+  end
+
   create_table "messages", force: true do |t|
     t.string   "content"
     t.datetime "created_at"

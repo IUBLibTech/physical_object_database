@@ -16,3 +16,41 @@
 		</table>
 	<% end %>
 </div>
+<div>
+	<h2>Previous Invoice Submissions</h2>
+	<table>
+		<tr>
+			<th>Invoice Filename</th>
+			<th>Submission Date</th>
+			<th>Status</th>
+		</tr>
+		<% @submissions.each_with_index do |s, i| %>
+			<tr class=<%= i.odd? ? "odd" : "even" %>>
+				<td>
+					<%= s.filename %>
+				</td>
+				<td>
+					<%= s.submission_date.strftime("%m/%d/%Y %l:%M%P") %>
+				</td>
+				<td class="<%= s.successful_validation ? "green" : "red" %>">
+					<% if s.validation_completion_percent == 100 and !s.successful_validation %>
+						<%= link_to "Failed", invoice_failed_message_ajax_path(s.id), remote: true, class: "msg_link", data: {type: :html}  %>
+					<% else %>
+						<%= (s.validation_completion_percent == 100 and s.successful_validation) ? "Successful" : "Processing [#{s.validation_completion_percent}%]" %>
+					<% end %>
+				</td>
+			</tr>
+		<% end %>
+	</table>
+</div>
+<script type="text/javascript">
+	$(".msg_link").bind('ajax:complete', function(event, xhr, settings) {
+			$("#errordiv").html(xhr.responseText)
+			$("#dialog").dialog({modal: true, height: 400, maxHeight: 400, width: 700})
+	  });
+</script>
+<div id="dialog" title="Reason For Failure">
+	<div id="errordiv">
+		
+	</div>
+</div>

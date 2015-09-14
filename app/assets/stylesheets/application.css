@@ -362,48 +362,75 @@ tr.packed {
   background: white;
   cursor: default;
   padding: 0.2em 0.0em;
-  /* self-clearing method: */ }
-  .pagination a, .pagination span, .pagination em {
-    padding: 0.2em 0.5em;
-    display: block;
-    float: left;
-    margin-right: 1px; }
-  .pagination .disabled {
-    color: #777777;
-    border: 1px solid #777777; }
-  .pagination .current {
-    font-style: normal;
-    font-weight: bold;
-    background: #7D110C;
-    color: white;
-    border: 1px solid #7D110C; }
-  .pagination a {
-    text-decoration: none;
-    color: #7D110C;
-    border: 1px solid #7D110C; }
-    .pagination a:hover, .pagination a:focus {
-      color: #000033;
-      background: rgba(125, 18, 12, 0.45);
-      border-color: #000033; }
-  .pagination .page_info {
-    background: rgba(125, 18, 12, 0.15);
-    color: black;
-    padding: 0.4em 0.4em;
-    width: 22em;
-    margin-bottom: 0.2em;
-    text-align: left; }
-    .pagination .page_info b {
-      color: black;
-      background: rgba(125, 18, 12, 0.30);
-      padding: 0.4em 0.5em; }
-  .pagination:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden; }
-  * html .pagination {
-    height: 1%; }
-  *:first-child + html .pagination {
-    overflow: hidden; }
+  /* self-clearing method: */ 
+}
+.pagination a, .pagination span, .pagination em {
+  padding: 0.2em 0.5em;
+  display: block;
+  float: left;
+  margin-right: 1px; 
+}
+
+.pagination .disabled {
+  color: #777777;
+  border: 1px solid #777777; 
+}
+
+.pagination .current {
+  font-style: normal;
+  font-weight: bold;
+  background: #7D110C;
+  color: white;
+  border: 1px solid #7D110C; 
+}
+
+.pagination a {
+  text-decoration: none;
+  color: #7D110C;
+  border: 1px solid #7D110C; 
+}
+
+.pagination a:hover, .pagination a:focus {
+  color: #000033;
+  background: rgba(125, 18, 12, 0.45);
+  border-color: #000033; 
+}
+
+.pagination .page_info {
+  background: rgba(125, 18, 12, 0.15);
+  color: black;
+  padding: 0.4em 0.4em;
+  width: 22em;
+  margin-bottom: 0.2em;
+  text-align: left; 
+}
+.pagination .page_info b {
+  color: black;
+  background: rgba(125, 18, 12, 0.30);
+  padding: 0.4em 0.5em; 
+}
+.pagination:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden; 
+}
+* html .pagination {
+  height: 1%; 
+}
+*:first-child + html .pagination {
+  overflow: hidden; 
+}
+
+.red {
+
+  color: rgb(255, 0, 0);
+  font-weight: bold
+}
+
+.green {
+  color: rgb(0,255, 0);
+  font-weight: bold
+}
 
