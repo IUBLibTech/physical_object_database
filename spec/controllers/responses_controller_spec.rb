@@ -291,8 +291,7 @@ describe ResponsesController do
     end
   end
 
-  # FIXME: PENDING rewrite
-  describe "#push_memnon_qc" do
+  describe "#push_memnon_qc successfully" do
     let(:memnon_xml) {
       '<?xml version="1.0" encoding="utf-8"?>
 <IU xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -377,30 +376,212 @@ describe ResponsesController do
     }
     before(:each) do
       po_requested.memnon_qc_completed = false
-      #po_requested.ensure_tm
+      po_requested.digital_provenance.digitizing_entity = nil
       po_requested.save
       post :push_memnon_qc, memnon_xml, mdpi_barcode: po_requested.mdpi_barcode, content_type: 'application/xml'
     end
 
     it "sets memnon xml" do
-      skip "FIXME: still waiting on final spec for Memnon digiprov XML and what to do in case of failure..." do
-        po_requested.reload
-        expect(po_requested.memnon_qc_completed).to eq true
-        expect(po_requested.digital_provenance.repaired).to eq false
-        expect(po_requested.digital_provenance.comments).to eq "Some Random Comments"
-        expect(po_requested.digital_provenance.cleaning_date.to_s).to eq "2015-02-02 17:05:22 -0500"
-        expect(po_requested.digital_provenance.baking.to_s).to eq "2015-02-03 17:05:22 -0500"
-        # these tests are currently not necessary because digital file provenance is no longer parsed
-        # expect(po_requested.digital_provenance.digital_file_provenances.size).to eq 1
-        # expect(po_requested.digital_provenance.digital_file_provenances.first.filename).to eq "MDPI_40000000089666_01_pres.wav"
-        # expect(po_requested.digital_provenance.digital_file_provenances.first.created_by).to eq "kgweinbe"
-        # expect(po_requested.digital_provenance.digital_file_provenances.first.speed_used).to eq "7.5 ips"
-      end
+      po_requested.reload
+      expect(po_requested.digital_provenance.digitizing_entity).to eq "Memnon Archiving Services Inc"
+      expect(po_requested.memnon_qc_completed).to eq true
     end
 
     it "fails on invalid barcode" do
       post :push_memnon_qc,memnon_xml, mdpi_barcode: 1, content_type: 'application/xml'
       expect(assigns(:po)).to be_nil
+      expect(assigns(:success)).to eq false
+    end
+  end
+
+  describe "#push_memnon_qc with missing DigitizingEntity" do
+    let(:bad_memnon_xml) {
+      '<?xml version="1.0" encoding="utf-8"?>
+<IU xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Carrier xsi:type="VinylsCarrier" type="Vinyls">
+    <Identifier>EHRET LP-S ZAe.286</Identifier>
+    <Barcode>' + po_requested.mdpi_barcode.to_s + '</Barcode>
+    <PhysicalCondition>
+      <Damage />
+      <PreservationProblem />
+    </PhysicalCondition>
+    <Parts>
+      <Part Side="1">
+        <Ingest xsi:type="VinylsIngest">
+          <Date>2015-08-12</Date>
+          <Comments>Signal - Very large number of clicks;</Comments>
+          <Created_by>chmalex</Created_by>
+          <Player_serial_number>GE2JY001246</Player_serial_number>
+          <Player_manufacturer>Technics</Player_manufacturer>
+          <Player_model>SL-1210 MKII</Player_model>
+          <Extraction_workstation>BL-UITS-DCDT027</Extraction_workstation>
+          <AD_serial_number>01504-0906-025</AD_serial_number>
+          <AD_manufacturer>Mytek</AD_manufacturer>
+          <AD_model>8X192 ADDA</AD_model>
+          <Preamp_serial_number>MD123058</Preamp_serial_number>
+          <Preamp_manufacturer>Vad Lyd</Preamp_manufacturer>
+          <Preamp_model>MD12 MK3</Preamp_model>
+          <Speed_used>33.3 rpm</Speed_used>
+        </Ingest>
+        <QcComment>Significant clicks due to scratch; Missing material (00:50-02:52)</QcComment>
+        <Files>
+          <File>
+            <FileName>MDPI_40000000527434_01_pres.wav</FileName>
+            <CheckSum>31C7502AE276EDEB30E0A492233BF54F</CheckSum>
+          </File>
+          <File>
+            <FileName>MDPI_40000000527434_01_prod.wav</FileName>
+            <CheckSum>F31C44FCFB29541CA874CAD345C6C32E</CheckSum>
+          </File>
+          <File>
+            <FileName>MDPI_40000000527434_01_access.mp4</FileName>
+            <CheckSum>B01FEC101B4B4283F99A7B9558834845</CheckSum>
+          </File>
+        </Files>
+      </Part>
+      <Part Side="2">
+        <Ingest xsi:type="VinylsIngest">
+          <Date>2015-08-11</Date>
+          <Comments>Disc - Physical defect disabling (continuous) playback;Disc - Stylus jump;</Comments>
+          <Created_by>chmalex</Created_by>
+          <Player_serial_number>GE2JY001246</Player_serial_number>
+          <Player_manufacturer>Technics</Player_manufacturer>
+          <Player_model>SL-1210 MKII</Player_model>
+          <Extraction_workstation>BL-UITS-DCDT027</Extraction_workstation>
+          <AD_serial_number>01504-0906-025</AD_serial_number>
+          <AD_manufacturer>Mytek</AD_manufacturer>
+          <AD_model>8X192 ADDA</AD_model>
+          <Preamp_serial_number>MD123058</Preamp_serial_number>
+          <Preamp_manufacturer>Vad Lyd</Preamp_manufacturer>
+          <Preamp_model>MD12 MK3</Preamp_model>
+          <Speed_used>33.3 rpm</Speed_used>
+        </Ingest>
+        <ManualCheck>Yes</ManualCheck>
+        <QcComment />
+        <Files />
+      </Part>
+    </Parts>
+    <Configuration xsi:type="ConfigurationVinyls">
+      <Speed>33.3 rpm</Speed>
+      <RecordingType>Lateral</RecordingType>
+    </Configuration>
+    <Cleaning>
+      <Date>2015-08-11</Date>
+      <Comment />
+    </Cleaning>
+    <Preview>
+      <Comments />
+    </Preview>
+  </Carrier>
+</IU>'
+    }
+    before(:each) do
+      po_requested.memnon_qc_completed = false
+      po_requested.digital_provenance.digitizing_entity = nil
+      po_requested.save
+      post :push_memnon_qc, bad_memnon_xml, mdpi_barcode: po_requested.mdpi_barcode, content_type: 'application/xml'
+    end
+
+    it "fails on invalid memnon xml" do
+      po_requested.reload
+      expect(po_requested.digital_provenance.digitizing_entity).to be_nil
+      expect(po_requested.memnon_qc_completed).to eq false
+      expect(assigns(:success)).to eq false
+    end
+  end
+
+  describe "#push_memnon_qc with missing ManualCheck" do
+    let(:memnon_xml) {
+      '<?xml version="1.0" encoding="utf-8"?>
+<IU xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Carrier xsi:type="VinylsCarrier" type="Vinyls">
+    <Identifier>EHRET LP-S ZAe.286</Identifier>
+    <Barcode>' + po_requested.mdpi_barcode.to_s + '</Barcode>
+    <PhysicalCondition>
+      <Damage />
+      <PreservationProblem />
+    </PhysicalCondition>
+    <Parts>
+      <DigitizingEntity>Memnon Archiving Services Inc</DigitizingEntity>
+      <Part Side="1">
+        <Ingest xsi:type="VinylsIngest">
+          <Date>2015-08-12</Date>
+          <Comments>Signal - Very large number of clicks;</Comments>
+          <Created_by>chmalex</Created_by>
+          <Player_serial_number>GE2JY001246</Player_serial_number>
+          <Player_manufacturer>Technics</Player_manufacturer>
+          <Player_model>SL-1210 MKII</Player_model>
+          <Extraction_workstation>BL-UITS-DCDT027</Extraction_workstation>
+          <AD_serial_number>01504-0906-025</AD_serial_number>
+          <AD_manufacturer>Mytek</AD_manufacturer>
+          <AD_model>8X192 ADDA</AD_model>
+          <Preamp_serial_number>MD123058</Preamp_serial_number>
+          <Preamp_manufacturer>Vad Lyd</Preamp_manufacturer>
+          <Preamp_model>MD12 MK3</Preamp_model>
+          <Speed_used>33.3 rpm</Speed_used>
+        </Ingest>
+        <QcComment>Significant clicks due to scratch; Missing material (00:50-02:52)</QcComment>
+        <Files>
+          <File>
+            <FileName>MDPI_40000000527434_01_pres.wav</FileName>
+            <CheckSum>31C7502AE276EDEB30E0A492233BF54F</CheckSum>
+          </File>
+          <File>
+            <FileName>MDPI_40000000527434_01_prod.wav</FileName>
+            <CheckSum>F31C44FCFB29541CA874CAD345C6C32E</CheckSum>
+          </File>
+          <File>
+            <FileName>MDPI_40000000527434_01_access.mp4</FileName>
+            <CheckSum>B01FEC101B4B4283F99A7B9558834845</CheckSum>
+          </File>
+        </Files>
+      </Part>
+      <Part Side="2">
+        <Ingest xsi:type="VinylsIngest">
+          <Date>2015-08-11</Date>
+          <Comments>Disc - Physical defect disabling (continuous) playback;Disc - Stylus jump;</Comments>
+          <Created_by>chmalex</Created_by>
+          <Player_serial_number>GE2JY001246</Player_serial_number>
+          <Player_manufacturer>Technics</Player_manufacturer>
+          <Player_model>SL-1210 MKII</Player_model>
+          <Extraction_workstation>BL-UITS-DCDT027</Extraction_workstation>
+          <AD_serial_number>01504-0906-025</AD_serial_number>
+          <AD_manufacturer>Mytek</AD_manufacturer>
+          <AD_model>8X192 ADDA</AD_model>
+          <Preamp_serial_number>MD123058</Preamp_serial_number>
+          <Preamp_manufacturer>Vad Lyd</Preamp_manufacturer>
+          <Preamp_model>MD12 MK3</Preamp_model>
+          <Speed_used>33.3 rpm</Speed_used>
+        </Ingest>
+        <QcComment />
+        <Files />
+      </Part>
+    </Parts>
+    <Configuration xsi:type="ConfigurationVinyls">
+      <Speed>33.3 rpm</Speed>
+      <RecordingType>Lateral</RecordingType>
+    </Configuration>
+    <Cleaning>
+      <Date>2015-08-11</Date>
+      <Comment />
+    </Cleaning>
+    <Preview>
+      <Comments />
+    </Preview>
+  </Carrier>
+</IU>'
+    }
+    before(:each) do
+      po_requested.memnon_qc_completed = false
+      po_requested.digital_provenance.digitizing_entity = nil
+      po_requested.save
+      post :push_memnon_qc, memnon_xml, mdpi_barcode: po_requested.mdpi_barcode, content_type: 'application/xml'
+    end
+
+    it "sets memnon xml" do
+      po_requested.reload
+      expect(po_requested.digital_provenance.digitizing_entity).to eq "Memnon Archiving Services Inc"
+      expect(po_requested.memnon_qc_completed).to eq false
     end
   end
 

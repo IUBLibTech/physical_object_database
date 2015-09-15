@@ -74,17 +74,29 @@ class ResponsesController < ActionController::Base
 
   # POST /responses/objects/memnon_qc/:mdpi_barcode
   def push_memnon_qc
-    @po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
-    unless @po.nil?
-      # @po.digital_provenance.update_attributes(xml: request.body.read)
-      # above call is replaced by parse_qc_xml
-      parse_qc_xml(@po, request.body.read)
-
-      @success = true
-      @message = "Saved memnon digiprov xml for physical object: #{@po.mdpi_barcode}" 
-    else
+    begin
+      # other methods may rely on namespaces so only remove them in a local document
+      doc = Nokogiri::XML(request.body.read).remove_namespaces!
+      entity = doc.css("IU Carrier Parts DigitizingEntity").first.content
+      @po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
+      unless entity == "Memnon Archiving Services Inc"
+        @success = true
+        @message = "Non-memnon xml, ignoring."
+      else
+        unless @po.nil?
+          parse_qc_xml(@po, request.body.read)
+          @success = true
+          @message = "Saved memnon digiprov xml for physical object: #{@po.mdpi_barcode}" 
+        else
+          @success = false
+          @message = "Could not find physical object: #{params[:mdpi_barcode]}"
+        end
+      end
+    rescue => e
+      o = e.message << e.backtrace.join("\n")
+      #puts o
       @success = false
-      @message = "Could not find physical object: #{params[:mdpi_barcode]}"
+      @message = "Something went wrong while parsing DigitizingEntity and/or ManualCheck: \n#{o}"
     end
     render template: "responses/notify.xml.builder", layout: false, status: 200
   end

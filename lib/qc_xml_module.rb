@@ -1,54 +1,28 @@
 module QcXmlModule
   
-	# parses XML and assigns attributes to po and its constituent digiprov models, OR it
+	# parses XML and assigns attributes to po's constituent DigitalProvenance model, OR it
   # returns false if the parse failed (most likely due to invalid controlled vocabulary
-  # in the XML)
+  # in the XML). IT DOES NOT 
   def parse_qc_xml(po, xml)
     # other methods may rely on namespaces so only remove them in a local document
     doc = Nokogiri::XML(xml).remove_namespaces!
     # parse the DigitalProvenance items first
     dp = po.ensure_digiprov
     dp.xml = xml
-    # Hotfix: just stash xml until we resolve parsing
     dp.save
-    return
-    # end Hotfix
-    if doc.at_css("IU Carrier Repaired") && yes_no?(doc.at_css("IU Carrier Repaired").content)
-      dp.repaired = yes_no(doc.at_css("IU Carrier Repaired").content)
-    else
-      return false
-    end
-    dp.comments = comments(doc)
-    dp.cleaning_date = cleaning_date(doc)
-    dp.baking = baking_date(doc)
-    dp.save
+    entity = doc.css("IU Carrier Parts DigitizingEntity").first.content
 
-    # parse technical metadata values next
-    # this may not be necessary... waiting for confirmation from Mike Casey
-    # tm = po.technical_metadatum.as_technical_metadatum.parse_qc_xml(doc)
-    # tm.save
-
+    po.digital_provenance.digitizing_entity = entity
     #parse digital file provenance last
     doc.css("IU Carrier Parts Part").each do |part|
-      # df = DigitalFileProvenance.new(digital_provenance_id: dp.id)
-      # df.filename = part.css("Files File").first.css("FileName").first.content
-      # df.comment = part.css("Ingest Comments").first.content
-      # df.created_by = part.css("Ingest Created_by").first.content
-      # FIXME: commented out to get qc pushing working
-      # df.player_serial_number = part.css("Ingest Player_serial_number").first.content
-      # df.player_manufacturer = part.css("Ingest Player_manufacturer").first.content
-      # df.player_model = part.css("Ingest Player_model").first.content
-      # df.ad_serial_number = part.css("Ingest AD_serial_number").first.content
-      # df.ad_manufacturer = part.css("Ingest AD_manufacturer").first.content
-      # df.ad_model = part.css("Ingest AD_model").first.content
-      # df.extraction_workstation = part.css("Ingest Extraction_workstation").first.content
-      # df.speed_used = part.css("Ingest Speed_used").first.content
-      # df.save
-      checked = yes_no(part.css("ManualCheck").first.content) if part.css("ManualCheck").first
+      checked = false
+      unless part.css("ManualCheck").size == 0 or part.css("ManualCheck").first.content.blank?
+        checked = yes_no(part.css("ManualCheck").first.content) if part.css("ManualCheck").first
+      end
       po.memnon_qc_completed ||= checked
     end
-    dp.save
     po.save
+    dp.save
     true
   end
 

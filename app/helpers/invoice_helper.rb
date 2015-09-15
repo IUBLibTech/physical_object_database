@@ -97,9 +97,9 @@ module InvoiceHelper
 				end
 			end
 		rescue => e
-			puts e.to_s
-			puts e.backtrace
-			mis.update_attributes(other_error: e.to_s << e.backtrace.to_s, successful_validation: false, validation_completion_percent: 100)
+			puts e.message
+			puts e.backtrace.join("\n")
+			mis.update_attributes(other_error: e.message << e.backtrace.join("\n"), successful_validation: false, validation_completion_percent: 100)
 		end
 	end
 
