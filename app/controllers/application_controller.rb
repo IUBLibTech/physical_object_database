@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   # that this pass value is the subclass (OpenReelTm, CdrTm, etc)
   # and not the super class TechnicalMetadatum
   def tm_partial_path(technical_metadatum)
-    TechnicalMetadatumModule::TM_PARTIALS[TechnicalMetadatumModule::TM_CLASS_FORMATS[technical_metadatum.class]]
+    'technical_metadatum/' + TechnicalMetadatumModule::TM_PARTIALS[TechnicalMetadatumModule::TM_CLASS_FORMATS[technical_metadatum.class]]
   end
 
   def tm_form
@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
         @tm = @picklist_specification.create_tm
       end
     end
-    render(partial: TechnicalMetadatumModule::TM_PARTIALS[f])
+    render(partial: 'technical_metadatum/' + TechnicalMetadatumModule::TM_PARTIALS[f])
   end
 
   def barcode_assigned(barcode)
