@@ -35,6 +35,11 @@ module TechnicalMetadatumModule
     "Betacam" => :video
   }
 
+  GENRE_EXTENSIONS = {
+    audio: "wav",
+    video: "mkv"
+  }
+
   TM_FORMAT_CLASSES = {
     "CD-R" => CdrTm,
     "DAT" => DatTm,
