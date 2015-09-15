@@ -60,7 +60,7 @@ class OpenReelTm < ActiveRecord::Base
           "Reel size" => :reel_size,
           "Track configuration" => :TRACK_CONFIGURATION_FIELDS,
           "Sound field" => :SOUND_FIELD_FIELDS,
-          "Playback speed" => :PLAYBACK_SPEEDd_FIELDS,
+          "Playback speed" => :PLAYBACK_SPEED_FIELDS,
           "Tape thickness" => :TAPE_THICKNESS_FIELDS,
           "Tape stock brand" => :tape_stock_brand,
           "Directions recorded" => :directions_recorded
