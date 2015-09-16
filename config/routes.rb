@@ -47,6 +47,7 @@ Pod::Application.routes.draw do
     get :create_multiple, on: :collection
     get :edit_ephemera, on: :member
     get :contained, on: :collection
+    get :generate_filename, on: :member
 
     patch :split_update, on: :member
     post :upload_update, on: :collection
@@ -152,6 +153,8 @@ Pod::Application.routes.draw do
   resources :sessions, only: [:new, :destroy] do
     get :validate_login, on: :collection
   end
+
+  resources :units
 
   resources :users
 

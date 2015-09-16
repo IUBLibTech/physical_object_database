@@ -1,4 +1,5 @@
 <div class="left">
+	<%= error_messages_for(f.object) %>
 	<%# need to generate a unique id for use in the table and select %>
 	<table class="digiprov">
 	<%#= fields_for :digital_file_provenance do |f|%>
@@ -13,7 +14,7 @@
 		<tr>
 			<th>Filename</th>
 			<td>
-				<%= f.text_field :filename %>
+				<%= f.text_field :filename, { class: "filename" } %>
 			</td>
 		</tr>
 		<tr>
@@ -51,9 +52,21 @@
 			</td>
 		</tr>
 		<script type="text/javascript">
+			<% if @edit_mode %>
 			$(function (){
 				$('.date').datepicker();
+				// remove the if check and just execute the contained code to rename all files based on sequence order
+				// this will ALWAYS make files _01_, _02_, _03_, etc
+
+				el = $('.filename').last();
+				if ( el.val().length == 0) {
+					bc = $("#barcode").first().text();
+					seq = ("000" + ($('.filename').size())).slice(-2);
+					v = "MDPI_"+bc+"_"+seq+"_pres.wav";
+					el.val(v);
+				}
 			});
+			<% end %>
 			$(function() {
 				$(".signal_chain_select").change(
 					function() {

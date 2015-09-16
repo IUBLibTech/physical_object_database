@@ -4,6 +4,26 @@
 #
 shared_examples "includes technical metadatum behaviors" do |tm_object|
 
+  describe "provides class constants:" do
+    specify "TM_FORMAT as Array of Strings" do
+      expect(tm_object.class.const_get(:TM_FORMAT).first.class).to eq String
+    end
+    specify "TM_SUBTYPE as Boolean" do
+      expect(tm_object.class.const_get(:TM_SUBTYPE)).to be_in([true, false])
+    end
+    specify "TM_GENRE as :audio/:video" do
+      expect(tm_object.class.const_get(:TM_GENRE)).to be_in([:audio, :video])
+    end
+    specify "TM_PARTIAL as String" do
+      expect(tm_object.class.const_get(:TM_PARTIAL).class).to eq String
+    end
+    specify "BOX_FORMAT, BIN_FORMAT as Booleans" do
+      expect(tm_object.class.const_get(:BOX_FORMAT)).to be_in([true, false])
+      expect(tm_object.class.const_get(:BIN_FORMAT)).to be_in([true, false])
+      expect(tm_object.class.const_get(:BOX_FORMAT) || tm_object.class.const_get(:BIN_FORMAT)).to eq true
+    end
+  end
+
   describe "has boolean fieldsets:" do
     tm_object.class::MULTIVALUED_FIELDSETS.each_pair do |description, constant_key|
       describe "#{description}" do

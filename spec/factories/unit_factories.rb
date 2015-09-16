@@ -7,6 +7,11 @@ FactoryGirl.define do
     name "Test Unit"
     institution "Indiana University"
     campus "Bloomington"
+
+    trait :invalid do
+      abbreviation nil
+    end
+
   end
 
 end

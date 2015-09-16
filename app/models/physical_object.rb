@@ -52,10 +52,6 @@ class PhysicalObject < ActiveRecord::Base
   scope :packed, lambda { where("physical_objects.bin_id > 0 OR physical_objects.box_id > 0") }
   scope :blocked, lambda { joins(:condition_statuses).where(condition_statuses: {active: true, condition_status_template_id: ConditionStatusTemplate.blocking_ids}).includes(:condition_statuses) }
 
-  # needs to be declared before the validation that uses it
-  def self.formats
-    TM_FORMATS
-  end
   # this hash holds the human reable attribute name for this class
   HUMANIZED_COLUMNS = {
       :mdpi_barcode => "MDPI barcode",
@@ -69,13 +65,23 @@ class PhysicalObject < ActiveRecord::Base
     'collection_name', 'generation', 'oclc_number', 'other_copies', 'year', 'group_position', 'ephemera_returned' ]
   MULTIVALUED_FIELDSETS = {}
 
-  validates :format, presence: true, inclusion: { in: TM_FORMATS.keys, message: "value \"%{value}\" is not in list of valid values: #{TM_FORMATS.keys}" }
+  def valid_formats
+    TechnicalMetadatumModule::TM_FORMATS_ARRAY
+  end
+  def self.valid_formats
+    TechnicalMetadatumModule::TM_FORMATS_ARRAY
+  end
+  def self.formats
+    TechnicalMetadatumModule::TM_FORMATS_HASH
+  end
+  validates :format, presence: true, inclusion: { in: lambda { |po| po.valid_formats }, message: "value \"%{value}\" is not in list of valid values: #{PhysicalObject.valid_formats}}" }
   validates :generation, inclusion: { in: GENERATION_VALUES.keys, message: "value \"%{value}\" is not in list of valid values: #{GENERATION_VALUES.keys}" }
   validates :group_position, presence: true
   validates :mdpi_barcode, mdpi_barcode: true
   validates :unit, presence: true
   validates :group_key, presence: true
   validates :technical_metadatum, presence: true
+  validates :digital_provenance, presence: true
   validates :workflow_status, presence: true
   validates_with PhysicalObjectValidator
   validate :validate_single_container_assignment, if: [:bin_id, :box_id]
@@ -181,7 +187,7 @@ class PhysicalObject < ActiveRecord::Base
   # the passed in value for f should be the human readable name of the format - in the case of AnalogSoundDisc
   # technical metadatum, this could be LP/45/78/Lacquer Disc/etc
   def create_tm(format, tm_args = {})
-    tm_class = TM_FORMAT_CLASSES[format]
+    tm_class = TechnicalMetadatumModule::TM_FORMAT_CLASSES[format]
     unless tm_class.nil?
       # setting the subtype should trigger and after_initialize callback to set defaults
       tm_args[:subtype] = format if TM_SUBTYPES.include?(format)
@@ -324,7 +330,7 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def ensure_tm
-    if TechnicalMetadatumModule::TM_FORMATS[self.format]
+    if TechnicalMetadatumModule::TM_FORMATS_HASH[self.format]
       if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule::TM_FORMAT_CLASSES[self.format].to_s
         @tm = create_tm(self.format, physical_object: self)
       else
@@ -464,6 +470,15 @@ assigned to a box."
 
   def self.datesql(date)
     date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
+  end
+
+  # See DigitalFileProvenance::FILE_USE_VALUES for list of valid use codes
+  def generate_filename(sequence: 1, use: 'pres', extension: nil)
+    sequence ||= self.digital_provenance.digital_file_provenances.size + 1 if self.digital_provenance
+    sequence = 1 unless sequence.to_i > 0
+    use = 'pres' if use.to_s.blank?
+    extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule::TM_GENRES[self.format]] if extension.blank?
+    "MDPI_#{self.mdpi_barcode}_#{sequence.to_s.rjust(2, "0")}_#{use}.#{extension}"
   end
 
   private

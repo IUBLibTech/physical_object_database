@@ -167,7 +167,7 @@ describe Batch do
     end
   end
 
-  status_list = ["Created", "Assigned", "Shipped", "Returned", "Complete"]
+  status_list = ["Created", "Assigned", "Shipped", "Interim Storage", "Returned", "Complete"]
   # pass status_list arg here to test previous/next methods
   it_behaves_like "includes Workflow Status Module", status_list do
     let(:object) { valid_batch }
