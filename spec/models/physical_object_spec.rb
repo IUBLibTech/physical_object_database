@@ -2,6 +2,7 @@ describe PhysicalObject do
   include TechnicalMetadatumModule
 
   let(:po) { FactoryGirl.create :physical_object, :cdr }
+  let(:grouped_po) { FactoryGirl.build :physical_object, :cdr, group_key: po.group_key }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:boxable_po) { FactoryGirl.build :physical_object, :boxable }
   let(:binnable_po) { FactoryGirl.build :physical_object, :binnable }
@@ -10,7 +11,7 @@ describe PhysicalObject do
   let(:picklist) { FactoryGirl.create :picklist }
   let(:box) { FactoryGirl.create :box }
   let(:bin) { FactoryGirl.create :bin }
-  
+
   tm_types = [:cdr, :dat, :lp, :open_reel, :betacam]
 
   describe "FactoryGirl" do
@@ -18,69 +19,67 @@ describe PhysicalObject do
       context "with tm_type: #{tm_type}" do
         let(:valid_po) { FactoryGirl.build :physical_object, tm_type }
         specify "provides a valid object" do
-         expect(valid_po).to be_valid
-         expect(valid_po.technical_metadatum).to be_valid
-         expect(valid_po.technical_metadatum.as_technical_metadatum).to be_valid
-         end
-       end
-     end
-   end
-   specify "provides an invalid object" do
-    expect(invalid_po).to be_valid
-  end
-
-  describe "sets proper media type" do
-    tm_types.each do |tm_type|
-      context "with tm_type: #{tm_type}" do
-        let(:po) { FactoryGirl.create :physical_object, tm_type }
-        specify "saves proper media type" do
-          expect(po.audio).to eq (TechnicalMetadatumModule::TM_GENRES[po.format] == :audio ? true : nil)
-          expect(po.video).to eq (TechnicalMetadatumModule::TM_GENRES[po.format] == :video ? true : nil)
+          expect(valid_po).to be_valid
+          expect(valid_po.technical_metadatum).to be_valid
+          expect(valid_po.technical_metadatum.as_technical_metadatum).to be_valid
         end
       end
     end
+    specify "provides an invalid object" do
+      expect(invalid_po).to be_valid
+    end
   end
 
-  describe "has required attributes:" do
-    it "requires a format" do
-      expect(valid_po.format).not_to be_blank
-      valid_po.format = ""
-      expect(valid_po).to be_invalid
+describe "sets proper media type" do
+    tm_types.each do |tm_type|
+    context "with tm_type: #{tm_type}" do
+      let(:po) { FactoryGirl.create :physical_object, tm_type }
+      specify "saves proper media type" do
+        expect(po.audio).to eq (TechnicalMetadatumModule::TM_GENRES[po.format] == :audio ? true : nil)
+        expect(po.video).to eq (TechnicalMetadatumModule::TM_GENRES[po.format] == :video ? true : nil)
+      end
     end
-    
-    it "requires a format from format list" do
-      valid_po.format = "invalid format"
-      expect(valid_po).to be_invalid
-    end
-    
-    it "requires a unit" do
-      expect(valid_po.unit).not_to be_nil
-      valid_po.unit = nil
-      expect(valid_po).to be_invalid
-    end
-    
-    it "requires a group_position" do
-      expect(valid_po.group_position).to be > 0
-      valid_po.group_position = nil
-      expect(valid_po).to be_invalid
-    end
-    it "automatically resolves group_position collisions by advancing other object's position" do
-      po.save
-      dup_po = po.dup
-      expect(dup_po.group_position).to eq 1
-      dup_po.save
-      dup_po.reload
-      po.reload
-      expect(dup_po.group_position).to eq 1
-      expect(po.group_position).to eq 2
-    end
-    it "automatically extends group_key.group_total" do
-      expect(po.group_key.group_total).to eq 1
-      po.group_position = 2
-      po.save
-      po.reload
-      expect(po.group_key.group_total).to eq 2
-    end
+  end
+end
+
+describe "has required attributes:" do
+  it "requires a format" do
+    expect(valid_po.format).not_to be_blank
+    valid_po.format = ""
+    expect(valid_po).to be_invalid
+  end
+  
+  it "requires a format from format list" do
+    valid_po.format = "invalid format"
+    expect(valid_po).to be_invalid
+  end
+  
+  it "requires a unit" do
+    expect(valid_po.unit).not_to be_nil
+    valid_po.unit = nil
+    expect(valid_po).to be_invalid
+  end
+  
+  it "requires a group_position" do
+    expect(valid_po.group_position).to be > 0
+    valid_po.group_position = nil
+    expect(valid_po).to be_invalid
+  end
+  it "automatically resolves group_position collisions by advancing other object's position" do
+    expect(grouped_po.group_position).to eq 1
+    grouped_po.save!
+    grouped_po.reload
+    po.reload
+    expect(grouped_po.group_position).to eq 1
+    expect(po.group_position).to eq 2
+  end
+  it "automatically extends group_key.group_total" do
+    expect(po.group_key.group_total).to eq 1
+    po.group_position = 2
+    po.save
+    po.reload
+    expect(po.group_key.group_total).to eq 2
+  end
     #technical_metadatum: separate section
 
     it "requires one of mdpi_barcode, iucat_barcode, title, call_number" do
@@ -122,112 +121,148 @@ describe PhysicalObject do
   end
 
   describe "has relationships:" do
-    specify "can belong to a box" do
-      expect(valid_po.box).to be_nil
-    end
-    specify "can belong to a bin" do
-      expect(valid_po.bin).to be_nil
-    end
-    TechnicalMetadatumModule.const_get(:BOX_FORMATS).each_with_index do |format, index|
-      describe "boxable format: #{format}" do
-        before(:each) { valid_po.format = format }
-        specify "cannot belong to a bin and box" do
-          valid_po.box = box
-          valid_po.bin = bin
-          expect(valid_po).not_to be_valid
-        end
-        specify "can belong to a box if a barcode is set" do
-          valid_po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-          valid_po.box = box
-          expect(valid_po).to be_valid
-        end
-        specify "cannot belong to a box if a barcode is not set" do
-          valid_po.box = box
-          expect(valid_po).not_to be_valid
-        end
-        unless format.in? TechnicalMetadatumModule.const_get(:BIN_FORMATS)
-          specify "cannot belong to a bin" do
+    describe "box" do
+      specify "can belong to a box" do
+        expect(valid_po).to respond_to :box_id
+      end
+      TechnicalMetadatumModule.const_get(:BOX_FORMATS).each_with_index do |format, index|
+        describe "boxable format: #{format}" do
+          before(:each) { valid_po.format = format }
+          specify "cannot belong to a bin and box" do
+            valid_po.box = box
             valid_po.bin = bin
             expect(valid_po).not_to be_valid
           end
-        end
-        if TechnicalMetadatumModule.const_get(:BOX_FORMATS).size > 1
-          specify "cannot belong to a box containing other formats" do
-            po.format = TechnicalMetadatumModule.const_get(:BOX_FORMATS)[index - 1]
-            po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-            po.box = box
-            po.save!
+          specify "can belong to a box if a barcode is set" do
+	    valid_po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
             valid_po.box = box
+            expect(valid_po).to be_valid
+          end
+          specify "cannot belong to a box if a barcode is not set" do
+            valid_po.box = box
+            expect(valid_po).not_to be_valid
+          end
+          unless format.in? TechnicalMetadatumModule.const_get(:BIN_FORMATS)
+            specify "cannot belong to a bin" do
+              valid_po.bin = bin
+              expect(valid_po).not_to be_valid
+            end
+          end
+          if TechnicalMetadatumModule.const_get(:BOX_FORMATS).size > 1
+            specify "cannot belong to a box containing other formats" do
+              po.format = TechnicalMetadatumModule.const_get(:BOX_FORMATS)[index - 1]
+	      po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+              po.box = box
+              po.save!
+              valid_po.box = box
+              expect(valid_po).not_to be_valid
+            end
+          end
+        end
+      end
+    end
+    describe "bin" do
+      specify "can belong to a bin" do
+        expect(valid_po).to respond_to :bin_id
+      end
+      TechnicalMetadatumModule.const_get(:BIN_FORMATS).each_with_index do |format, index|
+        describe "binnable format: #{format}" do
+          before(:each) { valid_po.format = format }
+          specify "cannot belong to a bin and box" do
+            valid_po.box = box
+            valid_po.bin = bin
+            expect(valid_po).not_to be_valid
+          end
+          specify "can belong to a bin if barcode is set" do
+	    valid_po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+            valid_po.bin = bin
+            expect(valid_po).to be_valid
+          end
+          specify "cannot belong to a bin if barcode is not set" do
+            valid_po.bin = bin
+            expect(valid_po).not_to be_valid
+          end
+          unless format.in? TechnicalMetadatumModule.const_get(:BOX_FORMATS)
+            specify "cannot belong to a box" do
+              valid_po.format = format
+              valid_po.box = box
+              expect(valid_po).not_to be_valid
+            end
+          end
+          if TechnicalMetadatumModule.const_get(:BIN_FORMATS).size > 1
+            specify "cannot belong to a bin containing other formats" do
+              po.format = TechnicalMetadatumModule.const_get(:BIN_FORMATS)[index - 1]
+	      po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+              po.bin = bin
+              po.save!
+              valid_po.bin = bin
+              expect(valid_po).not_to be_valid
+            end
+          end
+          specify "cannnot belong to a bin containing boxes" do
+            box.bin = bin
+            box.save
+	    valid_po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+            valid_po.bin = bin
             expect(valid_po).not_to be_valid
           end
         end
       end
     end
-    TechnicalMetadatumModule.const_get(:BIN_FORMATS).each_with_index do |format, index|
-      describe "binnable format: #{format}" do
-        before(:each) { valid_po.format = format }
-        specify "cannot belong to a bin and box" do
-          valid_po.box = box
-          valid_po.bin = bin
-          expect(valid_po).not_to be_valid
-        end
-        specify "can belong to a bin if barcode is set" do
-          valid_po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-          valid_po.bin = bin
-          expect(valid_po).to be_valid
-        end
-        specify "cannot belong to a bin if barcode is not set" do
-          valid_po.bin = bin
-          expect(valid_po).not_to be_valid
-        end
-        unless format.in? TechnicalMetadatumModule.const_get(:BOX_FORMATS)
-          specify "cannot belong to a box" do
-            valid_po.format = format
-            valid_po.box = box
-            expect(valid_po).not_to be_valid
-          end
-        end
-        if TechnicalMetadatumModule.const_get(:BIN_FORMATS).size > 1
-          specify "cannot belong to a bin containing other formats" do
-            po.format = TechnicalMetadatumModule.const_get(:BIN_FORMATS)[index - 1]
-            po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-            po.bin = bin
-            po.save!
-            valid_po.bin = bin
-            expect(valid_po).not_to be_valid
-          end
-        end
-        specify "cannnot belong to a bin containing boxes" do
-          box.bin = bin
-          box.save
-          valid_po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-          valid_po.bin = bin
-          expect(valid_po).not_to be_valid
-        end
+    describe "picklist" do
+      specify "can belong to a picklist" do
+        expect(valid_po).to respond_to :picklist_id
+        expect(valid_po.picklist).to be_nil
       end
     end
-    specify "can belong to a picklist" do
-      expect(valid_po.picklist).to be_nil
+    describe "container" do
+      specify "can belong to a container" do
+        expect(valid_po).to respond_to :container_id
+        expect(valid_po.container).to be_nil
+      end
     end
-    specify "can belong to a container" do
-      expect(valid_po.container).to be_nil
+    describe "spreadsheet" do
+      specify "can belong to a spreadsheet" do
+        expect(valid_po).to respond_to :spreadsheet_id
+        expect(valid_po.spreadsheet).to be_nil
+      end
     end
-    specify "can belong to a spreadsheet" do
-      expect(valid_po.spreadsheet).to be_nil
+    describe "unit" do
+      specify "belongs to" do
+        expect(valid_po).to respond_to :unit_id
+      end
+      specify "must belong to a unit" do
+        valid_po.unit = nil
+        expect(valid_po).not_to be_valid
+      end
     end
-    specify "must belong to a unit" do
-      expect(valid_po.unit).not_to be_nil
-      valid_po.unit = nil
-      expect(valid_po).not_to be_valid
+    describe "group key" do
+      specify "belongs to" do
+        expect(valid_po).to respond_to :group_key_id
+      end
+      specify "must belong to a group key" do
+        expect(valid_po.group_key).not_to be_nil
+      end
     end
-    specify "must belong to a group key" do
-      expect(valid_po.group_key).not_to be_nil
+    describe "workflow_statuses" do
+      specify "can have workflow statuses" do
+        expect(valid_po.workflow_statuses.size).to be >= 0
+      end
     end
-    specify "can have workflow statuses" do
-      expect(valid_po.workflow_statuses.size).to be >= 0
+    describe "condition statuses" do
+      specify "can have condition statuses" do
+        expect(valid_po.condition_statuses.size).to be >= 0
+      end
     end
-    specify "can have condition statuses" do
-      expect(valid_po.condition_statuses.size).to be >= 0
+    describe "digital provenance" do
+      specify "has_one" do
+        expect(valid_po).to respond_to :digital_provenance
+        expect(valid_po).not_to respond_to :digital_provenance_id
+      end
+      specify "is required" do
+        valid_po.digital_provenance = nil
+	expect(valid_po).not_to be_valid
+      end
     end
   end
   
@@ -350,30 +385,30 @@ describe PhysicalObject do
     describe "#container_bin" do
       context "when boxed" do
         before(:each) do
-          box.bin = bin
-          box.save
-          boxable_po.box = box
-        end
-        it "returns the box's bin" do
-          expect(boxable_po.container_bin).to eq bin
-        end
+	  box.bin = bin
+	  box.save
+	  boxable_po.box = box
+	end
+	it "returns the box's bin" do
+	  expect(boxable_po.container_bin).to eq bin
+	end
       end
       context "when binned" do
         before(:each) do
-          binnable_po.bin = bin
-        end
-        it "returns the bin" do
-          expect(binnable_po.container_bin).to eq bin
-        end
+	  binnable_po.bin = bin
+	end
+	it "returns the bin" do
+	  expect(binnable_po.container_bin).to eq bin
+	end
       end
       context "when uncontained" do
         before(:each) do
-          valid_po.box = nil
-          valid_po.bin = nil
-        end
-        it "returns nil" do
-          expect(valid_po.container_bin).to be_nil
-        end
+	  valid_po.box = nil
+	  valid_po.bin = nil
+	end
+	it "returns nil" do
+	  expect(valid_po.container_bin).to be_nil
+	end
       end
     end
     describe "#container_id" do
@@ -396,20 +431,20 @@ describe PhysicalObject do
     describe "#file_bext" do
       context "with collection_identifier" do
         before(:each) { valid_po.collection_identifier = "collection identifier" }
-        context "with call_number" do
+	context "with call_number" do
           let(:file_bext) { "Indiana University-Bloomington. #{valid_po.unit.name}. collection identifier. call number. File use: " }
-          before(:each) { valid_po.call_number = "call number" }
+	  before(:each) { valid_po.call_number = "call number" }
           it "returns correct text" do
             expect(valid_po.file_bext).to eq file_bext
           end
-        end
-        context "without call_number" do
-          let(:file_bext) { "Indiana University-Bloomington. #{valid_po.unit.name}. collection identifier. File use: " }
-          before(:each) { valid_po.call_number = "" }
-          it "returns correct text" do
-            expect(valid_po.file_bext).to eq file_bext
-          end
-        end
+	end
+	context "without call_number" do
+	  let(:file_bext) { "Indiana University-Bloomington. #{valid_po.unit.name}. collection identifier. File use: " }
+	  before(:each) { valid_po.call_number = "" }
+	  it "returns correct text" do
+	    expect(valid_po.file_bext).to eq file_bext
+	  end
+	end
       end
       context "without collection_identifier" do
         before(:each) { valid_po.collection_identifier = "" }
@@ -434,6 +469,47 @@ describe PhysicalObject do
     end
     it "#file_iarl" do
       expect(valid_po.file_iarl).to eq "Indiana University-Bloomington. #{valid_po.unit.name}."
+    end
+    describe "#generate_filename" do
+      describe "infers extension from format" do
+        specify ".wav for audio format" do
+	  valid_po.format = "CD-R"
+	  expect(valid_po.generate_filename).to match /\.wav$/
+	end
+	specify ".mkv for video format" do
+	  valid_po.format = "Betacam"
+	  expect(valid_po.generate_filename).to match /\.mkv$/
+	end
+	specify "defaults to nil for unknown format" do
+	  valid_po.format = "Unknown format"
+	  expect(valid_po.generate_filename).to match /\.$/
+	end
+      end
+      context "with specified sequence, use, extension" do
+        it "uses specified sequence, use, extension values" do
+	  expect(valid_po.generate_filename(sequence: 42, use: 'use', extension: 'ext')).to eq "MDPI_#{valid_po.mdpi_barcode}_42_use.ext"
+	end
+      end
+      context "with single-digit sequence" do
+        it "pads sequence value" do
+	  expect(valid_po.generate_filename(sequence: 4)).to eq "MDPI_#{valid_po.mdpi_barcode}_04_pres.wav"
+	end
+      end
+      context "with more than 2-digit sequence" do
+        it "uses full sequence value provided" do
+	  expect(valid_po.generate_filename(sequence: 420)).to eq "MDPI_#{valid_po.mdpi_barcode}_420_pres.wav"
+	end
+      end
+      context "with no arguments" do
+        it "uses default sequence, use, extension values" do
+          expect(valid_po.generate_filename).to eq "MDPI_#{valid_po.mdpi_barcode}_01_pres.wav"
+	end
+      end
+      context "with nil arguments" do
+        it "uses default sequence, use, extension values" do
+          expect(valid_po.generate_filename(sequence: nil, use: nil, extension: nil)).to eq "MDPI_#{valid_po.mdpi_barcode}_01_pres.wav"
+	end
+      end
     end
     it "#group_identifier" do
       expect(valid_po.group_identifier).to eq valid_po.group_key.group_identifier

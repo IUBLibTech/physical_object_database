@@ -44,7 +44,10 @@ FactoryGirl.define do
     generation ""
     group_position 1
     association :group_key, factory: :group_key
-    association :digital_provenance, factory: :digital_provenance
+    #association :digital_provenance, factory: :digital_provenance
+    after(:build) do |po|
+      po.digital_provenance ||= FactoryGirl.build(:digital_provenance, physical_object: po)
+    end
     #at least one must be set of MDPI barcode, IUCAT barcode, title, call number
     title "FactoryGirl object"
     #mdpi_barcode { BarcodeHelper.valid_mdpi_barcode }

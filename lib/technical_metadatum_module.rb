@@ -45,6 +45,12 @@ module TechnicalMetadatumModule
     const_set(:TM_TABLE_NAMES, @tm_table_names)
   end
 
+  # Pre-set module constants
+  GENRE_EXTENSIONS = {
+    audio: "wav",
+    video: "mkv"
+  }
+
   # For including classes: set empty default values, which class can override
   PRESERVATION_PROBLEM_FIELDS = [] # common boolean fieldset
   HUMANIZED_COLUMNS = {} # optionally overrides humanized fieldname

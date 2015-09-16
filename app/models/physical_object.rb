@@ -81,6 +81,7 @@ class PhysicalObject < ActiveRecord::Base
   validates :unit, presence: true
   validates :group_key, presence: true
   validates :technical_metadatum, presence: true
+  validates :digital_provenance, presence: true
   validates :workflow_status, presence: true
   validates_with PhysicalObjectValidator
   validate :validate_single_container_assignment, if: [:bin_id, :box_id]
@@ -469,6 +470,15 @@ assigned to a box."
 
   def self.datesql(date)
     date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
+  end
+
+  # See DigitalFileProvenance::FILE_USE_VALUES for list of valid use codes
+  def generate_filename(sequence: 1, use: 'pres', extension: nil)
+    sequence ||= self.digital_provenance.digital_file_provenances.size + 1 if self.digital_provenance
+    sequence = 1 unless sequence.to_i > 0
+    use = 'pres' if use.to_s.blank?
+    extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule::TM_GENRES[self.format]] if extension.blank?
+    "MDPI_#{self.mdpi_barcode}_#{sequence.to_s.rjust(2, "0")}_#{use}.#{extension}"
   end
 
   private
