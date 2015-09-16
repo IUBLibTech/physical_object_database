@@ -57,10 +57,13 @@
 				$('.date').datepicker();
 				// remove the if check and just execute the contained code to rename all files based on sequence order
 				// this will ALWAYS make files _01_, _02_, _03_, etc
-				if ($('.filename').last().val().size() == 0) {
-					bc = $("#barcode").first().text()
-					seq = ("000" + ($('.filename').size())).slice(-2)
-					$('.filename').last().val("MDPI_"+bc+"_"+seq+"_pres.wav")
+
+				el = $('.filename').last();
+				if ( el.val().length == 0) {
+					bc = $("#barcode").first().text();
+					seq = ("000" + ($('.filename').size())).slice(-2);
+					v = "MDPI_"+bc+"_"+seq+"_pres.wav";
+					el.val(v);
 				}
 			});
 			<% end %>
