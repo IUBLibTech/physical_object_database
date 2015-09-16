@@ -55,20 +55,13 @@
 			<% if @edit_mode %>
 			$(function (){
 				$('.date').datepicker();
-                                $.ajax({
-                                        url: "../../physical_objects/<%= @physical_object.id %>/generate_filename",
-                                        async: false,
-                                        data: {},
-                                        type: "GET",
-                                        dataType : "text",
-                                        success: function( text ) {
-						//FIXME: need to only set value if blank! currently overriding
-                                                $('.filename').val(text);
-                                        },
-                                        error: function( xhr, status, errorThrown ) {
-                                                alert("Error automatically populating filename field: "+status)
-                                        }
-                                })
+				// remove the if check and just execute the contained code to rename all files based on sequence order
+				// this will ALWAYS make files _01_, _02_, _03_, etc
+				if ($('.filename').last().val().size() == 0) {
+					bc = $("#barcode").first().text()
+					seq = ("000" + ($('.filename').size())).slice(-2)
+					$('.filename').last().val("MDPI_"+bc+"_"+seq+"_pres.wav")
+				}
 			});
 			<% end %>
 			$(function() {
