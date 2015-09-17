@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150915190311) do
+ActiveRecord::Schema.define(version: 20150917141859) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -220,6 +220,32 @@ ActiveRecord::Schema.define(version: 20150915190311) do
   end
 
   add_index "digital_statuses", ["physical_object_id"], name: "index_digital_statuses_on_physical_object_id", using: :btree
+
+  create_table "doFiles", id: false, force: true do |t|
+    t.string  "mdpiBarcode", limit: 14, null: false
+    t.integer "partNumber",  limit: 1
+    t.boolean "isMaster"
+    t.string  "fileUsage"
+    t.string  "md5",         limit: 32
+    t.integer "size",        limit: 8
+    t.float   "duration"
+  end
+
+  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+
+  create_table "doObjects", primary_key: "mdpiBarcode", force: true do |t|
+    t.string   "digitizingEntity"
+    t.string   "objectType"
+    t.datetime "acceptTime"
+    t.datetime "bagTime"
+    t.integer  "size",             limit: 8
+  end
+
+  create_table "doParts", id: false, force: true do |t|
+    t.string  "mdpiBarcode", limit: 14, null: false
+    t.integer "partNumber",  limit: 1,  null: false
+    t.boolean "vendorQC"
+  end
 
   create_table "group_keys", force: true do |t|
     t.datetime "created_at"
