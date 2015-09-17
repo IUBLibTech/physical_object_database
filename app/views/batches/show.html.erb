@@ -16,7 +16,8 @@
 <div class='left'>
 	<div id="batch_div">
 	  <h2>Batch</h2>
-	    Shipping Manifest: <%= link_to 'Excel File', batch_path(id: 'batch_' + @batch.id.to_s, format: :xls) %>
+	    Shipping Manifest: <%= link_to 'Excel File', batch_path(id: 'batch_' + @batch.id.to_s, format: :xls) %><br/>
+	    Bins List: <%= link_to 'Excel File', list_bins_batch_path(@batch), format: :xls %>
 	    <% @edit_mode = false %>
 	    <%= render(:partial => "batch") %>
 	</div>

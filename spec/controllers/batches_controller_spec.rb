@@ -225,4 +225,14 @@ describe BatchesController do
     end
   end
 
+  describe "GET list_bins" do
+    before(:each) { get :list_bins, id: batch.id }
+    it "assigns the requested object to @batch" do
+      expect(assigns(:batch)).to eq batch
+    end
+    it "renders the :list_bins template" do
+      expect(response).to render_template(:list_bins)
+    end
+  end
+
 end
