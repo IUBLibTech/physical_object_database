@@ -1,5 +1,5 @@
 class BatchesController < ApplicationController
-  before_action :set_batch, only: [:show, :edit, :update, :destroy, :workflow_history, :add_bin]
+  before_action :set_batch, only: [:show, :edit, :update, :destroy, :workflow_history, :add_bin, :list_bins]
 
   def index
     @batches = Batch.all
@@ -74,6 +74,14 @@ class BatchesController < ApplicationController
       flash[:notice] = "The selected bins were successfully added."
     end
     redirect_to(action: 'show', id: @batch.id)
+  end
+
+  def list_bins
+    request.format = :xls
+    response.headers['Content-Disposition'] = 'attachment; filename="batch_' + @batch.id.to_s + '_list_bins.xls"'
+    respond_to do |format|
+      format.xls
+    end
   end
 
   private

@@ -6,6 +6,7 @@ Pod::Application.routes.draw do
     patch :add_bin, on: :member
     post :remove_bin, on: :member
     get :workflow_history, on: :member
+    get :list_bins, on: :member
   end
 
   resources :bins do
