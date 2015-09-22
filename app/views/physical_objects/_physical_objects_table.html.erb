@@ -42,7 +42,7 @@
    <td><%= po.call_number %></td>
    <td title="<%= po.title.to_s.length <= title_limit ? "" : po.title %>"><%= po.title.to_s.length <= title_limit ? po.title : po.title[0,title_limit - 3] + '...'%></td>
    <td><%= po.format %></td>
-   <td>
+   <td class="po_links">
     <%= link_to("Show", po, class: 'action show') %>
     <% if @bin.nil? && @box.nil? && @picklist.nil? && @group_key.nil? %>
       <%= link_to("Edit", edit_physical_object_path(po), :class => 'action edit') %>
@@ -62,7 +62,16 @@
     <%= link_to("Remove", ungroup_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Group Key?'})%>
     <% end %>
     <% if (@search && !po.staging_requested) %>
-    <div id='div_<%= "stage_#{po.id}" %>' class="inline">| <%= link_to("Stage",  quality_control_ajax_stage_path(po.id), method: :post, remote: true, id: "stage_#{po.id}", class: 'stage_link', data: { type: :json }) %></div>
+      <div id='div_<%= "stage_#{po.id}" %>' class="inline">| <%= link_to("Stage",  quality_control_ajax_stage_path(po.id), method: :post, remote: true, id: "stage_#{po.id}", class: 'stage_link', data: { type: :json }) %></div>
+    <% end %>
+    <% if po.current_digital_status and po.current_digital_status.decided.nil? %>
+      <div class="top_red">
+        Status: <%= po.current_digital_status.state %>
+        <%= form_for(po.current_digital_status, url: quality_control_decide_path(po.current_digital_status)) do |f|%>
+          <%= select_tag(:decided, options_for_select(po.current_digital_status.select_options)) %>
+          <%= f.submit("Decide") %>
+        <% end %>
+      </div>
     <% end %>
   </td>
 </tr>
