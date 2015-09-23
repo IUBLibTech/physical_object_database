@@ -434,3 +434,12 @@ tr.packed {
   font-weight: bold
 }
 
+.top_red {
+  border-top: 1px solid #7d110c;
+  padding-top: 4px;
+  color: #7d110c;
+}
+
+.po_links {
+  font-size: 85%;
+}
