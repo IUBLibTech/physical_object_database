@@ -9,7 +9,16 @@ class DigitalFileProvenance < ActiveRecord::Base
 	validates :created_by, presence: true
 	validates :date_digitized, presence: true
 	validates :signal_chain, presence: true
+
+	validates :tape_fluxivity, numericality: {only_integer: true, greater_than: 0, message: "must be an integer value greater than 0."} 
+	validates :volume_units, format: {with: /(^[+-]\d+[.\d]*$)|(^0$)/, message: "must be a signed (+/-) decimal value."}
+	validates :analog_output_voltage, format: {with: /(^[+-]\d+[.\d]*$)|(^0$)/, message: "must be a signed (+/-) decimal value."}
+	validates :peak, numericality: {only_integer: true, less_than: 0, message: "must be an integer value less than 0."} 
+
 	validate :filename_validation
+
+
+
 	default_scope { order(:filename) }
 
         # File Uses:
@@ -37,6 +46,9 @@ class DigitalFileProvenance < ActiveRecord::Base
 	def default_values
 		self.created_by ||= User.current_user
 		self.date_digitized ||= Time.now
+		self.tape_fluxivity ||= 250
+		self.analog_output_voltage ||= "+4"
+		self.peak ||= -18
 	end
 
 	def filename_validation
