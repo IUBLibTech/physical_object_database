@@ -32,7 +32,20 @@ module TechnicalMetadatumModule
   @tm_partials = { nil => 'show_unknown_tm' }
   @tm_table_names = {}
 
+  
+  const_set(:TM_FORMATS_ARRAY, @tm_formats_array)
+    const_set(:TM_FORMATS_HASH, hashify(TM_FORMATS_ARRAY))
+    const_set(:TM_SUBTYPES, @tm_subtypes)
+    const_set(:BOX_FORMATS, @box_formats)
+    const_set(:BIN_FORMATS, @bin_formats)
+    const_set(:TM_GENRES, @tm_genres)
+    const_set(:TM_FORMAT_CLASSES, @tm_format_classes)
+    const_set(:TM_CLASS_FORMATS, @tm_class_formats)
+    const_set(:TM_PARTIALS, @tm_partials)
+    const_set(:TM_TABLE_NAMES, @tm_table_names)
+
   def TechnicalMetadatumModule.set_tm_constants
+    puts "\n\n\n\n\nHere????\n\n\n\n\n\n"
     const_set(:TM_FORMATS_ARRAY, @tm_formats_array)
     const_set(:TM_FORMATS_HASH, hashify(TM_FORMATS_ARRAY))
     const_set(:TM_SUBTYPES, @tm_subtypes)
