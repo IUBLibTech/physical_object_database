@@ -3,7 +3,7 @@
 #
 # Including classes update the instance variables, which must be set
 # as constants by calling set_tm_constants.
-# The last 2 lines of config/environment.rb take care of this.
+# The last 2 lines of this file take care of this, after the module is loaded.
 module TechnicalMetadatumModule
 
   TMM_ERROR_CODE = 1000
@@ -32,20 +32,7 @@ module TechnicalMetadatumModule
   @tm_partials = { nil => 'show_unknown_tm' }
   @tm_table_names = {}
 
-  
-  const_set(:TM_FORMATS_ARRAY, @tm_formats_array)
-    const_set(:TM_FORMATS_HASH, hashify(TM_FORMATS_ARRAY))
-    const_set(:TM_SUBTYPES, @tm_subtypes)
-    const_set(:BOX_FORMATS, @box_formats)
-    const_set(:BIN_FORMATS, @bin_formats)
-    const_set(:TM_GENRES, @tm_genres)
-    const_set(:TM_FORMAT_CLASSES, @tm_format_classes)
-    const_set(:TM_CLASS_FORMATS, @tm_class_formats)
-    const_set(:TM_PARTIALS, @tm_partials)
-    const_set(:TM_TABLE_NAMES, @tm_table_names)
-
   def TechnicalMetadatumModule.set_tm_constants
-    puts "\n\n\n\n\nHere????\n\n\n\n\n\n"
     const_set(:TM_FORMATS_ARRAY, @tm_formats_array)
     const_set(:TM_FORMATS_HASH, hashify(TM_FORMATS_ARRAY))
     const_set(:TM_SUBTYPES, @tm_subtypes)
@@ -119,8 +106,6 @@ module TechnicalMetadatumModule
 	end
       end
     end
-    #FIXME: Get test/dev/prod environments to initialize this in the same way?
-    TechnicalMetadatumModule.set_tm_constants if Rails.env.match /test/
   end
 
   def humanize_boolean_fields(*field_names)
@@ -227,3 +212,7 @@ module TechnicalMetadatumModule
     row_values
   end
 end
+
+# Intialize the TM constants
+Dir.glob("app/models/*_tm.rb").sort.map { |tm| tm.gsub(/^app\/models\//, "").gsub(/\.rb$/, '').camelize.constantize.connection }
+TechnicalMetadatumModule.set_tm_constants
