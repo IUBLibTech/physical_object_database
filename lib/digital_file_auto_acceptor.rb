@@ -15,26 +15,28 @@ class DigitalFileAutoAcceptor
 			while true
 				# approximate waking the thread up around midnight
 				time = Time.now
-				aa_logger.info("Auto accept thread running at #{time}")
 				mins = total_mins(time)
-				if ELEVEN <= mins and mins <= MIDNIGHT
+				if ELEVEN <= mins && mins <= MIDNIGHT
+					aa_logger.info("Auto accept thread running at #{time} (#{mins})")
 					auto_accept
+				else
+					aa_logger.info("Auto accept thread skipped at #{time} (#{mins})")
 				end
 				# recalc time in case auto_accept ran for awhile
 				time = Time.now
 				mins = total_mins(time)
-				sleep (mins < MIDNIGHT ? (MIDNIGHT - mins) * 60 : 0) + (ELEVEN * 60)
+				sleep (ELEVEN * 60) + (mins < MIDNIGHT ? (MIDNIGHT - mins) * 60 : 0)
 			end
 		}
 	end
 
 	def total_mins(time)
-		hr = time.hour + 1
-		return time.min + (hr * 60)
+		(time.hour * 60) + time.min
 	end
 
 	def auto_accept
 		audio = DigitalStatus.expired_audio_physical_objects
+		aa_logger.info("Expired audio objects: #{audio.size}")
 		audio.each do |po|
 			if po.current_digital_status.state == 'qc_wait'
 				po.current_digital_status.update_attributes(decided: 'qc_passed')
@@ -44,6 +46,7 @@ class DigitalFileAutoAcceptor
 			aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{po.current_digital_status.state} -> #{po.current_digital_status.decided}")
 		end
 		video = DigitalStatus.expired_video_physical_objects
+		aa_logger.info("Expired video objects: #{video.size}")
 		video.each do |po|
 			if po.current_digital_status.state == 'qc_wait'
 				po.current_digital_status.update_attributes(decided: 'qc_passed')
