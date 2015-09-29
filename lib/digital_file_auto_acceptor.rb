@@ -11,6 +11,7 @@ class DigitalFileAutoAcceptor
 	end
 
 	def start
+		aa_logger.info("Auto accept thread started at #{Time.now}")
 		Thread.new {
 			while true
 				# approximate waking the thread up around midnight
@@ -25,7 +26,9 @@ class DigitalFileAutoAcceptor
 				# recalc time in case auto_accept ran for awhile
 				time = Time.now
 				mins = total_mins(time)
-				sleep (ELEVEN * 60) + (mins < MIDNIGHT ? (MIDNIGHT - mins) * 60 : 0)
+				sleep_duration = (ELEVEN * 60) + (mins < MIDNIGHT ? (MIDNIGHT - mins) * 60 : 0)
+				aa_logger.info("Sleeping for #{sleep_duration} until #{Time.now + sleep_duration}")
+				sleep(sleep_duration)
 			end
 		}
 	end
