@@ -108,7 +108,7 @@ class DigitalStatus < ActiveRecord::Base
   # the number of hours after digitization start that a video physical object is auto-accepted
 	@@Video_File_Auto_Accept = 30 * 24
 	# the number of hours after digitization start that an audio physical object is auto-accepted
-	@@Aufio_File_Auto_Accept = 40 * 24
+	@@Audio_File_Auto_Accept = 40 * 24
 
 	scope :expired_audio_physical_objects, -> {
 		PhysicalObject.find_by_sql(
@@ -122,7 +122,7 @@ class DigitalStatus < ActiveRecord::Base
 				) AS ns INNER JOIN digital_statuses as dses
 				WHERE dses.id = ns.ds_id and (options is not null and options != '--- {}\n') and decided is null
 			) as states inner join physical_objects
-			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Aufio_File_Auto_Accept} hour) <= utc_timestamp() and audio = true
+			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Audio_File_Auto_Accept} hour) <= utc_timestamp() and audio = true
 			order by digital_start"
 		)
 	}
