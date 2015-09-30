@@ -13,11 +13,6 @@ Bundler.require(:default, Rails.env)
 
 module Pod
   class Application < Rails::Application
-    require 'digital_file_auto_acceptor'
-    # this fires up the background process that searches for physical objects to automatically move to accepted state
-    # after 30/40 days from digitization start (video/audio)
-    ::DigitalFileAutoAcceptor.instance.start
-    
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
