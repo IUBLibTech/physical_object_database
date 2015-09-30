@@ -8,6 +8,9 @@ Pod::Application.configure do
 
   # Do not eager load code on boot.
   config.eager_load = false
+  # Below added for simplecov:
+  # Disable Rails's static asset server (Apache or nginx will already do this)
+  config.serve_static_files = false
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true

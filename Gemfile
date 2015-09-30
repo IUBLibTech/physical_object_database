@@ -94,6 +94,7 @@ group :test do
   #gem 'cucumber', '1.2.5' # Spork not supported as of Cucumber 1.3.0, need to use 1.2.5
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
+  gem 'simplecov', require: false
 end
 
 group :production do

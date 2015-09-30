@@ -194,6 +194,10 @@ tr.even {
   background: rgba(125, 18, 12, 0.15);
 }
 
+.right {
+  float: right;
+}
+
 .left {
   float: left;
   margin-right: 15px;
@@ -434,3 +438,12 @@ tr.packed {
   font-weight: bold
 }
 
+.top_red {
+  border-top: 1px solid #7d110c;
+  padding-top: 4px;
+  color: #7d110c;
+}
+
+.po_links {
+  font-size: 85%;
+}

@@ -38,3 +38,6 @@ config/environments/*.local.yml
 
 # Ignore database update script
 script/copy-prod-db
+
+# Ignore simplecov folder
+coverage

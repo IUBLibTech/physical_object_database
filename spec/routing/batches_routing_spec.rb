@@ -8,4 +8,7 @@ describe "batches" do
   it "routes to remove_bin" do
     expect(post("/batches/id/remove_bin")).to be_routable
   end
+  it "routes to list_bins" do
+    expect(get("/batches/:id/list_bins")).to route_to(controller: 'batches', id: ':id', action: 'list_bins')
+  end
 end

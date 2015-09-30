@@ -5,6 +5,13 @@ class User < ActiveRecord::Base
 
   default_scope { order(:name) }
 
+  READ_ONLY_USER = 0
+  SMART_USER = 1
+  SMART_ADMIN = 2
+  QC_USER = 4
+  QC_ADMIN = 8
+  ADMIN = 16
+
   def self.authenticate(username)
     return false if username.nil? || username.blank?
     return true if valid_usernames.include? username
@@ -24,4 +31,7 @@ class User < ActiveRecord::Base
     user_string.blank? ? "UNAVAILABLE" : user_string
   end
 
+  def self.current_user_object
+    Thread.current[:current_user]
+  end
 end

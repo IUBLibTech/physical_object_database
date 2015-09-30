@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150917141859) do
+ActiveRecord::Schema.define(version: 20150930145937) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -186,6 +186,10 @@ ActiveRecord::Schema.define(version: 20150917141859) do
     t.integer  "digital_provenance_id", limit: 8
     t.string   "filename",                        null: false
     t.integer  "signal_chain_id",       limit: 8
+    t.integer  "tape_fluxivity"
+    t.string   "volume_units"
+    t.string   "analog_output_voltage"
+    t.integer  "peak"
   end
 
   add_index "digital_file_provenances", ["filename"], name: "index_digital_file_provenances_on_filename", unique: true, using: :btree
@@ -231,7 +235,7 @@ ActiveRecord::Schema.define(version: 20150917141859) do
     t.float   "duration"
   end
 
-  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: true do |t|
     t.string   "digitizingEntity"
@@ -245,6 +249,22 @@ ActiveRecord::Schema.define(version: 20150917141859) do
     t.string  "mdpiBarcode", limit: 14, null: false
     t.integer "partNumber",  limit: 1,  null: false
     t.boolean "vendorQC"
+  end
+
+  create_table "eight_millimeter_video_tms", force: true do |t|
+    t.string   "pack_deformation"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.string   "recording_standard"
+    t.string   "format_duration"
+    t.string   "tape_stock_brand"
+    t.string   "image_format"
+    t.string   "format_version"
+    t.string   "playback_speed"
+    t.string   "binder_system"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "group_keys", force: true do |t|
