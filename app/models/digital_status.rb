@@ -1,3 +1,4 @@
+# NOTE: The end of this file starts the Digital File Auto Acceptance thread, until we refactor it as a rake task
 class DigitalStatus < ActiveRecord::Base
 	require 'json/ext'
 
@@ -250,3 +251,4 @@ class DigitalStatus < ActiveRecord::Base
 		end
 	end
 end
+DigitalFileAutoAcceptor.instance.start
