@@ -19,7 +19,11 @@ class DigitalFileAutoAcceptor
 				mins = total_mins(time)
 				if ELEVEN <= mins && mins <= MIDNIGHT
 					aa_logger.info("Auto accept thread running at #{time} (#{mins})")
-					auto_accept
+					begin
+						auto_accept
+					rescue Exception => e
+						aa_logger.info("EXCEPTION: #{e.inspect}")
+					end
 				else
 					aa_logger.info("Auto accept thread skipped at #{time} (#{mins})")
 				end
