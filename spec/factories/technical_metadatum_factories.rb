@@ -25,6 +25,10 @@ FactoryGirl.define do
      as_technical_metadatum_type "BetacamTm"
      association :as_technical_metadatum, factory: :betacam_tm
    end
+   trait :eight_mm do
+     as_technical_metadatum_type "EightMillimeterVideoTm"
+     association :as_technical_metadatum, factory: :eight_mm_tm
+   end
   end
 
   factory :analog_sound_disc_tm, class: AnalogSoundDiscTm do
@@ -116,6 +120,26 @@ FactoryGirl.define do
     tape_stock_brand ""
     image_format ""
     format_version ""
+
+    trait :invalid do
+      pack_deformation "invalid value"
+    end
+    trait :valid do
+    end
+  end
+
+  factory :eight_mm_tm, class: EightMillimeterVideoTm do
+    pack_deformation "None"
+    fungus false
+    soft_binder_syndrome false
+    other_contaminants false
+    recording_standard "Unknown"
+    format_duration ""
+    tape_stock_brand ""
+    image_format "Unknown"
+    format_version "Unknown"
+    playback_speed "Unknown"
+    binder_system "Unknown"
 
     trait :invalid do
       pack_deformation "invalid value"

@@ -31,6 +31,10 @@ FactoryGirl.define do
       format "Betacam"
       association :technical_metadatum, factory: [:technical_metadatum, :betacam]
     end
+    trait :eight_mm do
+      format "8mm Video"
+      association :technical_metadatum, factory: [:technical_metadatum, :eight_mm]
+    end
     trait :boxable do
       cdr
     end

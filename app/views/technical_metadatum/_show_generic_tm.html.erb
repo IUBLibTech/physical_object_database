@@ -11,7 +11,7 @@
       <th><%= @tm.class.human_attribute_name(field) %></th>
       <% select_values = @tm.class.const_get(:SELECT_FIELDS)[field] %>
       <% if select_values %>
-        <td><%= f.select(field.to_sym, select_values, {}, disabled: !@edit_mode) %>
+        <td><%= f.select(field.to_sym, select_values, { include_blank: 'Select a value...'}, disabled: !@edit_mode) %>
       <% else %>
       <td><%= f.text_field(field.to_sym, readonly: !@edit_mode) %></td>
       <% end %>
