@@ -6,6 +6,11 @@ FactoryGirl.define do
     date_digitized Time.now
     association :signal_chain, factory: :signal_chain
 
+    tape_fluxivity 1
+    volume_units 0
+    analog_output_voltage 0
+    peak -1
+
     after(:build) do |dfp|
       dfp.filename = dfp.digital_provenance.physical_object.generate_filename unless dfp.filename.nil?
     end
