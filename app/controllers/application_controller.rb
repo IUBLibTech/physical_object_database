@@ -95,7 +95,9 @@ class ApplicationController < ActionController::Base
       :warped, :dirty, :scratched, :worn, :broken, :label,
       :subtype,
       #fields for betacam
-      :format_version, :cassette_size, :recording_standard, :image_format
+      :format_version, :cassette_size, :recording_standard, :image_format,
+      #fields for eight mm video
+      :playback_speed, :binder_system
       )
   end
 

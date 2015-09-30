@@ -12,7 +12,7 @@ describe PhysicalObject do
   let(:box) { FactoryGirl.create :box }
   let(:bin) { FactoryGirl.create :bin }
 
-  tm_types = [:cdr, :dat, :lp, :open_reel, :betacam]
+  tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :eight_mm]
 
   describe "FactoryGirl" do
     tm_types.each do |tm_type|
