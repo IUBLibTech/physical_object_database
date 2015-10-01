@@ -4,6 +4,8 @@
 # Including classes update the instance variables, which must be set
 # as constants by calling set_tm_constants.
 # The last 2 lines of this file take care of this, after the module is loaded.
+# NOTE: The end of this file also starts the Digital File Auto Acceptance thread,
+# until we refactor it as a rake task
 module TechnicalMetadatumModule
 
   TMM_ERROR_CODE = 1000
@@ -216,3 +218,7 @@ end
 # Intialize the TM constants
 Dir.glob("app/models/*_tm.rb").sort.map { |tm| tm.gsub(/^app\/models\//, "").gsub(/\.rb$/, '').camelize.constantize.connection }
 TechnicalMetadatumModule.set_tm_constants
+
+# NOTE: The end of this file also starts the Digital File Auto Acceptance thread,
+# until we refactor it as a rake task
+DigitalFileAutoAcceptor.instance.start
