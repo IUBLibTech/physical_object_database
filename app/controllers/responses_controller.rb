@@ -75,8 +75,9 @@ class ResponsesController < ActionController::Base
   # POST /responses/objects/memnon_qc/:mdpi_barcode
   def push_memnon_qc
     begin
+      xml = request.body.read
       # other methods may rely on namespaces so only remove them in a local document
-      doc = Nokogiri::XML(request.body.read).remove_namespaces!
+      doc = Nokogiri::XML(xml).remove_namespaces!
       entity = doc.css("IU Carrier Parts DigitizingEntity").first.content
       @po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
       unless entity == "Memnon Archiving Services Inc"
@@ -84,7 +85,7 @@ class ResponsesController < ActionController::Base
         @message = "Non-memnon xml, ignoring."
       else
         unless @po.nil?
-          parse_qc_xml(@po, request.body.read)
+          parse_qc_xml(@po, xml, doc)
           @success = true
           @message = "Saved memnon digiprov xml for physical object: #{@po.mdpi_barcode}" 
         else
