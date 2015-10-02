@@ -45,6 +45,10 @@ class QualityControlController < ApplicationController
 		render "index"
 	end
 
+	# stopgap measure to start auto_accept thread and view logs
+	def auto_accept
+	end
+
 	private
 	def set_header_title
 		@header_title = params[:status].nil? ? "" : params[:status].titleize

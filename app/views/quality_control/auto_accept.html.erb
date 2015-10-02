@@ -1,0 +1,25 @@
+<% DigitalFileAutoAcceptor.instance.start unless DigitalFileAutoAcceptor.instance.thread_active?%>
+<%= render 'context_menu' %>
+<h2>Quality Control: Auto Accept</h2>
+<div class="left">
+  <h3>Thread status is: <%= DigitalFileAutoAcceptor.instance.thread_active? ? "ACTIVE" : "INACTIVE" %></h3>
+  <h3>Auto Accept Log:</h3>
+  <% begin %>
+    <% log_file = File.open("#{Rails.root}/log/auto_accept.log") %>
+  <% rescue Exception => e %>
+    <% log_file = false %>
+  <% end %>
+  <pre>
+    <% if log_file %>
+      <% begin %>
+        <%= log_file.read %>
+      <% rescue Exception => e %>
+        Error reading log file:
+        <%= e.inspect %>
+      <% end %>
+    <% else %>
+      Error opening log file:
+      <%= e.inspect %>
+    <% end %>
+  </pre>
+</div>

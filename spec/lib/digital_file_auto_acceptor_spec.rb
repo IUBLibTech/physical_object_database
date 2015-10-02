@@ -36,6 +36,22 @@ describe DigitalFileAutoAcceptor do
     end
   end
 
+  describe "#thread_active?" do
+    after(:each) { DigitalFileAutoAcceptor.instance.stop }
+    context "when thread is active" do
+      it "returns true" do
+        DigitalFileAutoAcceptor.instance.start
+	sleep 1
+        expect(DigitalFileAutoAcceptor.instance.thread_active?).to eq true
+      end
+    end
+    context "when thread is inactive" do
+      it "returns false" do
+        expect(DigitalFileAutoAcceptor.instance.thread_active?).to eq false
+      end
+    end
+  end
+
   describe "#aa_logger" do
     pending "write logger tests"
   end
@@ -46,6 +62,10 @@ describe DigitalFileAutoAcceptor do
 
   describe "#start" do
     pending "write thread start tests, if feasible"
+  end
+
+  describe "#stop" do
+    pending "write thread stop tests, if feasible"
   end
 
 end

@@ -5,19 +5,22 @@ class DigitalFileAutoAcceptor
 
         WINDOW_START = 23 * 60 # 11pm, in minutes
         WINDOW_STOP  = 24 * 60 # midnight, in minutes
+	@@thread ||= nil
 
         def aa_logger
                 @@aa_logger ||= Logger.new("#{Rails.root}/log/auto_accept.log")
         end
 
+	def thread_active?
+	  @@thread ? true : false
+	end
+
         def start
-		@@thread_active ||= false
-		if @@thread_active
+		if thread_active?
                   aa_logger.info("Auto accept thread already running at #{Time.now}")
 		else
                   aa_logger.info("Auto accept thread started at #{Time.now}")
-                  Thread.new {
-			  @@thread_active = true
+                  @@thread = Thread.new {
                           while true
                                   time = Time.now
                                   if in_time_window?(time)
@@ -36,10 +39,24 @@ class DigitalFileAutoAcceptor
                                   aa_logger.info("Sleeping for #{sleep_duration} seconds until #{time + sleep_duration}")
                                   sleep(sleep_duration)
                           end
-			  @@thread_active = false
                   }
 		end
         end
+
+	def stop
+	  if @@thread
+	    aa_logger.info("Stopping thread at #{Time.now}")
+	    begin
+	      @@thread.exit
+	      aa_logger.info("Successfully stopped thread at #{Time.now}")
+	    rescue Exception => e
+	      aa_logger.info("EXCEPTION STOPPING THREAD: #{e.inspect}")
+	    end
+	    @@thread = nil
+	  else
+	    aa_logger.info("Thread already stopped at #{Time.now}")
+	  end
+	end
 
         def total_mins(time)
                 (time.hour * 60) + time.min
