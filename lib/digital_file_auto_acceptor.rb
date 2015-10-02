@@ -28,7 +28,7 @@ class DigitalFileAutoAcceptor
                                           begin
                                                   auto_accept
                                           rescue Exception => e
-                                                  aa_logger.info("EXCEPTION: #{e.inspect}")
+                                                  aa_logger.info("EXCEPTION: #{e.message << e.backtrace.join("\n")}")
                                           end
                                   else
                                           aa_logger.info("Auto accept thread skipped at #{time}")
@@ -50,7 +50,7 @@ class DigitalFileAutoAcceptor
 	      @@thread.exit
 	      aa_logger.info("Successfully stopped thread at #{Time.now}")
 	    rescue Exception => e
-	      aa_logger.info("EXCEPTION STOPPING THREAD: #{e.inspect}")
+	      aa_logger.info("EXCEPTION STOPPING THREAD: #{e.message << e.backtrace.join("\n")}")
 	    end
 	    @@thread = nil
 	  else
@@ -76,26 +76,32 @@ class DigitalFileAutoAcceptor
         end
 
         def auto_accept
-                audio = DigitalStatus.expired_audio_physical_objects
-                aa_logger.info("Expired audio objects: #{audio.size}")
-                audio.each do |po|
-                        if po.current_digital_status.state == 'qc_wait'
-                                po.current_digital_status.update_attributes(decided: 'qc_passed')
-                        else
-                                po.current_digital_status.update_attributes(decided: 'to_archive')
-                        end
-                        aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{po.current_digital_status.state} -> #{po.current_digital_status.decided}")
-                end
-                video = DigitalStatus.expired_video_physical_objects
-                aa_logger.info("Expired video objects: #{video.size}")
-                video.each do |po|
-                        if po.current_digital_status.state == 'qc_wait'
-                                po.current_digital_status.update_attributes(decided: 'qc_passed')
-                        else
-                                po.current_digital_status.update_attributes(decided: 'to_archive')
-                        end
-                        aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{po.current_digital_status.state} -> #{po.current_digital_status.decided}")
-                end
+		aa_logger.info("Auto accept process started at #{Time.now}")
+		begin
+                	audio = DigitalStatus.expired_audio_physical_objects
+                	aa_logger.info("Expired audio objects: #{audio.size}")
+                	audio.each do |po|
+                        	if po.current_digital_status.state == 'qc_wait'
+                                	po.current_digital_status.update_attributes(decided: 'qc_passed')
+                        	else
+                                	po.current_digital_status.update_attributes(decided: 'to_archive')
+                        	end
+                        	aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{po.current_digital_status.state} -> #{po.current_digital_status.decided}")
+                	end
+                	video = DigitalStatus.expired_video_physical_objects
+                	aa_logger.info("Expired video objects: #{video.size}")
+                	video.each do |po|
+                        	if po.current_digital_status.state == 'qc_wait'
+                                	po.current_digital_status.update_attributes(decided: 'qc_passed')
+                        	else
+                                	po.current_digital_status.update_attributes(decided: 'to_archive')
+                        	end
+                        	aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{po.current_digital_status.state} -> #{po.current_digital_status.decided}")
+                	end
+		rescue Exception => e
+			aa_logger.info("EXCEPTION IN AUTO_ACCEPT: #{e.message << e.backtrace.join("\n")}")
+		end
+		aa_logger.info("Auto accept process completed at #{Time.now}")
         end
 
 
