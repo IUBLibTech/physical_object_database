@@ -12,7 +12,7 @@
   <pre>
     <% if log_file %>
       <% begin %>
-        <%= log_file.read %>
+        <%= log_file.read.split(/\n/).last(10000).join("\n") %>
       <% rescue Exception => e %>
         Error reading log file:
         <%= e.inspect %>
