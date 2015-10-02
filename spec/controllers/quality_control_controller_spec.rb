@@ -73,5 +73,13 @@ RSpec.describe QualityControlController, :type => :controller do
 
 	end
 
+	describe "#auto_accept" do
+		before(:each) { get :auto_accept }
+		after(:each) { DigitalFileAutoAcceptor.instance.stop }
+		it "renders the :auto_accept template" do
+			expect(response).to render_template :auto_accept
+		end
+	end
+
 
 end
