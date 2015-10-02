@@ -1,15 +1,13 @@
 module QcXmlModule
   
-	# parses XML and assigns attributes to po's constituent DigitalProvenance model, OR it
+  # parses XML and assigns attributes to po's constituent DigitalProvenance model, OR it
   # returns false if the parse failed (most likely due to invalid controlled vocabulary
   # in the XML). IT DOES NOT 
-  def parse_qc_xml(po, xml)
-    # other methods may rely on namespaces so only remove them in a local document
-    doc = Nokogiri::XML(xml).remove_namespaces!
+  def parse_qc_xml(po, xml, doc)
     # parse the DigitalProvenance items first
     dp = po.ensure_digiprov
     dp.xml = xml
-    dp.save
+    dp.save!
     entity = doc.css("IU Carrier Parts DigitizingEntity").first.content
 
     po.digital_provenance.digitizing_entity = entity
@@ -21,8 +19,8 @@ module QcXmlModule
       end
       po.memnon_qc_completed ||= checked
     end
-    po.save
-    dp.save
+    po.save!
+    dp.save!
     true
   end
 
