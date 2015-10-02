@@ -1,6 +1,7 @@
 class ReturnsController < ApplicationController
 	before_action :set_batch, only: [:return_bins, :batch_complete]
 	before_action :set_bin, only: [:return_bin, :physical_object_returned, :bin_unpacked, :unload_bin]
+	before_action :authorize_return
 
 	def index
 		@batches = Batch.where(workflow_status: "Returned")
@@ -122,4 +123,7 @@ class ReturnsController < ApplicationController
 		@bin = Bin.find(params[:id])
 	end
 
+	def authorize_return
+		authorize :return
+	end
 end

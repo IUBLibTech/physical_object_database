@@ -1,4 +1,6 @@
 class WorkflowStatusTemplatesController < ApplicationController
+  before_action :set_wst, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_collection, only: [:index, :new, :create]
 
 	def workflow
 		@workflow_status_template = WorkflowStatusTemplate.new
@@ -20,11 +22,9 @@ class WorkflowStatusTemplatesController < ApplicationController
 	end
 
 	def edit
-		@workflow_status_template = WorkflowStatusTemplate.find(params[:id])
 	end
 
 	def update
-		@workflow_status_template = WorkflowStatusTemplate.find(params[:id])
                 old_i = @workflow_status_template.sequence_index.to_i
                 new_i = params[:workflow_status_template][:sequence_index].to_i
 		#if the sequence index has change we need to adjust any related templates
@@ -39,11 +39,9 @@ class WorkflowStatusTemplatesController < ApplicationController
 	end
 	
 	def show
-		@workflow_status_template = WorkflowStatusTemplate.find(params[:id])
 	end
 	
 	def destroy
-		@workflow_status_template = WorkflowStatusTemplate.find(params[:id])
 		#decrement each following template
 		temps = WorkflowStatusTemplate.where("sequence_index > ? AND object_type = ?", 
 			@workflow_status_template.sequence_index, @workflow_status_template.object_type)
@@ -61,7 +59,7 @@ class WorkflowStatusTemplatesController < ApplicationController
 		end
  	end
 
-	private
+  private
 		def insert_sequence(workflow_status_template)
 			if WorkflowStatusTemplate.exists?(sequence_index: workflow_status_template.sequence_index)
 				temps = WorkflowStatusTemplate.where("sequence_index >= ? AND object_type = ?", 
@@ -74,7 +72,6 @@ class WorkflowStatusTemplatesController < ApplicationController
 			workflow_status_template.save
 		end
 
-	private
 		def move_sequence(existing_template, old_i, new_i)
 			if new_i < old_i
 				temps = WorkflowStatusTemplate.where("sequence_index >= ? AND sequence_index < ? AND object_type = ?", 
@@ -93,9 +90,17 @@ class WorkflowStatusTemplatesController < ApplicationController
 			end
 		end
 
-	private
     def workflow_status_template_params
       params.require(:workflow_status_template).permit(:name, :description, :sequence_index, :object_type)
+    end
+
+    def set_wst
+      @workflow_status_template = WorkflowStatusTemplate.find(params[:id])
+      authorize @workflow_status_template
+    end
+
+    def authorize_collection
+      authorize WorkflowStatusTemplate
     end
 
 end

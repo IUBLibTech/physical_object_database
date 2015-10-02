@@ -1,5 +1,6 @@
 class UnitsController < ApplicationController
   before_action :set_unit, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_collection, only: [:index, :new, :create]
 
   # GET /units
   # GET /units.json
@@ -72,6 +73,11 @@ class UnitsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_unit
       @unit = Unit.find(params[:id])
+      authorize @unit
+    end
+
+    def authorize_collection
+      authorize Unit
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

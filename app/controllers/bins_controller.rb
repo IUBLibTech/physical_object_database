@@ -1,5 +1,6 @@
 class BinsController < ApplicationController
   before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :seal, :unseal, :show_boxes, :assign_boxes, :workflow_history]
+  before_action :authorize_collection, only: [:index, :new, :create]
   before_action :set_assigned_boxes, only: [:show, :assign_boxes]
   before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
@@ -174,7 +175,12 @@ class BinsController < ApplicationController
 	private
 	def set_bin
 		@bin = Bin.find(params[:id])
+		authorize @bin
 		@batch = @bin.batch
+	end
+
+	def authorize_collection
+		authorize Bin
 	end
 
 	def set_assigned_boxes

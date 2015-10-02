@@ -1,10 +1,13 @@
 class ApplicationController < ActionController::Base
-  # Pundit provides authorization support
-  include Pundit
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
   include SessionsHelper
+  # Pundit provides authorization support
+  include Pundit
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+  after_action :verify_authorized
+
   # Note that sessions_controller does not inherit from ApplicationController to avoid the following line and the catch-22 result
   before_action :signed_in_user
   around_filter :scope_current_user
@@ -140,6 +143,12 @@ class ApplicationController < ActionController::Base
     yield
   ensure
     User.current_user = nil
+  end
+
+  #FIXME: redirct to failure page?
+  def user_not_authorized
+    flash[:warning] = "You are not authorized to perform this action."
+    redirect_to(request.referrer || root_path)
   end
 
 end
