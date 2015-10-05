@@ -1,5 +1,6 @@
 class SignalChainsController < ApplicationController
   before_action :set_signal_chain, only: [:show, :edit, :update, :destroy, :include, :reorder]
+  before_action :authorize_collection, only: [:index, :new, :create]
 
   # GET /signal_chains
   # GET /signal_chains.json
@@ -112,6 +113,11 @@ class SignalChainsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_signal_chain
       @signal_chain = SignalChain.find(params[:id])
+      authorize @signal_chain
+    end
+
+    def authorize_collection
+      authorize SignalChain
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

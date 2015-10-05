@@ -1,5 +1,6 @@
 class SpreadsheetsController < ApplicationController
   before_action :set_spreadsheet, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_collection, only: [:index, :new, :create]
   before_action :set_associated_objects, only: [:show]
   before_action :set_modified_objects, only: [:show, :destroy]
 
@@ -52,6 +53,11 @@ class SpreadsheetsController < ApplicationController
       #remove spreadsheet_ prefix for CSV/XLS generation
       id = params[:id].to_s.sub(/^spreadsheet_/, '')
       @spreadsheet = Spreadsheet.find(id)
+      authorize @spreadsheet
+    end
+
+    def authorize_collection
+      authorize Spreadsheet
     end
 
     def set_associated_objects

@@ -38,7 +38,8 @@ feature "Physical Object management" do
 	conclude_jquery
 	within('#notes_div') do
 	  expect(page).to have_text "Creator"
-	  expect(page).to have_selector("input[value='user@example.com']")
+	  #FIXME: seed, use default admin user
+	  expect(page).to have_selector("input[value='aploshay']")
 	end
       end
     end

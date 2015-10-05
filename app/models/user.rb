@@ -5,13 +5,6 @@ class User < ActiveRecord::Base
 
   default_scope { order(:name) }
 
-  READ_ONLY_USER = 0
-  SMART_USER = 1
-  SMART_ADMIN = 2
-  QC_USER = 4
-  QC_ADMIN = 8
-  ADMIN = 16
-
   def self.authenticate(username)
     return false if username.nil? || username.blank?
     return true if valid_usernames.include? username
@@ -34,4 +27,27 @@ class User < ActiveRecord::Base
   def self.current_user_object
     Thread.current[:current_user]
   end
+
+  def permit?(controller, action, record)
+    permissions.map { |p| p[controller][action] }.any?
+  end
+
+  def permissions
+    roles.map { |r| ROLE_PERMISSIONS[r] }
+  end
+
+  def roles
+    [:all_access]
+  end
+
+  ROLES = [:nil_access, :all_access, :qc_access]
+  NIL_ACCESS = Hash.new({})
+  ALL_ACCESS = Hash.new(Hash.new(true))
+  ROLE_PERMISSIONS = {
+    nil_access: NIL_ACCESS,
+    all_access: ALL_ACCESS,
+    qc_access: NIL_ACCESS.merge({
+      QualityControlController => Hash.new(true)
+    })
+  }
 end

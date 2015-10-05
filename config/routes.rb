@@ -77,7 +77,6 @@ Pod::Application.routes.draw do
     get :pack_list, on: :collection
     patch :pack_list, on: :member
     get :pack_list, on: :member
-    get :assign, on: :member
     
     # these 5 routes were deprecated in sprint-22 and replaced with the pack_list route - these action are no more
     # patch :assign_to_container, on: :collection

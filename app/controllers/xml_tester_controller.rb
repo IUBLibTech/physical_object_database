@@ -2,9 +2,9 @@ class XmlTesterController < ApplicationController
 	require 'nokogiri'
 	include BasicAuthenticationHelper
   include QcXmlModule
+  before_action :authorize_xml_tester
 
 	def index
-		
 	end
 
 	def submit
@@ -23,5 +23,8 @@ class XmlTesterController < ApplicationController
 		end
 	end
 
-
+  private
+    def authorize_xml_tester
+      authorize :xml_tester
+    end
 end

@@ -1,7 +1,8 @@
 #mock authentication for testing in request
 
 module RequestHelpers
-  def sign_in(username = "user@example.com")
+  #FIXME: seed default admin user, replace
+  def sign_in(username = "aploshay")
     allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(username)
   end
 end

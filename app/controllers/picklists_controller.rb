@@ -1,5 +1,6 @@
 class PicklistsController < ApplicationController
 	before_action :set_picklist, only: [:show, :edit, :update, :destroy]
+	before_action :authorize_collection, only: [:index, :new, :create, :pack_list]
 	before_action :set_counts, only: [:show, :edit]
   # before_action :set_packing_picklist, only: :pack_list
 
@@ -94,6 +95,7 @@ def pack_list
 		redirect_to pack_list_picklist_path(params[:picklist][:id], box_id: params[:box_id], bin_id: params[:bin_id])
 	elsif params[:id]
 		@picklist = Picklist.eager_load(:physical_objects).find(params[:id])
+		authorize @picklist
 		if params[:search_button]
 			@physical_object = PhysicalObject.eager_load(:group_key, :bin, :box, :unit).where("picklist_id = ? and call_number = ?", @picklist.id, params[:call_number]).packing_sort.first
 			if @physical_object.nil?
@@ -288,7 +290,12 @@ def pack_list
 		    params[:id] = params[:id].sub(/picklist_/, '')
 		  end
 		  @picklist = Picklist.eager_load(:physical_objects).where("picklists.id = ?", params[:id]).first
+		  authorize @picklist
 		  @physical_objects = PhysicalObject.eager_load(:group_key).where("picklist_id = ?", @picklist.id).references(:group_key).packing_sort
+		end
+
+		def authorize_collection
+			authorize Picklist
 		end
 
 		def set_counts

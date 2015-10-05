@@ -1,7 +1,8 @@
 # mock authentication for testing in controllers
 
 module ControllerHelpers
-  def sign_in(username = "user@example.com" )
+  #FIXME: add admin user to seed data, use here
+  def sign_in(username = "aploshay")
     allow(controller).to receive(:current_user).and_return(username)
   end
   def sign_out

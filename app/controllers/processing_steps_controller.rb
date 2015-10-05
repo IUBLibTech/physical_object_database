@@ -15,6 +15,7 @@ class ProcessingStepsController < ApplicationController
   private
   def set_processing_step
     @processing_step = ProcessingStep.find(params[:id])
+    authorize @processing_step
   end
 
 end

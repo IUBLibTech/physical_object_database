@@ -1,5 +1,6 @@
 class PicklistSpecificationsController < ApplicationController
   before_action :set_picklist_specification, only: [:show, :edit, :update, :destroy, :query]
+  before_action :authorize_collection, only: [:index, :new, :create, :picklist_list, :new_picklist, :query_add]
   before_action :set_picklist_dropdown, only: [:query, :picklist_list]
 
   def index
@@ -140,8 +141,13 @@ class PicklistSpecificationsController < ApplicationController
   private
     def set_picklist_specification
       @ps = PicklistSpecification.find(params[:id])
+      authorize @ps
       @tm = @ps.technical_metadatum
       @tm = @tm.as_technical_metadatum unless @tm.nil?
+    end
+
+    def authorize_collection
+      authorize PicklistSpecification
     end
 
     def set_picklist_dropdown

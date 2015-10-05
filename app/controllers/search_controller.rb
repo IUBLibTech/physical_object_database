@@ -1,4 +1,5 @@
 class SearchController < ApplicationController
+  before_action :authorize_search
   def search_results
 	@search = true
     term = params[:identifier].to_s
@@ -55,5 +56,10 @@ class SearchController < ApplicationController
     flash[:notice] = "Your search returns these results"
     render('physical_objects/index')
   end
+
+  private
+    def authorize_search
+      authorize :search
+    end
 
 end
