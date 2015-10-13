@@ -179,6 +179,13 @@ class ResponsesController < ActionController::Base
     render template: "responses/notify.xml.builder", layout: false, status: 200
   end
 
+  def unit_full_name
+    unit = Unit.where(abbreviation: params[:abbreviation]).first
+    @success = !(unit.nil?)
+    @message = unit.nil? ? "Unknown unit abbreviation: #{params[:abbreviation]}" : unit.name
+    render template: "responses/notify.xml.builder", layout: false, status: 200
+  end
+
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?
