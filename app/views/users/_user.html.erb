@@ -22,6 +22,39 @@
       </td>
     </tr>
   </table>
+  <h2>User Role</h2>
+  <table>
+    <tr>
+      <th>Smart Team User</th>
+      <td>
+        <%= f.check_box :smart_team_user %>
+      </td>
+    </tr>
+    <tr>
+      <th>Smart Team Admin</th>
+      <td>
+        <%= f.check_box :smart_team_admin %>
+      </td>
+    </tr>
+    <tr>
+      <th>QC User</th>
+      <td>
+        <%= f.check_box :qc_user %>
+      </td>
+    </tr>
+    <tr>
+      <th>QC Admin</th>
+      <td>
+        <%= f.check_box :qc_admin %>
+      </td>
+    </tr>
+    <tr>
+      <th>Web Admin</th>
+      <td>
+        <%= f.check_box :web_admin %>
+      </td>
+    </tr>
+  </table>
   <% if @edit_mode %>
     <%= f.submit(@submit_text) %>
   <% end %>
