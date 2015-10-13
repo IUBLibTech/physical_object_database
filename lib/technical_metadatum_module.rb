@@ -32,6 +32,8 @@ module TechnicalMetadatumModule
   @tm_partials = { nil => 'show_unknown_tm' }
   @tm_table_names = {}
 
+  TM_FORMATS_ARRAY = []
+
   def TechnicalMetadatumModule.set_tm_constants
     const_set(:TM_FORMATS_ARRAY, @tm_formats_array)
     const_set(:TM_FORMATS_HASH, hashify(TM_FORMATS_ARRAY))
@@ -105,6 +107,7 @@ module TechnicalMetadatumModule
 	  end
 	end
       end
+      TechnicalMetadatumModule.set_tm_constants
     end
   end
 
@@ -212,7 +215,3 @@ module TechnicalMetadatumModule
     row_values
   end
 end
-
-# Intialize the TM constants
-Dir.glob("app/models/*_tm.rb").sort.map { |tm| tm.gsub(/^app\/models\//, "").gsub(/\.rb$/, '').camelize.constantize.connection }
-TechnicalMetadatumModule.set_tm_constants
