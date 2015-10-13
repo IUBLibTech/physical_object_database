@@ -1,5 +1,6 @@
 class MachinesController < ApplicationController
   before_action :set_machine, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_collection, only: [:index, :new, :create]
 
   # GET /machines
   # GET /machines.json
@@ -65,6 +66,11 @@ class MachinesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_machine
       @machine = Machine.find(params[:id])
+      authorize @machine
+    end
+
+    def authorize_collection
+      authorize Machine
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

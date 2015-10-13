@@ -1,5 +1,6 @@
 class MessagesController < ApplicationController
   before_action :set_message, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_collection, only: [:index, :new, :create]
 
   # GET /messages
   # GET /messages.json
@@ -65,6 +66,11 @@ class MessagesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_message
       @message = Message.find(params[:id])
+      authorize @message
+    end
+
+    def authorize_collection
+      authorize Message
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

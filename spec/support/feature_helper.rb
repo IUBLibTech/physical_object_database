@@ -1,7 +1,8 @@
 #authentication methods for testing in Capybara
 
 module FeatureHelpers
-  def sign_in(username = "user@example.com")
+  #FIXME: seed default admin user, replace
+  def sign_in(username = "aploshay")
     page.set_rack_session(username: username)
     User.current_user = username
   end

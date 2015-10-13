@@ -585,4 +585,18 @@ describe ResponsesController do
     end
   end
 
+  describe "#unit_full_name" do
+    let(:unit) { Unit.first }
+    it "finds the correct full name" do
+      get :unit_full_name, abbreviation: unit.abbreviation
+      expect(response.body).to match "<success>true"
+      expect(response.body).to match "<message>#{unit.name}"
+    end
+
+    it "fails on bad abbreviation" do
+      get :unit_full_name, abbreviation: "foobar"
+      expect(response.body).to match "<success>false"
+    end
+  end
+
 end

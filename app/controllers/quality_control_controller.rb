@@ -10,7 +10,6 @@ class QualityControlController < ApplicationController
 	end
 
 	def staging_index
-		
 		render "staging"
 	end
 
@@ -52,6 +51,7 @@ class QualityControlController < ApplicationController
 	private
 	def set_header_title
 		@header_title = params[:status].nil? ? "" : params[:status].titleize
+		authorize :quality_control
 	end
 
 	def set_staging

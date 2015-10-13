@@ -77,7 +77,6 @@ Pod::Application.routes.draw do
     get :pack_list, on: :collection
     patch :pack_list, on: :member
     get :pack_list, on: :member
-    get :assign, on: :member
     
     # these 5 routes were deprecated in sprint-22 and replaced with the pack_list route - these action are no more
     # patch :assign_to_container, on: :collection
@@ -104,6 +103,7 @@ Pod::Application.routes.draw do
   post 'responses/objects/memnon_qc/:mdpi_barcode', to: "responses#push_memnon_qc", as: "push_memnon_qc"
   get 'responses/objects/memnon_qc/:mdpi_barcode', to: "responses#pull_memnon_qc", as: "pull_memnon_qc"
   get 'responses/objects/states', to: "responses#pull_states", as: "pull_states"
+  get 'responses/packager/units/:abbreviation', to: "responses#unit_full_name", as: "unit_full_name"
 
   get 'quality_control/statuses/:status', to: "quality_control#index", as: "quality_control_status"
   get "quality_control/", to: "quality_control#index", as: "quality_control_index"

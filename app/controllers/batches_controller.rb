@@ -1,5 +1,6 @@
 class BatchesController < ApplicationController
   before_action :set_batch, only: [:show, :edit, :update, :destroy, :workflow_history, :add_bin, :list_bins]
+  before_action :authorize_collection, only: [:index, :new, :create]
 
   def index
     @batches = Batch.all
@@ -24,6 +25,7 @@ class BatchesController < ApplicationController
   end
 
   def update
+    authorize @batch
     @bins = @batch.bins
     @available_bins = Bin.available_bins
     Batch.transaction do
@@ -37,6 +39,7 @@ class BatchesController < ApplicationController
   end
 
   def show
+    authorize @batch
     @available_bins = Bin.available_bins
     @bins = @batch.bins
     respond_to do |format|
@@ -46,6 +49,7 @@ class BatchesController < ApplicationController
   end
 
   def destroy
+    authorize @batch
     if @batch.destroy
       flash[:notice] = "<i>#{@batch.identifier}</i> successfully destroyed".html_safe
       redirect_to(:action => 'index')
@@ -56,10 +60,12 @@ class BatchesController < ApplicationController
   end
 
   def workflow_history
+    authorize @batch
     @workflow_statuses = @batch.workflow_statuses
   end
 
   def add_bin
+    authorize @batch
     if @batch.packed_status?
       flash[:warning] = Batch.packed_status_message
     elsif params[:bin_ids].nil? or params[:bin_ids].empty?
@@ -77,6 +83,7 @@ class BatchesController < ApplicationController
   end
 
   def list_bins
+    authorize @batch
     request.format = :xls
     response.headers['Content-Disposition'] = 'attachment; filename="batch_' + @batch.id.to_s + '_list_bins.xls"'
     respond_to do |format|
@@ -92,6 +99,11 @@ class BatchesController < ApplicationController
     def set_batch
       # remove batch_ prefix, if present, for csv and xls requests
       @batch = Batch.eager_load(:bins).find(params[:id].to_s.sub(/^batch_/, ''))
+      authorize @batch
+    end
+
+    def authorize_collection
+      authorize Batch
     end
   
 end

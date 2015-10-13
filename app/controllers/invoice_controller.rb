@@ -2,7 +2,6 @@ class InvoiceController < ApplicationController
 	before_action :set_submissions
 
 	def index
-		
 	end
 
 	def submit
@@ -32,6 +31,7 @@ class InvoiceController < ApplicationController
 	def set_submissions
 		@file = ""
 		@submissions = MemnonInvoiceSubmission.all().order("submission_date DESC")
+		authorize :invoice
 	end
 
 end

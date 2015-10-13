@@ -68,7 +68,7 @@
       <div class="top_red">
         Status: <%= po.current_digital_status.state %>
         <%= form_for(po.current_digital_status, url: quality_control_decide_path(po.current_digital_status)) do |f|%>
-          <%= select_tag(:decided, options_for_select(po.current_digital_status.select_options)) %>
+          <%= select_tag(:decided, options_for_select(po.current_digital_status.select_options.sort)) %>
           <%= f.submit("Decide") %>
         <% end %>
       </div>

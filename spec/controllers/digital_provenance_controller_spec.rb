@@ -1,5 +1,3 @@
-require 'rails_helper'
-
-RSpec.describe DigitalProvenanceController, type: :controller do
-
+describe DigitalProvenanceController do
+  pending "write tests"
 end

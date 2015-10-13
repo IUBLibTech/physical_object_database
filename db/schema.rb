@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150930145937) do
+ActiveRecord::Schema.define(version: 20151013113154) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -484,6 +484,11 @@ ActiveRecord::Schema.define(version: 20150930145937) do
     t.string   "username"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "smart_team_user"
+    t.boolean  "smart_team_admin"
+    t.boolean  "qc_user"
+    t.boolean  "qc_admin"
+    t.boolean  "web_admin"
   end
 
   create_table "workflow_status_templates", force: true do |t|

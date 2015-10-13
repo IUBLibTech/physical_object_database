@@ -118,6 +118,14 @@ describe UsersController do
         expect(response).to render_template("edit")
       end
     end
+    context "setting a role" do
+      let(:update_attributes) { {name: user.name, smart_team_user: true} }
+      it "sets as smart team user" do
+        expect(user.smart_team_user?).to eq false
+	user.reload
+        expect(user.smart_team_user?).to eq true
+      end
+    end
   end
 
   describe "DELETE #destroy" do

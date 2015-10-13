@@ -1,6 +1,7 @@
 class BoxesController < ApplicationController
   before_action :set_bin
   before_action :set_box, only: [:show, :edit, :update, :destroy, :unbin]
+  before_action :authorize_collection, only: [:index, :new, :create]
 
   def index
     if @bin.nil?
@@ -132,6 +133,7 @@ class BoxesController < ApplicationController
     end
     def set_box
       @box = Box.find(params[:id])
+      authorize @box
       @bins = Bin.all
       #@physical_objects = @box.physical_objects
       @physical_objects = PhysicalObject.includes(:group_key).where(box_id: @box.id).references(:group_key).packing_sort
@@ -139,5 +141,7 @@ class BoxesController < ApplicationController
     def box_params
       params.require(:box).permit(:mdpi_barcode, :spreadsheet, :spreadsheet_id, :bin, :bin_id, :full, :description)
     end
-
+    def authorize_collection
+      authorize Box
+    end
 end

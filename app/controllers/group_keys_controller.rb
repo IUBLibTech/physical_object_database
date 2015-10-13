@@ -1,5 +1,6 @@
 class GroupKeysController < ApplicationController
   before_action :set_group_key, only: [:show, :edit, :update, :destroy, :reorder, :include]
+  before_action :authorize_collection, only: [:index, :new, :create]
 
   # GET /group_keys
   # GET /group_keys.json
@@ -140,7 +141,12 @@ class GroupKeysController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_group_key
       @group_key = GroupKey.find(params[:id])
+      authorize @group_key
       @physical_objects = @group_key.physical_objects.order(:group_position)
+    end
+
+    def authorize_collection
+      authorize GroupKey
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

@@ -1,4 +1,6 @@
 class ConditionStatusTemplatesController < ApplicationController
+  before_action :set_cst, only: [:edit, :update, :show, :destroy]
+  before_action :authorize_collection, only: [:index, :new, :create]
 
   def index
     @all_condition_status_templates = {}
@@ -27,11 +29,9 @@ class ConditionStatusTemplatesController < ApplicationController
   end
 
   def edit
-    @condition_status_template = ConditionStatusTemplate.find(params[:id])
   end
 
   def update
-    @condition_status_template = ConditionStatusTemplate.find(params[:id])
     if @condition_status_template.update_attributes(condition_status_template_params)
       flash[:notice] = "#{@condition_status_template.name} was successfully updated."
       redirect_to status_templates_path
@@ -42,11 +42,9 @@ class ConditionStatusTemplatesController < ApplicationController
   end
   
   def show
-    @condition_status_template = ConditionStatusTemplate.find(params[:id])
   end
   
   def destroy
-    @condition_status_template = ConditionStatusTemplate.find(params[:id])
     if @condition_status_template.destroy
       flash[:notice] = "#{@condition_status_template.name} successfully destroyed."
       redirect_to status_templates_path
@@ -59,6 +57,13 @@ class ConditionStatusTemplatesController < ApplicationController
   private
     def condition_status_template_params
       params.require(:condition_status_template).permit(:name, :description, :object_type, :blocks_packing)
+    end
+    def set_cst
+      @condition_status_template = ConditionStatusTemplate.find(params[:id])
+      authorize @condition_status_template
+    end
+    def authorize_collection
+      authorize ConditionStatusTemplate
     end
 
 end
