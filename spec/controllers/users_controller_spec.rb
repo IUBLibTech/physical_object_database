@@ -132,4 +132,16 @@ describe UsersController do
     end
   end
 
+  describe "User roles" do
+    # let(:update) { put :update, id: user.id, user: update_attributes }
+
+    # context "testing roles" do
+    #   let(:update_attributes) { {name: user.name, smart_team_user: true} }
+    #   it "sets as smart team user" do
+    #     update
+    #     expect(user.smart_team_user?).to eq true
+    #   end
+    # end
+  end
+
 end

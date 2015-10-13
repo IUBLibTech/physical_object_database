@@ -40,6 +40,7 @@ class User < ActiveRecord::Base
     [:all_access]
   end
 
+
   ROLES = [:nil_access, :all_access, :qc_access]
   NIL_ACCESS = Hash.new({})
   ALL_ACCESS = Hash.new(Hash.new(true))
