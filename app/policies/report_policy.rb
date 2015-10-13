@@ -1,5 +1,5 @@
 class ReportPolicy < Struct.new(:user, :report)
-  POLICY_CONTROLLER = ReportController
+  POLICY_CONTROLLER = ReportsController
   include PolicyModule
   include HeadlessPolicyModule
 end
