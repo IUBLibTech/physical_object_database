@@ -26,7 +26,8 @@
   <table>
     <tr>
       <th>Smart Team User</th>
-      <td>
+      <%# kludge fix for CSS making tiny checkboxes %>
+      <td style="min-width: 20px;">
         <%= f.check_box :smart_team_user %>
       </td>
     </tr>

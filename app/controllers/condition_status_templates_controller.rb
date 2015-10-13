@@ -60,6 +60,7 @@ class ConditionStatusTemplatesController < ApplicationController
     end
     def set_cst
       @condition_status_template = ConditionStatusTemplate.find(params[:id])
+      authorize @condition_status_template
     end
     def authorize_collection
       authorize ConditionStatusTemplate
