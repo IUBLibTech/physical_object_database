@@ -44,7 +44,7 @@ class QualityControlController < ApplicationController
 		render "index"
 	end
 
-	# stopgap measure to start auto_accept thread and view logs
+	# displays auto_accept logs
 	def auto_accept
 	end
 
