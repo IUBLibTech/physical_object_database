@@ -17,10 +17,11 @@ gem "nested_form"
 #gem 'simple_enum'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.1.0'
+gem 'rails', '~> 4.1.0'
 
 # Use mysql as the database for Active Record
-gem 'mysql2'
+# hold back mysql2 gem as newer ones are actually broken with newer activerecord
+gem 'mysql2', '~> 0.3.20'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
@@ -35,7 +36,7 @@ gem 'will_paginate', '~> 3.0'
 #gem 'coffee-rails', '~> 4.0.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', platforms: :ruby
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -50,7 +51,7 @@ gem 'jbuilder', '~> 1.2'
 
 gem 'json'
 
-gem 'rails_config'
+gem 'config'
 
 # roo adds XLSX read-only support
 gem 'roo'
