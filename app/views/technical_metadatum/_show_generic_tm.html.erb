@@ -3,7 +3,7 @@
   <%= f.hidden_field(:subtype) %>
   <h2><%= @tm.subtype %> Technical Metadata</h2>
 <% else %>
-  <h2><%= TechnicalMetadatumModule::TM_CLASS_FORMATS[@tm.class] %> Technical Metadata</h2>
+  <h2><%= TechnicalMetadatumModule.tm_class_formats[@tm.class] %> Technical Metadata</h2>
 <% end %>
 <table>
   <% @tm.class.const_get(:SIMPLE_FIELDS).each do |field| %>

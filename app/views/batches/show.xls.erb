@@ -9,13 +9,13 @@
       <% @first_object = @batch.first_object %>
       <% if @first_object %>
         <% @media_format = @first_object.format %>
-        <% @media_genre = TechnicalMetadatumModule::TM_GENRES[@media_format] %>
+        <% @media_genre = TechnicalMetadatumModule.tm_genres[@media_format] %>
         <% @column_names = ["Object Barcode", "Batch number", "Batch description", "Format", "Unit", "IU Object ID - Call number", "IU Object ID - Catalog barcode", "IU Collection ID", "Title", "Carrier Stream Index", "Container barcode", "Container name", "Container description", "Physical Condition – Damage", "Physical Condition - Preservation Problems", "Number of preservation masters expected", "Output file-name prefix"]%>
         <% if @media_genre == :audio %>
           <% @column_names += ["Embedded file info - Bext Chunk - Description", "Embedded file info - Info List - ICMT", "Embedded file info - Info List - IARL"] %>
         <% end %>
         <%# box column %>
-        <% if TechnicalMetadatumModule::BOX_FORMATS.include?(@media_format) %>
+        <% if TechnicalMetadatumModule.box_formats.include?(@media_format) %>
           <% @column_names << "Box barcode" %>
         <% end %>
         <%# format-specific columns %>

@@ -17,34 +17,50 @@ module TechnicalMetadatumModule
   end
 
   # For module: constants to track values from included classes
-  @tm_formats_array = []
-  @tm_formats_hash = {}
-  @tm_subtypes = []
-  @box_formats = []
-  @bin_formats = []
-  @tm_genres = {}
-  @tm_format_classes = {}
+  @tm_formats_array ||= []
+  @tm_formats_hash ||= {}
+  @tm_subtypes ||= []
+  @box_formats ||= []
+  @bin_formats ||= []
+  @tm_genres ||= {}
+  @tm_format_classes ||= {}
   # This only maps a class to one subtype, but that's okay.
   # In the 2 cases where this is used, it's suffient, as the subtypes should behave equivalently.
   # One case is determining valid import CSV headers.
   # The other case is mapping to partials (see immediately below).
-  @tm_class_formats = {}
-  @tm_partials = { nil => 'show_unknown_tm' }
-  @tm_table_names = {}
+  @tm_class_formats ||= {}
+  @tm_partials ||= { nil => 'show_unknown_tm' }
+  @tm_table_names ||= {}
 
-  TM_FORMATS_ARRAY = []
-
-  def TechnicalMetadatumModule.set_tm_constants
-    const_set(:TM_FORMATS_ARRAY, @tm_formats_array)
-    const_set(:TM_FORMATS_HASH, hashify(TM_FORMATS_ARRAY))
-    const_set(:TM_SUBTYPES, @tm_subtypes)
-    const_set(:BOX_FORMATS, @box_formats)
-    const_set(:BIN_FORMATS, @bin_formats)
-    const_set(:TM_GENRES, @tm_genres)
-    const_set(:TM_FORMAT_CLASSES, @tm_format_classes)
-    const_set(:TM_CLASS_FORMATS, @tm_class_formats)
-    const_set(:TM_PARTIALS, @tm_partials)
-    const_set(:TM_TABLE_NAMES, @tm_table_names)
+  def TechnicalMetadatumModule.tm_formats_array
+    @tm_formats_array
+  end
+  def TechnicalMetadatumModule.tm_formats_hash
+    @tm_formats_hash
+  end
+  def TechnicalMetadatumModule.tm_subtypes
+    @tm_subtypes
+  end
+  def TechnicalMetadatumModule.box_formats
+    @box_formats
+  end
+  def TechnicalMetadatumModule.bin_formats
+    @tm_formats_array
+  end
+  def TechnicalMetadatumModule.tm_genres
+    @tm_genres
+  end
+  def TechnicalMetadatumModule.tm_format_classes
+    @tm_format_classes
+  end
+  def TechnicalMetadatumModule.tm_class_formats
+    @tm_class_formats
+  end
+  def TechnicalMetadatumModule.tm_partials
+    @tm_partials
+  end
+  def TechnicalMetadatumModule.tm_table_names
+    @tm_table_names
   end
 
   # Pre-set module constants
@@ -68,6 +84,7 @@ module TechnicalMetadatumModule
       # Update module constants to track class values
       tm_formats = base.const_get(:TM_FORMAT)
       @tm_formats_array += tm_formats
+      @tm_formats_hash = hashify(@tm_formats_array)
       @tm_subtypes += tm_formats if base.const_defined?(:TM_SUBTYPE) && base.const_get(:TM_SUBTYPE)
       @box_formats += tm_formats if base.const_defined?(:BOX_FORMAT) && base.const_get(:BOX_FORMAT)
       @bin_formats += tm_formats if base.const_defined?(:BIN_FORMAT) && base.const_get(:BIN_FORMAT)
@@ -107,7 +124,6 @@ module TechnicalMetadatumModule
 	  end
 	end
       end
-      TechnicalMetadatumModule.set_tm_constants
     end
   end
 
