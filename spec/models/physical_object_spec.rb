@@ -35,8 +35,8 @@ describe "sets proper media type" do
     context "with tm_type: #{tm_type}" do
       let(:po) { FactoryGirl.create :physical_object, tm_type }
       specify "saves proper media type" do
-        expect(po.audio).to eq (TechnicalMetadatumModule::TM_GENRES[po.format] == :audio ? true : nil)
-        expect(po.video).to eq (TechnicalMetadatumModule::TM_GENRES[po.format] == :video ? true : nil)
+        expect(po.audio).to eq (TechnicalMetadatumModule.tm_genres[po.format] == :audio ? true : nil)
+        expect(po.video).to eq (TechnicalMetadatumModule.tm_genres[po.format] == :video ? true : nil)
       end
     end
   end
@@ -125,7 +125,7 @@ describe "has required attributes:" do
       specify "can belong to a box" do
         expect(valid_po).to respond_to :box_id
       end
-      TechnicalMetadatumModule.const_get(:BOX_FORMATS).each_with_index do |format, index|
+      TechnicalMetadatumModule.box_formats.each_with_index do |format, index|
         describe "boxable format: #{format}" do
           before(:each) { valid_po.format = format }
           specify "cannot belong to a bin and box" do
@@ -142,15 +142,15 @@ describe "has required attributes:" do
             valid_po.box = box
             expect(valid_po).not_to be_valid
           end
-          unless format.in? TechnicalMetadatumModule.const_get(:BIN_FORMATS)
+          unless format.in? TechnicalMetadatumModule.bin_formats
             specify "cannot belong to a bin" do
               valid_po.bin = bin
               expect(valid_po).not_to be_valid
             end
           end
-          if TechnicalMetadatumModule.const_get(:BOX_FORMATS).size > 1
+          if TechnicalMetadatumModule.box_formats.size > 1
             specify "cannot belong to a box containing other formats" do
-              po.format = TechnicalMetadatumModule.const_get(:BOX_FORMATS)[index - 1]
+              po.format = TechnicalMetadatumModule.box_formats[index - 1]
 	      po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
               po.box = box
               po.save!
@@ -165,7 +165,7 @@ describe "has required attributes:" do
       specify "can belong to a bin" do
         expect(valid_po).to respond_to :bin_id
       end
-      TechnicalMetadatumModule.const_get(:BIN_FORMATS).each_with_index do |format, index|
+      TechnicalMetadatumModule.bin_formats.each_with_index do |format, index|
         describe "binnable format: #{format}" do
           before(:each) { valid_po.format = format }
           specify "cannot belong to a bin and box" do
@@ -182,16 +182,16 @@ describe "has required attributes:" do
             valid_po.bin = bin
             expect(valid_po).not_to be_valid
           end
-          unless format.in? TechnicalMetadatumModule.const_get(:BOX_FORMATS)
+          unless format.in? TechnicalMetadatumModule.box_formats
             specify "cannot belong to a box" do
               valid_po.format = format
               valid_po.box = box
               expect(valid_po).not_to be_valid
             end
           end
-          if TechnicalMetadatumModule.const_get(:BIN_FORMATS).size > 1
+          if TechnicalMetadatumModule.bin_formats.size > 1
             specify "cannot belong to a bin containing other formats" do
-              po.format = TechnicalMetadatumModule.const_get(:BIN_FORMATS)[index - 1]
+              po.format = TechnicalMetadatumModule.bin_formats[index - 1]
 	      po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
               po.bin = bin
               po.save!
@@ -665,11 +665,11 @@ describe "has required attributes:" do
          end
 
          describe "#create_tm" do
-          TechnicalMetadatumModule::TM_FORMATS_HASH.keys.each do |format|
+          TechnicalMetadatumModule.tm_formats_array.each do |format|
             context "with valid format: #{format}" do
               let(:tm) { valid_po.create_tm(format) }
               it "creates a new TM" do
-                expect(tm).to be_a_new(TechnicalMetadatumModule::TM_FORMAT_CLASSES[format])
+                expect(tm).to be_a_new(TechnicalMetadatumModule.tm_format_classes[format])
               end
             end
           end

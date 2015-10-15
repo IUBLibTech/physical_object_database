@@ -85,6 +85,7 @@ describe User do
   end
 
   describe ".current_user" do
+    before(:each) { sign_out }
     it "returns Thread.current[:current_user] if set" do
       Thread.current[:current_user] = "test_user"
       expect(User.current_user).to eq "test_user"

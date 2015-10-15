@@ -10,7 +10,7 @@ module PhysicalObjectsHelper
     #start with list of headers not corresponding to fields in physical object or any tm
     valid_headers = ['Bin barcode', 'Bin identifier', 'Box barcode', 'Unit', 'Group key', 'Group total', 'Internal Notes', 'External Notes', 'Conditions']
     valid_headers += PhysicalObject.valid_headers
-    TechnicalMetadatumModule::TM_CLASS_FORMATS.keys.each do |tm_class|
+    TechnicalMetadatumModule.tm_class_formats.keys.each do |tm_class|
       valid_headers += tm_class.valid_headers
     end
     # parse_csv has already validated .csv, .xlsx filetype and parsing

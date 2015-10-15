@@ -66,13 +66,13 @@ class PhysicalObject < ActiveRecord::Base
   MULTIVALUED_FIELDSETS = {}
 
   def valid_formats
-    TechnicalMetadatumModule::TM_FORMATS_ARRAY
+    TechnicalMetadatumModule.tm_formats_array
   end
   def self.valid_formats
-    TechnicalMetadatumModule::TM_FORMATS_ARRAY
+    TechnicalMetadatumModule.tm_formats_array
   end
   def self.formats
-    TechnicalMetadatumModule::TM_FORMATS_HASH
+    TechnicalMetadatumModule.tm_formats_hash
   end
   validates :format, presence: true, inclusion: { in: lambda { |po| po.valid_formats }, message: "value \"%{value}\" is not in list of valid values: #{PhysicalObject.valid_formats}}" }
   validates :generation, inclusion: { in: GENERATION_VALUES.keys, message: "value \"%{value}\" is not in list of valid values: #{GENERATION_VALUES.keys}" }
@@ -187,10 +187,10 @@ class PhysicalObject < ActiveRecord::Base
   # the passed in value for f should be the human readable name of the format - in the case of AnalogSoundDisc
   # technical metadatum, this could be LP/45/78/Lacquer Disc/etc
   def create_tm(format, tm_args = {})
-    tm_class = TechnicalMetadatumModule::TM_FORMAT_CLASSES[format]
+    tm_class = TechnicalMetadatumModule.tm_format_classes[format]
     unless tm_class.nil?
       # setting the subtype should trigger and after_initialize callback to set defaults
-      tm_args[:subtype] = format if TM_SUBTYPES.include?(format)
+      tm_args[:subtype] = format if TechnicalMetadatumModule.tm_subtypes.include?(format)
       tm_class.new(**tm_args)
     else
       raise "Unknown format: #{format}"
@@ -218,7 +218,7 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def format_class
-    return TM_FORMAT_CLASSES[self.format]
+    return TechnicalMetadatumModule.tm_format_classes[self.format]
   end
 
   def self.to_csv(physical_objects, picklist = nil)
@@ -330,8 +330,8 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def ensure_tm
-    if TechnicalMetadatumModule::TM_FORMATS_HASH[self.format]
-      if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule::TM_FORMAT_CLASSES[self.format].to_s
+    if TechnicalMetadatumModule.tm_formats_hash[self.format]
+      if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule.tm_format_classes[self.format].to_s
         @tm = create_tm(self.format, physical_object: self)
       else
         @tm = self.technical_metadatum.as_technical_metadatum
@@ -435,7 +435,7 @@ class PhysicalObject < ActiveRecord::Base
     if bin
       if !ApplicationHelper.real_barcode?(self.mdpi_barcode)
         errors[:base] << "An object must be assigned a barcode before it can be assigned to a bin."
-      elsif !self.format.in? PhysicalObject.const_get(:BIN_FORMATS)
+      elsif !self.format.in? TechnicalMetadatumModule.bin_formats
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a bin."
       elsif bin.boxes.any?
         errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes.  You may only assign a physical object to a bin containing physical objects."
@@ -450,7 +450,7 @@ class PhysicalObject < ActiveRecord::Base
       if !ApplicationHelper.real_barcode?(self.mdpi_barcode)
         errors[:base] << "An object must be assigned a barcode before it can be 
 assigned to a box."
-      elsif !self.format.in? PhysicalObject.const_get(:BOX_FORMATS)
+      elsif !self.format.in? TechnicalMetadatumModule.box_formats
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a box."
       elsif box.physical_objects.any? && box.physical_objects.first.format != self.format
         errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format (#{box.physical_objects.first.format}).  You may only assign a physical object to a box containing the matching format (#{self.format})."
@@ -477,7 +477,7 @@ assigned to a box."
     sequence ||= self.digital_provenance.digital_file_provenances.size + 1 if self.digital_provenance
     sequence = 1 unless sequence.to_i > 0
     use = 'pres' if use.to_s.blank?
-    extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule::TM_GENRES[self.format]] if extension.blank?
+    extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule.tm_genres[self.format]] if extension.blank?
     "MDPI_#{self.mdpi_barcode}_#{sequence.to_s.rjust(2, "0")}_#{use}.#{extension}"
   end
 
@@ -511,7 +511,7 @@ assigned to a box."
 
   private
   def tm_table_name(format)
-    table_name = TM_TABLE_NAMES[format]
+    table_name = TechnicalMetadatumModule.tm_table_names[format]
     unless table_name.nil?
       table_name
     else
