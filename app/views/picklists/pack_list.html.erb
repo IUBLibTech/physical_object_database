@@ -33,7 +33,7 @@
 	<% end %>
 </div>
 <% if @physical_object %>
-	<% @tm ||= @physical_object.technical_metadatum.as_technical_metadatum %>
+	<% @tm ||= @physical_object.technical_metadatum.specific %>
 	<%= error_messages_for(@physical_object) %>
 	<%= error_messages_for(@tm) %>
 	<%= nested_form_for(@physical_object, html: {id: "pack_form"}, url: pack_list_picklist_path(@picklist.id, bin_id: @bin ? @bin.id : nil, box_id: @box ? @box.id : nil)) do |f| %>

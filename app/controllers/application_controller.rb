@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
       if ! @physical_object.technical_metadatum.nil?
         #this may be an edit cahnging the format
         if f == @physical_object.format
-          @tm = @physical_object.technical_metadatum.as_technical_metadatum
+          @tm = @physical_object.technical_metadatum.specific
         else
           @tm = @physical_object.create_tm(f)
         end
@@ -30,14 +30,14 @@ class ApplicationController < ActionController::Base
         tm = TechnicalMetadatum.new
         @tm = @physical_object.create_tm(f)
         @physical_object.technical_metadatum = tm
-        tm.as_technical_metadatum = @tm
+        tm.specific = @tm
       end
     elsif params[:type] == 'PicklistSpecification'
       @picklist_specification = params[:id] == '0' ? PicklistSpecification.new(format: f) : PicklistSpecification.find(params[:id])
       if !@picklist_specification.technical_metadatum.nil?
         #could be an edit changing the format of the piclist spec
         if f == @picklist_specification.format
-          @tm = @picklist_specification.technical_metadatum.as_technical_metadatum
+          @tm = @picklist_specification.technical_metadatum.specific
         else
           #do not save this - reassigning here so the call to create_tm works
           @picklist_specification.format = f

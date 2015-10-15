@@ -253,8 +253,8 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def master_copies
-    if self.technical_metadatum && self.technical_metadatum.as_technical_metadatum
-      self.technical_metadatum.as_technical_metadatum.master_copies
+    if self.technical_metadatum && self.technical_metadatum.specific
+      self.technical_metadatum.specific.master_copies
     else
       0
     end
@@ -287,11 +287,11 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def metadata_attributes
-    technical_metadatum.as_technical_metadatum.attributes
+    technical_metadatum.specific.attributes
   end
 
   def metadata_columns
-    technical_metadatum.as_technical_metadatum.class.column_names
+    technical_metadatum.specific.class.column_names
   end
 
   def printable_column_headers
@@ -319,7 +319,7 @@ class PhysicalObject < ActiveRecord::Base
     "WHERE " <<
     (!format.nil? and format.length > 0 ? 
       "physical_objects.format='#{format}' AND physical_objects.id=technical_metadata.physical_object_id " << 
-      "AND technical_metadata.as_technical_metadatum_id=#{tm_table_name(self.format)}.id " 
+      "AND technical_metadata.actable_id=#{tm_table_name(self.format)}.id " 
       : 
       "" ) << (omit_picklisted ? "AND (picklist_id is null OR picklist_id = 0) " : "")
     physical_object_where_clause <<
@@ -331,10 +331,10 @@ class PhysicalObject < ActiveRecord::Base
 
   def ensure_tm
     if TechnicalMetadatumModule.tm_formats_hash[self.format]
-      if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule.tm_format_classes[self.format].to_s
+      if self.technical_metadatum.nil? || self.technical_metadatum.specific.nil? || self.technical_metadatum.actable_type != TechnicalMetadatumModule.tm_format_classes[self.format].to_s
         @tm = create_tm(self.format, physical_object: self)
       else
-        @tm = self.technical_metadatum.as_technical_metadatum
+        @tm = self.technical_metadatum.specific
       end
     end
   end
@@ -506,7 +506,7 @@ assigned to a box."
 
   private
   def technical_metadata_where_claus
-    tm_where(tm_table_name(format), technical_metadatum.as_technical_metadatum)
+    tm_where(tm_table_name(format), technical_metadatum.specific)
   end
 
   private
@@ -531,7 +531,7 @@ assigned to a box."
   #   q = ""
   #   stm.attributes.each do |name, value|
   #     #ignore these fields in the Sql WHERE clause
-  #     if name == 'id' or name == 'created_at' or name == 'updated_at' or name == "as_technical_metadatum_type"
+  #     if name == 'id' or name == 'created_at' or name == 'updated_at' or name == "actable_type"
   #       next
   #     # a value of false in a query means we don't care whether the returned value is true OR false
   #     elsif !value.nil? and (value.class == String and value.length > 0)
@@ -548,7 +548,7 @@ assigned to a box."
     tm.attributes.each do |name, value|
       #ignore these fields in the Sql WHERE clause
       if name == 'id' or name == 'created_at' or name == 'updated_at' or 
-      name == "as_technical_metadatum_type" or name == 'unknown' or name == 'none'
+      name == "actable_type" or name == 'unknown' or name == 'none'
         next
       # a value of false in a query means we don't care whether the returned value is true OR false
       elsif !value.nil? and (value.class == String and value.length > 0)

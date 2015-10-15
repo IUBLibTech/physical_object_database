@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 #STANDARD CASES
-#act_as_relation handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
-gem "acts_as_relation"
+#active_record-acts_as handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
+gem "active_record-acts_as"
 
 # counter_culture improves default count_cache handling and adds additional features
 # removed; deprecate or resolve caching issue

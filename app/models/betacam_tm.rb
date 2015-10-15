@@ -1,5 +1,5 @@
 class BetacamTm < ActiveRecord::Base
-  acts_as :technical_metadatum
+  acts_as :technical_metadatum, validates_actable: false
   extend TechnicalMetadatumClassModule
   # TM module constants
   TM_FORMAT = ['Betacam']

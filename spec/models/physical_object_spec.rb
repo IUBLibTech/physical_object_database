@@ -21,7 +21,7 @@ describe PhysicalObject do
         specify "provides a valid object" do
           expect(valid_po).to be_valid
           expect(valid_po.technical_metadatum).to be_valid
-          expect(valid_po.technical_metadatum.as_technical_metadatum).to be_valid
+          expect(valid_po.technical_metadatum.specific).to be_valid
         end
       end
     end
@@ -339,10 +339,10 @@ describe "has required attributes:" do
     end
     it "is re-generated before validation, on format change" do
       expect(valid_po).to be_valid
-      expect(valid_po.technical_metadatum.as_technical_metadatum_type).not_to eq "DatTm"
+      expect(valid_po.technical_metadatum.actable_type).not_to eq "DatTm"
       valid_po.format = "DAT"
       valid_po.valid?
-      expect(valid_po.technical_metadatum.as_technical_metadatum_type).to eq "DatTm"
+      expect(valid_po.technical_metadatum.actable_type).to eq "DatTm"
     end
     it "is not generated for invalid format" do
       valid_po.technical_metadatum = nil
@@ -652,7 +652,7 @@ describe "has required attributes:" do
               describe "#master_copies" do
                 context "with technical metadatum present" do
                   it "returns values from technical metadatum" do
-                   expect(po.master_copies).to eq po.technical_metadatum.as_technical_metadatum.master_copies
+                   expect(po.master_copies).to eq po.technical_metadatum.specific.master_copies
                  end
                end
                context "without technical metadatum present" do
