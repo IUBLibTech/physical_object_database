@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
         @tm = @picklist_specification.create_tm
       end
     end
-    render(partial: 'technical_metadatum/' + TechnicalMetadatumModule::TM_PARTIALS[f])
+    render(partial: 'technical_metadatum/' + TechnicalMetadatumModule.tm_partials[f])
   end
 
   private
@@ -120,7 +120,7 @@ class ApplicationController < ActionController::Base
     # that this pass value is the subclass (OpenReelTm, CdrTm, etc)
     # and not the super class TechnicalMetadatum
     def tm_partial_path(technical_metadatum)
-      'technical_metadatum/' + TechnicalMetadatumModule::TM_PARTIALS[TechnicalMetadatumModule::TM_CLASS_FORMATS[technical_metadatum.class]]
+      'technical_metadatum/' + TechnicalMetadatumModule.tm_partials[TechnicalMetadatumModule.tm_class_formats[technical_metadatum.class]]
     end
 
     # there is a disconnect between jquery datepicker and how rails parses datetime objects.

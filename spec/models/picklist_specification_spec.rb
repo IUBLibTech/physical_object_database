@@ -57,7 +57,7 @@ describe PicklistSpecification do
         expect(created_tm.picklist_specification).to eq valid_picklist_specification
       end
       it "returns a tm of matching format" do
-        expect(created_tm.as_technical_metadatum_type).to eq (TechnicalMetadatumModule::TM_FORMAT_CLASSES[valid_picklist_specification.format]).to_s
+        expect(created_tm.as_technical_metadatum_type).to eq (TechnicalMetadatumModule.tm_format_classes[valid_picklist_specification.format]).to_s
       end
     end
 

@@ -3,10 +3,10 @@ class PhysicalObjectValidator < ActiveModel::Validator
 	def validate(record)
 		# piggy back on the validation to set audio/video media type - not the optimal place for this but setting a
 		# before_validation in physical object was creating an intermittent bug...
-		if TM_GENRES[record.format] == :audio
+		if TechnicalMetadatumModule.tm_genres[record.format] == :audio
       record.audio = true
       record.video = nil
-    elsif TM_GENRES[record.format] == :video
+    elsif TechnicalMetadatumModule.tm_genres[record.format] == :video
       record.audio = nil
       record.video = true
     end
