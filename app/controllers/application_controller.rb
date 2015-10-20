@@ -111,7 +111,7 @@ class ApplicationController < ActionController::Base
         :digitizing_entity, :date, :comments, :created_by, :cleaning_date, :cleaning_comment, 
         :baking, :repaired, :duration, digital_file_provenances_attributes: [
           :id, :filename, :comment, :date_digitized, :display_date_digitized, :created_by,
-          :speed_used, :signal_chain_id, :volume_units, :tape_fluxivity, :peak, :analog_output_voltage, :_destroy]
+          :speed_used, :signal_chain_id, :volume_units, :tape_fluxivity, :peak, :analog_output_voltage, :stylus_size, :turnover, :rolloff, :_destroy]
       )
     end
 

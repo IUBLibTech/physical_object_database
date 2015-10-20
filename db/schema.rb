@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151013113154) do
+ActiveRecord::Schema.define(version: 20151019192105) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -190,6 +190,9 @@ ActiveRecord::Schema.define(version: 20151013113154) do
     t.string   "volume_units"
     t.string   "analog_output_voltage"
     t.integer  "peak"
+    t.string   "stylus_size"
+    t.string   "turnover"
+    t.string   "rolloff"
   end
 
   add_index "digital_file_provenances", ["filename"], name: "index_digital_file_provenances_on_filename", unique: true, using: :btree
@@ -235,7 +238,7 @@ ActiveRecord::Schema.define(version: 20151013113154) do
     t.float   "duration"
   end
 
-  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: true do |t|
     t.string   "digitizingEntity"

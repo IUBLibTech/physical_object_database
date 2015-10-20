@@ -8,12 +8,12 @@ class DigitalFileProvenance < ActiveRecord::Base
 	validates :filename, presence: true, uniqueness: true
 	validates :created_by, presence: true
 	validates :date_digitized, presence: true
-	validates :signal_chain, presence: true
+	validates :signal_chain, presence: true, allow_blank: true
 
-	validates :tape_fluxivity, numericality: {only_integer: true, greater_than: 0, message: "must be an integer value greater than 0."} 
-	validates :volume_units, format: {with: /(^[+-]\d+[.\d]*$)|(^0$)/, message: "must be a signed (+/-) decimal value."}
-	validates :analog_output_voltage, format: {with: /(^[+-]\d+[.\d]*$)|(^0$)/, message: "must be a signed (+/-) decimal value."}
-	validates :peak, numericality: {only_integer: true, less_than: 0, message: "must be an integer value less than 0."} 
+	validates :tape_fluxivity, numericality: {only_integer: true, greater_than: 0, message: "must be an integer value greater than 0."}, allow_blank: true
+	validates :volume_units, format: {with: /(^[+-]\d+[.\d]*$)|(^0$)/, message: "must be a signed (+/-) decimal value."}, allow_blank: true
+	validates :analog_output_voltage, format: {with: /(^[+-]\d+[.\d]*$)|(^0$)/, message: "must be a signed (+/-) decimal value."}, allow_blank: true
+	validates :peak, numericality: {only_integer: true, less_than: 0, message: "must be an integer value less than 0."}, allow_blank: true
 
 	validate :filename_validation
 
