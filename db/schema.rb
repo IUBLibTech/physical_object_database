@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151013113154) do
+ActiveRecord::Schema.define(version: 20151021200430) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -210,6 +210,8 @@ ActiveRecord::Schema.define(version: 20151013113154) do
     t.string   "duration"
   end
 
+  add_index "digital_provenances", ["physical_object_id"], name: "index_digital_provenances_on_physical_object_id", using: :btree
+
   create_table "digital_statuses", force: true do |t|
     t.integer  "physical_object_id"
     t.integer  "physical_object_mdpi_barcode", limit: 8
@@ -223,6 +225,7 @@ ActiveRecord::Schema.define(version: 20151013113154) do
     t.datetime "updated_at"
   end
 
+  add_index "digital_statuses", ["created_at", "state", "physical_object_id"], name: "quality_control_staging", using: :btree
   add_index "digital_statuses", ["physical_object_id"], name: "index_digital_statuses_on_physical_object_id", using: :btree
 
   create_table "doFiles", id: false, force: true do |t|
