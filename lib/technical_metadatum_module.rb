@@ -17,51 +17,22 @@ module TechnicalMetadatumModule
   end
 
   # For module: constants to track values from included classes
-  @tm_formats_array ||= []
-  @tm_formats_hash ||= {}
-  @tm_subtypes ||= []
-  @box_formats ||= []
-  @bin_formats ||= []
-  @tm_genres ||= {}
-  @tm_format_classes ||= {}
+  @@tm_formats_array ||= []
+  @@tm_formats_hash ||= {}
+  @@tm_subtypes ||= []
+  @@box_formats ||= []
+  @@bin_formats ||= []
+  @@tm_genres ||= {}
+  @@tm_format_classes ||= {}
   # This only maps a class to one subtype, but that's okay.
   # In the 2 cases where this is used, it's suffient, as the subtypes should behave equivalently.
   # One case is determining valid import CSV headers.
   # The other case is mapping to partials (see immediately below).
-  @tm_class_formats ||= {}
-  @tm_partials ||= { nil => 'show_unknown_tm' }
-  @tm_table_names ||= {}
+  @@tm_class_formats ||= {}
+  @@tm_partials ||= { nil => 'show_unknown_tm' }
+  @@tm_table_names ||= {}
 
-  def TechnicalMetadatumModule.tm_formats_array
-    @tm_formats_array
-  end
-  def TechnicalMetadatumModule.tm_formats_hash
-    @tm_formats_hash
-  end
-  def TechnicalMetadatumModule.tm_subtypes
-    @tm_subtypes
-  end
-  def TechnicalMetadatumModule.box_formats
-    @box_formats
-  end
-  def TechnicalMetadatumModule.bin_formats
-    @tm_formats_array
-  end
-  def TechnicalMetadatumModule.tm_genres
-    @tm_genres
-  end
-  def TechnicalMetadatumModule.tm_format_classes
-    @tm_format_classes
-  end
-  def TechnicalMetadatumModule.tm_class_formats
-    @tm_class_formats
-  end
-  def TechnicalMetadatumModule.tm_partials
-    @tm_partials
-  end
-  def TechnicalMetadatumModule.tm_table_names
-    @tm_table_names
-  end
+  mattr_reader :tm_formats_array, :tm_formats_hash, :tm_subtypes, :box_formats, :bin_formats, :tm_genres, :tm_format_classes, :tm_class_formats, :tm_partials, :tm_table_names
 
   # Pre-set module constants
   GENRE_EXTENSIONS = {
@@ -83,21 +54,21 @@ module TechnicalMetadatumModule
     if base.const_defined?(:TM_FORMAT)
       # Update module constants to track class values
       tm_formats = base.const_get(:TM_FORMAT)
-      @tm_formats_array += tm_formats
-      @tm_formats_hash = hashify(@tm_formats_array)
-      @tm_subtypes += tm_formats if base.const_defined?(:TM_SUBTYPE) && base.const_get(:TM_SUBTYPE)
-      @box_formats += tm_formats if base.const_defined?(:BOX_FORMAT) && base.const_get(:BOX_FORMAT)
-      @bin_formats += tm_formats if base.const_defined?(:BIN_FORMAT) && base.const_get(:BIN_FORMAT)
-      @tm_class_formats = @tm_class_formats.merge({ base => tm_formats.first })
+      @@tm_formats_array += tm_formats
+      @@tm_formats_hash = hashify(@@tm_formats_array)
+      @@tm_subtypes += tm_formats if base.const_defined?(:TM_SUBTYPE) && base.const_get(:TM_SUBTYPE)
+      @@box_formats += tm_formats if base.const_defined?(:BOX_FORMAT) && base.const_get(:BOX_FORMAT)
+      @@bin_formats += tm_formats if base.const_defined?(:BIN_FORMAT) && base.const_get(:BIN_FORMAT)
+      @@tm_class_formats = @@tm_class_formats.merge({ base => tm_formats.first })
       tm_formats.each do |tm_format|
-        @tm_genres = @tm_genres.merge({ tm_format => base.const_get(:TM_GENRE)}) if base.const_defined?(:TM_GENRE)
+        @@tm_genres = @@tm_genres.merge({ tm_format => base.const_get(:TM_GENRE)}) if base.const_defined?(:TM_GENRE)
         if base.const_defined?(:TM_PARTIAL)
-          @tm_partials = @tm_partials.merge({ tm_format => base.const_get(:TM_PARTIAL)})
-	else
-          @tm_partials = @tm_partials.merge({ tm_format => 'show_generic_tm'})  
-	end
-	@tm_format_classes = @tm_format_classes.merge({ tm_format => base })
-        @tm_table_names = @tm_table_names.merge({ tm_format => base.table_name})
+          @@tm_partials = @@tm_partials.merge({ tm_format => base.const_get(:TM_PARTIAL)})
+        else
+          @@tm_partials = @@tm_partials.merge({ tm_format => 'show_generic_tm'})  
+        end
+        @@tm_format_classes = @@tm_format_classes.merge({ tm_format => base })
+        @@tm_table_names = @@tm_table_names.merge({ tm_format => base.table_name})
       end
 
       # Update class
@@ -105,12 +76,12 @@ module TechnicalMetadatumModule
       base.constants.map { |c| c.to_s }.select { |c| c.match /^.*_VALUES$/ }.each do |values_constant|
         fieldname = values_constant.match(/^(.*)_VALUES/)[1].downcase
         base.class_eval do
-	  # Select values method on object
-	  define_method(values_constant.downcase) do
-	    self.class.const_get(values_constant.to_sym)
-	  end
-	  # Select values validation
-	  validates fieldname.to_sym, inclusion: { in: base.const_get(values_constant.to_sym).keys }
+          # Select values method on object
+          define_method(values_constant.downcase) do
+            self.class.const_get(values_constant.to_sym)
+          end
+          # Select values validation
+          validates fieldname.to_sym, inclusion: { in: base.const_get(values_constant.to_sym).keys }
         end
       end
       # SELECT_FIELDS constant on class
@@ -118,11 +89,11 @@ module TechnicalMetadatumModule
       # Boolean fieldsets: display methods for fieldsets
       base.constants.map { |c| c.to_s }.select { |c| c.match /^.*_FIELDS$/ }.each do |values_constant|
         fieldset = values_constant.match(/^(.*)_FIELDS/)[1].downcase
-	base.class_eval do
-	  define_method(fieldset) do
-	    humanize_boolean_fieldset(values_constant.to_sym)
-	  end
-	end
+        base.class_eval do
+          define_method(fieldset) do
+            humanize_boolean_fieldset(values_constant.to_sym)
+          end
+        end
       end
     end
   end
@@ -188,7 +159,7 @@ module TechnicalMetadatumModule
            section_string = "  <#{name}>\n" + section_string + "  </#{name}>\n"
           end
           xml << section_string
-	end
+        end
       end
     end
   end
