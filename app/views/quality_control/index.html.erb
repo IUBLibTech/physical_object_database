@@ -6,7 +6,7 @@
 			<li>Action Required</li>
 			<% DigitalStatus.action_statuses.each do |as| %>
 				<li>
-					<%= link_to("#{as[0]} (#{as[1]})", quality_control_status_path(as[0])) %>
+					<%= link_to("#{as[0]} (#{as[1]})", quality_control_status_path(as[0])) if policy(:quality_control).index? %>
 				</li>
 			<% end %>
 		</ul>

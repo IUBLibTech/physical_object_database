@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
 	<div class="contextMenuItem">
-    <%= link_to("Cancel", controller: 'picklist_specifications', :action => 'index') %>
+    <%= link_to("Cancel", controller: 'picklist_specifications', :action => 'index') if policy(PicklistSpecification).index? %>
   </div>
 <% end %>
 <%= render(:partial => "picklist") %>

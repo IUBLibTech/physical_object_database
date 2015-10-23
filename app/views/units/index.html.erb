@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to "Create Unit", new_unit_path %>
+    <%= link_to "Create Unit", new_unit_path if policy(Unit).new? %>
   </div>
 <% end %>
 <div>

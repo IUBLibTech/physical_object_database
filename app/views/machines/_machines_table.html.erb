@@ -15,9 +15,9 @@
       <td><%= machine.manufacturer %></td>
       <td><%= machine.model %></td>
       <td>
-        <%= link_to "Show", machine_path(machine) %>
-        <%= link_to "Edit", edit_machine_path(machine) %>
-        <%= link_to "Delete", machine_path(machine), method: :delete, data: { confirm: 'Are you sure you want to delete this Machine?' } %>
+        <%= link_to "Show", machine_path(machine) if policy(machine).show? %>
+        <%= link_to "Edit", edit_machine_path(machine) if policy(machine).edit? %>
+        <%= link_to "Delete", machine_path(machine), method: :delete, data: { confirm: 'Are you sure you want to delete this Machine?' } if policy(machine).destroy? %>
       </td>
     </tr>
   <% end %>

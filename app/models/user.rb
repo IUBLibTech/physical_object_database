@@ -48,9 +48,9 @@ class User < ActiveRecord::Base
 
   NO_ACTIONS = {}
   ALL_ACTIONS = Hash.new(true)
-  READ_ONLY = { index: true, show: true }
-  EDIT_ONLY = { index: true, show: true, edit: true, update: true }
-  ALL_BUT_DELETE = ALL_ACTIONS.merge({ destroy: false})
+  READ_ONLY = {index: true, show: true, workflow_history: true}
+  EDIT_ONLY = READ_ONLY.merge({edit: true, update: true})
+  ALL_BUT_DELETE = ALL_ACTIONS.merge({destroy: false})
 
   NIL_ACCESS = Hash.new(NO_ACTIONS)
   ALL_ACCESS = Hash.new(ALL_ACTIONS)

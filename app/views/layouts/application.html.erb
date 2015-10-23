@@ -19,40 +19,40 @@
         Version <%= APP_VERSION %>
       </div>
       <div id="user_info">
-        <strong>User:</strong> <%= current_user %> (<%= link_to "logout", signout_path, method: :delete %>)
+        <strong>User:</strong> <%= current_user %> (<%= link_to "logout", signout_path, method: :delete %><%# sessions controller does not use policy authorization %>)
       </div>
     </div>
     <%= environment_notice %>
     <div id="menu">
       <div class="menuItem">
-        <%= link_to("Physical Objects", :controller => 'physical_objects', :action => 'index') %>
+        <%= link_to("Physical Objects", :controller => 'physical_objects', :action => 'index') if policy(PhysicalObject).index? %>
       </div>
       <div class="menuItem">
-        <%= link_to("Batches", controller: :batches, action: :index) %>
+        <%= link_to("Batches", controller: :batches, action: :index) if policy(Batch).index? %>
       </div>
       <div class="menuItem">
-        <%= link_to 'Bins', bins_path %>
+        <%= link_to 'Bins', bins_path if policy(Bin).index? %>
       </div>
       <div class="menuItem">
-        <%= link_to("Pick Lists", controller: 'picklist_specifications', action: 'index') %>
+        <%= link_to("Pick Lists", controller: 'picklist_specifications', action: 'index') if policy(PicklistSpecification).index? %>
       </div>
       <div class="menuItem">
-        <%= link_to("Statuses", :controller => 'status_templates', :action => 'index') %>
+        <%= link_to("Statuses", :controller => 'status_templates', :action => 'index') if policy(:status_template).index? %>
       </div>
       <div class="menuItem">
-        <%= link_to("Returns", returns_path) %>
+        <%= link_to("Returns", returns_path) if policy(:return).index? %>
       </div>
       <div class="menuItem">
-        <%= link_to("Quality Control", quality_control_index_path) %>
+        <%= link_to("Quality Control", quality_control_index_path) if policy(:quality_control).index? %>
       </div>
       <!-- <div class="menuItem"> -->
-        <%# link_to("Advanced Search", :controller => 'search', :action => 'index') %>
+        <%# link_to("Advanced Search", :controller => 'search', :action => 'index') if policy(:search).advanced_search? %>
       <!-- </div> -->
       <div class="menuItem">
-        <%= link_to("Reports", controller: :reports, action: :index) %>
+        <%= link_to("Reports", controller: :reports, action: :index) if policy(:report).index? %>
       </div>
       <div class="left">
-        <%= render 'search/basic_search_form' %>
+        <%= render 'search/basic_search_form' if policy(:search).search_results? %>
       </div>
     </div>
     <div id="contextMenu">

@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-	  <%= link_to("Cancel", {:action => 'show', :id => @box.id}) %>
+	  <%= link_to("Cancel", {:action => 'show', :id => @box.id}) if policy(@box).show? %>
 	</div>
 <% end %>
 <div>

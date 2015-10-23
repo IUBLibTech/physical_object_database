@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to "Cancel", machines_path %>
+    <%= link_to "Cancel", machines_path if policy(Machine).index? %>
   </div>
 <% end %>
 <div>

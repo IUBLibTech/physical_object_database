@@ -20,9 +20,9 @@
       <td><%= user.qc_admin? ? '✓' : '' %></td>
       <td><%= user.web_admin? ? '✓' : '' %></td>
       <td>
-        <%= link_to "Show", user_path(user) %>
-        <%= link_to "Edit", edit_user_path(user) %>
-        <%= link_to "Delete", user_path(user), method: :delete, data: { confirm: 'Are you sure you want to delete this User?' } %>
+        <%= link_to "Show", user_path(user) if policy(user).show? %>
+        <%= link_to "Edit", edit_user_path(user) if policy(user).edit? %>
+        <%= link_to "Delete", user_path(user), method: :delete, data: { confirm: 'Are you sure you want to delete this User?' } if policy(user).destroy? %>
       </td>
     </tr>
     <% count += 1 %>

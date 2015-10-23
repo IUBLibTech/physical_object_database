@@ -1,12 +1,12 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Edit", {action: 'edit', id: @workflow_status_template.id}) %>
+    <%= link_to("Edit", {action: 'edit', id: @workflow_status_template.id}) if policy(@workflow_status_template).edit? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Delete", @workflow_status_template, method: 'delete', data: {confirm: 'Are you sure you want to delete with Workflow Status Tempalte?'}) %>
+    <%= link_to("Delete", @workflow_status_template, method: 'delete', data: {confirm: 'Are you sure you want to delete with Workflow Status Template?'}) if policy(@workflow_status_template).destroy? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("List Statuses", {controller: :status_templates, action: 'index'} ) %>
+    <%= link_to("List Statuses", {controller: :status_templates, action: 'index'} ) if policy(:status_template).index? %>
   </div>
 <% end %>
 <div>

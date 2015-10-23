@@ -1,9 +1,9 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Create Picklist", :action => 'new') %>
+    <%= link_to("Create Picklist", :action => 'new') if policy(Picklist).new? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("View Picklists", :action => 'index') %>
+    <%= link_to("View Picklists", :action => 'index') if policy(PicklistSpecification).index? %>
   </div>
 <% end %>
 <%= error_messages_for(@ps) %>
@@ -27,14 +27,7 @@
           <tr class='even'>
         <%end%>
         <% po.attributes.each do |name, value|%>
-	  <% if name =~ /unit_id$/ %>
-	    <% if value.nil? || value.blank? || value.to_i.zero? %>
-	      <% value = "" %>
-	    <% else %>
-	      <% value = Kernel.const_get(name.titleize.gsub(' ', '')).find(value).spreadsheet_descriptor %>
-	    <% end %>
-	  <% end %>
-          <td><%= value.to_s[0, 20] %><% if value.to_s.length > 15 %>...<% end %></td>
+          <td><%= value.to_s[0, 20] %><% if value.to_s.length > 20 %>...<% end %></td>
         <% end %>
         <td>
           <%= check_box_tag 'po_ids[]', po.id, true %>

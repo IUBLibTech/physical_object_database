@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to "Create User", new_user_path %>
+    <%= link_to "Create User", new_user_path if policy(User).new? %>
   </div>
 <% end %>
 <div>

@@ -10,7 +10,7 @@
             <th>Picklist</th>
             <td>
               <% if !@physical_object.picklist.nil? %>
-                <%= link_to(@physical_object.picklist.name, controller: 'picklists', action: 'show', id: @physical_object.picklist.id ) %>
+                <%= link_to(@physical_object.picklist.name, controller: 'picklists', action: 'show', id: @physical_object.picklist.id) if policy(@physical_object.picklist).show? %>
               <% else %>
                 Not Assigned
               <% end %>
@@ -28,7 +28,7 @@
               <% if @edit_mode %>
                 <%= text_field_tag "bin_mdpi_barcode", (@physical_object.bin ? @physical_object.bin.mdpi_barcode : "" ), class: "mdpi" %>
               <% elsif !@edit_mode and !@physical_object.bin.nil? %>
-                <%= link_to("Bin: #{@physical_object.bin.mdpi_barcode}", @physical_object.bin) %>
+                <%= link_to("Bin: #{@physical_object.bin.mdpi_barcode}", @physical_object.bin) if policy(@physical_object.bin).show? %>
               <% else %>
                 Not Assigned
               <% end %>
@@ -41,7 +41,7 @@
               <% if @edit_mode %>
                 <%= text_field_tag "box_mdpi_barcode", (@physical_object.box ? @physical_object.box.mdpi_barcode : ""), class: "mdpi" %>
               <% elsif !@edit_mode and !@physical_object.box.nil? %>
-                <%= link_to("Box: #{@physical_object.box.mdpi_barcode}", @physical_object.box) %>
+                <%= link_to("Box: #{@physical_object.box.mdpi_barcode}", @physical_object.box) if policy(@physical_object.box).show? %>
               <% else %>
                 Not Assigned
               <% end %>

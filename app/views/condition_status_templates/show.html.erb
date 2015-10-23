@@ -1,12 +1,12 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Edit", {action: 'edit', id: @condition_status_template.id}) %>
+    <%= link_to("Edit", {action: 'edit', id: @condition_status_template.id}) if policy(@condition_status_template).show? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Delete", @condition_status_template, method: :delete, data: { confirm: 'Are you sure you want to delete this Condition Status Template?' }) %>
+    <%= link_to("Delete", @condition_status_template, method: :delete, data: { confirm: 'Are you sure you want to delete this Condition Status Template?' }) if policy(@condition_status_template).destroy? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("List Statuses", {controller: :status_templates, action: :index}) %>
+    <%= link_to("List Statuses", {controller: :status_templates, action: :index}) if policy(ConditionStatusTemplate).index? %>
   </div>
 <% end %>
 <div>
