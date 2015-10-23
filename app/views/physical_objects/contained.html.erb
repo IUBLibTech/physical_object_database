@@ -5,17 +5,17 @@
 <% end %>
 <div>
   <h2>Contained Physical Objects Report</h2>
-  Report produces an Excel file of physical objects binned or boxed within the specified date range (inclusive).<br/>
+  Report produces an Excel file of physical objects binned or boxed within the specified date range, packed on or after the start date and <em>before</em> the end date .<br/>
   If your browser is NOT presenting a date picker or automatically formatting date input, use the following format for your date entry:<br/>
   <em>YYYY-MM-DD (ex. 2015-01-23)</em>
   <%= form_for(:physical_object, url: { action: :contained, format: :xls }, method: :get) do |f| %>
     <table>
       <tr>
-        <th>Start date</th>
+        <th>Start date (inclusive)</th>
         <td><%= f.date_field :start_date %></td>
       </tr>
       <tr>
-        <th>End date</th>
+        <th>End date (exclusive)</th>
         <td><%= f.date_field :end_date %></td>
       </tr>
     </table>
