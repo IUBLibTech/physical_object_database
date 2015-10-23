@@ -96,4 +96,8 @@ describe User do
     end
   end
 
+  describe "#roles" do
+    pending "write roles tests"
+  end
+
 end

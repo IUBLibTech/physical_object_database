@@ -37,10 +37,14 @@ class User < ActiveRecord::Base
   end
 
   def roles
-    [:all_access]
+    result = []
+    ROLES.each do |role|
+      result << role if self.send("#{role}?".to_sym)
+    end
+    result
   end
 
-  ROLES = [:nil_access, :all_access, :smart_user, :smart_admin, :qc_user, :qc_admin]
+  ROLES = [:smart_team_user, :smart_team_admin, :qc_user, :qc_admin, :web_admin]
 
   NO_ACTIONS = {}
   ALL_ACTIONS = Hash.new(true)
@@ -50,7 +54,7 @@ class User < ActiveRecord::Base
 
   NIL_ACCESS = Hash.new(NO_ACTIONS)
   ALL_ACCESS = Hash.new(ALL_ACTIONS)
-  SMART_USER = NIL_ACCESS.merge({
+  SMART_TEAM_USER = NIL_ACCESS.merge({
     BatchesController => ALL_BUT_DELETE,
     BinsController => ALL_BUT_DELETE,
     BoxesController => ALL_BUT_DELETE,
@@ -77,7 +81,7 @@ class User < ActiveRecord::Base
     WorkflowStatusTemplatesController => READ_ONLY,
     XmlTesterController => NO_ACTIONS,
   })
-  SMART_ADMIN = NIL_ACCESS.merge({
+  SMART_TEAM_ADMIN = NIL_ACCESS.merge({
     BatchesController => ALL_ACTIONS,
     BinsController => ALL_ACTIONS,
     BoxesController => ALL_ACTIONS,
@@ -143,8 +147,8 @@ class User < ActiveRecord::Base
   ROLE_PERMISSIONS = {
     nil_access: NIL_ACCESS,
     all_access: ALL_ACCESS,
-    smart_user: SMART_USER,
-    smart_admin: SMART_ADMIN,
+    smart_team_user: SMART_TEAM_USER,
+    smart_team_admin: SMART_TEAM_ADMIN,
     qc_user: QC_USER,
     qc_admin: QC_ADMIN,
     web_admin: WEB_ADMIN,

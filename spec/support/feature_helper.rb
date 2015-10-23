@@ -2,7 +2,7 @@
 
 module FeatureHelpers
   #FIXME: seed default admin user, replace
-  def sign_in(username = "aploshay")
+  def sign_in(username = "web_admin")
     page.set_rack_session(username: username)
     User.current_user = username
   end

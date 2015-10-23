@@ -1,7 +1,7 @@
 #authentication methods for testing in models
 
 module ModelHelpers
-  def sign_in(username = "user@example.com")
+  def sign_in(username = "web_admin")
     User.current_user = username
   end
   
