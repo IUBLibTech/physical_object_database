@@ -66,7 +66,7 @@ class User < ActiveRecord::Base
     PicklistsController => ALL_BUT_DELETE,
     ProcessingStepsController => NO_ACTIONS,
     QualityControlController => NO_ACTIONS,
-    ReportsController => NO_ACTIONS,
+    ReportsController => ALL_ACTIONS,
     ReturnsController => ALL_ACTIONS,
     SearchController => ALL_ACTIONS,
     SignalChainsController => NO_ACTIONS,
@@ -100,7 +100,7 @@ class User < ActiveRecord::Base
     SpreadsheetsController => ALL_ACTIONS,
     StatusTemplatesController => READ_ONLY,
     UnitsController => ALL_BUT_DELETE,
-    UsersController => READ_ONLY,
+    UsersController => ALL_ACTIONS,
     WorkflowStatusTemplatesController => READ_ONLY,
     XmlTesterController => NO_ACTIONS,
   })
@@ -115,7 +115,7 @@ class User < ActiveRecord::Base
     InvoiceController => READ_ONLY,
     MachinesController => ALL_BUT_DELETE,
     MessagesController => ALL_BUT_DELETE,
-    PhysicalObjectsController => READ_ONLY,
+    PhysicalObjectsController => EDIT_ONLY,
     PicklistSpecificationsController => READ_ONLY,
     PicklistsController => READ_ONLY,
     ProcessingStepsController => ALL_BUT_DELETE,
@@ -134,16 +134,11 @@ class User < ActiveRecord::Base
   QC_ADMIN = ALL_ACCESS.merge({
     ConditionStatusTemplatesController => READ_ONLY,
     StatusTemplatesController => READ_ONLY,
-    UnitsController => READ_ONLY,
-    UsersController => READ_ONLY,
+    UnitsController => ALL_BUT_DELETE,
     WorkflowStatusTemplatesController => READ_ONLY,
     XmlTesterController => NO_ACTIONS,
   })
-  WEB_ADMIN = ALL_ACCESS.merge({
-    ConditionStatusTemplatesController => READ_ONLY,
-    StatusTemplatesController => READ_ONLY,
-    WorkflowStatusTemplatesController => READ_ONLY,
-  })
+  WEB_ADMIN = ALL_ACCESS
 
   ROLE_PERMISSIONS = {
     nil_access: NIL_ACCESS,
