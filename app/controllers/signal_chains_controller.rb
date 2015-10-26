@@ -1,6 +1,6 @@
 class SignalChainsController < ApplicationController
   before_action :set_signal_chain, only: [:show, :edit, :update, :destroy, :include, :reorder]
-  before_action :authorize_collection, only: [:index, :new, :create]
+  before_action :authorize_collection, only: [:index, :new, :create, :ajax_show]
 
   # GET /signal_chains
   # GET /signal_chains.json

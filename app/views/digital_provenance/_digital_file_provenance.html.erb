@@ -14,7 +14,7 @@
 		<tr>
 			<th>Filename</th>
 			<td>
-				<%= f.text_field :filename, { class: "filename" } %>
+				<%= f.text_field :filename, { class: "filename", readonly: !@edit_mode } %>
 			</td>
 		</tr>
 		<tr>
@@ -32,14 +32,50 @@
 		<tr>
 			<th>Created By</th>
 			<td>
-				<%= f.text_field :created_by %>
+				<%= f.text_field :created_by, readonly: !@edit_mode %>
 			</td>
 		</tr>
 		<tr>
 			<th>Speed Used</th>
 			<td>
-				<%= f.text_field :speed_used %>
+				<%= f.text_field :speed_used, readonly: !@edit_mode %>
 			</td>
+		</tr>
+		<tr>
+			<th>Tape Fluxivity (nWb/m)</th>
+			<td>
+				<%= f.text_field :tape_fluxivity, readonly: !@edit_mode %>
+			</td>
+		</tr>
+		<tr>
+			<th>Volume Units</th>
+			<td>
+				<%= f.text_field :volume_units, readonly: !@edit_mode %>
+			</td>
+		</tr>
+		<tr>
+			<th>Analog Output Voltage (dBu)</th>
+			<td>
+				<%= f.text_field :analog_output_voltage, readonly: !@edit_mode %>
+			</td>
+		</tr>
+		<tr>
+			<th>Peak (dBfs)</th>
+			<td>
+				<%= f.text_field :peak, readonly: !@edit_mode %>
+			</td>
+		</tr>
+		<tr>
+			<th>Stylus Size</th>
+			<td><%= f.text_field :stylus_size, readonly: !@edit_mode %></td>
+		</tr>
+		<tr>
+			<th>Turnover</th>
+			<td><%= f.text_field :turnover, readonly: !@edit_mode %></td>
+		</tr>
+		<tr>
+			<th>Rolloff</th>
+			<td><%= f.text_field :rolloff, readonly: !@edit_mode %></td>
 		</tr>
 		<tr>
 			<th>Signal Chain</th>
@@ -49,30 +85,6 @@
 				<% else %>
 					<%= f.object.signal_chain ? f.object.signal_chain.name : "Not assigned" %>
 				<% end %>
-			</td>
-		</tr>
-		<tr>
-			<th>Tape Fluxivity (nWb/m)</th>
-			<td>
-				<%= f.text_field :tape_fluxivity %>
-			</td>
-		</tr>
-		<tr>
-			<th>Volume Units</th>
-			<td>
-				<%= f.text_field :volume_units %>
-			</td>
-		</tr>
-		<tr>
-			<th>Analog Output Voltage (dBu)</th>
-			<td>
-				<%= f.text_field :analog_output_voltage %>
-			</td>
-		</tr>
-		<tr>
-			<th>Peak (dBfs)</th>
-			<td>
-				<%= f.text_field :peak %>
 			</td>
 		</tr>
 		<script type="text/javascript">
