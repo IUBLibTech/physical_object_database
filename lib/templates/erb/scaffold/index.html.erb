@@ -1,6 +1,6 @@
 <%% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%%= link_to "Create <%= singular_table_name.titleize.downcase.camelize %>", new_<%= singular_table_name %>_path %>
+    <%%= link_to "Create <%= singular_table_name.titleize.downcase.camelize %>", new_<%= singular_table_name %>_path if policy(<%= singular_table_name.titleize %>).new? %>
   </div>
 <%% end %>
 <div>
@@ -22,9 +22,9 @@
       <td><%%= <%= singular_table_name %>.<%= attribute.name %> %></td>
     <% end -%>
       <td>
-        <%%= link_to "Show", <%= singular_table_name %> %>
-        <%%= link_to "Edit", edit_<%= singular_table_name %>_path(<%= singular_table_name %>) %>
-        <%%= link_to "Delete", <%= singular_table_name %>, method: :delete, data: { confirm: 'Are you sure you want to delete this <%= singular_table_name.camelize %>?' } %>
+        <%%= link_to "Show", <%= singular_table_name %> if policy(<%= singular_table_name %>).show? %>
+        <%%= link_to "Edit", edit_<%= singular_table_name %>_path(<%= singular_table_name %>) if policy(<%= singular_table_name %>).edit? %>
+        <%%= link_to "Delete", <%= singular_table_name %>, method: :delete, data: { confirm: 'Are you sure you want to delete this <%= singular_table_name.camelize %>?' } if policy(<%= singular_table_name %>).destroy? %>
       </td>
     </tr>
   <%% end %>
