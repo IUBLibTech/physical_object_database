@@ -1,12 +1,12 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Cancel", {:action => 'show', :id => @physical_object.id}, :class => 'action edit') %>
+    <%= link_to("Cancel", {:action => 'show', :id => @physical_object.id}, :class => 'action edit') if policy(@physical_object).show? %>
   </div>
   <div class="contextMenuItem">
-  	<%= link_to("Signal Chains", signal_chains_path) %>
+  	<%= link_to("Signal Chains", signal_chains_path) if policy(SignalChain).index?  %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Physical Object Metadata", {controller: 'physical_objects', action: 'show', id: @physical_object.id}) %>
+    <%= link_to("Physical Object Metadata", {controller: 'physical_objects', action: 'show', id: @physical_object.id}) if policy(@physical_object).show? %>
   </div>
 <% end %>
 <h2>

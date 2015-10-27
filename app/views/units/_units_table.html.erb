@@ -15,9 +15,9 @@
           <td><%= unit.institution %></td>
           <td><%= unit.campus %></td>
           <td>
-        <%= link_to "Show", unit %>
-        <%= link_to "Edit", edit_unit_path(unit) %>
-        <%= link_to "Delete", unit, method: :delete, data: { confirm: 'Are you sure you want to delete this Unit?' } %>
+        <%= link_to "Show", unit if policy(unit).show? %>
+        <%= link_to "Edit", edit_unit_path(unit) if policy(unit).edit? %>
+        <%= link_to "Delete", unit, method: :delete, data: { confirm: 'Are you sure you want to delete this Unit?' } if policy(unit).destroy? %>
       </td>
     </tr>
   <% end %>

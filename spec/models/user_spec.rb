@@ -75,25 +75,33 @@ describe User do
     end
   end
 
-  describe ".current_user=" do
-    it "sets Thread.current[:current_user]" do
-      expect(Thread.current[:current_user]).to be_nil
-      User.current_user = "test_user"
-      expect(Thread.current[:current_user]).to eq "test_user" 
-      Thread.current[:current_user] = nil
+  describe ".current_username=" do
+    it "sets Thread.current[:current_username]" do
+      expect(Thread.current[:current_username]).to be_nil
+      User.current_username = "test_user"
+      expect(Thread.current[:current_username]).to eq "test_user" 
+      Thread.current[:current_username] = nil
+    end
+  end
+
+  describe ".current_username" do
+    before(:each) { sign_out }
+    it "returns Thread.current[:current_username] if set" do
+      Thread.current[:current_username] = "test_user"
+      expect(User.current_username).to eq "test_user"
+      Thread.current[:current_username] = nil
+    end
+    it "returns UNAVAILABLE if unset" do
+      expect(User.current_username).to eq "UNAVAILABLE"
     end
   end
 
   describe ".current_user" do
-    before(:each) { sign_out }
-    it "returns Thread.current[:current_user] if set" do
-      Thread.current[:current_user] = "test_user"
-      expect(User.current_user).to eq "test_user"
-      Thread.current[:current_user] = nil
-    end
-    it "returns UNAVAILABLE if unset" do
-      expect(User.current_user).to eq "UNAVAILABLE"
-    end
+    pending "need current_user test"
+  end
+
+  describe "#roles" do
+    pending "write roles tests"
   end
 
 end

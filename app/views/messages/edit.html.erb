@@ -2,5 +2,5 @@
 
 <%= render 'form' %>
 
-<%= link_to 'Show', @message %> |
-<%= link_to 'Back', messages_path %>
+<%= link_to 'Show', @message if policy(@message).show? %> |
+<%= link_to 'Back', messages_path if policy(Message).index? %>

@@ -27,7 +27,7 @@ class ConditionStatus < ActiveRecord::Base
 
   def default_values
     self.active ||= true
-    self.user ||= User.current_user
+    self.user ||= User.current_username
   end
 
   def blocks_packing

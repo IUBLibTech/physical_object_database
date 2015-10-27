@@ -1,21 +1,21 @@
   <% content_for :context_menu do %>
     <div class="contextMenuItem">
-      <%= link_to("Create New Physical Object", controller: 'physical_objects', action: 'new') %>
+      <%= link_to("Create New Physical Object", controller: 'physical_objects', action: 'new') if policy(PhysicalObject).new? %>
     </div>
     <div class="contextMenuItem">
-      <%= link_to("Create Multiple Physical Objects", create_multiple_physical_objects_path) %>
+      <%= link_to("Create Multiple Physical Objects", create_multiple_physical_objects_path) if policy(PhysicalObject).create_multiple? %>
     </div>
     <div class="contextMenuItem">
-      <%= link_to "View Group Keys", group_keys_path  %>
+      <%= link_to "View Group Keys", group_keys_path if policy(GroupKey).index?  %>
     </div>
     <div class="contextMenuItem">
-      <%= link_to("View Imported Spreadsheets", spreadsheets_path) %>
+      <%= link_to("View Imported Spreadsheets", spreadsheets_path) if policy(Spreadsheet).index? %>
     </div>
     <div class="contextMenuItem">
-      <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) %>
+      <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) if policy(Spreadsheet).new? %>
     </div>
     <div class="contextMenuItem">
-      <%= link_to("Memnon Invoice",  invoice_controller_path ) %>
+      <%= link_to("Memnon Invoice", invoice_controller_path) if policy(Invoice).index? %>
     </div>
   <% end %>
   <h2>Physical Objects</h2>

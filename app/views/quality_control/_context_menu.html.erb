@@ -1,11 +1,11 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Statuses", controller: 'quality_control', action: 'index') %>
+    <%= link_to("Statuses", controller: 'quality_control', action: 'index') if policy(:quality_control).index? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Staging", controller: 'quality_control', action: 'staging_index') %>
+    <%= link_to("Staging", controller: 'quality_control', action: 'staging_index') if policy(:quality_control).staging_index? %>
   </div>
   <div class="contextMenuItem">
-  	<%= link_to("responses/transfers xml", transfers_index_response_path ) %>
+  	<%= link_to("responses/transfers xml", transfers_index_response_path) %><%# responses controller does not use policy authorization %>
   </div>
 <% end %>

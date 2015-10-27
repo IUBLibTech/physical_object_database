@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
 	<div class="contextMenuItem">
-    <%= link_to("Cancel", :action => 'index') %>
+    <%= link_to("Cancel", :action => 'index') if policy(WorkflowStatusTemplate).index? %>
   </div>
 <% end %>
 <div>

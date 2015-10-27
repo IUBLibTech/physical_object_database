@@ -43,7 +43,7 @@
       <th>Imported from spreadsheet</th>
       <td>
       <% if !@box.spreadsheet.nil? %>
-        <%= link_to("#{@box.spreadsheet.filename}", @box.spreadsheet) %>
+        <%= link_to("#{@box.spreadsheet.filename}", @box.spreadsheet) if policy(@box.spreadsheet).show? %>
       <% end %>
       </td>
     </tr>
@@ -52,8 +52,12 @@
       <td>
         <% if @edit_mode and @box.full? %>
           <%= select(:box, :bin_id, @bins.any? ? @bins.collect{|b| [b.identifier, b.id]} : [], include_blank: 'Not Assigned') %>
+        <% elsif @box.bin.nil? %>
+          Not assigned
+        <% elsif policy(@box.bin).show? %>
+          <%= link_to(@box.bin.identifier, @box.bin) if policy(@box.bin).show? %>
         <% else %>
-          <%= @box.bin.nil? ? 'Not Assigned' : link_to(@box.bin.identifier, @box.bin ) %>
+          <%= @box.bin.identifier %>
         <% end %>
       </td>
     </tr>

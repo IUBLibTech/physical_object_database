@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Contained Objects Report", controller: 'physical_objects', action: 'contained') %>
+    <%= link_to("Contained Objects Report", controller: 'physical_objects', action: 'contained') if policy(PhysicalObject).contained? %>
   </div>
 <% end %>
 <div>
