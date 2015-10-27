@@ -39,7 +39,7 @@ class WorkflowStatus < ActiveRecord::Base
   end
 
   def default_values
-    self.user ||= User.current_user
+    self.user ||= User.current_username
   end
 
   # ephemera_okay is set true/false if applicable, nil otherwise

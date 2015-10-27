@@ -2,7 +2,7 @@
 
 module ModelHelpers
   def sign_in(username = "web_admin")
-    User.current_user = username
+    User.current_username = username
   end
   
   def sign_out

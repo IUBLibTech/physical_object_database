@@ -44,7 +44,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 	end
 
 	def default_values
-		self.created_by ||= User.current_user
+		self.created_by ||= User.current_username
 		self.date_digitized ||= Time.now
 		self.tape_fluxivity ||= 250
 		self.analog_output_voltage ||= "+4"

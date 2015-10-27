@@ -15,17 +15,17 @@ class User < ActiveRecord::Base
     return User.all.map { |user| user.username }
   end
 
-  def self.current_user=(user)
-    Thread.current[:current_user] = user
+  def self.current_username=(user)
+    Thread.current[:current_username] = user
   end
 
-  def self.current_user
-    user_string = Thread.current[:current_user].to_s
+  def self.current_username
+    user_string = Thread.current[:current_username].to_s
     user_string.blank? ? "UNAVAILABLE" : user_string
   end
 
-  def self.current_user_object
-    Thread.current[:current_user]
+  def self.current_username_object
+    Thread.current[:current_username]
   end
 
   def permit?(controller, action, record)

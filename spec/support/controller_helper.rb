@@ -3,6 +3,7 @@
 module ControllerHelpers
   #FIXME: add admin user to seed data, use here
   def sign_in(username = "web_admin")
+    allow(controller).to receive(:current_username).and_return(username)
     allow(controller).to receive(:current_user).and_return(username)
   end
   def sign_out

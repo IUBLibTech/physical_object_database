@@ -19,7 +19,7 @@
         Version <%= APP_VERSION %>
       </div>
       <div id="user_info">
-        <strong>User:</strong> <%= current_user %> (<%= link_to "logout", signout_path, method: :delete %><%# sessions controller does not use policy authorization %>)
+        <strong>User:</strong> <%= current_username %> (<%= link_to "logout", signout_path, method: :delete %><%# sessions controller does not use policy authorization %>)
       </div>
     </div>
     <%= environment_notice %>
