@@ -15,7 +15,7 @@ class AddTestUsers < ActiveRecord::Migration
 	    User::ROLES.each do |role|
 		    u = User.where(username: role.to_s).first
         if u
-			    puts "Destroying user: #{u.insect}"
+			    puts "Destroying user: #{u.inspect}"
 			    u.destroy!
         else
           puts "User not found: #{role}"
