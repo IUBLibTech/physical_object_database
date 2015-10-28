@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
 
   # Note that sessions_controller does not inherit from ApplicationController to avoid the following line and the catch-22 result
   before_action :signed_in_user
-  around_filter :scope_current_user
+  around_filter :scope_current_username
 
   helper_method :tm_partial_path
 
@@ -51,11 +51,11 @@ class ApplicationController < ActionController::Base
   end
 
   private
-    def scope_current_user
-      User.current_user = current_user
+    def scope_current_username
+      User.current_username = current_username
       yield
     ensure
-      User.current_user = nil
+      User.current_username = nil
     end
   
     #FIXME: redirect to failure page?

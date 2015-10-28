@@ -43,11 +43,11 @@
 	<% else %>
           <% previous_status = @batch.previous_workflow_status %>
 	  <% button_text = ("<button" + (previous_status.blank? ? " disabled=\"true\">" : ">") + "#{previous_status} &lt;&lt;</button>").html_safe %>
-          <%= link_to button_text, batch_path(@batch, batch: { current_workflow_status: previous_status }), method: :patch %>
+          <%= link_to button_text, batch_path(@batch, batch: { current_workflow_status: previous_status }), method: :patch if policy(@batch).update? %>
           <%= @batch.display_workflow_status %>
           <% next_status = @batch.next_workflow_status %>
 	  <% button_text = ("<button" + (next_status.in?(["", "Complete"]) ? " disabled=\"true\">" : ">") + "&gt;&gt; #{next_status}</button>").html_safe %>
-          <%= link_to button_text, batch_path(@batch, batch: { current_workflow_status: next_status }), method: :patch %>
+          <%= link_to button_text, batch_path(@batch, batch: { current_workflow_status: next_status }), method: :patch if policy(@batch).update? %>
 	<% end %>
       </td>
     </tr>

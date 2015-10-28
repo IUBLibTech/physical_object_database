@@ -96,8 +96,8 @@
 		</tr>
 		<% @blocked.each do |p| %>
 			<tr>
-				<td><%= link_to p.mdpi_barcode, (physical_object_path(p)) %></td>
-				<td><%= link_to p.title, (physical_object_path(p)) %></td>
+				<td><%= link_to p.mdpi_barcode, (physical_object_path(p)) if policy(p).show? %></td>
+				<td><%= link_to p.title, (physical_object_path(p)) if policy(p).show? %></td>
 				<td>
 					<ul>
 					<% p.condition_statuses.blocking.each do |cs| %>
@@ -115,7 +115,7 @@
 	<h2>Physical Objects in this picklist: <%= @picklist.physical_objects.size %></h2>
 	<% if !@picklist.id.nil? && @picklist.physical_objects.any? %>
 	  Download list as:
-          <%= link_to 'Excel File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :xls) %><br/>
+          <%= link_to 'Excel File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :xls) if policy(@picklist).show? %><br/>
 	  <%= render 'physical_objects/physical_objects_table' %>
 	<% end %>
 </div>

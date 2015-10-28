@@ -1,6 +1,6 @@
 <%% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%%= link_to "Cancel", <%= singular_table_name %>_path(@<%= @singular_table_name %>) %>
+    <%%= link_to "Cancel", <%= singular_table_name %>_path(@<%= @singular_table_name %>) if policy(@<%= singular_table_name %>).show? %>
   </div>
 <%% end %>
 

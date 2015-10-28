@@ -5,7 +5,8 @@
   <% end %>
   <tr>
     <th><%= f.select :condition_status_template_id, target_object.condition_status_options, {include_blank: 'Select a condition...'}, disabled: !@edit_mode %></th>
-    <td><% if @edit_mode %><%= f.link_to_remove("Delete condition", data: { confirm: 'Are you sure you want to mark this condition for deletion?  The condition will be deleted when you submit the form.'} ) %><% end %></td>
+    <% @parent_object = (@physical_object || @bin) %>
+    <td><% if @edit_mode && policy(@parent_object).edit? %><%= f.link_to_remove("Delete condition", data: { confirm: 'Are you sure you want to mark this condition for deletion?  The condition will be deleted when you submit the form.'} ) if policy(@parent_object).edit? %><% end %></td>
   </tr>
   <tr>
     <th>Active</th>

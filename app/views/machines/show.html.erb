@@ -1,12 +1,12 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to "Edit", edit_machine_path(@machine) %>
+    <%= link_to "Edit", edit_machine_path(@machine) if policy(@machine).edit? %>
   </div>
   <div class="contextMenuItem">
-  <%= link_to "Delete", machine_path(@machine), method: :delete, data: { confirm: 'Are you sure you want to delete this Device?' } %>
+  <%= link_to "Delete", machine_path(@machine), method: :delete, data: { confirm: 'Are you sure you want to delete this Device?' } if policy(@machine).destroy? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to "Device Index", machines_path %>
+    <%= link_to "Device Index", machines_path if policy(Machine).index? %>
   </div>
 <% end %>
 

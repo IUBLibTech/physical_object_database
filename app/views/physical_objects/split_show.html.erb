@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'show', :id => @physical_object.id}, :class => 'action split')%>
+    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'show', :id => @physical_object.id}, :class => 'action split') if policy(@physical_object).show? %>
   </div>
 <% end %>
 <div>

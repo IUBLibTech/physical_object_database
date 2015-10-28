@@ -16,9 +16,9 @@
 			<td><%= b.physical_objects_count %></td>
 			<td><%= b.current_workflow_status %></td>
 			<td>
-				<%= link_to("Show", {controller: 'batches',:action => 'show', :id => b.id}, :class => 'action show') %>
-		    <%= link_to("Edit", {controller: 'batches', :action => 'edit', :id => b.id}, :class => 'action edit') %>
-		    <%= link_to("Delete", batch_path(b.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Batch?'}) %>
+				<%= link_to("Show", {controller: 'batches',:action => 'show', :id => b.id}, :class => 'action show') if policy(b).show? %>
+		    <%= link_to("Edit", {controller: 'batches', :action => 'edit', :id => b.id}, :class => 'action edit') if policy(b).edit? %>
+		    <%= link_to("Delete", batch_path(b.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Batch?'}) if policy(b).destroy? %>
 			</td>
 		</tr>
 	<% end %>

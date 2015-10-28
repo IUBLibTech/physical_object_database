@@ -12,9 +12,7 @@
 							<%= f.text_field(:mdpi_barcode, readonly: true, maxlength: "14", size: "14", class: "mdpi") %>
 					</td>
 					<td>
-						<%= link_to(physical_object_path(p.id), target: "_blank") do %>
-							Call Number: <%= p.call_number %>
-						<% end %>
+						<%= link_to("Call Number: #{p.call_number}", physical_object_path(p.id), target: "_blank") if policy(p).show? %>
 					</td>
 				</tr>
 		</table>

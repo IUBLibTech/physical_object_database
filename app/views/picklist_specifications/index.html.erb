@@ -1,9 +1,9 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Create Picklist Specification", {action: 'new'}) %>
+    <%= link_to("Create Picklist Specification", {action: 'new'}) if policy(PicklistSpecification).new? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Create Picklist", {controller: 'picklists', action: 'new'}) %>
+    <%= link_to("Create Picklist", {controller: 'picklists', action: 'new'}) if policy(Picklist).new? %>
   </div>
 <% end %>
 <div class="left">
@@ -24,10 +24,10 @@
 		    <td><%= p.name %></td>
 		    <td><%= p.description %></td>
 		    <td>
-		      <%= link_to("Show", {action: 'show', id: p.id}) %>
-		      <%= link_to("Edit", {action: 'edit', id: p.id}) %>
-		      <%= link_to("Delete", picklist_specification_path(p.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Picklist Specification?'}) %>
-		      <%= link_to("Query", {action: 'query', id: p.id}) %>
+		      <%= link_to("Show", {action: 'show', id: p.id}) if policy(p).show? %>
+		      <%= link_to("Edit", {action: 'edit', id: p.id}) if policy(p).edit?%>
+		      <%= link_to("Delete", picklist_specification_path(p.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Picklist Specification?'}) if policy(p).destroy? %>
+		      <%= link_to("Query", {action: 'query', id: p.id}) if policy(p).query? %>
 		    </td>
 		  </tr>
 		<% count += 1 %>
@@ -51,9 +51,9 @@
 				<td><%= pl.description[0,20] %><%= pl.description.length > 20 ? "..." : "" %></td>
 				<td><%= pl.destination %></td>
 				<td>
-					<%= link_to("Show", {controller: 'picklists', action: 'show', id: pl.id}) %>
-		      <%= link_to("Edit", {controller: 'picklists', action: 'edit', id: pl.id}) %>
-		      <%= link_to("Delete", picklist_path(pl.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Picklist?'}) %>
+					<%= link_to("Show", {controller: 'picklists', action: 'show', id: pl.id}) if policy(pl).show? %>
+		      <%= link_to("Edit", {controller: 'picklists', action: 'edit', id: pl.id}) if policy(pl).edit? %>
+		      <%= link_to("Delete", picklist_path(pl.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Picklist?'}) if policy(pl).destroy? %>
 				</td> 
 			</tr>
 		<% end %>

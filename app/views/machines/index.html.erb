@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to "Create Device", new_machine_path %>
+    <%= link_to "Create Device", new_machine_path if policy(Machine).new? %>
   </div>
 <% end %>
 <div>

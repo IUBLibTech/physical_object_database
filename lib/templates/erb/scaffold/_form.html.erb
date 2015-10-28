@@ -13,7 +13,7 @@
     <% else -%>
   <th><%= attribute.name.titleize.downcase.camelize %></th>
       <%- if attribute.reference? -%>
-      <td><%%= f.collection_select :<%= attribute.column_name %>, <%= attribute.name.titleize.downcase.camelize %>.all, :id, :name, {include_blank: 'None', prompt: "Select a <%= attribute.name.titleize.downcase.camelize %>..."}, disabled: !@edit_mode %></td>
+      <td><%%= f.collection_select :<%= attribute.column_name %>, <%= attribute.name.titleize.downcase.camelize %>.all, :id, :id, {include_blank: 'None', prompt: "Select a <%= attribute.name.titleize.downcase.camelize %>..."}, disabled: !@edit_mode %></td>
       <%- else -%>
       <td>
         <%% if @edit_mode %>

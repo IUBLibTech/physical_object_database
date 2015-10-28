@@ -1,28 +1,28 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => @physical_object.id}, :class => 'action edit') %>
+    <%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => @physical_object.id}, :class => 'action edit') if policy(@physical_object).edit? %>
   </div>
   <div class="contextMenuItem">
-  <%= link_to("Delete", physical_object_path(@physical_object.id), method: :delete, data: {:confirm=>'Are you sure you want to delete this Physical Object?'})%>
+  <%= link_to("Delete", physical_object_path(@physical_object.id), method: :delete, data: {:confirm=>'Are you sure you want to delete this Physical Object?'}) if policy(@physical_object).destroy? %>
   </div>
   <div class="contextMenuItem">
     <% if @physical_object.bin.nil? && @physical_object.box.nil? %>
-      <%= link_to("Split Record", {:controller => 'physical_objects', :action => 'split_show', :id => @physical_object.id}, :class => 'action split')%>
+      <%= link_to("Split Record", {:controller => 'physical_objects', :action => 'split_show', :id => @physical_object.id}, :class => 'action split') if policy(@physical_object).split_show? %>
     <% else %>
       <strong><strike>Split Record</strong></strike>
     <% end %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Create New Physical Object", :action => 'new') %>
+    <%= link_to("Create New Physical Object", :action => 'new') if policy(PhysicalObject).new? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to "View Workflow History", workflow_history_physical_object_path(@physical_object) %>
+    <%= link_to "View Workflow History", workflow_history_physical_object_path(@physical_object) if policy(@physical_object).workflow_history? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Edit Ephemera Status", {:controller => 'physical_objects', :action => 'edit_ephemera', :id => @physical_object.id}, :class => 'action edit') %>
+    <%= link_to("Edit Ephemera Status", {:controller => 'physical_objects', :action => 'edit_ephemera', :id => @physical_object.id}, :class => 'action edit') if policy(@physical_object).edit_ephemera? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Digital Workflow", {:controller => 'digital_provenance', :action => 'show', :id => @physical_object.id}, :class => 'action edit' ) %>
+    <%= link_to("Digital Workflow", {:controller => 'digital_provenance', :action => 'show', :id => @physical_object.id}, :class => 'action edit') if policy(@physical_object.ensure_digiprov).show? %>
   </div>
 <% end %>
 

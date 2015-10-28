@@ -15,8 +15,8 @@
 					<td><%= b.identifier %></td>
 					<td><%= b.current_workflow_status %></td>
 					<td>
-						<%= link_to "Show", batch_path(b) %>
-						<%= link_to "Return Bins", return_bins_return_path(b.id) %>
+						<%= link_to "Show", batch_path(b) if policy(b).show? %>
+						<%= link_to "Return Bins", return_bins_return_path(b.id) if policy(:return).return_bins? %>
 					</td>
 				</tr>
 			<% end %>

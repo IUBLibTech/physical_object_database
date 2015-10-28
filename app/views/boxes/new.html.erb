@@ -1,7 +1,7 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-          <%= link_to("Cancel", bins_path) %>
-        </div>
+    <%= link_to("Cancel", bins_path) if policy(Bin).index? %>
+  </div>
 <% end %>
 <div>
   <h2>Create Box</h2>

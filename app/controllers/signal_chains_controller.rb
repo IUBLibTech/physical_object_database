@@ -106,6 +106,11 @@ class SignalChainsController < ApplicationController
     if !!(params[:id] =~ /\A[-+]?[0-9]+\z/)
       @signal_chain = SignalChain.where(id: params[:id]).first
     end
+    if @signal_chain
+      authorize @signal_chain
+    else
+      authorize SignalChain
+    end
     render(partial: 'ajax_show_signal_chain')
   end
 

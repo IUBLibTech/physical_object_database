@@ -37,6 +37,11 @@ class DigitalProvenanceController < ApplicationController
 		end
 	end
 
+  def destroy
+    flash[:warning] = "Digital Provenance may not be deleted."
+    redirect_to action: :show
+  end
+
 	private
 	def set_po
 		@physical_object = PhysicalObject.find(params[:id])

@@ -39,7 +39,7 @@ feature "Physical Object management" do
 	within('#notes_div') do
 	  expect(page).to have_text "Creator"
 	  #FIXME: seed, use default admin user
-	  expect(page).to have_selector("input[value='aploshay']")
+	  expect(page).to have_selector("input[value='web_admin']")
 	end
       end
     end
