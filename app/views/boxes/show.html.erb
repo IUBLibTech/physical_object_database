@@ -1,9 +1,9 @@
 <% content_for :context_menu do %>
         <div class="contextMenuItem">
-          <%= link_to("Edit Box", {:action => 'edit', :id => @box.id}) %>
+          <%= link_to("Edit Box", {:action => 'edit', :id => @box.id}) if policy(@box).edit? %>
         </div>
         <div class="contextMenuItem">
-          <%= link_to("Delete Box", @box, method: :delete, data: {:confirm=>'Are you sure you want to delete this Box?'})%>
+          <%= link_to("Delete Box", @box, method: :delete, data: {:confirm=>'Are you sure you want to delete this Box?'}) if policy(@box).destroy? %>
         </div>
 <% end %>
 

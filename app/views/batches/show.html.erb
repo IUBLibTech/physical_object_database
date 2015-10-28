@@ -1,23 +1,23 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-	  <%= link_to("Create Batch", {:action => 'new'}) %>
+	  <%= link_to("Create Batch", {:action => 'new'}) if policy(Batch).new? %>
 	</div>
 	<div class="contextMenuItem">
-	  <%= link_to("Edit Batch", {:action => 'edit', :id => @batch.id}) %>
+	  <%= link_to("Edit Batch", {:action => 'edit', :id => @batch.id}) if policy(@batch).edit? %>
 	</div>
 	<div class="contextMenuItem">
-	  <%= link_to("Delete Batch", batch_path(@batch.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Batch?'}) %>
+	  <%= link_to("Delete Batch", batch_path(@batch.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Batch?'}) if policy(@batch).destroy? %>
 	</div>
 	<div class="contextMenuItem">
-	  <%= link_to "View Workflow History", workflow_history_batch_path(@batch) %>
+	  <%= link_to "View Workflow History", workflow_history_batch_path(@batch) if policy(@batch).workflow_history? %>
 	</div>
 
 <% end %>
 <div class='left'>
 	<div id="batch_div">
 	  <h2>Batch</h2>
-	    Shipping Manifest: <%= link_to 'Excel File', batch_path(id: 'batch_' + @batch.id.to_s, format: :xls) %><br/>
-	    Bins List: <%= link_to 'Excel File', list_bins_batch_path(@batch), format: :xls %>
+	    Shipping Manifest: <%= link_to 'Excel File', batch_path(id: 'batch_' + @batch.id.to_s, format: :xls) if policy(@batch).show? %><br/>
+	    Bins List: <%= link_to 'Excel File', list_bins_batch_path(@batch), format: :xls if policy(@batch).list_bins? %>
 	    <% @edit_mode = false %>
 	    <%= render(:partial => "batch") %>
 	</div>

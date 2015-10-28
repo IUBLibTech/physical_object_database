@@ -1,6 +1,6 @@
 class SignalChainsController < ApplicationController
   before_action :set_signal_chain, only: [:show, :edit, :update, :destroy, :include, :reorder]
-  before_action :authorize_collection, only: [:index, :new, :create]
+  before_action :authorize_collection, only: [:index, :new, :create, :ajax_show]
 
   # GET /signal_chains
   # GET /signal_chains.json
@@ -105,6 +105,11 @@ class SignalChainsController < ApplicationController
     # left blank "No Select Value" will be in the params[:id] slot
     if !!(params[:id] =~ /\A[-+]?[0-9]+\z/)
       @signal_chain = SignalChain.where(id: params[:id]).first
+    end
+    if @signal_chain
+      authorize @signal_chain
+    else
+      authorize SignalChain
     end
     render(partial: 'ajax_show_signal_chain')
   end

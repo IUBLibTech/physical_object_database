@@ -56,8 +56,8 @@
 				<%= dp.fields_for :digital_file_provenances do |df| %>
 					<%= render 'digital_provenance/digital_file_provenance', f: df %>
 				<% end %>
-				<% if @edit_mode %>
-					<%= dp.link_to_add "Add Digital File", :digital_file_provenances %>
+				<% if @edit_mode && policy(@dp).edit? %>
+					<%= dp.link_to_add "Add Digital File", :digital_file_provenances if policy(@dp).edit? %>
 				<% end %>
 			<% end %>
 		</div>

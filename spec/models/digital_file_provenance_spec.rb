@@ -138,4 +138,14 @@ describe DigitalFileProvenance do
       end
     end
   end
+
+  describe "accepts blanks" do
+    it "validates on blank tape_fluxivity, analog_output_voltage, and peak" do
+      valid_dfp.tape_fluxivity = ""
+      valid_dfp.analog_output_voltage = ""
+      valid_dfp.peak = ""
+      valid_dfp.signal_chain = nil
+      expect(valid_dfp).to be_valid
+    end
+  end
 end

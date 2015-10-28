@@ -1,12 +1,12 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to "Edit", edit_unit_path(@unit) %>
+    <%= link_to "Edit", edit_unit_path(@unit) if policy(@unit).edit? %>
   </div>
   <div class="contextMenuItem">
-  <%= link_to "Delete", unit_path(@unit), method: :delete, data: { confirm: 'Are you sure you want to delete this Unit?' } %>
+  <%= link_to "Delete", unit_path(@unit), method: :delete, data: { confirm: 'Are you sure you want to delete this Unit?' } if policy(@unit).destroy? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to "Units Index", units_path %>
+    <%= link_to "Units Index", units_path if policy(Unit).index? %>
   </div>
 <% end %>
 

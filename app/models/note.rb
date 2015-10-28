@@ -11,7 +11,7 @@ class Note < ActiveRecord::Base
 
   def default_values
     self.export ||= false
-    self.user ||= User.current_user
+    self.user ||= User.current_username
   end
 
 end

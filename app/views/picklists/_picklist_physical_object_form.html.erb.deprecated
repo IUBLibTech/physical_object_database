@@ -20,8 +20,8 @@
 		<% css_class = (index.odd? ? 'odd' : 'even') + ((p.bin or p.box) ? ' packed' : '') %>
 		<tr class="<%= css_class %>">
 			<td rowspan="5">
-				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, {target: '_blank'}) %><br/>
-				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: '_blank'}) %><br/>
+				<%= link_to("Show", {:controller => 'physical_objects', :action => 'show', :id => p.id}, {target: '_blank'}) if policy(p).show? %><br/>
+				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: '_blank'}) if policy(p).edit? %><br/>
 				<% if p.group_key.physical_objects_count <= 1 %>
 				  <%# NOTE: No destination for link because set by javascript %>
 				  <%= link_to("Remove", "", {method: :post, id: "remove_#{p.id}", target: "_blank", remote: true})%><br/>

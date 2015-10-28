@@ -119,10 +119,10 @@ class PhysicalObjectsController < ApplicationController
       if @physical_object.valid?
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
-	begin
+        begin
           @tm.assign_attributes(tm_params)
-	rescue
-	  tm_assigned = false
+        rescue
+         tm_assigned = false
         end
       end
       if @physical_object.valid? && @tm.valid? && @dp.valid? && tm_assigned
@@ -136,7 +136,6 @@ class PhysicalObjectsController < ApplicationController
       if !tm_assigned
         @physical_object.errors[:base] << "Technical Metadata format did not match, which was probably the result of a failed format change.  Verify physical object format and technical metadata, then resubmit."
       end
-
       if updated 
         flash[:notice] = "Physical Object successfully updated".html_safe
         redirect_to(action: 'index')

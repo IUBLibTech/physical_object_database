@@ -1,6 +1,6 @@
 <%% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%%= link_to "Cancel", <%= index_helper %>_path %>
+    <%%= link_to "Cancel", <%= index_helper %>_path if policy(<%= singular_table_name.titleize %>).index? %>
   </div>
 <%% end %>
 <div>

@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to "Cancel", signal_chain_path(@signal_chain) %>
+    <%= link_to "Cancel", signal_chain_path(@signal_chain) if policy(@signal_chain).show? %>
   </div>
 <% end %>
 

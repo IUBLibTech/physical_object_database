@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
 
   # Note that sessions_controller does not inherit from ApplicationController to avoid the following line and the catch-22 result
   before_action :signed_in_user
-  around_filter :scope_current_user
+  around_filter :scope_current_username
 
   helper_method :tm_partial_path
 
@@ -51,11 +51,11 @@ class ApplicationController < ActionController::Base
   end
 
   private
-    def scope_current_user
-      User.current_user = current_user
+    def scope_current_username
+      User.current_username = current_username
       yield
     ensure
-      User.current_user = nil
+      User.current_username = nil
     end
   
     #FIXME: redirect to failure page?
@@ -89,7 +89,7 @@ class ApplicationController < ActionController::Base
         :seven_point5_ips, :one_point875_ips, :fifteen_ips, :three_point75_ips, :thirty_ips, :full_track,
         :half_track, :quarter_track, :unknown_track, :one_mils, :one_point5_mils, :zero_point5_mils,
         :mono, :stereo, :unknown_sound_field, :acetate_base, :polyester_base, :pvc_base, :paper_base,
-        :unknown_playback_speed, :directions_recorded,
+        :unknown_playback_speed,
         #fields for cd-r's not covered by open reel audio tape fields
         :damage, :breakdown_of_materials, :format_duration,
         #fields for dat not covered so far
@@ -111,7 +111,7 @@ class ApplicationController < ActionController::Base
         :digitizing_entity, :date, :comments, :created_by, :cleaning_date, :cleaning_comment, 
         :baking, :repaired, :duration, digital_file_provenances_attributes: [
           :id, :filename, :comment, :date_digitized, :display_date_digitized, :created_by,
-          :speed_used, :signal_chain_id, :volume_units, :tape_fluxivity, :peak, :analog_output_voltage, :_destroy]
+          :speed_used, :signal_chain_id, :volume_units, :tape_fluxivity, :peak, :analog_output_voltage, :stylus_size, :turnover, :rolloff, :_destroy]
       )
     end
 
