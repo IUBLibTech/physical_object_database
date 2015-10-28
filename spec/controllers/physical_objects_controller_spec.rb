@@ -144,6 +144,28 @@ describe PhysicalObjectsController do
     end
   end
 
+  describe "Directions recorded" do
+    let!(:dr_po) { FactoryGirl.create(:physical_object, :open_reel, title: "Some title") }
+    context "creation" do
+      it "intializes calculated_directions_recorded and copies value to directions_recorded" do
+        expect(dr_po).to be_valid
+        expect(dr_po.technical_metadatum).not_to be_nil
+        expect(dr_po.technical_metadatum.as_technical_metadatum.calculated_directions_recorded).to eq 2
+        expect(dr_po.technical_metadatum.as_technical_metadatum.directions_recorded).to eq 2
+      end
+    end
+
+    context "POST #update" do
+      before(:each) do
+        put :update, id: dr_po.id, physical_object: FactoryGirl.attributes_for(:physical_object, :open_reel, title: "Updated title"), tm: FactoryGirl.attributes_for(:open_reel_tm, directions_recorded: 5)
+      end
+      it "updates directions_recorded" do
+        dr_po.reload
+        expect(dr_po.technical_metadatum).not_to be_nil
+      end
+    end
+  end
+
   describe "PUT update" do
     context "with valid attributes" do
       before(:each) do

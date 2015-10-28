@@ -89,7 +89,7 @@ class ApplicationController < ActionController::Base
         :seven_point5_ips, :one_point875_ips, :fifteen_ips, :three_point75_ips, :thirty_ips, :full_track,
         :half_track, :quarter_track, :unknown_track, :one_mils, :one_point5_mils, :zero_point5_mils,
         :mono, :stereo, :unknown_sound_field, :acetate_base, :polyester_base, :pvc_base, :paper_base,
-        :unknown_playback_speed, :directions_recorded,
+        :unknown_playback_speed,
         #fields for cd-r's not covered by open reel audio tape fields
         :damage, :breakdown_of_materials, :format_duration,
         #fields for dat not covered so far

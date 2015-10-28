@@ -167,9 +167,15 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Directions recorded</th>
+			<th>Calculated Directions recorded</th>
 			<td>
-				<%= @tm.directions_recorded %>
+				<%= @tm.calculated_directions_recorded %>
+			</td>
+		</tr>
+		<tr>
+			<th>Actual Directions Recorded</th>
+			<td>
+				<%= f.text_field(:directions_recorded, readonly: !@edit_mode) %>
 			</td>
 		</tr>
 	</table>
