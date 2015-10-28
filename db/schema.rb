@@ -349,6 +349,7 @@ ActiveRecord::Schema.define(version: 20151023195407) do
     t.boolean  "pvc_base"
     t.boolean  "paper_base"
     t.boolean  "unknown_playback_speed"
+    t.integer  "calculated_directions_recorded"
     t.integer  "directions_recorded"
   end
 

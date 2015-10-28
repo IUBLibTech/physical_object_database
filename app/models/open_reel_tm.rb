@@ -106,7 +106,8 @@ class OpenReelTm < ActiveRecord::Base
   alias_method :pack_deformations, :pack_deformation_values
 
   def infer_values
-    self.directions_recorded = infer_directions_recorded
+    self.calculated_directions_recorded = infer_directions_recorded
+    self.directions_recorded ||= self.calculated_directions_recorded
   end
 
   def infer_directions_recorded

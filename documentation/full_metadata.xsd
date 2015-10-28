@@ -467,6 +467,13 @@
         <xs:element ref="comment"/>
         <xs:element ref="created_by"/>
         <xs:element ref="speed_used"/>
+        <xs:element ref="tape_fluxivity"/>
+        <xs:element ref="volume_units"/>
+        <xs:element ref="analog_output_voltage"/>
+        <xs:element ref="peak"/>
+        <xs:element ref="stylus_size"/>
+        <xs:element ref="turnover"/>
+        <xs:element ref="rolloff"/>
         <xs:element ref="signal_chain"/>
       </xs:sequence>
     </xs:complexType>
@@ -476,6 +483,15 @@
   <xs:element name="comment" type="xs:string"/>
   <xs:element name="created_by" type="xs:string" />
   <xs:element name="speed_used" type="xs:string" />
+  <xs:element name="tape_fluxivity">
+    <xs:complexType/>
+  </xs:element>
+  <xs:element name="volume_units" type="xs:integer"/>
+  <xs:element name="analog_output_voltage" type="xs:integer"/>
+  <xs:element name="peak" type="xs:integer"/>
+  <xs:element name="stylus_size" type="xs:NCName"/>
+  <xs:element name="turnover" type="xs:NCName"/>
+  <xs:element name="rolloff" type="xs:NCName"/>
   <xs:element name="signal_chain">
     <xs:complexType>
       <xs:sequence>

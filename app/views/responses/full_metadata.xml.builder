@@ -62,6 +62,13 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
                 xml.comment dfp.comment
                 xml.created_by dfp.created_by
                 xml.speed_used dfp.speed_used
+                xml.tape_fluxivity dfp.tape_fluxivity
+                xml.volume_units dfp.volume_units
+                xml.analog_output_voltage dfp.analog_output_voltage
+                xml.peak dfp.peak
+                xml.stylus_size dfp.stylus_size
+                xml.turnover dfp.turnover
+                xml.rolloff dfp.rolloff
                 xml.signal_chain do
                   unless dfp.signal_chain.nil?
                     dfp.signal_chain.processing_steps.each do |device|
