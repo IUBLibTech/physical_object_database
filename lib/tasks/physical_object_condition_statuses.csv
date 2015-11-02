@@ -4,6 +4,7 @@ Missing,Item has been misplaced within the workflow.,true
 Unplayable,Item is so badly damaged that it cannot be sent to Memnon or IU,true
 Cannot go to Memnon,Item cannot be shipped to Memnon. Can possibly go to IU though.,false
 Catalog Problem,Indicates that there is a problem with the catalog record for this item.,false
+Duplicate Physical Object,Indicates that this POD record represents a duplicate physical object of another physical object.,true
 Duplicate POD Record,Indicates that this POD record is a duplicate of another POD record for the same physical object.,true
 Problem,A problem with the item that cannot be described by any other condition status.,true
 Rejected by Memnon,Memnon determined it cannot digitize this item,true
