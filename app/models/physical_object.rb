@@ -118,11 +118,17 @@ class PhysicalObject < ActiveRecord::Base
       AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).pluck(:format)
   }
 
-  scope :unstaged_by_date_by_format, lambda { |date, format| 
-    PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
-      ON digital_statuses.physical_object_id = ds2.physical_object_id
-      AND digital_statuses.state = ds2.state
-      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, format: format, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).eager_load(:digital_provenance).order("RAND()")
+  # deprecated because the joins are no longer necessary
+  # scope :unstaged_by_date_by_format, lambda { |date, format| 
+  #   PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
+  #     ON digital_statuses.physical_object_id = ds2.physical_object_id
+  #     AND digital_statuses.state = ds2.state
+  #     AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, format: format, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).eager_load(:digital_provenance).order("RAND()")
+  # }
+
+
+  scope :unstaged_by_date_by_format, lambda { |date, format|
+    PhysicalObject.where(staging_requested: false, format: format).where(datesql(date)).order("RAND()")
   }
 
   scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
@@ -468,8 +474,12 @@ assigned to a box."
     self.box ? self.box.bin : self.bin
   end
 
+  # deprecated because the using scope no longer needs to compare against a joined table
+  # def self.datesql(date)
+  #   date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
+  # end
   def self.datesql(date)
-    date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
+    date.blank? ? "" : "DATEDIFF(physical_objects.digital_start, '#{date}') = 0"
   end
 
   # See DigitalFileProvenance::FILE_USE_VALUES for list of valid use codes
