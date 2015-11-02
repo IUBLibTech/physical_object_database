@@ -46,19 +46,20 @@
 		<% if @box %>
 			<%= hidden_field_tag "box_id", @box.id %>
 		<% end %>
-		<div >
-			<%= f.submit (@wrap_previous_packable ? "*||" : "") + "< Unpacked", name: "previous_unpacked_button", disabled: @previous_packable_physical_object.nil?, title: "Previous unpacked item" + (@wrap_previous_packable ? " (wrapping)" : "") %>
-			<%= f.submit (@wrap_previous ? "*||" : "") + "<", name: "previous_button", disabled: @previous_physical_object.nil?, title: "Previous item" + (@wrap_previous ? " (wrapping)" : "") %>
-			<% if @physical_object.bin or @physical_object.box %>
-				<%= f.submit "Unpack", name: "unpack_button" %>
-			<% else %>
-				<%= f.submit "Pack", name: "pack_button" %>
-			<% end %>
-			<%= f.submit ">" + (@wrap_next ? "||*" : ""), name: "next_button", disabled: @next_physical_object.nil?, title: "Next item" + (@wrap_next ? " (wrapping)" : "") %>
-			<%= f.submit "Unpacked >" + (@wrap_next_packable ? "||*" : ""), name: "next_unpacked_button", disabled: @next_packable_physical_object.nil?, title: "Next unpacked item" + (@wrap_next_packable ? " (wrapping)" : "") %>
-
-			<%= hidden_field_tag "repeat", @repeat %>
-		</div>
+    <div>
+		  <div style="float: left;">
+			  <%= f.submit (@wrap_previous_packable ? "*||" : "") + "< Unpacked", name: "previous_unpacked_button", disabled: @previous_packable_physical_object.nil?, title: "Previous unpacked item" + (@wrap_previous_packable ? " (wrapping)" : "") %>
+			  <%= f.submit (@wrap_previous ? "*||" : "") + "<", name: "previous_button", disabled: @previous_physical_object.nil?, title: "Previous item" + (@wrap_previous ? " (wrapping)" : "") %>
+			  <%= f.submit "Pack", name: "pack_button", disabled: (@physical_object.bin || @physical_object.box)  %>
+			  <%= f.submit ">" + (@wrap_next ? "||*" : ""), name: "next_button", disabled: @next_physical_object.nil?, title: "Next item" + (@wrap_next ? " (wrapping)" : "") %>
+			  <%= f.submit "Unpacked >" + (@wrap_next_packable ? "||*" : ""), name: "next_unpacked_button", disabled: @next_packable_physical_object.nil?, title: "Next unpacked item" + (@wrap_next_packable ? " (wrapping)" : "") %>
+      </div>
+      <div style="float: right;">
+        <%= f.submit "Unpack", name: "unpack_button", disabled: !(@physical_object.bin || @physical_object.box) %>
+			  <%= hidden_field_tag "repeat", @repeat %>
+		  </div>
+      <div style="display: block; clear: both;"></div>
+   </div>
 		<table>
   	  <tr>
   	    <th colspan="2">Assignment</th>
