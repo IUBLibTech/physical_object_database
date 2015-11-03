@@ -119,7 +119,7 @@ class GroupKeysController < ApplicationController
     group_position = params[:group_position].to_i
     group_position ||= 1
     if mdpi_barcode.zero?
-      flash[:warning] = "You must specify a valid, non-zero MPDI barcode."
+      flash[:warning] = "You must specific a valid, non-zero MPDI barcode."
     else
       physical_object = PhysicalObject.where(mdpi_barcode: mdpi_barcode).first
       if physical_object

@@ -1,5 +1,5 @@
 class CdrTm < ActiveRecord::Base
-  acts_as :technical_metadatum
+  acts_as :technical_metadatum, validates_actable: false
   after_initialize :default_values, if: :new_record?
   extend TechnicalMetadatumClassModule
   #TM module constants

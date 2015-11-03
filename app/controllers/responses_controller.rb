@@ -192,7 +192,7 @@ class ResponsesController < ActionController::Base
       if @physical_object.nil?
         barcode_not_found
       else
-        @tm = @physical_object.technical_metadatum.as_technical_metadatum unless @physical_object.technical_metadatum.nil?
+        @tm = @physical_object.technical_metadatum.specific unless @physical_object.technical_metadatum.nil?
         @dp = @physical_object.ensure_digiprov
       end
     end

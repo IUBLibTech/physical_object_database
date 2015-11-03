@@ -69,7 +69,7 @@ describe AnalogSoundDiscTm do
   describe "has virtual fields" do
     specify "#year" do
       physical_object = FactoryGirl.create(:physical_object, :lp, year: 1985)
-      analog_sound_disc_tm.technical_metadatum.physical_object = physical_object
+      analog_sound_disc_tm.physical_object = physical_object
       expect(analog_sound_disc_tm.year).to eq 1985
     end
   end

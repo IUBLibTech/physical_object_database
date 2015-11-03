@@ -110,7 +110,7 @@ def pack_list
 			@physical_object = @picklist.physical_objects.unpacked.packing_sort.first
 		end	
 		if @physical_object
-			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			@tm = @physical_object.technical_metadatum.specific
 			@group_key = @physical_object.group_key
 			surrounding_physical_objects
 		end
@@ -195,7 +195,7 @@ def pack_list
 			else
 				@physical_object = @next_physical_object
 			end
-			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			@tm = @physical_object.technical_metadatum.specific
 			@group_key = @physical_object.group_key
       			# need to recalculate bookend physical objects
       			surrounding_physical_objects
@@ -217,7 +217,7 @@ def pack_list
 			else
 				@physical_object = @previous_physical_object
 			end
-			@tm = @physical_object.technical_metadatum.as_technical_metadatum
+			@tm = @physical_object.technical_metadatum.specific
 			@group_key = @physical_object.group_key
 			# need to recalculate the bookend physical objects
 			surrounding_physical_objects
@@ -252,7 +252,7 @@ def pack_list
 						  end
 
 						  if @physical_object
-						  	@tm = @physical_object.technical_metadatum.as_technical_metadatum
+						  	@tm = @physical_object.technical_metadatum.specific
 						  	@group_key = @physical_object.group_key
 						  	surrounding_physical_objects
 						  end
@@ -350,7 +350,7 @@ def pack_list
 		def updated?
 			updated = @physical_object.update_attributes(physical_object_params)
 			if updated
-				@tm = @physical_object.technical_metadatum.as_technical_metadatum
+				@tm = @physical_object.technical_metadatum.specific
 				update = @tm.update_attributes(tm_params)
 			end
 			return updated

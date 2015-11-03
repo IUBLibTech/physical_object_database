@@ -66,7 +66,7 @@ describe ResponsesController do
       it "returns data XML" do
         expect(response.body).to match /<data>/
         expect(response.body).to match /<format>#{physical_object.format}<\/format>/
-        expect(response.body).to match /<files>#{physical_object.technical_metadatum.master_copies}<\/files>/
+        expect(response.body).to match /<files>#{physical_object.technical_metadatum.specific.master_copies}<\/files>/
       end
       it "returns a 200 status" do
         expect(response).to have_http_status(200)
@@ -94,7 +94,7 @@ describe ResponsesController do
       it "returns data XML" do
         expect(response.body).to match /<data>/
         expect(response.body).to match /<format>#{physical_object.format}<\/format>/
-        expect(response.body).to match /<files>#{physical_object.technical_metadatum.master_copies}<\/files>/
+        expect(response.body).to match /<files>#{physical_object.technical_metadatum.specific.master_copies}<\/files>/
       end
       it "returns a 200 status" do
         expect(response).to have_http_status(200)

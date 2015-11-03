@@ -5,7 +5,7 @@
 shared_examples "ensure_tm examples" do 
 
   describe "#ensure_tm" do
-    let(:original_tm) { test_object.technical_metadatum.as_technical_metadatum }
+    let(:original_tm) { test_object.technical_metadatum.specific }
     specify "returns nil for an invalid format" do
       test_object.format = "invalid"
       expect(test_object.ensure_tm).to eq nil
@@ -26,7 +26,7 @@ shared_examples "ensure_tm examples" do
       test_object.technical_metadatum = nil
       test_object.ensure_tm
       expect(test_object.technical_metadatum).to be_valid
-      expect(test_object.technical_metadatum.as_technical_metadatum).to be_valid
+      expect(test_object.ensure_tm).to be_valid
     end
     context "if format changes" do
       before(:each) do

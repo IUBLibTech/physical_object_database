@@ -19,7 +19,7 @@
           <% @column_names << "Box barcode" %>
         <% end %>
         <%# format-specific columns %>
-        <% @column_names += @first_object.technical_metadatum.as_technical_metadatum.manifest_headers %>
+        <% @column_names += @first_object.technical_metadatum.specific.manifest_headers %>
         <%# Conditions and Notes %>
         <% @column_names += ["Condition Notes", "Other Notes"] %>
         <Row>
