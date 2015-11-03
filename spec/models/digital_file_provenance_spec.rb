@@ -132,9 +132,9 @@ describe DigitalFileProvenance do
       it "belongs to" do
         expect(valid_dfp).to respond_to :signal_chain_id
       end
-      it "requires" do
+      it "is optional" do
         valid_dfp.signal_chain = nil
-        expect(valid_dfp).not_to be_valid
+        expect(valid_dfp).to be_valid
       end
     end
   end
