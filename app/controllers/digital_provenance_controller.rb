@@ -45,7 +45,7 @@ class DigitalProvenanceController < ApplicationController
 	private
 	def set_po
 		@physical_object = PhysicalObject.find(params[:id])
-		@tm = @physical_object.technical_metadatum.as_technical_metadatum
+		@tm = @physical_object.technical_metadatum.specific
 		@dp = @physical_object.digital_provenance
 		authorize @dp
 	end

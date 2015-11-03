@@ -190,7 +190,7 @@ class PhysicalObjectsController < ApplicationController
 	  po.group_position = 1
 	  po.group_key = nil
 	end
-        tm = @physical_object.technical_metadatum.as_technical_metadatum.dup
+        tm = @physical_object.technical_metadatum.specific.dup
         tm.physical_object = po
         tm.save
         #po is automatically saved by association
@@ -405,7 +405,7 @@ class PhysicalObjectsController < ApplicationController
       @physical_object = PhysicalObject.find(params[:id])
       authorize @physical_object
       @tm = @physical_object.technical_metadatum
-      @tm = @physical_object.technical_metadatum.as_technical_metadatum unless @tm.nil?
+      @tm = @physical_object.technical_metadatum.specific unless @tm.nil?
       @dp = @physical_object.ensure_digiprov
       @bin = @physical_object.bin
       @box = @physical_object.box

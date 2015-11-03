@@ -1,5 +1,5 @@
 class DatTm < ActiveRecord::Base
-  acts_as :technical_metadatum
+  acts_as :technical_metadatum, validates_actable: false
   #no default values needed
   extend TechnicalMetadatumClassModule
   # TM module constants

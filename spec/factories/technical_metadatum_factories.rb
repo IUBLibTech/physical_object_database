@@ -1,33 +1,33 @@
 FactoryGirl.define do
 
   factory :technical_metadatum, class: TechnicalMetadatum do
-   # as_technical_metadatum_id
-   # as_technical_metadatum_type
+   # actable_id
+   # actable_type
    # physical_object_id
    # picklist_specification_id
    trait :analog_sound_disc do
-     as_technical_metadatum_type "AnalogSoundDiscTm"
-     association :as_technical_metadatum, factory: :analog_sound_disc_tm
+     actable_type "AnalogSoundDiscTm"
+     association :actable, factory: :analog_sound_disc_tm
    end
    trait :cdr do
-     as_technical_metadatum_type "CdrTm"
-     association :as_technical_metadatum, factory: :cdr_tm
+     actable_type "CdrTm"
+     association :actable, factory: :cdr_tm
    end
    trait :dat do
-     as_technical_metadatum_type "DatTm"
-     association :as_technical_metadatum, factory: :dat_tm
+     actable_type "DatTm"
+     association :actable, factory: :dat_tm
    end
    trait :open_reel do
-     as_technical_metadatum_type "OpenReelTm"
-     association :as_technical_metadatum, factory: :open_reel_tm
+     actable_type "OpenReelTm"
+     association :actable, factory: :open_reel_tm
    end
    trait :betacam do
-     as_technical_metadatum_type "BetacamTm"
-     association :as_technical_metadatum, factory: :betacam_tm
+     actable_type "BetacamTm"
+     association :actable, factory: :betacam_tm
    end
    trait :eight_mm do
-     as_technical_metadatum_type "EightMillimeterVideoTm"
-     association :as_technical_metadatum, factory: :eight_mm_tm
+     actable_type "EightMillimeterVideoTm"
+     association :actable, factory: :eight_mm_tm
    end
   end
 

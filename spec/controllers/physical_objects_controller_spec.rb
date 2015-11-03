@@ -150,8 +150,8 @@ describe PhysicalObjectsController do
       it "intializes calculated_directions_recorded and copies value to directions_recorded" do
         expect(dr_po).to be_valid
         expect(dr_po.technical_metadatum).not_to be_nil
-        expect(dr_po.technical_metadatum.as_technical_metadatum.calculated_directions_recorded).to eq 2
-        expect(dr_po.technical_metadatum.as_technical_metadatum.directions_recorded).to eq 2
+        expect(dr_po.technical_metadatum.specific.calculated_directions_recorded).to eq 2
+        expect(dr_po.technical_metadatum.specific.directions_recorded).to eq 2
       end
     end
 

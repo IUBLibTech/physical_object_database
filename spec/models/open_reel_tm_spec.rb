@@ -43,7 +43,7 @@ describe OpenReelTm do
   describe "has virtual fields" do
     specify "#year" do
       physical_object = FactoryGirl.create(:physical_object, :open_reel, year: 1985)
-      open_reel_tm.technical_metadatum.physical_object = physical_object
+      open_reel_tm.physical_object = physical_object
       expect(open_reel_tm.year).to eq 1985
     end
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151023195407) do
+ActiveRecord::Schema.define(version: 20151102162041) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -238,10 +238,10 @@ ActiveRecord::Schema.define(version: 20151023195407) do
     t.string  "fileUsage"
     t.string  "md5",         limit: 32
     t.integer "size",        limit: 8
-    t.float   "duration"
+    t.float   "duration",    limit: 24
   end
 
-  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: true do |t|
     t.string   "digitizingEntity"
@@ -465,15 +465,15 @@ ActiveRecord::Schema.define(version: 20151023195407) do
   add_index "spreadsheets", ["filename"], name: "index_spreadsheets_on_filename", unique: true, using: :btree
 
   create_table "technical_metadata", force: true do |t|
-    t.integer  "as_technical_metadatum_id"
-    t.string   "as_technical_metadatum_type"
-    t.integer  "physical_object_id",          limit: 8
-    t.integer  "picklist_specification_id",   limit: 8
+    t.integer  "actable_id"
+    t.string   "actable_type"
+    t.integer  "physical_object_id",        limit: 8
+    t.integer  "picklist_specification_id", limit: 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "technical_metadata", ["as_technical_metadatum_id", "as_technical_metadatum_type"], name: "technical_metadata_as_technical_metadatum_index", using: :btree
+  add_index "technical_metadata", ["actable_id", "actable_type"], name: "technical_metadata_as_technical_metadatum_index", using: :btree
   add_index "technical_metadata", ["physical_object_id"], name: "index_technical_metadata_on_physical_object_id", using: :btree
   add_index "technical_metadata", ["picklist_specification_id"], name: "index_technical_metadata_on_picklist_specification_id", using: :btree
 
