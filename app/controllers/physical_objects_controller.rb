@@ -129,7 +129,7 @@ class PhysicalObjectsController < ApplicationController
         updated = @physical_object.save
         updated = @tm.update_attributes(tm_params) if updated
         @tm.reload
-        if @original_tm && @original_tm.id != @tm.technical_metadatum.id
+        if @original_tm && @original_tm.specific && (@original_tm.specific.id != @tm.id)
           @original_tm.destroy
         end
       end
