@@ -93,11 +93,11 @@ describe UnitsController do
   end
 
   describe "PUT #update" do
+    let!(:original_name) { unit.name }
     let(:put_update) { put :update, id: unit.id, unit: update_attributes }
     before(:each) { put_update }
     after(:each) { unit.destroy }
     context "with valid params" do
-      let(:original_name) { unit.name }
       let(:update_attributes) { { name: original_name + " updated" } }
       it "assigns the requested unit as @unit" do
         expect(assigns(:unit)).to eq(unit)
@@ -115,6 +115,11 @@ describe UnitsController do
       let(:update_attributes) { { name: "" } }
       it "assigns the unit as @unit" do
         expect(assigns(:unit)).to eq(unit)
+      end
+      it "does not update the requested unit" do
+        expect(unit.name).to eq original_name
+        unit.reload
+        expect(unit.name).to eq original_name
       end
       it "re-renders the 'edit' template" do
         expect(response).to render_template("edit")
