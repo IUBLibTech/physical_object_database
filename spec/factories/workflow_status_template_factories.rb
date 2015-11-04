@@ -5,6 +5,10 @@ FactoryGirl.define do
     description "Created by Factory Girl"
     object_type "Physical Object"
     sequence_index 100
+
+    trait :invalid do
+      name nil
+    end
   end
 
 end

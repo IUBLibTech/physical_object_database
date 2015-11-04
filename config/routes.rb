@@ -169,7 +169,7 @@ Pod::Application.routes.draw do
 
   resources :users
 
-  resources :workflow_status_templates
+  resources :workflow_status_templates, except: [:index]
 
   #old routing scheme was:
   #match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
