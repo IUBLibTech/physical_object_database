@@ -1,9 +1,7 @@
-require 'rails_helper'
-require 'debugger'
-
 describe PhysicalObjectsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
   let(:barcoded_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded) }
   let(:second_object) { FactoryGirl.create(:physical_object, :cdr, unit: physical_object.unit, group_key: physical_object.group_key, group_position: 2) }

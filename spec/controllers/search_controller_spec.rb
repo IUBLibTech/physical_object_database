@@ -1,6 +1,7 @@
 describe SearchController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:physical_object) { FactoryGirl.create :physical_object, :boxable, :barcoded, title: "test title", call_number: "test call number" }
   let(:bin) { FactoryGirl.create :bin }
   let(:box) { FactoryGirl.create :box }

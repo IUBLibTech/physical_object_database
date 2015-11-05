@@ -3,7 +3,7 @@
 #
 describe UnitsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   
   let(:unit) { FactoryGirl.create(:unit) }
   let(:valid_unit) { FactoryGirl.build(:unit) }

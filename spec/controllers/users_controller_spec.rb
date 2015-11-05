@@ -3,7 +3,7 @@
 #
 describe UsersController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   
   let(:user) { FactoryGirl.create(:user) }
   let(:valid_user) { FactoryGirl.build(:user) }

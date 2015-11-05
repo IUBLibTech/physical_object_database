@@ -3,7 +3,7 @@
 #
 describe SignalChainsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   
   let(:signal_chain) { FactoryGirl.create(:signal_chain) }
   let(:valid_signal_chain) { FactoryGirl.build(:signal_chain) }

@@ -1,6 +1,7 @@
 describe BoxesController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:other_bin) { FactoryGirl.create(:bin, identifier: "other " + bin.identifier) }

@@ -1,5 +1,6 @@
-require 'rails_helper'
+describe XmlTesterController do
+  render_views
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-RSpec.describe XmlTesterController, type: :controller do
   pending "write tests"
 end

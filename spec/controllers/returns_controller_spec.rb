@@ -1,8 +1,7 @@
-require 'rails_helper'
-
 describe ReturnsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:batch) { FactoryGirl.create :batch, identifier: "Created Batch" }
   let(:created_batch) { FactoryGirl.create :batch, identifier: "Returned Batch" }
   let(:bin) { FactoryGirl.create :bin, batch: batch }

@@ -1,6 +1,7 @@
 describe WorkflowStatusTemplatesController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:wst) { WorkflowStatusTemplate.first }
   let(:temp_wst) { FactoryGirl.create :workflow_status_template }
   let(:valid_attributes) { FactoryGirl.attributes_for(:workflow_status_template) }

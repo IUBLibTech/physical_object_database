@@ -1,7 +1,5 @@
-#FIXME: rewrite for boxes!
-require 'rails_helper'
-
 describe SessionsController do
+  before(:each) { request.env['HTTP_REFERER'] = 'source_page' }
 
   describe "#new" do
     pending

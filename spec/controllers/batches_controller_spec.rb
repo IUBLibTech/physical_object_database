@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe BatchesController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin, identifier: "bin") }
   let(:batched_bin) { FactoryGirl.create(:bin, identifier: "batched_bin", batch: batch) }

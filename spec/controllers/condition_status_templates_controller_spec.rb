@@ -1,6 +1,7 @@
 describe ConditionStatusTemplatesController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:cst) { ConditionStatusTemplate.first }
   let(:temp_cst) { FactoryGirl.create :condition_status_template }
   let(:valid_attributes) { FactoryGirl.attributes_for(:condition_status_template) }
