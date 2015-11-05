@@ -3,10 +3,6 @@ describe "boxes" do
     expect(get("/boxes/:id/edit")).to be_routable
   end
 
-  it "routes to add_barcode_item" do
-    expect(post("/boxes/:id/add_barcode_item")).to be_routable
-  end
-
   it "routes to unbin" do
     expect(post("/boxes/:id/unbin")).to be_routable
   end

@@ -74,39 +74,6 @@ class BinsController < ApplicationController
 		@workflow_statuses = @bin.workflow_statuses
 	end
 
-	def add_barcode_item
-		bc = params[:barcode][:mdpi_barcode]
-		@bin = Bin.find(params[:bin][:id])
-		@physical_objects = @bin.physical_objects
-		if Box.where(mdpi_barcode: bc).where("mdpi_barcode != ?", 0).limit(1).size == 1
-			box = Box.where(mdpi_barcode: bc).first
-			box.bin = @bin
-			box.save
-			flash[:notice] = "Successfully added Box <i>#{box.mdpi_barcode}</i> to the Bin.".html_safe
-		elsif PhysicalObject.where(mdpi_barcode: bc).where("mdpi_barcode != ?", 0).limit(1).size == 1
-			po = PhysicalObject.where(mdpi_barcode: bc).first
-			po.bin = @bin
-			po.save
-			flash[:notice] = "Successfully added Physical Object <i>#{po.mdpi_barcode}</i> to Bin #{@bin.identifier}.".html_safe
-		else
-			@box = Box.new
-			@box.mdpi_barcode = bc
-			@box.bin = @bin
-			#TODO: for now, boxes cannot be assigned a barcode of 0 even though it is technically valid. This will change
-			#at some point but is yet to be decided the workflow behavior
-			
-			if bc != '0' and @box.save
-				flash[:notice] = "Successfully created new Box <i>#{bc}</i> and added it to Bin <i>#{@bin.identifier}</i>".html_safe
-			else 
-				#don't redirect because view needs @box to display error messages
-				@bin.errors.add(:boxes, "tried to add/create a  Box with invalid MDPI barcode: #{bc}")
-				render('show')
-				return
-			end
-		end
-		redirect_to(action: 'show', id: @bin.id)
-	end
-
 	def unbatch
 		@bin.batch = nil
 		if @bin.save
@@ -168,6 +135,7 @@ class BinsController < ApplicationController
                   redirect_to action: :show
                   return
                 end
+		#FIXME: catch case of boxes already assigned to a bin?
 		unless params[:box_ids].nil?
 			params[:box_ids].each do |b_id|
 				Box.find(b_id).update_attributes(bin_id: @bin.id)

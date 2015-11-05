@@ -277,15 +277,10 @@ describe BinsController do
     end
   end
 
-  describe "POST add_barcode_item" do
-    skip "FIXME: deprecated?"
-  end
-
   describe "POST unbatch" do
     before(:each) do
       bin.batch = batch
       bin.save
-      request.env["HTTP_REFERER"] = "source_page"
       post :unbatch, id: bin.id
     end
     it "removes the batch association from the bin" do
@@ -425,7 +420,6 @@ describe BinsController do
   end
 
   describe "POST unseal" do
-    before(:each) { request.env["HTTP_REFERER"] = "source_page" }
     context "on an unsealed (Created) bin" do
       before(:each) do
         post :unseal, id: bin.id

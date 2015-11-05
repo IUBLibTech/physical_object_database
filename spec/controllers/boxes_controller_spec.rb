@@ -162,7 +162,11 @@ describe BoxesController do
       it "locates the requested object" do
         expect(assigns(:box)).to eq box
       end
-      it "does not change the object's attributes"
+      it "does not change the object's attributes" do
+        expect(box.mdpi_barcode).not_to be_nil
+        box.reload
+        expect(box.mdpi_barcode).not_to be_nil
+      end
       it "renders the :edit template" do
         expect(response).to render_template :edit
       end
@@ -253,8 +257,4 @@ describe BoxesController do
     end
   end
 
-  describe "PUT add_barcode_item" do
-    it "FIXME: deprecated?"
-  end
-  
 end
