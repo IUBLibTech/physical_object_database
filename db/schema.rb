@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151023195407) do
+ActiveRecord::Schema.define(version: 20151105221552) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -241,7 +241,7 @@ ActiveRecord::Schema.define(version: 20151023195407) do
     t.float   "duration"
   end
 
-  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: true do |t|
     t.string   "digitizingEntity"
@@ -302,7 +302,7 @@ ActiveRecord::Schema.define(version: 20151023195407) do
   end
 
   create_table "messages", force: true do |t|
-    t.string   "content"
+    t.text     "content"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

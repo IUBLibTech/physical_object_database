@@ -34,7 +34,7 @@
 				</td>
 				<td class="<%= s.successful_validation ? "green" : "red" %>">
 					<% if s.validation_completion_percent == 100 and !s.successful_validation %>
-						<%= link_to "Failed", invoice_failed_message_ajax_path(s.id), remote: true, class: "msg_link", data: {type: :html} if policy(s).failed_message?  %>
+						<%= link_to "Failed", invoice_failed_message_ajax_path(s.id), remote: true, class: "msg_link", data: {type: :html} if policy(:invoice).failed_message?  %>
 					<% else %>
 						<%= (s.validation_completion_percent == 100 and s.successful_validation) ? "Successful" : "Processing [#{s.validation_completion_percent}%]" %>
 					<% end %>
