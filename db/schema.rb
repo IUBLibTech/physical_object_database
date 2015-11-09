@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151106135653) do
+ActiveRecord::Schema.define(version: 20151109182535) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -227,6 +227,7 @@ ActiveRecord::Schema.define(version: 20151106135653) do
     t.text     "options"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "decided_manually",                       default: false
   end
 
   add_index "digital_statuses", ["created_at", "state", "physical_object_id"], name: "quality_control_staging", using: :btree
