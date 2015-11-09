@@ -42,6 +42,11 @@ class BatchesController < ApplicationController
     authorize @batch
     @available_bins = Bin.available_bins
     @bins = @batch.bins
+    if (@bins.first and @bins.first.physical_objects.size > 0)
+      @days = TechnicalMetadatumModule.tm_genres[@bins.first.physical_objects.first.format] == :audio ? 45 : 30
+    else
+      @days = 0
+    end
     respond_to do |format|
       format.html
       format.xls
