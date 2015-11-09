@@ -60,14 +60,19 @@ RSpec.describe QualityControlController, :type => :controller do
 
 	describe "#decide" do
 		context "making a decision" do
-			it "sets the decision for a digital status state" do
+			before(:each) {
 				ds.physical_object_mdpi_barcode = po.mdpi_barcode
 				ds.physical_object_id = po.id
 				ds.save!
 				patch :decide, id: ds.id, decided: ds.options[ds.options.keys[2]]
 				expect(assigns(:ds)).not_to be_nil
 				ds.reload
+			}
+			it "sets the decision for a digital status state" do
 				expect(ds.decided).to eq ds.options[ds.options.keys[2]]
+			end
+			it "sets the 'decided_manually' flag" do
+				expect(ds.decided_manually).to eq true
 			end
 		end
 
