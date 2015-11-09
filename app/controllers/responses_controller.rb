@@ -134,9 +134,14 @@ class ResponsesController < ActionController::Base
     render template: 'responses/pull_states.xml.builder', layout: false
   end
 
-  # NOT IMPLEMENTED YET
   def flags
+    @physical_object = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
+    @success = ! @physical_object.nil?
+    @message = "<data><flags>foo</flags></data>".html_safe
+    render template: "responses/flags_response.xml.builder", layout: false, status: 200
   end
+
+  # NOT IMPLEMENTED YET
   def transfer_request
   end
   
