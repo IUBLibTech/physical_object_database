@@ -233,6 +233,18 @@ ActiveRecord::Schema.define(version: 20151109182535) do
   add_index "digital_statuses", ["created_at", "state", "physical_object_id"], name: "quality_control_staging", using: :btree
   add_index "digital_statuses", ["physical_object_id"], name: "index_digital_statuses_on_physical_object_id", using: :btree
 
+  create_table "doFiles", id: false, force: true do |t|
+    t.string  "mdpiBarcode", limit: 14, null: false
+    t.integer "partNumber",  limit: 1
+    t.boolean "isMaster"
+    t.string  "fileUsage"
+    t.string  "md5",         limit: 32
+    t.integer "size",        limit: 8
+    t.float   "duration",    limit: 24
+  end
+
+  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+
   create_table "doObjects", primary_key: "mdpiBarcode", force: true do |t|
     t.string   "digitizingEntity"
     t.string   "objectType"
@@ -246,18 +258,6 @@ ActiveRecord::Schema.define(version: 20151109182535) do
     t.integer "partNumber",  limit: 1,  null: false
     t.boolean "vendorQC"
   end
-
-  create_table "dofiles", id: false, force: true do |t|
-    t.string  "mdpiBarcode", limit: 14, null: false
-    t.integer "partNumber",  limit: 1
-    t.boolean "isMaster"
-    t.string  "fileUsage"
-    t.string  "md5",         limit: 32
-    t.integer "size",        limit: 8
-    t.float   "duration",    limit: 24
-  end
-
-  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "eight_millimeter_video_tms", force: true do |t|
     t.string   "pack_deformation"
