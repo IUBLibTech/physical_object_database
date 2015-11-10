@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
         tm = TechnicalMetadatum.new
         @tm = @physical_object.create_tm(f)
         @physical_object.technical_metadatum = tm
-        tm.specific = @tm
+        tm.actable = @tm
       end
     elsif params[:type] == 'PicklistSpecification'
       @picklist_specification = params[:id] == '0' ? PicklistSpecification.new(format: f) : PicklistSpecification.find(params[:id])
