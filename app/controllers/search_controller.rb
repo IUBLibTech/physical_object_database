@@ -45,7 +45,7 @@ class SearchController < ApplicationController
     po.technical_metadatum = tm
 
     stm = po.create_tm(po.format)
-    tm.specific = stm
+    tm.actable = stm
     tmp.each do |name, value|
       if !value.nil? and value.length > 0
         stm[name] = value
