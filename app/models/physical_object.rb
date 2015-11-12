@@ -26,8 +26,8 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :spreadsheet
   belongs_to :unit
   
-  has_one :technical_metadatum, :dependent => :destroy
-  has_one :digital_provenance, :dependent => :destroy
+  has_one :technical_metadatum, :dependent => :destroy, validate: true
+  has_one :digital_provenance, :dependent => :destroy, validate: true
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
   has_many :notes, :dependent => :destroy
@@ -339,6 +339,10 @@ class PhysicalObject < ActiveRecord::Base
     if TechnicalMetadatumModule.tm_formats_hash[self.format]
       if self.technical_metadatum.nil? || self.technical_metadatum.specific.nil? || self.technical_metadatum.actable_type != TechnicalMetadatumModule.tm_format_classes[self.format].to_s
         @tm = create_tm(self.format, physical_object: self)
+        #checks to ensure correct child/parent linkage for new objects; gem does not seem to take care of this?
+        self.technical_metadatum = @tm.technical_metadatum if self.technical_metadatum != @tm.technical_metadatum
+        self.technical_metadatum.actable = @tm if self.technical_metadatum.actable != @tm
+        @tm
       else
         @tm = self.technical_metadatum.specific
       end
