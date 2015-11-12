@@ -26,15 +26,19 @@ class Batch < ActiveRecord::Base
   end
 
   def digitization_start
-  	date = PhysicalObject.connection.execute(
-  		"SELECT physical_objects.digital_start
-			FROM bins, physical_objects
-			WHERE bins.batch_id = #{self.id} and physical_objects.bin_id = bins.id 
-			and physical_objects.digital_start is not null
-			ORDER by digital_start
-			LIMIT 1"
-  	)
-  	return date.size == 0 ? nil : date.first[0]
+    if self.id
+  	  date = PhysicalObject.connection.execute(
+  		  "SELECT physical_objects.digital_start
+			  FROM bins, physical_objects
+			  WHERE bins.batch_id = #{self.id} and physical_objects.bin_id = bins.id 
+			  and physical_objects.digital_start is not null
+			  ORDER by digital_start
+			  LIMIT 1"
+  	  )
+  	  return date.size == 0 ? nil : date.first[0]
+    else
+      return nil
+    end
   end
 
 	def media_format

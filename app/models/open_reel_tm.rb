@@ -71,7 +71,7 @@ class OpenReelTm < ActiveRecord::Base
 
   def default_values
     self.pack_deformation ||= "None"
-    self.reel_size ||= "Unknown"
+    self.reel_size ||= ""
   end
 
   def damage
