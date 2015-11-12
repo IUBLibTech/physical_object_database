@@ -98,7 +98,7 @@
       <tr>
         <th>Unit</th>
         <td>
-          <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :abbreviation, {prompt: "Please specify a unit"}, disabled: !@edit_mode %>
+          <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :abbreviation, {prompt: "Please specify a unit..."}, disabled: !@edit_mode %>
         </td>
       </tr>
       <tr>

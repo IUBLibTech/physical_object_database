@@ -12,7 +12,7 @@ describe PhysicalObject do
   let(:box) { FactoryGirl.create :box }
   let(:bin) { FactoryGirl.create :bin }
 
-  tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :eight_mm]
+  tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :eight_mm, :umatic]
   tm_factories = {
     "CD-R" => :cdr_tm,
     "DAT" => :dat_tm,
@@ -23,7 +23,8 @@ describe PhysicalObject do
     "Other Analog Sound Disc" => :analog_sound_disc_tm,
     "Open Reel Audio Tape" => :open_reel_tm,
     "Betacam" => :betacam_tm,
-    "8mm Video" =>:eight_mm_tm
+    "8mm Video" => :eight_mm_tm,
+    "U-matic" => :umatic_tm,
   }
 
   describe "FactoryGirl" do

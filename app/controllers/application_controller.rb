@@ -99,7 +99,9 @@ class ApplicationController < ActionController::Base
         #fields for betacam
         :format_version, :cassette_size, :recording_standard, :image_format,
         #fields for eight mm video
-        :playback_speed, :binder_system
+        :playback_speed, :binder_system,
+        #fields for umatic video
+        :size
         )
     end
 

@@ -42,7 +42,7 @@ class PhysicalObjectsController < ApplicationController
     @tm = @physical_object.ensure_tm
     @dp = @physical_object.ensure_digiprov
     @tm.assign_attributes(tm_params)
-    if @physical_object.valid? && @tm.valid? && @dp.valid?
+    if @physical_object.errors.none? && @physical_object.valid? && @tm.valid? && @dp.valid?
       saved = @physical_object.save 
     end
     if saved
@@ -120,7 +120,7 @@ class PhysicalObjectsController < ApplicationController
       rescue
         tm_assigned = false
       end
-      if @physical_object.valid? && @tm.valid? && @dp.valid? && tm_assigned
+      if @physical_object.errors.none? && @physical_object.valid? && @tm.valid? && @dp.valid? && tm_assigned
         updated = @physical_object.save
         @tm.reload
         if @original_tm && @original_tm.specific && (@original_tm.specific.id != @tm.id)

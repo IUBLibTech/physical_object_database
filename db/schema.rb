@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151109182535) do
+ActiveRecord::Schema.define(version: 20151111042022) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -243,7 +243,7 @@ ActiveRecord::Schema.define(version: 20151109182535) do
     t.float   "duration",    limit: 24
   end
 
-  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: true do |t|
     t.string   "digitizingEntity"
@@ -478,6 +478,21 @@ ActiveRecord::Schema.define(version: 20151109182535) do
   add_index "technical_metadata", ["actable_id", "actable_type"], name: "technical_metadata_as_technical_metadatum_index", using: :btree
   add_index "technical_metadata", ["physical_object_id"], name: "index_technical_metadata_on_physical_object_id", using: :btree
   add_index "technical_metadata", ["picklist_specification_id"], name: "index_technical_metadata_on_picklist_specification_id", using: :btree
+
+  create_table "umatic_video_tms", force: true do |t|
+    t.string   "pack_deformation"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.string   "recording_standard"
+    t.string   "format_duration"
+    t.string   "size"
+    t.string   "tape_stock_brand"
+    t.string   "image_format"
+    t.string   "format_version"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "units", force: true do |t|
     t.string   "abbreviation"
