@@ -9,6 +9,7 @@ describe Batch do
   let(:bin) { FactoryGirl.create :bin, batch: batch }
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
+  let(:open_reel) { FactoryGirl.create :physical_object, :open_reel, :barcoded, bin: bin }
   let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
@@ -100,14 +101,10 @@ describe Batch do
     end
     it "returns first object in first bin" do
       bin
-      physical_object.format = "Open Reel Audio Tape"
-      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-      physical_object.bin = bin
-      physical_object.save!
-      physical_object.reload
+      open_reel
       bin.reload
       expect(bin.boxes).to be_empty
-      expect(batch.first_object).to eq physical_object
+      expect(batch.first_object).to eq open_reel
     end
     it "returns first object in first box in first bin" do
       bin
@@ -135,14 +132,10 @@ describe Batch do
     end
     it "returns format of first object in first bin" do
       bin
-      physical_object.format = "Open Reel Audio Tape"
-      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-      physical_object.bin = bin
-      physical_object.save!
-      physical_object.reload
+      open_reel
       bin.reload
       expect(bin.boxes).to be_empty
-      expect(batch.media_format).to eq physical_object.format
+      expect(batch.media_format).to eq open_reel.format
     end
     it "returns format of first object in first box in in first bin" do
       bin

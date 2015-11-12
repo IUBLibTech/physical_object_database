@@ -161,6 +161,8 @@ module PhysicalObjectsHelper
             )
           po.picklist = picklist unless picklist.nil?
           po.assign_inferred_workflow_status
+          tm = po.ensure_tm
+          tm.class.parse_tm(tm, r) unless tm.nil?
           #Need extra check on box_id as we nullify bin_id for non-nil box_id
           if bin_id.nil? && r["Bin barcode"].to_i > 0 && box_id.nil?
             failed << [index, bin]
@@ -171,14 +173,12 @@ module PhysicalObjectsHelper
           elsif !po.valid?
             failed << [index, po]
           else
-            tm = po.ensure_tm
-            tm.class.parse_tm(tm, r) unless tm.nil?
             if tm.nil?
               #error
             elsif tm.errors.any?
               failed << [index, tm]
-            elsif !tm.save
-              failed << [index, tm]
+            #elsif !tm.save
+            #  failed << [index, tm]
             elsif po.save
               succeeded << po.id
 
@@ -244,7 +244,7 @@ module PhysicalObjectsHelper
               end
             else
               #need to remove tm
-              tm.destroy
+              tm.destroy if tm.persisted?
               failed << [index, po]
             end
           end

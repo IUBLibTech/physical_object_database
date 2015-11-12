@@ -301,7 +301,8 @@ describe PhysicalObjectsController do
     context "on a binned object" do
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
-	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+        physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+	      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.bin = FactoryGirl.create(:bin)
         physical_object.save!
         split_show
@@ -358,7 +359,8 @@ describe PhysicalObjectsController do
       context "on a binned item" do
         before(:each) do
           physical_object.format = "Open Reel Audio Tape"
-	  physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+          physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+	        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
           physical_object.bin = FactoryGirl.create(:bin)
           physical_object.save!
         end
@@ -471,7 +473,8 @@ describe PhysicalObjectsController do
       let(:source_page) { "source_page" }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
-	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+        physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+	      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.bin = FactoryGirl.create(:bin)
         physical_object.save!
       end
@@ -675,7 +678,8 @@ describe PhysicalObjectsController do
       let(:bin) { FactoryGirl.create(:bin) }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
-	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+        physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+	      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = nil
         physical_object.bin = bin
         physical_object.save!
