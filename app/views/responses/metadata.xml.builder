@@ -5,7 +5,7 @@ xml.pod do
      xml.success true
      xml.data do
        xml.format @physical_object.format
-       xml.files @physical_object.technical_metadatum.master_copies
+       xml.files @physical_object.ensure_tm.master_copies
      end
    else
      xml.success false

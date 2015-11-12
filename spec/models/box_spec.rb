@@ -6,6 +6,7 @@ describe Box do
   let(:invalid_box) { FactoryGirl.build :box, :invalid }
   let(:po) { FactoryGirl.create :physical_object, :cdr, :barcoded, box: box}
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
+  let(:open_reel) { FactoryGirl.create :physical_object, :open_reel, :barcoded, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
   describe "FactoryGirl" do
@@ -67,9 +68,7 @@ describe Box do
     end
     #FIXME: test against being in a bin containing boxes of different formats
     it "cannot belong to a bin containing physical objects" do
-      physical_object.format = "Open Reel Audio Tape"
-      physical_object.bin = bin
-      physical_object.save!
+      open_reel
       valid_box.bin = bin
       expect(valid_box).not_to be_valid
     end

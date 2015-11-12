@@ -35,7 +35,7 @@ describe PicklistSpecificationsController do
       expect(assigns(:ps)).to eq picklist_specification
     end
     it "assigns tm to @tm" do
-      expect(assigns(:tm)).to eq picklist_specification.technical_metadatum.as_technical_metadatum
+      expect(assigns(:tm)).to eq picklist_specification.technical_metadatum.specific
     end
     it "renders the :show template" do
       expect(response).to render_template(:show)

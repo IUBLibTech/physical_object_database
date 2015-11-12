@@ -11,7 +11,7 @@ describe PicklistSpecification do
     it "generates a valid object" do
       expect(valid_picklist_specification).to be_valid
       expect(valid_picklist_specification.technical_metadatum).to be_valid
-      expect(valid_picklist_specification.technical_metadatum.as_technical_metadatum).to be_valid
+      expect(valid_picklist_specification.technical_metadatum.specific).to be_valid
     end
     it "generates an invalid object" do
       expect(invalid_picklist_specification).not_to be_valid
@@ -57,7 +57,7 @@ describe PicklistSpecification do
         expect(created_tm.picklist_specification).to eq valid_picklist_specification
       end
       it "returns a tm of matching format" do
-        expect(created_tm.as_technical_metadatum_type).to eq (TechnicalMetadatumModule.tm_format_classes[valid_picklist_specification.format]).to_s
+        expect(created_tm.actable_type).to eq (TechnicalMetadatumModule.tm_format_classes[valid_picklist_specification.format]).to_s
       end
     end
 

@@ -18,7 +18,7 @@ class DigitizationController < ApplicationController
 	def set_po
 		@physical_object = PhysicalObject.find(params[:id])
 		authorize @physical_object
-		@tm = @physical_object.technical_metadatum.as_technical_metadatum
+		@tm = @physical_object.technical_metadatum.specific
 		@dp = @physical_object.digital_provenance
 	end
 end

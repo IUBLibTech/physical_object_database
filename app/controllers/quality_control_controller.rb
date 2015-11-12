@@ -39,7 +39,7 @@ class QualityControlController < ApplicationController
 
 	def decide
 		@ds = DigitalStatus.find(params[:id])
-		@ds.update_attributes(decided: params[:decided])
+		@ds.update_attributes(decided: params[:decided], decided_manually: true)
 		flash[:notice] = "Updated Digital Status for #{@ds.physical_object.mdpi_barcode} - chose #{@ds.decided}"
 		render "index"
 	end

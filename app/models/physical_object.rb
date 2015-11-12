@@ -26,8 +26,8 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :spreadsheet
   belongs_to :unit
   
-  has_one :technical_metadatum, :dependent => :destroy
-  has_one :digital_provenance, :dependent => :destroy
+  has_one :technical_metadatum, :dependent => :destroy, validate: true
+  has_one :digital_provenance, :dependent => :destroy, validate: true
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
   has_many :notes, :dependent => :destroy
@@ -118,11 +118,17 @@ class PhysicalObject < ActiveRecord::Base
       AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).pluck(:format)
   }
 
-  scope :unstaged_by_date_by_format, lambda { |date, format| 
-    PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
-      ON digital_statuses.physical_object_id = ds2.physical_object_id
-      AND digital_statuses.state = ds2.state
-      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, format: format, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).eager_load(:digital_provenance).order("RAND()")
+  # deprecated because the joins are no longer necessary
+  # scope :unstaged_by_date_by_format, lambda { |date, format| 
+  #   PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
+  #     ON digital_statuses.physical_object_id = ds2.physical_object_id
+  #     AND digital_statuses.state = ds2.state
+  #     AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, format: format, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).eager_load(:digital_provenance).order("RAND()")
+  # }
+
+
+  scope :unstaged_by_date_by_format, lambda { |date, format|
+    PhysicalObject.where(staging_requested: false, format: format).where(datesql(date)).order("RAND()")
   }
 
   scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
@@ -253,8 +259,8 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def master_copies
-    if self.technical_metadatum && self.technical_metadatum.as_technical_metadatum
-      self.technical_metadatum.as_technical_metadatum.master_copies
+    if self.technical_metadatum && self.technical_metadatum.specific
+      self.technical_metadatum.specific.master_copies
     else
       0
     end
@@ -287,11 +293,11 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def metadata_attributes
-    technical_metadatum.as_technical_metadatum.attributes
+    technical_metadatum.specific.attributes
   end
 
   def metadata_columns
-    technical_metadatum.as_technical_metadatum.class.column_names
+    technical_metadatum.specific.class.column_names
   end
 
   def printable_column_headers
@@ -319,7 +325,7 @@ class PhysicalObject < ActiveRecord::Base
     "WHERE " <<
     (!format.nil? and format.length > 0 ? 
       "physical_objects.format='#{format}' AND physical_objects.id=technical_metadata.physical_object_id " << 
-      "AND technical_metadata.as_technical_metadatum_id=#{tm_table_name(self.format)}.id " 
+      "AND technical_metadata.actable_id=#{tm_table_name(self.format)}.id " 
       : 
       "" ) << (omit_picklisted ? "AND (picklist_id is null OR picklist_id = 0) " : "")
     physical_object_where_clause <<
@@ -331,10 +337,14 @@ class PhysicalObject < ActiveRecord::Base
 
   def ensure_tm
     if TechnicalMetadatumModule.tm_formats_hash[self.format]
-      if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule.tm_format_classes[self.format].to_s
+      if self.technical_metadatum.nil? || self.technical_metadatum.specific.nil? || self.technical_metadatum.actable_type != TechnicalMetadatumModule.tm_format_classes[self.format].to_s
         @tm = create_tm(self.format, physical_object: self)
+        #checks to ensure correct child/parent linkage for new objects; gem does not seem to take care of this?
+        self.technical_metadatum = @tm.technical_metadatum if self.technical_metadatum != @tm.technical_metadatum
+        self.technical_metadatum.actable = @tm if self.technical_metadatum.actable != @tm
+        @tm
       else
-        @tm = self.technical_metadatum.as_technical_metadatum
+        @tm = self.technical_metadatum.specific
       end
     end
   end
@@ -468,8 +478,12 @@ assigned to a box."
     self.box ? self.box.bin : self.bin
   end
 
+  # deprecated because the using scope no longer needs to compare against a joined table
+  # def self.datesql(date)
+  #   date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
+  # end
   def self.datesql(date)
-    date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
+    date.blank? ? "" : "DATEDIFF(physical_objects.digital_start, '#{date}') = 0"
   end
 
   # See DigitalFileProvenance::FILE_USE_VALUES for list of valid use codes
@@ -506,7 +520,7 @@ assigned to a box."
 
   private
   def technical_metadata_where_claus
-    tm_where(tm_table_name(format), technical_metadatum.as_technical_metadatum)
+    tm_where(tm_table_name(format), technical_metadatum.specific)
   end
 
   private
@@ -531,7 +545,7 @@ assigned to a box."
   #   q = ""
   #   stm.attributes.each do |name, value|
   #     #ignore these fields in the Sql WHERE clause
-  #     if name == 'id' or name == 'created_at' or name == 'updated_at' or name == "as_technical_metadatum_type"
+  #     if name == 'id' or name == 'created_at' or name == 'updated_at' or name == "actable_type"
   #       next
   #     # a value of false in a query means we don't care whether the returned value is true OR false
   #     elsif !value.nil? and (value.class == String and value.length > 0)
@@ -548,7 +562,7 @@ assigned to a box."
     tm.attributes.each do |name, value|
       #ignore these fields in the Sql WHERE clause
       if name == 'id' or name == 'created_at' or name == 'updated_at' or 
-      name == "as_technical_metadatum_type" or name == 'unknown' or name == 'none'
+      name == "actable_type" or name == 'unknown' or name == 'none'
         next
       # a value of false in a query means we don't care whether the returned value is true OR false
       elsif !value.nil? and (value.class == String and value.length > 0)

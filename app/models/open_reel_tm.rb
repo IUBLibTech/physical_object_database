@@ -1,5 +1,5 @@
 class OpenReelTm < ActiveRecord::Base
-  acts_as :technical_metadatum
+  acts_as :technical_metadatum, validates_actable: false
   after_initialize :default_values, if: :new_record?
   before_validation :infer_values
   extend TechnicalMetadatumClassModule
@@ -71,7 +71,7 @@ class OpenReelTm < ActiveRecord::Base
 
   def default_values
     self.pack_deformation ||= "None"
-    self.reel_size ||= "Unknown"
+    self.reel_size ||= ""
   end
 
   def damage

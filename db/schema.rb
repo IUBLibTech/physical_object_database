@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151105221552) do
+ActiveRecord::Schema.define(version: 20151111042022) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -205,12 +205,13 @@ ActiveRecord::Schema.define(version: 20151105221552) do
     t.datetime "cleaning_date"
     t.datetime "baking"
     t.boolean  "repaired"
-    t.integer  "physical_object_id", limit: 8
+    t.integer  "physical_object_id",    limit: 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "cleaning_comment"
-    t.text     "xml",                limit: 2147483647
+    t.text     "xml",                   limit: 2147483647
     t.string   "duration"
+    t.text     "batch_processing_flag"
   end
 
   add_index "digital_provenances", ["physical_object_id"], name: "index_digital_provenances_on_physical_object_id", using: :btree
@@ -226,6 +227,7 @@ ActiveRecord::Schema.define(version: 20151105221552) do
     t.text     "options"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "decided_manually",                       default: false
   end
 
   add_index "digital_statuses", ["created_at", "state", "physical_object_id"], name: "quality_control_staging", using: :btree
@@ -238,7 +240,7 @@ ActiveRecord::Schema.define(version: 20151105221552) do
     t.string  "fileUsage"
     t.string  "md5",         limit: 32
     t.integer "size",        limit: 8
-    t.float   "duration"
+    t.float   "duration",    limit: 24
   end
 
   add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
@@ -465,17 +467,32 @@ ActiveRecord::Schema.define(version: 20151105221552) do
   add_index "spreadsheets", ["filename"], name: "index_spreadsheets_on_filename", unique: true, using: :btree
 
   create_table "technical_metadata", force: true do |t|
-    t.integer  "as_technical_metadatum_id"
-    t.string   "as_technical_metadatum_type"
-    t.integer  "physical_object_id",          limit: 8
-    t.integer  "picklist_specification_id",   limit: 8
+    t.integer  "actable_id"
+    t.string   "actable_type"
+    t.integer  "physical_object_id",        limit: 8
+    t.integer  "picklist_specification_id", limit: 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "technical_metadata", ["as_technical_metadatum_id", "as_technical_metadatum_type"], name: "technical_metadata_as_technical_metadatum_index", using: :btree
+  add_index "technical_metadata", ["actable_id", "actable_type"], name: "technical_metadata_as_technical_metadatum_index", using: :btree
   add_index "technical_metadata", ["physical_object_id"], name: "index_technical_metadata_on_physical_object_id", using: :btree
   add_index "technical_metadata", ["picklist_specification_id"], name: "index_technical_metadata_on_picklist_specification_id", using: :btree
+
+  create_table "umatic_video_tms", force: true do |t|
+    t.string   "pack_deformation"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.string   "recording_standard"
+    t.string   "format_duration"
+    t.string   "size"
+    t.string   "tape_stock_brand"
+    t.string   "image_format"
+    t.string   "format_version"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "units", force: true do |t|
     t.string   "abbreviation"

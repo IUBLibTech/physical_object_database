@@ -1,9 +1,10 @@
-class EightMillimeterVideoTm < ActiveRecord::Base
+class UmaticVideoTm < ActiveRecord::Base
   acts_as :technical_metadatum, validates_actable: false
+  after_initialize :default_values, if: :new_record?
   extend TechnicalMetadatumClassModule
 
   # TM module constants
-  TM_FORMAT = ['8mm Video']
+  TM_FORMAT = ['U-matic']
   TM_SUBTYPE = false
   TM_GENRE = :video
   TM_PARTIAL = 'show_generic_tm'
@@ -11,16 +12,15 @@ class EightMillimeterVideoTm < ActiveRecord::Base
   BIN_FORMAT = true
   # TM simple fields
   SIMPLE_FIELDS = [
-    "pack_deformation", "recording_standard", "format_duration",
-    "tape_stock_brand", "image_format", "format_version", "playback_speed",
-    "binder_system"
+    "pack_deformation", "recording_standard", "format_duration", "size",
+    "tape_stock_brand", "image_format", "format_version"
   ]
   PACK_DEFORMATION_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
   RECORDING_STANDARD_VALUES = hashify ["NTSC", "PAL", "SECAM", "Unknown"]
+  FORMAT_DURATION_VALUES = hashify ["5", "10", "20", "30", "60", "75", "Unknown"]
+  SIZE_VALUES = hashify ["Large", "Small"]
   IMAGE_FORMAT_VALUES = hashify ["4:3", "16:9", "Unknown"]
-  FORMAT_VERSION_VALUES = hashify ["Regular", "Hi", "Digital", "Unknown"]
-  PLAYBACK_SPEED_VALUES = hashify ["Standard", "Long Play", "Unknown"]
-  BINDER_SYSTEM_VALUES = hashify ["Metal particle", "Metal Evaporated", "Unknown"]
+  FORMAT_VERSION_VALUES = hashify ["Low Band", "High Band", "SP", "PCM Audio", "Unknown"]
 
   # TM Boolean fieldsets
   PRESERVATION_PROBLEM_FIELDS = [
@@ -37,20 +37,22 @@ class EightMillimeterVideoTm < ActiveRecord::Base
   MANIFEST_EXPORT = {
     "Recording standard" => :recording_standard,
     "Format duration" => :format_duration,
+    "Size" => :size,
     "Tape stock brand" => :tape_stock_brand,
     "Image format" => :image_format,
-    "Format version" => :format_version,
-    "Playback speed" => :playback_speed,
-    "Binder system" => :binder_system
+    "Format version" => :format_version
   }
   include TechnicalMetadatumModule
 
-  # no default_values
+  def default_values
+    self.recording_standard = "NTSC"
+    self.image_format = "4:3"
+  end
 
   def damage
     pack_deformation
   end
 
-  # master_coipies default of 1
+  # master_copies default of 1
 
 end

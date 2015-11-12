@@ -19,10 +19,14 @@ class PicklistSpecification < ActiveRecord::Base
 
 	def ensure_tm
 		if TechnicalMetadatumModule.tm_formats_hash[self.format]
-			if self.technical_metadatum.nil? || self.technical_metadatum.as_technical_metadatum_type != TechnicalMetadatumModule.tm_format_classes[self.format].to_s
+			if self.technical_metadatum.nil? || self.technical_metadatum.specific.nil? ||self.technical_metadatum.actable_type != TechnicalMetadatumModule.tm_format_classes[self.format].to_s
 				@tm = PhysicalObject.new.create_tm(self.format, picklist_specification: self)
+        #checks to ensure correct child/parent linkage for new objects; gem does not seem to take care of this?
+        self.technical_metadatum = @tm.technical_metadatum if self.technical_metadatum != @tm.technical_metadatum
+        self.technical_metadatum.actable = @tm if self.technical_metadatum.actable != @tm
+        @tm
                         else
-				@tm = self.technical_metadatum.as_technical_metadatum
+				@tm = self.technical_metadatum.specific
 			end
 		end
 	end

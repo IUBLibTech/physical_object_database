@@ -30,7 +30,7 @@ describe BetacamTm do
     end
     specify "#year" do
       physical_object = FactoryGirl.create(:physical_object, :betacam, year: 1985)
-      valid_betacam.technical_metadatum.physical_object = physical_object
+      valid_betacam.physical_object = physical_object
       expect(valid_betacam.year).to eq 1985
     end
   end

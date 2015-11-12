@@ -7,7 +7,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
       xml.object("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
         xml.basics do
           xml.format @physical_object.format
-          xml.files @physical_object.technical_metadatum.master_copies
+          xml.files @physical_object.ensure_tm.master_copies
         end
         xml.assignment do
           xml.unit @physical_object.unit.abbreviation

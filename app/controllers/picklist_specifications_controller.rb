@@ -143,7 +143,7 @@ class PicklistSpecificationsController < ApplicationController
       @ps = PicklistSpecification.find(params[:id])
       authorize @ps
       @tm = @ps.technical_metadatum
-      @tm = @tm.as_technical_metadatum unless @tm.nil?
+      @tm = @tm.specific unless @tm.nil?
     end
 
     def authorize_collection
@@ -160,7 +160,7 @@ class PicklistSpecificationsController < ApplicationController
 
   def format_tm_where(tm)
     q = ""
-    stm = tm.as_technical_metadatum
+    stm = tm.specific
     stm.attributes.each do |name, value|
       if name == 'id' or name == 'created_at' or name == 'updated_at'
         next

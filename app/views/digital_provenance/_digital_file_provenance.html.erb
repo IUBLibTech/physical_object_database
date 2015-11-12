@@ -93,12 +93,12 @@
 				$('.date').datepicker();
 				// remove the if check and just execute the contained code to rename all files based on sequence order
 				// this will ALWAYS make files _01_, _02_, _03_, etc
-
+				var ext = <%= (TechnicalMetadatumModule.tm_genres[@physical_object.format] == :audio ? "'wav'" : "'mkv'").html_safe%>;
 				el = $('.filename').last();
 				if ( el.val().length == 0) {
 					bc = $("#barcode").first().text();
 					seq = ("000" + ($('.filename').size())).slice(-2);
-					v = "MDPI_"+bc+"_"+seq+"_pres.wav";
+					v = "MDPI_"+bc+"_"+seq+"_pres."+ext;
 					el.val(v);
 				}
 			});

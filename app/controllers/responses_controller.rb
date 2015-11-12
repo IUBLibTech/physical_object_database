@@ -134,9 +134,14 @@ class ResponsesController < ActionController::Base
     render template: 'responses/pull_states.xml.builder', layout: false
   end
 
-  # NOT IMPLEMENTED YET
   def flags
+    @physical_object = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
+    @success = ! @physical_object.nil?
+    @message = "<data><flags>foo</flags></data>".html_safe
+    render template: "responses/flags_response.xml.builder", layout: false, status: 200
   end
+
+  # NOT IMPLEMENTED YET
   def transfer_request
   end
   
@@ -192,7 +197,7 @@ class ResponsesController < ActionController::Base
       if @physical_object.nil?
         barcode_not_found
       else
-        @tm = @physical_object.technical_metadatum.as_technical_metadatum unless @physical_object.technical_metadatum.nil?
+        @tm = @physical_object.technical_metadatum.specific unless @physical_object.technical_metadatum.nil?
         @dp = @physical_object.ensure_digiprov
       end
     end

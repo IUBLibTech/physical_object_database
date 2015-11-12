@@ -66,7 +66,7 @@ describe ResponsesController do
       it "returns data XML" do
         expect(response.body).to match /<data>/
         expect(response.body).to match /<format>#{physical_object.format}<\/format>/
-        expect(response.body).to match /<files>#{physical_object.technical_metadatum.master_copies}<\/files>/
+        expect(response.body).to match /<files>#{physical_object.technical_metadatum.specific.master_copies}<\/files>/
       end
       it "returns a 200 status" do
         expect(response).to have_http_status(200)
@@ -94,7 +94,7 @@ describe ResponsesController do
       it "returns data XML" do
         expect(response.body).to match /<data>/
         expect(response.body).to match /<format>#{physical_object.format}<\/format>/
-        expect(response.body).to match /<files>#{physical_object.technical_metadatum.master_copies}<\/files>/
+        expect(response.body).to match /<files>#{physical_object.technical_metadatum.specific.master_copies}<\/files>/
       end
       it "returns a 200 status" do
         expect(response).to have_http_status(200)
@@ -597,6 +597,42 @@ describe ResponsesController do
       get :unit_full_name, abbreviation: "foobar"
       expect(response.body).to match "<success>false"
     end
+  end
+
+  describe "#flags" do
+    let(:no_flag) { FactoryGirl.create :physical_object, :cdr, :barcoded}
+    let(:flag) { FactoryGirl.create :physical_object, :cdr, :barcoded}
+
+    context "DigiProv without a flag" do
+      before(:each) { 
+        get :flags, mdpi_barcode: no_flag.mdpi_barcode 
+      }
+      
+      it "a successful but, no-flag call" do
+        expect(assigns(:physical_object)).to eq no_flag
+        expect(response).to have_http_status(200)
+        expect(response.body).to match /<data>/
+        expect(response.body).to match /<success.*true<\/success>/
+        expect(response.body).to match /<flags\/>/
+        expect(response.body).not_to match /<flags>.*<\/flags>/
+      end
+    end
+
+    context "with a flag set" do
+      before(:each) {
+        flag.digital_provenance.batch_processing_flag = "Some Flag!"
+        flag.digital_provenance.save
+        get :flags, mdpi_barcode: flag.mdpi_barcode
+      }
+      it "has the correct flag" do
+        expect(assigns(:physical_object)).to eq flag
+        expect(response).to have_http_status(200)
+        expect(response.body).to match /<data>/
+        expect(response.body).to match /<success.*true<\/success>/
+        expect(response.body).to match /<flags>Some Flag!<\/flags>/
+      end
+    end
+
   end
 
 end

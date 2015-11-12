@@ -22,22 +22,19 @@ class ApplicationController < ActionController::Base
       if ! @physical_object.technical_metadatum.nil?
         #this may be an edit cahnging the format
         if f == @physical_object.format
-          @tm = @physical_object.technical_metadatum.as_technical_metadatum
+          @tm = @physical_object.technical_metadatum.specific
         else
           @tm = @physical_object.create_tm(f)
         end
       else
-        tm = TechnicalMetadatum.new
         @tm = @physical_object.create_tm(f)
-        @physical_object.technical_metadatum = tm
-        tm.as_technical_metadatum = @tm
       end
     elsif params[:type] == 'PicklistSpecification'
       @picklist_specification = params[:id] == '0' ? PicklistSpecification.new(format: f) : PicklistSpecification.find(params[:id])
       if !@picklist_specification.technical_metadatum.nil?
         #could be an edit changing the format of the piclist spec
         if f == @picklist_specification.format
-          @tm = @picklist_specification.technical_metadatum.as_technical_metadatum
+          @tm = @picklist_specification.technical_metadatum.specific
         else
           #do not save this - reassigning here so the call to create_tm works
           @picklist_specification.format = f
@@ -102,14 +99,16 @@ class ApplicationController < ActionController::Base
         #fields for betacam
         :format_version, :cassette_size, :recording_standard, :image_format,
         #fields for eight mm video
-        :playback_speed, :binder_system
+        :playback_speed, :binder_system,
+        #fields for umatic video
+        :size
         )
     end
 
     def dp_params
       params.require(:digital_provenance).permit(
         :digitizing_entity, :date, :comments, :created_by, :cleaning_date, :cleaning_comment, 
-        :baking, :repaired, :duration, digital_file_provenances_attributes: [
+        :baking, :repaired, :duration, :batch_processing_flag, digital_file_provenances_attributes: [
           :id, :filename, :comment, :date_digitized, :display_date_digitized, :created_by,
           :speed_used, :signal_chain_id, :volume_units, :tape_fluxivity, :peak, :analog_output_voltage, :stylus_size, :turnover, :rolloff, :_destroy]
       )

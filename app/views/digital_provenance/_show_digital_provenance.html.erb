@@ -43,6 +43,12 @@
 						<% end %>
 					</td>
 				</tr>
+				<tr>
+					<th>Batch Processing Flag</th>
+					<td colspan="5">
+						<%= dp.text_field(:batch_processing_flag, readonly: !@edit_mode) %>
+					</td>
+				</tr>
 			</table>				
 		</div>
 		<%# the fields for kluge %>

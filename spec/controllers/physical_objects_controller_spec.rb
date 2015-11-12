@@ -150,8 +150,8 @@ describe PhysicalObjectsController do
       it "intializes calculated_directions_recorded and copies value to directions_recorded" do
         expect(dr_po).to be_valid
         expect(dr_po.technical_metadatum).not_to be_nil
-        expect(dr_po.technical_metadatum.as_technical_metadatum.calculated_directions_recorded).to eq 2
-        expect(dr_po.technical_metadatum.as_technical_metadatum.directions_recorded).to eq 2
+        expect(dr_po.technical_metadatum.specific.calculated_directions_recorded).to eq 2
+        expect(dr_po.technical_metadatum.specific.directions_recorded).to eq 2
       end
     end
 
@@ -301,7 +301,8 @@ describe PhysicalObjectsController do
     context "on a binned object" do
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
-	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+        physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+	      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.bin = FactoryGirl.create(:bin)
         physical_object.save!
         split_show
@@ -358,7 +359,8 @@ describe PhysicalObjectsController do
       context "on a binned item" do
         before(:each) do
           physical_object.format = "Open Reel Audio Tape"
-	  physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+          physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+	        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
           physical_object.bin = FactoryGirl.create(:bin)
           physical_object.save!
         end
@@ -471,7 +473,8 @@ describe PhysicalObjectsController do
       let(:source_page) { "source_page" }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
-	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+        physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+	      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.bin = FactoryGirl.create(:bin)
         physical_object.save!
       end
@@ -572,7 +575,7 @@ describe PhysicalObjectsController do
       end
     end
 
-    ["po_import_betacam.csv", "po_import_8mm.csv", "po_import_cdr.csv", "po_import_cdr_iso-8559-1.csv", "po_import_cdr.xlsx", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv", "po_import_lacquer_disc.csv", "po_import_other_analog_sound_disc.csv"].each do |filename|
+    ["po_import_betacam.csv", "po_import_8mm.csv", "po_import_cdr.csv", "po_import_cdr_iso-8559-1.csv", "po_import_cdr.xlsx", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv", "po_import_lacquer_disc.csv", "po_import_other_analog_sound_disc.csv", "po_import_umatic.csv"].each do |filename|
       context "specifying a file: #{filename}" do
         let(:post_args) { { physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } } }
         let(:upload_update) { post :upload_update, **post_args }
@@ -675,7 +678,8 @@ describe PhysicalObjectsController do
       let(:bin) { FactoryGirl.create(:bin) }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
-	physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+        physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+	      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = nil
         physical_object.bin = bin
         physical_object.save!

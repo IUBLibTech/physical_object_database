@@ -3,7 +3,7 @@ module Sql
 	def Sql.physical_object_query(physical_object)
 		 "SELECT physical_objects.* FROM physical_objects, technical_metadata, #{tm_table_name(physical_object.format)}" << 
 			"WHERE physical_objects.id=technical_metadata.physical_object_id " << 
-			"AND technical_metadata.as_technical_metadatum_id=tm_table_name(physical_object.format).id AND" <<
+			"AND technical_metadata.actable_id=tm_table_name(physical_object.format).id AND" <<
 			physical_object_where_clause(physical_object) 
 	end
 
@@ -35,7 +35,7 @@ module Sql
 
 	private
 	def Sql.technical_metadata_where_claus(technical_metadatum)
-		stm = technical_metadatum.as_technical_metadatum
+		stm = technical_metadatum.specific
 		if stm.class == OpenReelTm
 			Sql.open_reel_tm_where(technical_metadatum)
 		else
