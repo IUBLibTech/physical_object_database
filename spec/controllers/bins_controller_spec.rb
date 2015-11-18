@@ -31,20 +31,46 @@ describe BinsController do
   end
 
   describe "GET index" do
-    before(:each) do
-      bin.save
-      box.save
-      unassigned_box.save
-      get :index
+    context "basic functions" do
+      before(:each) do
+        bin.save
+        box.save
+        unassigned_box.save
+        get :index
+      end
+      it "populates an array of objects" do
+        expect(assigns(:bins)).to eq [bin]
+      end
+      it "populates unassigned boxes to @boxes" do
+        expect(assigns(:boxes)).to eq [unassigned_box]
+      end
+      it "renders the :index view" do
+        expect(response).to render_template(:index)
+      end
     end
-    it "populates an array of objects" do
-      expect(assigns(:bins)).to eq [bin]
-    end
-    it "populates unassigned boxes to @boxes" do
-      expect(assigns(:boxes)).to eq [unassigned_box]
-    end
-    it "renders the :index view" do
-      expect(response).to render_template(:index)
+    describe "workflow status filter" do
+      before(:each) do
+        bin; sealed
+        get :index, workflow_status: workflow_status
+      end
+      context "with no value set" do
+        let(:workflow_status) { nil }
+        it "returns all bins" do
+          expect(assigns(:bins).sort).to eq [bin, sealed].sort
+        end
+      end
+      context "with a matching value set" do
+        let(:workflow_status) { sealed.workflow_status }
+        it "returns matching bins" do
+          expect(assigns(:bins)).to eq [sealed]
+        end
+      end
+      context "with a non-matching value set" do
+        let(:workflow_status) { "non-matching value" }
+        it "returns no bins" do
+          expect(assigns(:bins)).to be_empty
+        end
+      end
     end
   end
 

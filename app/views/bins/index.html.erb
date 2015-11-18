@@ -6,8 +6,12 @@
 	  <%= link_to("Create Box", new_box_path) %>
 	</div>
 <% end %>
+<%= form_tag(bins_path, method: :get) do %>
+  Filtering by workflow status: <%= select_tag :workflow_status, options_for_select(WorkflowStatusTemplate.where(object_type: "Bin").collect { |wst| wst.name }, params[:workflow_status]), { prompt: "(No filter applied)" } %>
+  <%= submit_tag "Update filters" %>
+<% end %>
 <div class="left">
-	<h2>Bins</h2>
+	<h2><%= params[:workflow_status].blank? ? "All" : params[:workflow_status] %> Bins</h2>
 	<%= render 'bins_table' %>
 </div>
 <div class="left">

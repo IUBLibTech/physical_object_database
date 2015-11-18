@@ -5,7 +5,11 @@ class BinsController < ApplicationController
   before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
 	def index
-		@bins = Bin.eager_load([:physical_objects, :boxes]).all
+    if params[:workflow_status].to_s.blank?
+		  @bins = Bin.eager_load([:physical_objects, :boxes]).all
+    else
+      @bins = Bin.eager_load([:physical_objects, :boxes]).where(workflow_status: params[:workflow_status].to_s) unless params[:workflow_status].to_s.blank?
+    end
 	end
 
 	def new
