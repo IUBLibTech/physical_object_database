@@ -10,7 +10,7 @@
 	});
 </script>
 <div >
-	<h2>Unstaged Physical Objects for <%= @date.strftime("%m/%d/%Y") %> </h2>	
+	<h2>[<%= @digitizing_entity %>] Unstaged Physical Objects for <%= @date.strftime("%m/%d/%Y") %> </h2>
 	<button typ="button" onclick="uncheck()">Uncheck Selected</button>
 	<%= form_tag quality_control_staging_post_path_path do %>
 		<%= submit_tag "Stage Selected Objects" %>

@@ -118,18 +118,16 @@ class PhysicalObject < ActiveRecord::Base
       AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).pluck(:format)
   }
 
-  # deprecated because the joins are no longer necessary
-  # scope :unstaged_by_date_by_format, lambda { |date, format| 
-  #   PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
-  #     ON digital_statuses.physical_object_id = ds2.physical_object_id
-  #     AND digital_statuses.state = ds2.state
-  #     AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, format: format, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).eager_load(:digital_provenance).order("RAND()")
-  # }
-
-
   scope :unstaged_by_date_by_format, lambda { |date, format|
     PhysicalObject.where(staging_requested: false, format: format).where(datesql(date)).order("RAND()")
   }
+
+  scope :memnon_unstaged_by_date_and_format,
+        lambda { |date, format|
+          PhysicalObject.joins(:digital_provenance).where(
+              format: format,
+              staging_requested: false).where("digital_provenances.digitizing_entity = 'Memnon Archiving Services Inc'")
+        }
 
   scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
   scope :staged, lambda { where(staged: true) }

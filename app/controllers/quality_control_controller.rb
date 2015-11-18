@@ -61,7 +61,7 @@ class QualityControlController < ApplicationController
 		else
 			@date = Time.new(now.year, now.month, now.day)
 		end
-
+		@digitizing_entity = "Memnon"
 		formats = PhysicalObject.unstaged_by_date_formats(@date)
 		@format_to_physical_objects = ActiveSupport::OrderedHash.new
 		formats.each do |format|
