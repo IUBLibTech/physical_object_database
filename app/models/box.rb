@@ -42,4 +42,14 @@ class Box < ActiveRecord::Base
     end
   end
 
+  def media_format
+    if physical_objects.any?
+      physical_objects.first.format
+    else
+      nil
+    end
+  end
+
+  alias_method :format, :media_format
+
 end
