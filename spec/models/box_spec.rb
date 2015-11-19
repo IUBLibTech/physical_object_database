@@ -4,7 +4,7 @@ describe Box do
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_box) { FactoryGirl.build :box }
   let(:invalid_box) { FactoryGirl.build :box, :invalid }
-  let(:po) { FactoryGirl.create :physical_object, :cdr, :barcoded, box: box}
+  let(:boxed_object) { FactoryGirl.create :physical_object, :cdr, :barcoded, box: box}
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
   let(:open_reel) { FactoryGirl.create :physical_object, :open_reel, :barcoded, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
@@ -47,7 +47,7 @@ describe Box do
   describe "has relationships:" do
     it "has many physical_objects" do 
   	  expect(box.physical_objects).to be_empty	
-  	  po # a reference to the physcical object is necessary to "load" it into the rspec framework
+  	  boxed_object # a reference to the physcical object is necessary to "load" it into the rspec framework
   	  expect(box.physical_objects).not_to be_empty
   	  expect(box.physical_objects_count).to eq 1   	
     end
@@ -83,6 +83,22 @@ describe Box do
     end
     it "provides a physical object count" do
       expect(box.physical_objects_count).to eq 0 
+    end
+  end
+
+  describe "#media_format" do
+    context "without any objects" do
+      it "returns nil" do
+        expect(box.physical_objects).to be_empty
+        expect(box.media_format).to be_nil
+      end
+    end
+    context "with at least one object" do
+      it "returns format of first object" do
+        boxed_object
+        expect(box.media_format).not_to be_nil
+        expect(box.media_format).to eq boxed_object.format
+      end
     end
   end
 

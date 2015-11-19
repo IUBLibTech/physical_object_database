@@ -84,6 +84,8 @@ class Bin < ActiveRecord::Base
     format_object ? format_object.format : nil
   end
 
+  alias_method :format, :media_format
+
   def remove_physical_objects
     self.physical_objects.each do |po|
       po.bin = nil

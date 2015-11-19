@@ -31,20 +31,80 @@ describe BinsController do
   end
 
   describe "GET index" do
-    before(:each) do
-      bin.save
-      box.save
-      unassigned_box.save
-      get :index
+    context "basic functions" do
+      before(:each) do
+        bin.save
+        box.save
+        unassigned_box.save
+        get :index
+      end
+      it "populates an array of objects" do
+        expect(assigns(:bins)).to eq [bin]
+      end
+      it "populates unassigned boxes to @boxes" do
+        expect(assigns(:boxes)).to eq [unassigned_box]
+      end
+      it "renders the :index view" do
+        expect(response).to render_template(:index)
+      end
     end
-    it "populates an array of objects" do
-      expect(assigns(:bins)).to eq [bin]
+    describe "workflow status filter" do
+      before(:each) do
+        bin; sealed
+        get :index, workflow_status: workflow_status
+      end
+      context "with no value set" do
+        let(:workflow_status) { nil }
+        it "returns all bins" do
+          expect(assigns(:bins).sort).to eq [bin, sealed].sort
+        end
+      end
+      context "with a matching value set" do
+        let(:workflow_status) { sealed.workflow_status }
+        it "returns matching bins" do
+          expect(assigns(:bins)).to eq [sealed]
+        end
+      end
+      context "with a non-matching value set" do
+        let(:workflow_status) { "non-matching value" }
+        it "returns no bins" do
+          expect(assigns(:bins)).to be_empty
+        end
+      end
     end
-    it "populates unassigned boxes to @boxes" do
-      expect(assigns(:boxes)).to eq [unassigned_box]
-    end
-    it "renders the :index view" do
-      expect(response).to render_template(:index)
+    describe "format filter" do
+      let!(:bin_of_objects) { FactoryGirl.create(:bin, identifier: "bin of objects") }
+      let!(:bin_of_boxes) { FactoryGirl.create(:bin, identifier: "bin of boxes") }
+      let!(:binned_box) { FactoryGirl.create(:box, bin: bin_of_boxes) }
+      let!(:box_format_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: binned_box) }
+      let!(:bin_format_object) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: bin_of_objects) }
+      before(:each) do
+        get :index, format: format
+      end
+      context "with no value set" do
+        let(:format) { nil }
+        it "returns all bins" do
+          expect(assigns(:bins).sort).to eq [bin_of_objects, bin_of_boxes].sort
+        end
+      end
+      context "with a matching binned object value set" do
+        let(:format) { bin_of_objects.format }
+        it "returns matching bins" do
+          expect(assigns(:bins)).to eq [bin_of_objects]
+        end
+      end
+      context "with a matching boxed object value set" do
+        let(:format) { bin_of_boxes.format }
+        it "returns matching bins" do
+          expect(assigns(:bins)).to eq [bin_of_boxes]
+        end
+      end
+      context "with a non-matching value set" do
+        let(:format) { "non-matching value" }
+        it "returns no bins" do
+          expect(assigns(:bins)).to be_empty
+        end
+      end
     end
   end
 
