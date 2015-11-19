@@ -27,7 +27,7 @@ class BatchesController < ApplicationController
   def update
     authorize @batch
     @bins = @batch.bins
-    @available_bins = Bin.available_bins
+    @available_bins = Bin.available_bins.select { |bin| bin.media_format.in? [@batch.media_format, nil] }
     Batch.transaction do
       if @batch.update_attributes(batch_params)
         flash[:notice] = "<i>#{@batch.identifier}</i> was successfully updated.".html_safe
@@ -40,7 +40,7 @@ class BatchesController < ApplicationController
 
   def show
     authorize @batch
-    @available_bins = Bin.available_bins
+    @available_bins = Bin.available_bins.select { |bin| bin.media_format.in? [@batch.media_format, nil] }
     @bins = @batch.bins
     if (@bins.first and @bins.first.physical_objects.size > 0)
       @days = TechnicalMetadatumModule.tm_genres[@bins.first.physical_objects.first.format] == :audio ? 45 : 30
