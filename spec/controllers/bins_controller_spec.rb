@@ -72,6 +72,40 @@ describe BinsController do
         end
       end
     end
+    describe "format filter" do
+      let!(:bin_of_objects) { FactoryGirl.create(:bin, identifier: "bin of objects") }
+      let!(:bin_of_boxes) { FactoryGirl.create(:bin, identifier: "bin of boxes") }
+      let!(:binned_box) { FactoryGirl.create(:box, bin: bin_of_boxes) }
+      let!(:box_format_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: binned_box) }
+      let!(:bin_format_object) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: bin_of_objects) }
+      before(:each) do
+        get :index, format: format
+      end
+      context "with no value set" do
+        let(:format) { nil }
+        it "returns all bins" do
+          expect(assigns(:bins).sort).to eq [bin_of_objects, bin_of_boxes].sort
+        end
+      end
+      context "with a matching binned object value set" do
+        let(:format) { bin_of_objects.format }
+        it "returns matching bins" do
+          expect(assigns(:bins)).to eq [bin_of_objects]
+        end
+      end
+      context "with a matching boxed object value set" do
+        let(:format) { bin_of_boxes.format }
+        it "returns matching bins" do
+          expect(assigns(:bins)).to eq [bin_of_boxes]
+        end
+      end
+      context "with a non-matching value set" do
+        let(:format) { "non-matching value" }
+        it "returns no bins" do
+          expect(assigns(:bins)).to be_empty
+        end
+      end
+    end
   end
 
   describe "GET show" do
