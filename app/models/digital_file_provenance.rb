@@ -49,6 +49,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 		self.tape_fluxivity ||= 250
 		self.analog_output_voltage ||= "+4"
 		self.peak ||= -18
+		self.volume_units ||= 0
 	end
 
 	def filename_validation
