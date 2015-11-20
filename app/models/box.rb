@@ -6,8 +6,9 @@ class Box < ActiveRecord::Base
 	has_many :physical_objects
 
 	validates :mdpi_barcode, mdpi_barcode: true, numericality: { greater_than: 0 }
-        validate :validate_bin_container
+  validate :validate_bin_container
 	before_save :default_values
+	after_save :set_container_format
 	before_destroy :remove_physical_objects, prepend: true
 
         def packed_status?
@@ -31,6 +32,12 @@ class Box < ActiveRecord::Base
 	  self.description ||= ""
 	end
 
+  def set_container_format
+    if format && bin && bin.format.nil?
+      bin.format = format; bin.save
+    end
+  end
+
 	def validate_bin_container
 	  errors[:base] << Bin.invalid_box_assignment_message if bin && bin.physical_objects.any?
 	end
@@ -49,7 +56,5 @@ class Box < ActiveRecord::Base
       nil
     end
   end
-
-  alias_method :format, :media_format
 
 end

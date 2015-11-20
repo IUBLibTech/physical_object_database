@@ -37,6 +37,29 @@ describe Batch do
     end
   end
 
+  describe "has optional attributes" do
+    describe "format" do
+      it "can be nil" do
+        valid_batch.format = nil
+        expect(valid_batch).to be_valid
+      end
+      it "is automatically set by bin of physical objects" do
+        expect(batch.format).to be_nil
+        binned_object
+        batch.reload
+        expect(batch.format).not_to be_nil
+        expect(batch.format).to eq bin.format
+      end
+      it "is automatically set by bin of boxes" do
+        expect(batch.format).to be_nil
+        boxed_object
+        batch.reload
+        expect(batch.format).not_to be_nil
+        expect(batch.format).to eq box.format
+      end
+    end
+  end
+
   describe "has relationships:" do
     it "provides a physical object count" do
       expect(batch.physical_objects_count).to eq 0 

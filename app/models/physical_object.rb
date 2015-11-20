@@ -15,6 +15,7 @@ class PhysicalObject < ActiveRecord::Base
   before_validation :ensure_group_key
   before_save :assign_inferred_workflow_status
   after_save :resolve_group_position
+  after_save :set_container_format
   after_update :destroy_empty_group
   after_destroy :destroy_empty_group
 
@@ -401,6 +402,14 @@ class PhysicalObject < ActiveRecord::Base
         self.group_key.group_total = self.group_position
         self.group_key.save
       end
+    end
+  end
+
+  def set_container_format
+    if box && box.format.nil?
+      box.format = format; box.save
+    elsif bin && bin.format.nil?
+      bin.format = format; bin.save
     end
   end
 

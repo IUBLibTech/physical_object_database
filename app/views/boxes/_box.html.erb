@@ -33,7 +33,9 @@
     </tr>
     <tr>
       <th>Format</th>
-      <td><%= @box.physical_objects.size.zero? ? "" : @box.physical_objects.first.format %></td>
+      <td>
+        <%= f.select(:format, TechnicalMetadatumModule.tm_formats_hash, {include_blank: "(undefined)"}, disabled: (!@edit_mode || f.object.physical_objects.any?) ) %>
+      </td>
     </tr>
     <tr>
       <th>Objects Count</th>

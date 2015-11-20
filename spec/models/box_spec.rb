@@ -42,6 +42,18 @@ describe Box do
       valid_box.description = nil
       expect(valid_box).to be_valid
     end
+    describe "format" do
+      specify "is optional" do
+        valid_box.format = nil
+        expect(valid_box).to be_valid
+      end
+      specify "is automatically set by first contained object" do
+        expect(box.format).to be_nil
+        boxed_object
+        box.reload
+        expect(box.format).to eq boxed_object.format
+      end
+    end
   end
 
   describe "has relationships:" do

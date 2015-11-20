@@ -38,6 +38,26 @@ describe Bin do
       valid_bin.description = nil
       expect(valid_bin).to be_valid
     end
+    describe "format" do
+      it "can be nil" do
+        valid_bin.format = nil
+        expect(valid_bin).to be_valid
+      end
+      it "is automatically set by contained physical object" do
+        expect(bin.format).to be_blank
+        binned_object
+        bin.reload
+        expect(bin.format).not_to be_blank
+        expect(bin.format).to eq binned_object.format
+      end
+      it "is automatically set by contained box" do
+        expect(bin.format).to be_blank
+        boxed_object
+        bin.reload
+        expect(bin.format).not_to be_blank
+        expect(bin.format).to eq box.format
+      end
+    end
   end
 
   describe "has relationships:" do
