@@ -39,7 +39,13 @@ class Box < ActiveRecord::Base
   end
 
 	def validate_bin_container
-	  errors[:base] << Bin.invalid_box_assignment_message if bin && bin.physical_objects.any?
+	  if bin
+	    if bin.physical_objects.any?
+	      errors[:base] << Bin.invalid_box_assignment_message
+      elsif !format.blank? && !bin.format.blank? && bin.format != format
+        errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes of a different format (#{bin.format}).  You may only assign a box to a bin containing the matching format (#{format})."
+      end
+    end
 	end
 
   def remove_physical_objects

@@ -10,6 +10,7 @@ class Bin < ActiveRecord::Base
         has_many :boxes
         has_many :workflow_statuses, :dependent => :destroy
         after_initialize :assign_default_workflow_status
+        validate :validate_batch_container
 	before_save :assign_inferred_workflow_status
 	before_destroy :remove_physical_objects, prepend: true
   after_save :set_container_format
@@ -89,6 +90,12 @@ class Bin < ActiveRecord::Base
    if format && batch && batch.format.nil?
      batch.format = format; batch.save
    end
+  end
+
+  def validate_batch_container
+    if batch && !format.blank? && !batch.format.blank? && batch.format != format
+      errors[:base] << "This batch (#{batch.identifier}) contains bins of a different format (#{batch.format}).  You may only assign a bin to a batch containing the matching format (#{format})."
+    end
   end
 
   def remove_physical_objects

@@ -7,6 +7,7 @@ describe Bin do
   let(:bin) { FactoryGirl.create :bin, batch: batch }
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_bin) { FactoryGirl.build :bin }
+  let(:valid_batch) { FactoryGirl.build :batch }
   let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
@@ -68,6 +69,24 @@ describe Bin do
       bin.save
       expect(bin.batch).to eq nil
       expect(batch.bins.where(id: bin.id).first).to be_nil
+    end
+    it "can belong to a batch with unspecified format" do
+      valid_batch.format = nil
+      valid_bin.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.batch = valid_batch
+      expect(valid_bin).to be_valid
+    end
+    it "can belong to a batch with matching format" do
+      valid_batch.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.batch = valid_batch
+      expect(valid_bin).to be_valid
+    end
+    it "cannot belong to a batch with mismatched format" do
+      valid_batch.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.format = TechnicalMetadatumModule.bin_formats.last
+      valid_bin.batch = valid_batch
+      expect(valid_bin).not_to be_valid
     end
     it "can belong to a picklist specification" do
       expect(bin.picklist_specification).to be_nil
