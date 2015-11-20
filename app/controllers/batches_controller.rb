@@ -26,7 +26,7 @@ class BatchesController < ApplicationController
 
   def update
     @bins = @batch.bins
-    @available_bins = Bin.available_bins.select { |bin| bin.media_format.in? [@batch.media_format, nil, ""] }
+    @available_bins = Bin.available_bins.where(format: [@batch.format, nil, ""])
     Batch.transaction do
       if @batch.update_attributes(batch_params)
         flash[:notice] = "<i>#{@batch.identifier}</i> was successfully updated.".html_safe
@@ -38,7 +38,7 @@ class BatchesController < ApplicationController
   end
 
   def show
-    @available_bins = Bin.available_bins.select { |bin| bin.media_format.in? [@batch.media_format, nil, ""] }
+    @available_bins = Bin.available_bins.where(format: [@batch.format, nil, ""])
     @bins = @batch.bins
     respond_to do |format|
       format.html
@@ -93,8 +93,8 @@ class BatchesController < ApplicationController
     def set_batch
       # remove batch_ prefix, if present, for csv and xls requests
       @batch = Batch.eager_load(:bins).find(params[:id].to_s.sub(/^batch_/, ''))
-      if @batch.media_format
-        @days = TechnicalMetadatumModule.tm_genres[@batch.media_format] == :audio ? 45 : 30
+      unless @batch.format.blank?
+        @days = TechnicalMetadatumModule.tm_genres[@batch.format] == :audio ? 45 : 30
       else
         @days = 0
       end

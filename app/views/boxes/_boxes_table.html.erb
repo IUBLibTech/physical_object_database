@@ -16,7 +16,7 @@
         <%= '...' if box.description.length > 20 %>
       </td>
       <td><%= 'Yes' if box.full?%></td>
-      <td><%= box.physical_objects.size.zero? ? "" : box.physical_objects.first.format %></td>
+      <td><%= box.format %></td>
       <td><%= box.physical_objects_count %></td>
       <td>
         <%= link_to("Show", box_path(box)) if policy(box).show? %>
