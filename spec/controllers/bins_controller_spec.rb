@@ -6,15 +6,21 @@ describe BinsController do
     sign_in 
     request.env['HTTP_REFERER'] = "Foo"
   }
+
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:sealed) {FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier:"UNIQUE!", current_workflow_status: "Sealed")} 
-  let(:box) { FactoryGirl.create(:box, bin: bin) }
+  let(:box) { FactoryGirl.create(:box, bin: bin, format: bin.format) }
+  let(:valid_boxed_object) { FactoryGirl.build(:physical_object, :boxable) }
   let(:boxed_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: box) }
+  let(:box_format) { valid_boxed_object.format }
+  let(:other_box_format) { TechnicalMetadatumModule.box_formats.first }
   let(:other_boxed_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: unassigned_box) }
   let(:binned_object) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: bin) }
   let(:unassigned_object) { FactoryGirl.create(:physical_object, :boxable) }
-  let(:unassigned_box) { FactoryGirl.create(:box) }
+  let(:unassigned_box) { FactoryGirl.create(:box, format: box_format) }
+  let(:unassigned_mismatched_box) { FactoryGirl.create(:box, format: other_box_format) }
+  let(:unassigned_unformatted_box) { FactoryGirl.create(:box) }
   let(:picklist) { FactoryGirl.create(:picklist) }
   let!(:complete) { FactoryGirl.create(:picklist, name: 'complete', complete: true)}
   let(:valid_bin) { FactoryGirl.build(:bin) }
@@ -33,16 +39,19 @@ describe BinsController do
   describe "GET index" do
     context "basic functions" do
       before(:each) do
-        bin.save
-        box.save
-        unassigned_box.save
+        bin.format = box_format
+        bin.save!
+        box
+        unassigned_box
+        unassigned_mismatched_box
+        unassigned_unformatted_box
         get :index
       end
       it "populates an array of objects" do
         expect(assigns(:bins)).to eq [bin]
       end
-      it "populates unassigned boxes to @boxes" do
-        expect(assigns(:boxes)).to eq [unassigned_box]
+      it "populates unassigned boxes to @boxes (no format filter)" do
+        expect(assigns(:boxes).sort).to eq [unassigned_box, unassigned_mismatched_box, unassigned_unformatted_box].sort
       end
       it "renders the :index view" do
         expect(response).to render_template(:index)
@@ -79,12 +88,16 @@ describe BinsController do
       let!(:box_format_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: binned_box) }
       let!(:bin_format_object) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: bin_of_objects) }
       before(:each) do
+        box
+        unassigned_box
+        unassigned_mismatched_box
+        unassigned_unformatted_box
         get :index, format: format
       end
       context "with no value set" do
         let(:format) { nil }
         it "returns all bins" do
-          expect(assigns(:bins).sort).to eq [bin_of_objects, bin_of_boxes].sort
+          expect(assigns(:bins).sort).to eq Bin.all.sort
         end
       end
       context "with a matching binned object value set" do
@@ -92,11 +105,17 @@ describe BinsController do
         it "returns matching bins" do
           expect(assigns(:bins)).to eq [bin_of_objects]
         end
+        it "assigns unassigned format-matching boxes to @boxes" do
+          expect(assigns(:boxes)).to eq []
+        end
       end
       context "with a matching boxed object value set" do
         let(:format) { bin_of_boxes.format }
         it "returns matching bins" do
           expect(assigns(:bins)).to eq [bin_of_boxes]
+        end
+        it "assigns unassigned format-matching boxes to @boxes" do
+          expect(assigns(:boxes)).to eq [unassigned_box]
         end
       end
       context "with a non-matching value set" do
@@ -289,13 +308,21 @@ describe BinsController do
   
   describe "GET show_boxes" do
     context "for an unsealed bin" do
-      before(:each) do 
-        box.bin = nil
-        box.save
+      before(:each) do
+        bin.format = box_format
+        bin.save!
+        box
+        unassigned_box
+        unassigned_mismatched_box
+        unassigned_unformatted_box
+        bin.reload
         get :show_boxes, id: bin.id
       end
-      it "assigns unassigned boxes to @boxes" do
-        expect(assigns(:boxes)).to eq [box]
+      it "assigns the bin to @bin" do
+        expect(assigns(:bin)).to eq bin
+      end
+      it "populates unassigned boxes to @boxes (matching by format)" do
+        expect(assigns(:boxes)).to eq [unassigned_box]
       end
       it "renders :show_boxes" do
         expect(response).to render_template :show_boxes

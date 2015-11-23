@@ -8,6 +8,7 @@ class BinsController < ApplicationController
 		@bins = Bin.eager_load([:physical_objects, :boxes]).all
     @bins = @bins.where(workflow_status: params[:workflow_status]) unless params[:workflow_status].blank?
     @bins = @bins.where(format: params[:format]) unless params[:format].blank?
+    @boxes = @boxes.where(format: params[:format]) unless params[:format].blank?
 	end
 
 	def new
@@ -147,6 +148,7 @@ class BinsController < ApplicationController
 	end
 
 	def show_boxes
+    @boxes = @boxes.where(format: @bin.format)
 		if @bin.packed_status?
 		  flash[:warning] = Bin.packed_status_message
 		  redirect_to action: :show
