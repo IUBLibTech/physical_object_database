@@ -6,8 +6,9 @@ class Box < ActiveRecord::Base
 	has_many :physical_objects
 
 	validates :mdpi_barcode, mdpi_barcode: true, numericality: { greater_than: 0 }
-        validate :validate_bin_container
+  validate :validate_bin_container
 	before_save :default_values
+	after_save :set_container_format
 	before_destroy :remove_physical_objects, prepend: true
 
         def packed_status?
@@ -31,8 +32,24 @@ class Box < ActiveRecord::Base
 	  self.description ||= ""
 	end
 
+  def set_container_format
+    if format && bin && bin.format.nil?
+      bin.format = format; bin.save
+    end
+  end
+
 	def validate_bin_container
-	  errors[:base] << Bin.invalid_box_assignment_message if bin && bin.physical_objects.any?
+	  if bin
+	    if bin.physical_objects.any?
+	      errors[:base] << Bin.invalid_box_assignment_message
+      elsif !bin.format.blank?
+        if format.blank?
+          errors[:base] << "This box (#{mdpi_barcode}) must have a format set before it can be assigned to a format-specific bin."
+        elsif bin.format != format
+          errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes of a different format (#{bin.format}).  You may only assign a box to a bin containing the matching format (#{format})."
+        end
+      end
+    end
 	end
 
   def remove_physical_objects
@@ -49,7 +66,5 @@ class Box < ActiveRecord::Base
       nil
     end
   end
-
-  alias_method :format, :media_format
 
 end

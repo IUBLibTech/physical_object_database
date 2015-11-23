@@ -10,8 +10,10 @@ class Bin < ActiveRecord::Base
         has_many :boxes
         has_many :workflow_statuses, :dependent => :destroy
         after_initialize :assign_default_workflow_status
+        validate :validate_batch_container
 	before_save :assign_inferred_workflow_status
 	before_destroy :remove_physical_objects, prepend: true
+  after_save :set_container_format
         include WorkflowStatusModule
         extend WorkflowStatusQueryModule
         has_many :condition_statuses, :dependent => :destroy
@@ -84,7 +86,21 @@ class Bin < ActiveRecord::Base
     format_object ? format_object.format : nil
   end
 
-  alias_method :format, :media_format
+  def set_container_format
+   if format && batch && batch.format.nil?
+     batch.format = format; batch.save
+   end
+  end
+
+  def validate_batch_container
+    if batch && !batch.format.blank?
+      if format.blank?
+        errors[:base] << "This bin must have a format value set, before it can be assigned to a batch."
+      elsif batch.format != format
+        errors[:base] << "This batch (#{batch.identifier}) contains bins of a different format (#{batch.format}).  You may only assign a bin to a batch containing the matching format (#{format})."
+      end
+    end
+  end
 
   def remove_physical_objects
     self.physical_objects.each do |po|

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151111042022) do
+ActiveRecord::Schema.define(version: 20151120154652) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20151111042022) do
     t.string   "workflow_status"
     t.integer  "workflow_index"
     t.string   "destination"
+    t.string   "format"
   end
 
   add_index "batches", ["destination"], name: "index_batches_on_destination", using: :btree
@@ -88,6 +89,7 @@ ActiveRecord::Schema.define(version: 20151111042022) do
     t.string   "workflow_status"
     t.integer  "workflow_index"
     t.string   "destination"
+    t.string   "format"
   end
 
   add_index "bins", ["batch_id"], name: "index_bins_on_batch_id", using: :btree
@@ -105,6 +107,7 @@ ActiveRecord::Schema.define(version: 20151111042022) do
     t.integer  "spreadsheet_id"
     t.boolean  "full",                     default: false
     t.text     "description"
+    t.string   "format"
   end
 
   add_index "boxes", ["bin_id"], name: "index_boxes_on_bin_id", using: :btree

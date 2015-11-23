@@ -4,6 +4,7 @@ describe Box do
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_box) { FactoryGirl.build :box }
   let(:invalid_box) { FactoryGirl.build :box, :invalid }
+  let(:valid_bin) { FactoryGirl.build :bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :cdr, :barcoded, box: box}
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
   let(:open_reel) { FactoryGirl.create :physical_object, :open_reel, :barcoded, bin: bin }
@@ -42,6 +43,18 @@ describe Box do
       valid_box.description = nil
       expect(valid_box).to be_valid
     end
+    describe "format" do
+      specify "is optional" do
+        valid_box.format = nil
+        expect(valid_box).to be_valid
+      end
+      specify "is automatically set by first contained object" do
+        expect(box.format).to be_nil
+        boxed_object
+        box.reload
+        expect(box.format).to eq boxed_object.format
+      end
+    end
   end
 
   describe "has relationships:" do
@@ -63,13 +76,36 @@ describe Box do
     end
     it "cannot belong to a bin if barcode is not set" do
     	valid_box.mdpi_barcode = "0"
-	valid_box.bin = bin
-	expect(valid_box).not_to be_valid
+	    valid_box.bin = bin
+	    expect(valid_box).not_to be_valid
     end
-    #FIXME: test against being in a bin containing boxes of different formats
     it "cannot belong to a bin containing physical objects" do
       open_reel
       valid_box.bin = bin
+      expect(valid_box).not_to be_valid
+    end
+    it "can belong to a bin of unspecified format" do
+      valid_bin.format = nil
+      valid_box.format = TechnicalMetadatumModule.box_formats.first
+      valid_box.bin = valid_bin
+      expect(valid_box).to be_valid
+    end
+    it "can belong to a bin of matching format" do
+      valid_bin.format = TechnicalMetadatumModule.box_formats.first
+      valid_box.format = TechnicalMetadatumModule.box_formats.first
+      valid_box.bin = valid_bin
+      expect(valid_box).to be_valid
+    end
+    it "cannot belong to a bin of mismatched format" do
+      valid_bin.format = TechnicalMetadatumModule.box_formats.first
+      valid_box.format = TechnicalMetadatumModule.box_formats.last
+      valid_box.bin = valid_bin
+      expect(valid_box).not_to be_valid
+    end
+    it "cannot belong to a format-specific bin if format unset" do
+      valid_bin.format = TechnicalMetadatumModule.box_formats.first
+      valid_box.format = ""
+      valid_box.bin = valid_bin
       expect(valid_box).not_to be_valid
     end
     it "can belong to a spreadsheet" do

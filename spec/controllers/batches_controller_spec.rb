@@ -4,8 +4,8 @@ describe BatchesController do
   render_views
   before(:each) { sign_in }
   let(:batch) { FactoryGirl.create(:batch) }
-  let(:bin) { FactoryGirl.create(:bin) }
-  let(:batched_bin) { FactoryGirl.create(:bin, batch: batch) }
+  let(:bin) { FactoryGirl.create(:bin, identifier: "bin") }
+  let(:batched_bin) { FactoryGirl.create(:bin, identifier: "batched_bin", batch: batch) }
   let(:binned_box) { FactoryGirl.create(:box, bin: batched_bin) }
   let(:po_dat) { FactoryGirl.create(:physical_object, :barcoded, :dat, box: binned_box) }
   let(:valid_batch) { FactoryGirl.build(:batch) }
@@ -25,11 +25,25 @@ describe BatchesController do
   end
 
   describe "GET show" do
-    before(:each) { po_dat }
+    before(:each) { bin; po_dat }
     context "in HTML format" do
+      let!(:other_batch) { FactoryGirl.create(:batch, identifier: "other_batch") }
+      let!(:unavailable_mismatched_bin) { FactoryGirl.create(:bin, identifier: "unavailable_mismatched_bin", batch: other_batch) }
+      let!(:unavailable_mismatched_po) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: unavailable_mismatched_bin) }
+      let!(:available_matched_bin) { FactoryGirl.create(:bin, identifier: "available_matched_bin") }
+      let!(:available_matched_box) { FactoryGirl.create(:box, bin: available_matched_bin) }
+      let!(:available_matched_po) { FactoryGirl.create(:physical_object, :barcoded, :dat, box: available_matched_box) }
+      let!(:available_mismatched_bin) { FactoryGirl.create(:bin, identifier: "available_mismatched_bin") }
+      let!(:available_mismatched_po) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: available_mismatched_bin) }
       before(:each) { get :show, id: batch.id }
       it "assigns the requested object to @batch" do
         expect(assigns(:batch)).to eq batch
+      end
+      it "assigns bins" do
+        expect(assigns(:bins)).to eq [batched_bin]
+      end
+      it "assigns available_bins (unbatched, format match)" do
+        expect(assigns(:available_bins).sort).to eq [available_matched_bin].sort
       end
       it "renders the :show template" do
         expect(response).to render_template(:show)

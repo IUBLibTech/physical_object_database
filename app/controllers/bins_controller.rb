@@ -7,7 +7,7 @@ class BinsController < ApplicationController
 	def index
 		@bins = Bin.eager_load([:physical_objects, :boxes]).all
     @bins = @bins.where(workflow_status: params[:workflow_status]) unless params[:workflow_status].blank?
-    @bins = @bins.select { |bin| bin.media_format == params[:format]} unless params[:format].blank?
+    @bins = @bins.where(format: params[:format]) unless params[:format].blank?
 	end
 
 	def new
@@ -205,7 +205,7 @@ class BinsController < ApplicationController
 
 	def bin_params
 		params.require(:bin).permit(:mdpi_barcode, :identifier, :description, :destination, :batch, :batch_id, :spreadsheet, 
-			:spreadsheet_id, :current_workflow_status, 
+			:spreadsheet_id, :current_workflow_status, :format,
 			condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :active, :user, :_destroy])
 
 	end
