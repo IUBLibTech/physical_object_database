@@ -26,7 +26,7 @@ class BatchesController < ApplicationController
 
   def update
     @bins = @batch.bins
-    @available_bins = Bin.available_bins.where(format: [@batch.format, nil, ""])
+    @available_bins = Bin.available_bins.where(format: @batch.format)
     Batch.transaction do
       if @batch.update_attributes(batch_params)
         flash[:notice] = "<i>#{@batch.identifier}</i> was successfully updated.".html_safe
@@ -38,7 +38,7 @@ class BatchesController < ApplicationController
   end
 
   def show
-    @available_bins = Bin.available_bins.where(format: [@batch.format, nil, ""])
+    @available_bins = Bin.available_bins.where(format: @batch.format)
     @bins = @batch.bins
     respond_to do |format|
       format.html

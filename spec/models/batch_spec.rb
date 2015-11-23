@@ -70,9 +70,9 @@ describe Batch do
       end
       it "resets bins workflow status to Sealed if destroyed" do
         expect(bin.workflow_status).to eq "Batched"
-	batch.destroy
-	bin.reload
-	expect(bin.workflow_status).to eq "Sealed"
+        batch.destroy
+        bin.reload
+        expect(bin.workflow_status).to eq "Sealed"
       end
     end
     it "can have workflow statuses" do

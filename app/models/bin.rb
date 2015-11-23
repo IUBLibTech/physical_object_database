@@ -93,8 +93,12 @@ class Bin < ActiveRecord::Base
   end
 
   def validate_batch_container
-    if batch && !format.blank? && !batch.format.blank? && batch.format != format
-      errors[:base] << "This batch (#{batch.identifier}) contains bins of a different format (#{batch.format}).  You may only assign a bin to a batch containing the matching format (#{format})."
+    if batch && !batch.format.blank?
+      if format.blank?
+        errors[:base] << "This bin must have a format value set, before it can be assigned to a batch."
+      elsif batch.format != format
+        errors[:base] << "This batch (#{batch.identifier}) contains bins of a different format (#{batch.format}).  You may only assign a bin to a batch containing the matching format (#{format})."
+      end
     end
   end
 

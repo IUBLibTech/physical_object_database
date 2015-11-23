@@ -63,6 +63,7 @@ describe Bin do
 
   describe "has relationships:" do
     it "can belong to a batch" do
+      binned_object
       expect(batch.bins.where(id: bin.id).first).to eq(bin)
       expect(bin.batch).to eq batch
       bin.batch = nil
@@ -81,6 +82,12 @@ describe Bin do
       valid_bin.format = TechnicalMetadatumModule.bin_formats.first
       valid_bin.batch = valid_batch
       expect(valid_bin).to be_valid
+    end
+    it "cannot belong to a format-specific batch if self.format is blank" do
+      valid_batch.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.format = ""
+      valid_bin.batch = valid_batch
+      expect(valid_bin).not_to be_valid
     end
     it "cannot belong to a batch with mismatched format" do
       valid_batch.format = TechnicalMetadatumModule.bin_formats.first

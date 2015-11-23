@@ -102,6 +102,12 @@ describe Box do
       valid_box.bin = valid_bin
       expect(valid_box).not_to be_valid
     end
+    it "cannot belong to a format-specific bin if format unset" do
+      valid_bin.format = TechnicalMetadatumModule.box_formats.first
+      valid_box.format = ""
+      valid_box.bin = valid_bin
+      expect(valid_box).not_to be_valid
+    end
     it "can belong to a spreadsheet" do
       expect(box.spreadsheet).to be_nil
     end

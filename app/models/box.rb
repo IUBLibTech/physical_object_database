@@ -42,8 +42,12 @@ class Box < ActiveRecord::Base
 	  if bin
 	    if bin.physical_objects.any?
 	      errors[:base] << Bin.invalid_box_assignment_message
-      elsif !format.blank? && !bin.format.blank? && bin.format != format
-        errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes of a different format (#{bin.format}).  You may only assign a box to a bin containing the matching format (#{format})."
+      elsif !bin.format.blank?
+        if format.blank?
+          errors[:base] << "This box (#{mdpi_barcode}) must have a format set before it can be assigned to a format-specific bin."
+        elsif bin.format != format
+          errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes of a different format (#{bin.format}).  You may only assign a box to a bin containing the matching format (#{format})."
+        end
       end
     end
 	end

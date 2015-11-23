@@ -42,8 +42,8 @@ describe BatchesController do
       it "assigns bins" do
         expect(assigns(:bins)).to eq [batched_bin]
       end
-      it "assigns available_bins (unbatched, format match or undefined)" do
-        expect(assigns(:available_bins).sort).to eq [bin, available_matched_bin].sort
+      it "assigns available_bins (unbatched, format match)" do
+        expect(assigns(:available_bins).sort).to eq [available_matched_bin].sort
       end
       it "renders the :show template" do
         expect(response).to render_template(:show)
