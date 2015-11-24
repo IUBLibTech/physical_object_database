@@ -26,19 +26,18 @@ class BatchesController < ApplicationController
 
   def update
     @bins = @batch.bins
-    @available_bins = Bin.available_bins.where(format: @batch.format)
     Batch.transaction do
       if @batch.update_attributes(batch_params)
         flash[:notice] = "<i>#{@batch.identifier}</i> was successfully updated.".html_safe
         redirect_to(:action => 'show', :id => @batch.id)
       else
-        render('show')
+        render('edit')
       end
     end
   end
 
   def show
-    @available_bins = Bin.available_bins.where(format: @batch.format)
+    @available_bins = Bin.available_bins.where(format: @batch.format).eager_load(:physical_objects, :boxed_physical_objects)
     @bins = @batch.bins
     respond_to do |format|
       format.html
