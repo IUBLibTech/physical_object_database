@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
     result
   end
 
-  ROLES = [:smart_team_user, :smart_team_admin, :qc_user, :qc_admin, :web_admin]
+  ROLES = [:smart_team_user, :smart_team_admin, :qc_user, :qc_admin, :web_admin, :engineer]
 
   NO_ACTIONS = {}
   ALL_ACTIONS = Hash.new(true)
@@ -143,6 +143,33 @@ class User < ActiveRecord::Base
     XmlTesterController => NO_ACTIONS,
   })
   WEB_ADMIN = ALL_ACCESS
+  ENGINEER = NIL_ACCESS.merge({
+    BatchesController => READ_ONLY,
+    BinsController => READ_ONLY,
+    BoxesController => READ_ONLY,
+    ConditionStatusTemplatesController => READ_ONLY,
+    DigitalProvenanceController => ALL_ACTIONS,
+    DigitizationController => NO_ACTIONS,
+    GroupKeysController => READ_ONLY,
+    InvoiceController => READ_ONLY,
+    MachinesController => ALL_ACTIONS,
+    MessagesController => READ_ONLY,
+    PhysicalObjectsController => ALL_BUT_DELETE,
+    PicklistSpecificationsController => READ_ONLY,
+    PicklistsController => READ_ONLY,
+    ProcessingStepsController => ALL_ACTIONS,
+    QualityControlController => { index: true, staging_index: true },
+    ReportsController => ALL_ACTIONS,
+    ReturnsController => NO_ACTIONS,
+    SearchController => ALL_ACTIONS,
+    SignalChainsController => ALL_ACTIONS,
+    SpreadsheetsController => READ_ONLY,
+    StatusTemplatesController => READ_ONLY,
+    UnitsController => READ_ONLY,
+    UsersController => NO_ACTIONS,
+    WorkflowStatusTemplatesController => READ_ONLY,
+    XmlTesterController => NO_ACTIONS,
+  })
 
   ROLE_PERMISSIONS = {
     nil_access: NIL_ACCESS,
@@ -152,5 +179,6 @@ class User < ActiveRecord::Base
     qc_user: QC_USER,
     qc_admin: QC_ADMIN,
     web_admin: WEB_ADMIN,
+    engineer: ENGINEER,
   }
 end
