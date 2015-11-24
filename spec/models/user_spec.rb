@@ -33,6 +33,14 @@ describe User do
     end
   end
 
+  describe "has role fields:" do
+    User::ROLES.each do |role|
+      specify "#{role}" do
+        expect(valid_user).to respond_to role
+      end
+    end
+  end
+
   describe "has unique fields:" do
     # user is seed data and must be manually destroyed in tests
     before(:each) { user }
