@@ -1,6 +1,7 @@
 <table>
 	<tr>
 		<th>Batch Identifier</th>
+		<th>Format</th>
 		<th>Description</th>
 		<th>Destination</th>
 		<th>Objects Count</th>
@@ -11,6 +12,7 @@
 	<% @batches.each do |b| %>
 		<tr class=<%= count.odd? ? "odd" : "even" %> >
 			<td><%= b.identifier %></td>
+			<td><%= b.format %></td>
 			<td><%= b.description %></td>
 			<td><%= b.destination %></td>
 			<td><%= b.physical_objects_count %></td>

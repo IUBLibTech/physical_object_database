@@ -152,8 +152,8 @@ describe BatchesController do
         batch.reload
         expect(batch.identifier).to eq "Test Batch"
       end
-      it "re-renders the :show template" do
-        expect(response).to render_template(:show)
+      it "re-renders the :edit template" do
+        expect(response).to render_template(:edit)
       end
 
     end
