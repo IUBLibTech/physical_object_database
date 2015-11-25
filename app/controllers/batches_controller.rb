@@ -92,11 +92,8 @@ class BatchesController < ApplicationController
     def set_batch
       # remove batch_ prefix, if present, for csv and xls requests
       @batch = Batch.eager_load(:bins).find(params[:id].to_s.sub(/^batch_/, ''))
-      unless @batch.format.blank?
-        @days = TechnicalMetadatumModule.tm_genres[@batch.format] == :audio ? 45 : 30
-      else
-        @days = 0
-      end
+      @digitization_start = (@batch ? @batch.digitization_start : nil)
+      @auto_accept = (@batch ? @batch.auto_accept : nil)
       authorize @batch
     end
 

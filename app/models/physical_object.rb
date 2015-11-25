@@ -169,6 +169,10 @@ class PhysicalObject < ActiveRecord::Base
     self.group_key.group_total
   end
 
+  def auto_accept
+    digital_start ? (digital_start + auto_accept_days.days) : nil
+  end
+
   def carrier_stream_index
     if self.group_key.nil?
       group_identifier + "_1_1"

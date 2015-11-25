@@ -40,6 +40,11 @@ module TechnicalMetadatumModule
     video: "mkv"
   }
 
+  GENRE_AUTO_ACCEPT_DAYS = {
+    audio: 45,
+    video: 30
+  }
+
   # For including classes: set empty default values, which class can override
   PRESERVATION_PROBLEM_FIELDS = [] # common boolean fieldset
   HUMANIZED_COLUMNS = {} # optionally overrides humanized fieldname
@@ -201,4 +206,13 @@ module TechnicalMetadatumModule
     end
     row_values
   end
+
+  def TechnicalMetadatumModule.format_auto_accept_days(format)
+    GENRE_AUTO_ACCEPT_DAYS[tm_genres[format]]
+  end
+
+  def auto_accept_days
+    TechnicalMetadatumModule.format_auto_accept_days(format)
+  end
+
 end
