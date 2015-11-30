@@ -193,7 +193,7 @@ describe PicklistsController do
           args[:id] = -1
         }
         it "raises error" do
-          expect{ pack_list }.to raise_error
+          expect{ pack_list }.to raise_error ActiveRecord::RecordNotFound
         end
       end
 

@@ -36,7 +36,12 @@
 				<%= f.select(:destination, Bin.DESTINATION_VALUES, {}, disabled: !@edit_mode) %>
 			</td>
 		</tr>
-
+    <tr>
+      <th>Format</th>
+      <td>
+        <%= f.select(:format, TechnicalMetadatumModule.tm_formats_hash, {include_blank: "(undefined)"}, disabled: (!@edit_mode || f.object.contained_physical_objects.any?) ) %>
+      </td>
+    </tr>
 		<tr>
 			<th>Imported from spreadsheet</th>
 			<td>

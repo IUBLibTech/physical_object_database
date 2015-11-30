@@ -29,6 +29,10 @@ FactoryGirl.define do
      actable_type "EightMillimeterVideoTm"
      association :actable, factory: :eight_mm_tm
    end
+   trait :umatic do
+     actable_type "UmaticVideoTm"
+     association :actable, factory: :umatic_tm
+   end
   end
 
   factory :analog_sound_disc_tm, class: AnalogSoundDiscTm do
@@ -140,6 +144,25 @@ FactoryGirl.define do
     format_version "Unknown"
     playback_speed "Unknown"
     binder_system "Unknown"
+
+    trait :invalid do
+      pack_deformation "invalid value"
+    end
+    trait :valid do
+    end
+  end
+
+  factory :umatic_tm, class: UmaticVideoTm do
+    pack_deformation "None"
+    fungus false
+    soft_binder_syndrome false
+    other_contaminants false
+    recording_standard "Unknown"
+    format_duration "Unknown"
+    size "Small"
+    tape_stock_brand ""
+    image_format "Unknown"
+    format_version "Unknown"
 
     trait :invalid do
       pack_deformation "invalid value"

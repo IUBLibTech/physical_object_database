@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151109182535) do
+ActiveRecord::Schema.define(version: 20151124205549) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20151109182535) do
     t.string   "workflow_status"
     t.integer  "workflow_index"
     t.string   "destination"
+    t.string   "format"
   end
 
   add_index "batches", ["destination"], name: "index_batches_on_destination", using: :btree
@@ -88,6 +89,7 @@ ActiveRecord::Schema.define(version: 20151109182535) do
     t.string   "workflow_status"
     t.integer  "workflow_index"
     t.string   "destination"
+    t.string   "format"
   end
 
   add_index "bins", ["batch_id"], name: "index_bins_on_batch_id", using: :btree
@@ -105,6 +107,7 @@ ActiveRecord::Schema.define(version: 20151109182535) do
     t.integer  "spreadsheet_id"
     t.boolean  "full",                     default: false
     t.text     "description"
+    t.string   "format"
   end
 
   add_index "boxes", ["bin_id"], name: "index_boxes_on_bin_id", using: :btree
@@ -243,7 +246,7 @@ ActiveRecord::Schema.define(version: 20151109182535) do
     t.float   "duration",    limit: 24
   end
 
-  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: true do |t|
     t.string   "digitizingEntity"
@@ -479,6 +482,21 @@ ActiveRecord::Schema.define(version: 20151109182535) do
   add_index "technical_metadata", ["physical_object_id"], name: "index_technical_metadata_on_physical_object_id", using: :btree
   add_index "technical_metadata", ["picklist_specification_id"], name: "index_technical_metadata_on_picklist_specification_id", using: :btree
 
+  create_table "umatic_video_tms", force: true do |t|
+    t.string   "pack_deformation"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.string   "recording_standard"
+    t.string   "format_duration"
+    t.string   "size"
+    t.string   "tape_stock_brand"
+    t.string   "image_format"
+    t.string   "format_version"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "units", force: true do |t|
     t.string   "abbreviation"
     t.string   "name"
@@ -498,6 +516,7 @@ ActiveRecord::Schema.define(version: 20151109182535) do
     t.boolean  "qc_user"
     t.boolean  "qc_admin"
     t.boolean  "web_admin"
+    t.boolean  "engineer"
   end
 
   create_table "workflow_status_templates", force: true do |t|

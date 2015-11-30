@@ -35,6 +35,10 @@ FactoryGirl.define do
       format "8mm Video"
       association :technical_metadatum, factory: [:technical_metadatum, :eight_mm]
     end
+    trait :umatic do
+      format "U-matic"
+      association :technical_metadatum, factory: [:technical_metadatum, :umatic]
+    end
     trait :boxable do
       cdr
     end

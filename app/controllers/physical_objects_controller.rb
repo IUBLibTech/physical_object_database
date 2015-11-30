@@ -42,14 +42,14 @@ class PhysicalObjectsController < ApplicationController
     @tm = @physical_object.ensure_tm
     @dp = @physical_object.ensure_digiprov
     @tm.assign_attributes(tm_params)
-    if @physical_object.valid? && @tm.valid? && @dp.valid?
+    if @physical_object.errors.none? && @physical_object.valid? && @tm.valid? && @dp.valid?
       saved = @physical_object.save 
-      saved = @tm.update_attributes(tm_params) if saved
     end
     if saved
       flash[:notice] = "Physical Object was successfully created.".html_safe
+    else
+      flash.now[:warning] = "Physical Object was NOT saved.".html_safe
     end
-
 
     if @repeat != true and saved
       redirect_to(:action => 'index')
@@ -59,9 +59,6 @@ class PhysicalObjectsController < ApplicationController
         @physical_object = PhysicalObject.new(physical_object_params)
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
-        @tm.assign_attributes(tm_params)
-      else
-        # for failed save, carry over tm attributes
         @tm.assign_attributes(tm_params)
       end
       @display_assigned = true
@@ -116,18 +113,15 @@ class PhysicalObjectsController < ApplicationController
       @original_tm = @physical_object.technical_metadatum
       @physical_object.assign_attributes(physical_object_params)
       tm_assigned = true
-      if @physical_object.valid?
-        @tm = @physical_object.ensure_tm
-        @dp = @physical_object.ensure_digiprov
-        begin
-          @tm.assign_attributes(tm_params)
-        rescue
-         tm_assigned = false
-        end
+      @tm = @physical_object.ensure_tm
+      @dp = @physical_object.ensure_digiprov
+      begin
+        @tm.assign_attributes(tm_params)
+      rescue
+        tm_assigned = false
       end
-      if @physical_object.valid? && @tm.valid? && @dp.valid? && tm_assigned
+      if @physical_object.errors.none? && @physical_object.valid? && @tm.valid? && @dp.valid? && tm_assigned
         updated = @physical_object.save
-        updated = @tm.update_attributes(tm_params) if updated
         @tm.reload
         if @original_tm && @original_tm.specific && (@original_tm.specific.id != @tm.id)
           @original_tm.destroy

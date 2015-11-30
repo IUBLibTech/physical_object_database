@@ -9,6 +9,7 @@ describe Batch do
   let(:bin) { FactoryGirl.create :bin, batch: batch }
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
+  let(:open_reel) { FactoryGirl.create :physical_object, :open_reel, :barcoded, bin: bin }
   let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
@@ -36,6 +37,29 @@ describe Batch do
     end
   end
 
+  describe "has optional attributes" do
+    describe "format" do
+      it "can be nil" do
+        valid_batch.format = nil
+        expect(valid_batch).to be_valid
+      end
+      it "is automatically set by bin of physical objects" do
+        expect(batch.format).to be_nil
+        binned_object
+        batch.reload
+        expect(batch.format).not_to be_nil
+        expect(batch.format).to eq bin.format
+      end
+      it "is automatically set by bin of boxes" do
+        expect(batch.format).to be_nil
+        boxed_object
+        batch.reload
+        expect(batch.format).not_to be_nil
+        expect(batch.format).to eq box.format
+      end
+    end
+  end
+
   describe "has relationships:" do
     it "provides a physical object count" do
       expect(batch.physical_objects_count).to eq 0 
@@ -46,9 +70,9 @@ describe Batch do
       end
       it "resets bins workflow status to Sealed if destroyed" do
         expect(bin.workflow_status).to eq "Batched"
-	batch.destroy
-	bin.reload
-	expect(bin.workflow_status).to eq "Sealed"
+        batch.destroy
+        bin.reload
+        expect(bin.workflow_status).to eq "Sealed"
       end
     end
     it "can have workflow statuses" do
@@ -100,14 +124,10 @@ describe Batch do
     end
     it "returns first object in first bin" do
       bin
-      physical_object.format = "Open Reel Audio Tape"
-      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-      physical_object.bin = bin
-      physical_object.save!
-      physical_object.reload
+      open_reel
       bin.reload
       expect(bin.boxes).to be_empty
-      expect(batch.first_object).to eq physical_object
+      expect(batch.first_object).to eq open_reel
     end
     it "returns first object in first box in first bin" do
       bin
@@ -135,14 +155,10 @@ describe Batch do
     end
     it "returns format of first object in first bin" do
       bin
-      physical_object.format = "Open Reel Audio Tape"
-      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-      physical_object.bin = bin
-      physical_object.save!
-      physical_object.reload
+      open_reel
       bin.reload
       expect(bin.boxes).to be_empty
-      expect(batch.media_format).to eq physical_object.format
+      expect(batch.media_format).to eq open_reel.format
     end
     it "returns format of first object in first box in in first bin" do
       bin

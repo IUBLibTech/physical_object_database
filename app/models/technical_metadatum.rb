@@ -5,6 +5,6 @@ class TechnicalMetadatum < ActiveRecord::Base
 	belongs_to :picklist_specification
 
 	# require a specific TM subtype
-        # validates :actable, presence: true
+  validates :actable, presence: true
 
 end

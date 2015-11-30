@@ -15,6 +15,7 @@ class PhysicalObject < ActiveRecord::Base
   before_validation :ensure_group_key
   before_save :assign_inferred_workflow_status
   after_save :resolve_group_position
+  after_save :set_container_format
   after_update :destroy_empty_group
   after_destroy :destroy_empty_group
 
@@ -26,8 +27,8 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :spreadsheet
   belongs_to :unit
   
-  has_one :technical_metadatum, :dependent => :destroy
-  has_one :digital_provenance, :dependent => :destroy
+  has_one :technical_metadatum, :dependent => :destroy, validate: true
+  has_one :digital_provenance, :dependent => :destroy, validate: true
   has_many :workflow_statuses, :dependent => :destroy
   has_many :condition_statuses, :dependent => :destroy
   has_many :notes, :dependent => :destroy
@@ -339,6 +340,10 @@ class PhysicalObject < ActiveRecord::Base
     if TechnicalMetadatumModule.tm_formats_hash[self.format]
       if self.technical_metadatum.nil? || self.technical_metadatum.specific.nil? || self.technical_metadatum.actable_type != TechnicalMetadatumModule.tm_format_classes[self.format].to_s
         @tm = create_tm(self.format, physical_object: self)
+        #checks to ensure correct child/parent linkage for new objects; gem does not seem to take care of this?
+        self.technical_metadatum = @tm.technical_metadatum if self.technical_metadatum != @tm.technical_metadatum
+        self.technical_metadatum.actable = @tm if self.technical_metadatum.actable != @tm
+        @tm
       else
         @tm = self.technical_metadatum.specific
       end
@@ -400,6 +405,14 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
+  def set_container_format
+    if box && box.format.nil?
+      box.format = format; box.save
+    elsif bin && bin.format.nil?
+      bin.format = format; bin.save
+    end
+  end
+
   def display_date_billed
     date_billed.in_time_zone.strftime("%m/%d/%Y")
   end
@@ -445,8 +458,8 @@ class PhysicalObject < ActiveRecord::Base
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a bin."
       elsif bin.boxes.any?
         errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes.  You may only assign a physical object to a bin containing physical objects."
-      elsif bin.physical_objects.any? && bin.physical_objects.first.format != self.format
-        errors[:base] << "This bin (#{bin.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a bin containing the matching format (#{self.format})." 
+      elsif !bin.format.blank? && bin.format != format
+        errors[:base] << "This bin (#{bin.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a bin containing the matching format (#{format})." 
       end
     end
   end
@@ -458,8 +471,8 @@ class PhysicalObject < ActiveRecord::Base
 assigned to a box."
       elsif !self.format.in? TechnicalMetadatumModule.box_formats
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a box."
-      elsif box.physical_objects.any? && box.physical_objects.first.format != self.format
-        errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format (#{box.physical_objects.first.format}).  You may only assign a physical object to a box containing the matching format (#{self.format})."
+      elsif !box.format.blank? && box.format != format
+        errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format (#{box.format}).  You may only assign a physical object to a box containing the matching format (#{format})."
       end
     end
   end

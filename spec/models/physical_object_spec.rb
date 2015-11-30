@@ -12,7 +12,20 @@ describe PhysicalObject do
   let(:box) { FactoryGirl.create :box }
   let(:bin) { FactoryGirl.create :bin }
 
-  tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :eight_mm]
+  tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :eight_mm, :umatic]
+  tm_factories = {
+    "CD-R" => :cdr_tm,
+    "DAT" => :dat_tm,
+    "LP" => :analog_sound_disc_tm,
+    "Lacquer Disc" => :analog_sound_disc_tm,
+    "45" => :analog_sound_disc_tm,
+    "78" => :analog_sound_disc_tm,
+    "Other Analog Sound Disc" => :analog_sound_disc_tm,
+    "Open Reel Audio Tape" => :open_reel_tm,
+    "Betacam" => :betacam_tm,
+    "8mm Video" => :eight_mm_tm,
+    "U-matic" => :umatic_tm,
+  }
 
   describe "FactoryGirl" do
     tm_types.each do |tm_type|
@@ -125,9 +138,13 @@ describe "has required attributes:" do
       specify "can belong to a box" do
         expect(valid_po).to respond_to :box_id
       end
+      #FIXME: need to properly create TM objects via factories
       TechnicalMetadatumModule.box_formats.each_with_index do |format, index|
         describe "boxable format: #{format}" do
-          before(:each) { valid_po.format = format }
+          before(:each) do
+            valid_po.format = format
+            valid_po.ensure_tm.assign_attributes(FactoryGirl.attributes_for tm_factories[format])
+          end
           specify "cannot belong to a bin and box" do
             valid_po.box = box
             valid_po.bin = bin
@@ -150,8 +167,10 @@ describe "has required attributes:" do
           end
           if TechnicalMetadatumModule.box_formats.size > 1
             specify "cannot belong to a box containing other formats" do
-              po.format = TechnicalMetadatumModule.box_formats[index - 1]
-	      po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+              format_value = TechnicalMetadatumModule.box_formats[index - 1]
+              po.format = format_value
+              po.ensure_tm.assign_attributes(FactoryGirl.attributes_for tm_factories[format_value])
+	            po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
               po.box = box
               po.save!
               valid_po.box = box
@@ -167,7 +186,10 @@ describe "has required attributes:" do
       end
       TechnicalMetadatumModule.bin_formats.each_with_index do |format, index|
         describe "binnable format: #{format}" do
-          before(:each) { valid_po.format = format }
+          before(:each) do
+            valid_po.format = format
+            valid_po.ensure_tm.assign_attributes(FactoryGirl.attributes_for tm_factories[format])
+          end
           specify "cannot belong to a bin and box" do
             valid_po.box = box
             valid_po.bin = bin
@@ -191,8 +213,10 @@ describe "has required attributes:" do
           end
           if TechnicalMetadatumModule.bin_formats.size > 1
             specify "cannot belong to a bin containing other formats" do
-              po.format = TechnicalMetadatumModule.bin_formats[index - 1]
-	      po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
+              format_value = TechnicalMetadatumModule.bin_formats[index - 1]
+              po.format = format_value
+              po.ensure_tm.assign_attributes(FactoryGirl.attributes_for tm_factories[format_value])
+	            po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
               po.bin = bin
               po.save!
               valid_po.bin = bin

@@ -140,7 +140,6 @@ describe SignalChainsController do
    
     it "includes the machine" do
       put :include, id: signal_chain.id, machine_id: machine.id, position: signal_chain.processing_steps.size + 1
-      puts "machine_id: #{machine.id}, processing_steps: #{signal_chain.processing_steps[0]}"
       signal_chain.reload
       expect(signal_chain.processing_steps[signal_chain.processing_steps.size - 1].machine_id).to eq machine.id
     end
