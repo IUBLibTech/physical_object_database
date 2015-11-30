@@ -104,38 +104,49 @@ class PhysicalObject < ActiveRecord::Base
     po.physical_object_query(false)
   }
 
-  scope :unstaged_by_date, lambda { |date| 
-    PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
-      ON digital_statuses.physical_object_id = ds2.physical_object_id
-      AND digital_statuses.state = ds2.state
-      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date))
-
-  }
-
-  scope :unstaged_by_date_formats, lambda { |date|
-    PhysicalObject.uniq.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
-      ON digital_statuses.physical_object_id = ds2.physical_object_id
-      AND digital_statuses.state = ds2.state
-      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).pluck(:format)
-  }
-
-  # deprecated because the joins are no longer necessary
-  # scope :unstaged_by_date_by_format, lambda { |date, format| 
+  # no longer used
+  # scope :unstaged_by_date, lambda { |date|
   #   PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
   #     ON digital_statuses.physical_object_id = ds2.physical_object_id
   #     AND digital_statuses.state = ds2.state
-  #     AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, format: format, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).eager_load(:digital_provenance).order("RAND()")
+  #     AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date))
+  #
   # }
+  # No longer used
+  # scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
+  # scope :staged, lambda { where(staged: true) }
 
+  # This scope grabs all formats, for all unstaged physical objects whose digitization_start timestamp is within 24 hrs of the specified date
+  scope :unstaged_by_date_formats, lambda { |date|
+    PhysicalObject.where(staging_requested: false).where(datesql(date)).pluck(:format)
+  }
 
+  # this scope grabs all physical objects of the specified format whose digital_start timestamp is within 24 hrs of the specified date
   scope :unstaged_by_date_by_format, lambda { |date, format|
     PhysicalObject.where(staging_requested: false, format: format).where(datesql(date)).order("RAND()")
   }
 
-  scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
-  scope :staged, lambda { where(staged: true) }
+  # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by Memnon
+  scope :memnon_unstaged_by_date_formats, lambda{ |date|
+    PhysicalObject.joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format)
+  }
+  # this scope grabs all unstaged physical objects of the specified format whose digital_start timestamp is with 24 hrs of the specified date
+  # AND whose digitizing entity is Memnon
+  scope :memnon_unstaged_by_date_and_format, lambda { |date, format|
+    PhysicalObject.joins(:digital_provenance).where(format: format,staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'")
+  }
 
-  
+
+  # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by Memnon
+  scope :memnon_unstaged_by_date_formats, lambda{ |date|
+    PhysicalObject.joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format)
+  }
+  # This scope selects all unstaged physical objects of the specified format, whose digital_start timestamp is within 24hrs of the specified date
+  # AND whose digitizing entity
+  scope :iu_unstaged_by_date_and_format, lambda { |date, format|
+    PhysicalObject.joins(:digital_provenance).where(format: format, staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'")
+  }
+
 
   attr_accessor :generation_values
   def generation_values

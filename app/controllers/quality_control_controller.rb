@@ -61,7 +61,22 @@ class QualityControlController < ApplicationController
 		else
 			@date = Time.new(now.year, now.month, now.day)
 		end
+		@d_entity = "Memnon"
+		formats = PhysicalObject.unstaged_by_date_formats(@date)
+		@format_to_physical_objects = ActiveSupport::OrderedHash.new
+		formats.each do |format|
+			@format_to_physical_objects[format] = PhysicalObject.unstaged_by_date_by_format(@date, format)
+		end
+	end
 
+	def set_iu_staging
+		now = Time.now
+		if params[:date]
+			@date = params[:date].blank? ? Time.new(now.year, now.month, now.day) : DateTime.strptime(params[:date], "%m/%d/%Y")
+		else
+			@date = Time.new(now.year, now.month, now.day)
+		end
+		@d_entity = "IU"
 		formats = PhysicalObject.unstaged_by_date_formats(@date)
 		@format_to_physical_objects = ActiveSupport::OrderedHash.new
 		formats.each do |format|
