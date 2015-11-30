@@ -30,7 +30,7 @@ class Batch < ActiveRecord::Base
     if self.id
       if self.bins.none?
         return nil
-      elsif self.bins.first.physical_objects.any?
+      elsif self.format.in? TechnicalMetadatumModule.bin_formats
   	    date = PhysicalObject.connection.execute(
   		    "SELECT physical_objects.digital_start
 			    FROM bins, physical_objects
