@@ -7,7 +7,7 @@ describe BatchesController do
   let(:bin) { FactoryGirl.create(:bin, identifier: "bin") }
   let(:batched_bin) { FactoryGirl.create(:bin, identifier: "batched_bin", batch: batch) }
   let(:binned_box) { FactoryGirl.create(:box, bin: batched_bin) }
-  let(:po_dat) { FactoryGirl.create(:physical_object, :barcoded, :dat, box: binned_box) }
+  let(:po_dat) { FactoryGirl.create(:physical_object, :barcoded, :dat, box: binned_box, digital_start: Time.now) }
   let(:valid_batch) { FactoryGirl.build(:batch) }
   let(:invalid_batch) { FactoryGirl.build(:invalid_batch) }
 
@@ -38,6 +38,14 @@ describe BatchesController do
       before(:each) { get :show, id: batch.id }
       it "assigns the requested object to @batch" do
         expect(assigns(:batch)).to eq batch
+      end
+      it "assigns @digitization_start" do
+        expect(assigns(:digitization_start)).not_to be_nil
+        expect(assigns(:digitization_start)).to eq batch.digitization_start
+      end
+      it "assigns @auto_accept" do
+        expect(assigns(:auto_accept)).not_to be_nil
+        expect(assigns(:auto_accept)).to eq batch.auto_accept
       end
       it "assigns bins" do
         expect(assigns(:bins)).to eq [batched_bin]

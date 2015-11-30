@@ -4,6 +4,7 @@ describe PhysicalObject do
   let(:po) { FactoryGirl.create :physical_object, :cdr }
   let(:grouped_po) { FactoryGirl.build :physical_object, :cdr, group_key: po.group_key }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
+  let(:video_po) { FactoryGirl.build :physical_object, :umatic }
   let(:boxable_po) { FactoryGirl.build :physical_object, :boxable }
   let(:binnable_po) { FactoryGirl.build :physical_object, :binnable }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
@@ -403,6 +404,28 @@ describe "has required attributes:" do
   end
 
   describe "provides virtual attributes:" do
+    describe "#auto_accept" do
+      context "when .digital_start is nil" do
+        it "returns nil" do
+          expect(valid_po.digital_start).to be_nil
+          expect(valid_po.auto_accept).to be_nil
+        end
+      end
+      context "when .digital_start is set" do
+        before(:each) do
+          valid_po.digital_start = Time.now
+          video_po.digital_start = Time.now
+        end
+        specify "for an audio format, returns audio delay" do
+          expect(valid_po.auto_accept).not_to be_nil
+          expect(valid_po.auto_accept).to eq (valid_po.digital_start + TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:audio].days)
+        end
+        specify "for video format, returns video delay" do
+          expect(video_po.auto_accept).not_to be_nil
+          expect(video_po.auto_accept).to eq (video_po.digital_start + TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:video].days)
+        end
+      end
+    end
     it "#carrier_stream_index" do
       expect(valid_po.carrier_stream_index).to eq valid_po.group_identifier + "_1_1"
     end
