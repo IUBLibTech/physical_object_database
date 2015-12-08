@@ -25,17 +25,40 @@ class Batch < ActiveRecord::Base
     bins.any? ? bins.first.first_object : nil
   end
 
-  def digitization_start
+  def digitization_start(descending = false)
+    #FIXME: collapse queries?
     if self.id
-  	  date = PhysicalObject.connection.execute(
-  		  "SELECT physical_objects.digital_start
-			  FROM bins, physical_objects
-			  WHERE bins.batch_id = #{self.id} and physical_objects.bin_id = bins.id 
-			  and physical_objects.digital_start is not null
-			  ORDER by digital_start
-			  LIMIT 1"
-  	  )
+      if self.bins.none?
+        return nil
+      elsif self.format.in? TechnicalMetadatumModule.bin_formats
+  	    date = PhysicalObject.connection.execute(
+  		    "SELECT physical_objects.digital_start
+			    FROM bins, physical_objects
+			    WHERE bins.batch_id = #{self.id} and physical_objects.bin_id = bins.id 
+			    and physical_objects.digital_start is not null
+			    ORDER by digital_start #{"DESC" if descending}
+			    LIMIT 1"
+  	    )
+      else
+  	    date = PhysicalObject.connection.execute(
+  		    "SELECT physical_objects.digital_start
+			    FROM bins, boxes, physical_objects
+			    WHERE bins.batch_id = #{self.id} and boxes.bin_id = bins.id and physical_objects.box_id = boxes.id 
+			    and physical_objects.digital_start is not null
+			    ORDER by digital_start #{"DESC" if descending}
+			    LIMIT 1"
+  	    )
+      end
   	  return date.size == 0 ? nil : date.first[0]
+    else
+      return nil
+    end
+  end
+
+  def auto_accept(descending = false)
+    if self.id
+      ds = digitization_start(descending)
+      ds.nil? ? nil : ds + TechnicalMetadatumModule.format_auto_accept_days(format).days
     else
       return nil
     end

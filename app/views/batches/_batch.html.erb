@@ -60,12 +60,12 @@
   <%# if @batch.current_workflow_status = 'Interim Storage' %>
     <tr>
       <th>Digitization Start (Auto passed if red)</th>
-        <% if @batch.digitization_start && @batch.digitization_start + @days < Time.now %>
+        <% if @digitization_start && (@auto_accept < Time.now) %>
           <td class="red">
         <% else %>
           <td class="green">
         <% end %>
-        <%= @batch.digitization_start ? @batch.digitization_start.strftime("%B %-d, %Y") : "Digitization Not Started" %>
+        <%= @digitization_start ? @digitization_start.strftime("%B %-d, %Y") : "Digitization Not Started" %>
       </td>
     </tr>
 </table>
