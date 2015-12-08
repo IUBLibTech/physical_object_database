@@ -6,6 +6,9 @@
     <%= link_to("Memnon Staging", controller: 'quality_control', action: 'staging_index') if policy(:quality_control).staging_index? %>
   </div>
   <div class="contextMenuItem">
+    <%= link_to("IU Staging", controller: 'quality_control', action: 'iu_staging_index') if policy(:quality_control).staging_index? %>
+  </div>
+  <div class="contextMenuItem">
   	<%= link_to("responses/transfers xml", transfers_index_response_path) %><%# responses controller does not use policy authorization %>
   </div>
 <% end %>

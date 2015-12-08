@@ -128,7 +128,7 @@ class PhysicalObject < ActiveRecord::Base
 
   # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by Memnon
   scope :memnon_unstaged_by_date_formats, lambda{ |date|
-    PhysicalObject.joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format)
+    PhysicalObject.joins(:digital_provenance).where("staging_requested = false").where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format)
   }
   # this scope grabs all unstaged physical objects of the specified format whose digital_start timestamp is with 24 hrs of the specified date
   # AND whose digitizing entity is Memnon
@@ -138,7 +138,7 @@ class PhysicalObject < ActiveRecord::Base
 
 
   # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by Memnon
-  scope :memnon_unstaged_by_date_formats, lambda{ |date|
+  scope :iu_unstaged_by_date_formats, lambda{ |date|
     PhysicalObject.joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format)
   }
   # This scope selects all unstaged physical objects of the specified format, whose digital_start timestamp is within 24hrs of the specified date
