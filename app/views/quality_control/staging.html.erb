@@ -1,5 +1,5 @@
 <%= render 'context_menu' %>
-<%= form_tag url_for(:controller => 'quality_control', :action => 'staging_index') do %>
+<%= form_tag url_for(:controller => 'quality_control', :action => @action) do %>
 	Date
 	<%= text_field_tag :date, params[:date] %>
 	<%= submit_tag "Filter Unstaged On Date" %>
@@ -16,7 +16,10 @@
 		<%= submit_tag "Stage Selected Objects" %>
 		<% @format_to_physical_objects.keys.each do |key| %>
 			<h2><%= key %> [<%= @format_to_physical_objects[key].size %> items]</h2>
-			<%= render 'physical_objects_list', physical_objects: @format_to_physical_objects[key], choice_header: "Stage", percent: (key == "LP" ? 0.02 : 0.1) %>
+			<%= render 'physical_objects_list',
+				physical_objects: @format_to_physical_objects[key],
+				choice_header: "Stage",
+				percent: (@d_entity == "IU" ? 1 : (key == "LP" ? 0.02 : 0.1) )%>
 		<% end %>
 	<% end %>
 </div>

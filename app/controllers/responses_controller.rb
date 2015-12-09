@@ -154,7 +154,7 @@ class ResponsesController < ActionController::Base
   def transfer_result
     po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
     unless po.nil?
-      po.update_attributes(staged: true)
+      po.update_attributes(staged: true, staging_requested: false)
       @success = true
     else
       @message = "Could not find physical object with mdpi_barcode: #{params[:mdpi_barcode]}"
