@@ -110,6 +110,39 @@ describe ResponsesController do
     end
   end
 
+  describe "#grouping" do
+    context "with a valid barcode" do
+      before(:each) { get :grouping, mdpi_barcode: barcoded_object.mdpi_barcode }
+      it "assigns @physical_object" do
+        expect(assigns(:physical_object)).to eq barcoded_object
+      end
+      it "returns success=true XML" do
+        expect(response.body).to match /<success.*true<\/success>/
+      end
+      it "returns data XML" do
+        expect(response.body).to match /<data>/
+        expect(response.body).to match /<group_identifier>#{barcoded_object.group_key.group_identifier}<\/group_identifier>/
+        expect(response.body).to match /<group_total>#{barcoded_object.group_key.group_total}<\/group_total>/
+        expect(response.body).to match /<physical_objects_count>#{barcoded_object.group_key.physical_objects_count}<\/physical_objects_count>/
+        expect(response.body).to match /<physical_objects>/
+        expect(response.body).to match /<physical_object>/
+        expect(response.body).to match /<group_position>#{barcoded_object.group_position}<\/group_position>/
+        expect(response.body).to match /<mdpi_barcode>#{barcoded_object.mdpi_barcode}<\/mdpi_barcode>/
+      end
+      it "returns a 200 status" do
+        expect(response).to have_http_status(200)
+      end
+    end
+    context "with a 0 barcode" do
+      before(:each) { get :grouping, mdpi_barcode: physical_object.mdpi_barcode }
+      include_examples "barcode 0"
+    end
+    context "with an unmatched barcode" do
+      before(:each) { get :grouping, mdpi_barcode: unmatched_barcode }
+      include_examples "barcode not found"
+    end
+  end
+
   describe "#notify" do
     before(:each) { post :notify, request_xml, content_type: 'application/xml' }
     let(:request_xml) { "<pod><data><message>#{message_text}</message></data></pod>" }
