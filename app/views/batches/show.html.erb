@@ -37,6 +37,7 @@
 				<tr class="header">
 			    <th>MDPI barcode</th>
 			    <th>Identifier</th>
+			    <th>Item Count</th>
 			    <th>Description</th>
 			    <th>Add</th>
 			  </tr>
@@ -49,6 +50,13 @@
 						</td>
 						<td>
 							<%= b.identifier %>
+						</td>
+						<td>
+							<% if b.physical_objects.any? %>
+							  <%= b.physical_objects.size %>
+							<% elsif b.boxes.any? %>
+							  <%= b.boxed_physical_objects.size %>
+							<% end %>
 						</td>
 						<td>
 							<%= b.description %>

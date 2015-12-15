@@ -61,6 +61,14 @@ describe SearchController do
         expect(assigns(:boxes)).to be_empty
       end
     end
+    context "matching on bin identifier" do
+      let(:term) { 'Test Bin' }
+      it "returns the matching bin, only" do
+        expect(assigns(:physical_objects)).to be_empty
+        expect(assigns(:bins)).to include bin
+        expect(assigns(:boxes)).to be_empty
+      end
+    end
   end
 
   describe "GET #advanced_search" do

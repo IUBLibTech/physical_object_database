@@ -1,12 +1,18 @@
 class QualityControlController < ApplicationController
 	before_action :set_header_title
 	before_action :set_staging, only: [:staging_index]
+	before_action :set_iu_staging, only: [:iu_staging_index]
 
 	def index
 		if params[:status]
 			@physical_objects = DigitalStatus.current_actionable_status(params[:status])
 			ActiveRecord::Associations::Preloader.new.preload(@physical_objects, [:unit, :digital_statuses])
 		end
+	end
+
+
+	def iu_staging_index
+		render "staging"
 	end
 
 	def staging_index
@@ -37,6 +43,7 @@ class QualityControlController < ApplicationController
 		render json: [@success, @msg]
 	end
 
+	# FIXME: I think this is only being referenced in spec tests now...
 	def decide
 		@ds = DigitalStatus.find(params[:id])
 		@ds.update_attributes(decided: params[:decided], decided_manually: true)
@@ -55,17 +62,34 @@ class QualityControlController < ApplicationController
 	end
 
 	def set_staging
+		@action = 'staging_index'
 		now = Time.now
 		if params[:date]
 			@date = params[:date].blank? ? Time.new(now.year, now.month, now.day) : DateTime.strptime(params[:date], "%m/%d/%Y")
 		else
 			@date = Time.new(now.year, now.month, now.day)
 		end
-
-		formats = PhysicalObject.unstaged_by_date_formats(@date)
+		@d_entity = "Memnon"
+		formats = PhysicalObject.memnon_unstaged_by_date_formats(@date)
 		@format_to_physical_objects = ActiveSupport::OrderedHash.new
 		formats.each do |format|
-			@format_to_physical_objects[format] = PhysicalObject.unstaged_by_date_by_format(@date, format)
+			@format_to_physical_objects[format] = PhysicalObject.memnon_unstaged_by_date_and_format(@date, format)
+		end
+	end
+
+	def set_iu_staging
+		@action = "iu_staging_index"
+		now = Time.now
+		if params[:date]
+			@date = params[:date].blank? ? Time.new(now.year, now.month, now.day) : DateTime.strptime(params[:date], "%m/%d/%Y")
+		else
+			@date = Time.new(now.year, now.month, now.day)
+		end
+		@d_entity = "IU"
+		formats = PhysicalObject.iu_unstaged_by_date_formats(@date)
+		@format_to_physical_objects = ActiveSupport::OrderedHash.new
+		formats.each do |format|
+			@format_to_physical_objects[format] = PhysicalObject.iu_unstaged_by_date_and_format(@date, format)
 		end
 	end
 

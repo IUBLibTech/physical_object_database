@@ -11,7 +11,9 @@ describe Batch do
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
   let(:open_reel) { FactoryGirl.create :physical_object, :open_reel, :barcoded, bin: bin }
   let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:other_binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
+  let(:other_boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
   describe "FactoryGirl" do
     it "provides a valid batch" do
@@ -37,6 +39,29 @@ describe Batch do
     end
   end
 
+  describe "has optional attributes" do
+    describe "format" do
+      it "can be nil" do
+        valid_batch.format = nil
+        expect(valid_batch).to be_valid
+      end
+      it "is automatically set by bin of physical objects" do
+        expect(batch.format).to be_nil
+        binned_object
+        batch.reload
+        expect(batch.format).not_to be_nil
+        expect(batch.format).to eq bin.format
+      end
+      it "is automatically set by bin of boxes" do
+        expect(batch.format).to be_nil
+        boxed_object
+        batch.reload
+        expect(batch.format).not_to be_nil
+        expect(batch.format).to eq box.format
+      end
+    end
+  end
+
   describe "has relationships:" do
     it "provides a physical object count" do
       expect(batch.physical_objects_count).to eq 0 
@@ -47,9 +72,9 @@ describe Batch do
       end
       it "resets bins workflow status to Sealed if destroyed" do
         expect(bin.workflow_status).to eq "Batched"
-	batch.destroy
-	bin.reload
-	expect(bin.workflow_status).to eq "Sealed"
+        batch.destroy
+        bin.reload
+        expect(bin.workflow_status).to eq "Sealed"
       end
     end
     it "can have workflow statuses" do
@@ -157,6 +182,112 @@ describe Batch do
     it "returns true for other status" do
       batch.current_workflow_status = "Assigned"
       expect(batch.packed_status?).to eq true
+    end
+  end
+
+  describe "#digitization_start" do
+    context "on a batch not persisted" do
+      it "returns nil" do
+        expect(valid_batch.digitization_start).to be_nil
+      end
+    end
+    context "on a batch with no objects" do
+      it "returns nil" do
+        expect(batch.digitization_start).to be_nil
+      end
+    end
+    context "on a batch with directly binned objects" do
+      before(:each) do
+        binned_object.digital_start = Time.now.in_time_zone.change(usec: 0)
+        binned_object.save!
+        other_binned_object.digital_start = Time.now.in_time_zone.change(usec: 0) - 1000
+        other_binned_object.save!
+      end
+      context "asking for the first (implicitly)" do
+        it "returns .digital_start of earliest object" do
+          expect(batch.digitization_start).not_to be_nil
+          expect(batch.digitization_start.in_time_zone.change(usec: 0)).to eq other_binned_object.digital_start.in_time_zone.change(usec: 0)
+        end
+      end
+      context "asking for the last (explicitly)" do
+        it "returns .digital_start of latest object" do
+          expect(batch.digitization_start(true)).not_to be_nil
+          expect(batch.digitization_start(true).in_time_zone.change(usec: 0)).to eq binned_object.digital_start.in_time_zone.change(usec: 0)
+        end
+      end
+    end
+    context "on a batch with boxed objects" do
+      before(:each) do
+        boxed_object.digital_start = Time.now.in_time_zone.change(usec: 0)
+        boxed_object.save!
+        other_boxed_object.digital_start = Time.now.in_time_zone.change(usec: 0) - 1000
+        other_boxed_object.save!
+      end
+      context "asking for the first (implicitly)" do
+        it "returns .digital_start of earliest object" do
+          expect(batch.digitization_start).not_to be_nil
+          expect(batch.digitization_start.in_time_zone.change(usec: 0)).to eq other_boxed_object.digital_start.in_time_zone.change(usec: 0)
+        end
+      end
+      context "asking for the last (explicitly)" do
+        it "returns .digital_start of latest object" do
+          expect(batch.digitization_start(true)).not_to be_nil
+          expect(batch.digitization_start(true).in_time_zone.change(usec: 0)).to eq boxed_object.digital_start.in_time_zone.change(usec: 0)
+        end
+      end
+    end
+  end
+
+  describe "#auto_accept" do
+    context "on a batch not persisted" do
+      it "returns nil" do
+        expect(valid_batch.auto_accept).to be_nil
+      end
+    end
+    context "on a batch with no objects" do
+      it "returns nil" do
+        expect(batch.auto_accept).to be_nil
+      end
+    end
+    context "on a batch with directly binned objects" do
+      before(:each) do
+        binned_object.digital_start = Time.now.in_time_zone.change(usec: 0)
+        binned_object.save!
+        other_binned_object.digital_start = Time.now.in_time_zone.change(usec: 0) - 1000
+        other_binned_object.save!
+      end
+      context "asking for the first (implicitly)" do
+        it "returns .digital_start + (auto_accept delay) of earliest object" do
+          expect(batch.auto_accept).not_to be_nil
+          expect(batch.auto_accept.in_time_zone.change(usec: 0)).to eq other_binned_object.auto_accept.in_time_zone.change(usec: 0)
+        end
+      end
+      context "asking for the last (explicitly)" do
+        it "returns .digital_start + (auto_accept delay) of latest object" do
+          expect(batch.digitization_start(true)).not_to be_nil
+          expect(batch.auto_accept(true).in_time_zone.change(usec: 0)).to eq binned_object.auto_accept.in_time_zone.change(usec: 0)
+        end
+      end
+    end
+    context "on a batch with boxed objects" do
+      before(:each) do
+        boxed_object.digital_start = Time.now.in_time_zone.change(usec: 0)
+        boxed_object.save!
+        other_boxed_object.digital_start = Time.now.in_time_zone.change(usec: 0) - 1000
+        other_boxed_object.save!
+      end
+      context "asking for the first (implicitly)" do
+        it "returns .auto_accept of earliest object" do
+          expect(batch.auto_accept).not_to be_nil
+          expect(batch.auto_accept.in_time_zone.change(usec: 0)).to eq other_boxed_object.auto_accept.in_time_zone.change(usec: 0)
+        end
+      end
+      context "asking for the last (explicitly)" do
+        it "returns .digital_start + (auto_accept delay) of latest object" do
+          expect(batch.digitization_start(true)).not_to be_nil
+          expect(batch.auto_accept(true).in_time_zone.change(usec: 0)).to eq boxed_object.auto_accept.in_time_zone.change(usec: 0)
+        end
+      end
     end
   end
 

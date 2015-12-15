@@ -42,13 +42,13 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Tape Fluxivity (nWb/m)</th>
+			<th>Reference Fluxivity (nWb/m)</th>
 			<td>
 				<%= f.text_field :tape_fluxivity, readonly: !@edit_mode %>
 			</td>
 		</tr>
 		<tr>
-			<th>Volume Units</th>
+			<th>Gain</th>
 			<td>
 				<%= f.text_field :volume_units, readonly: !@edit_mode %>
 			</td>
@@ -56,13 +56,13 @@
 		<tr>
 			<th>Analog Output Voltage (dBu)</th>
 			<td>
-				<%= f.text_field :analog_output_voltage, readonly: !@edit_mode %>
+				<%= f.text_field :analog_output_voltage, readonly: true %>
 			</td>
 		</tr>
 		<tr>
 			<th>Peak (dBfs)</th>
 			<td>
-				<%= f.text_field :peak, readonly: !@edit_mode %>
+				<%= f.text_field :peak, readonly: true %>
 			</td>
 		</tr>
 		<tr>

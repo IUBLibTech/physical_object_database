@@ -7,6 +7,7 @@ describe Bin do
   let(:bin) { FactoryGirl.create :bin, batch: batch }
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_bin) { FactoryGirl.build :bin }
+  let(:valid_batch) { FactoryGirl.build :batch }
   let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
@@ -38,16 +39,61 @@ describe Bin do
       valid_bin.description = nil
       expect(valid_bin).to be_valid
     end
+    describe "format" do
+      it "can be nil" do
+        valid_bin.format = nil
+        expect(valid_bin).to be_valid
+      end
+      it "is automatically set by contained physical object" do
+        expect(bin.format).to be_blank
+        binned_object
+        bin.reload
+        expect(bin.format).not_to be_blank
+        expect(bin.format).to eq binned_object.format
+      end
+      it "is automatically set by contained box" do
+        expect(bin.format).to be_blank
+        boxed_object
+        bin.reload
+        expect(bin.format).not_to be_blank
+        expect(bin.format).to eq box.format
+      end
+    end
   end
 
   describe "has relationships:" do
     it "can belong to a batch" do
+      binned_object
       expect(batch.bins.where(id: bin.id).first).to eq(bin)
       expect(bin.batch).to eq batch
       bin.batch = nil
       bin.save
       expect(bin.batch).to eq nil
       expect(batch.bins.where(id: bin.id).first).to be_nil
+    end
+    it "can belong to a batch with unspecified format" do
+      valid_batch.format = nil
+      valid_bin.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.batch = valid_batch
+      expect(valid_bin).to be_valid
+    end
+    it "can belong to a batch with matching format" do
+      valid_batch.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.batch = valid_batch
+      expect(valid_bin).to be_valid
+    end
+    it "cannot belong to a format-specific batch if self.format is blank" do
+      valid_batch.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.format = ""
+      valid_bin.batch = valid_batch
+      expect(valid_bin).not_to be_valid
+    end
+    it "cannot belong to a batch with mismatched format" do
+      valid_batch.format = TechnicalMetadatumModule.bin_formats.first
+      valid_bin.format = TechnicalMetadatumModule.bin_formats.last
+      valid_bin.batch = valid_batch
+      expect(valid_bin).not_to be_valid
     end
     it "can belong to a picklist specification" do
       expect(bin.picklist_specification).to be_nil

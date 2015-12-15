@@ -15,6 +15,7 @@ class PhysicalObject < ActiveRecord::Base
   before_validation :ensure_group_key
   before_save :assign_inferred_workflow_status
   after_save :resolve_group_position
+  after_save :set_container_format
   after_update :destroy_empty_group
   after_destroy :destroy_empty_group
 
@@ -103,38 +104,49 @@ class PhysicalObject < ActiveRecord::Base
     po.physical_object_query(false)
   }
 
-  scope :unstaged_by_date, lambda { |date| 
-    PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
-      ON digital_statuses.physical_object_id = ds2.physical_object_id
-      AND digital_statuses.state = ds2.state
-      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date))
-
-  }
-
-  scope :unstaged_by_date_formats, lambda { |date|
-    PhysicalObject.uniq.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
-      ON digital_statuses.physical_object_id = ds2.physical_object_id
-      AND digital_statuses.state = ds2.state
-      AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).pluck(:format)
-  }
-
-  # deprecated because the joins are no longer necessary
-  # scope :unstaged_by_date_by_format, lambda { |date, format| 
+  # no longer used
+  # scope :unstaged_by_date, lambda { |date|
   #   PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
   #     ON digital_statuses.physical_object_id = ds2.physical_object_id
   #     AND digital_statuses.state = ds2.state
-  #     AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, format: format, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date)).eager_load(:digital_provenance).order("RAND()")
+  #     AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date))
+  #
   # }
+  # No longer used
+  # scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
+  # scope :staged, lambda { where(staged: true) }
 
+  # This scope grabs all formats, for all unstaged physical objects whose digitization_start timestamp is within 24 hrs of the specified date
+  scope :unstaged_by_date_formats, lambda { |date|
+    PhysicalObject.where(staging_requested: false).where(datesql(date)).pluck(:format)
+  }
 
+  # this scope grabs all physical objects of the specified format whose digital_start timestamp is within 24 hrs of the specified date
   scope :unstaged_by_date_by_format, lambda { |date, format|
     PhysicalObject.where(staging_requested: false, format: format).where(datesql(date)).order("RAND()")
   }
 
-  scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
-  scope :staged, lambda { where(staged: true) }
+  # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by Memnon
+  scope :memnon_unstaged_by_date_formats, lambda{ |date|
+    PhysicalObject.joins(:digital_provenance).where("staging_requested = false").where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format)
+  }
+  # this scope grabs all unstaged physical objects of the specified format whose digital_start timestamp is with 24 hrs of the specified date
+  # AND whose digitizing entity is Memnon
+  scope :memnon_unstaged_by_date_and_format, lambda { |date, format|
+    PhysicalObject.joins(:digital_provenance).where(format: format,staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'")
+  }
 
-  
+
+  # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by Memnon
+  scope :iu_unstaged_by_date_formats, lambda{ |date|
+    PhysicalObject.joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format)
+  }
+  # This scope selects all unstaged physical objects of the specified format, whose digital_start timestamp is within 24hrs of the specified date
+  # AND whose digitizing entity
+  scope :iu_unstaged_by_date_and_format, lambda { |date, format|
+    PhysicalObject.joins(:digital_provenance).where(format: format, staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'")
+  }
+
 
   attr_accessor :generation_values
   def generation_values
@@ -166,6 +178,10 @@ class PhysicalObject < ActiveRecord::Base
   def group_total
     return 1 if self.group_key.nil?
     self.group_key.group_total
+  end
+
+  def auto_accept
+    digital_start ? (digital_start + auto_accept_days.days) : nil
   end
 
   def carrier_stream_index
@@ -404,6 +420,14 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
+  def set_container_format
+    if box && box.format.nil?
+      box.format = format; box.save
+    elsif bin && bin.format.nil?
+      bin.format = format; bin.save
+    end
+  end
+
   def display_date_billed
     date_billed.in_time_zone.strftime("%m/%d/%Y")
   end
@@ -449,8 +473,8 @@ class PhysicalObject < ActiveRecord::Base
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a bin."
       elsif bin.boxes.any?
         errors[:base] << "This bin (#{bin.mdpi_barcode}) contains boxes.  You may only assign a physical object to a bin containing physical objects."
-      elsif bin.physical_objects.any? && bin.physical_objects.first.format != self.format
-        errors[:base] << "This bin (#{bin.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a bin containing the matching format (#{self.format})." 
+      elsif !bin.format.blank? && bin.format != format
+        errors[:base] << "This bin (#{bin.mdpi_barcode}) contains physical objects of a different format.  You may only assign a physical object to a bin containing the matching format (#{format})." 
       end
     end
   end
@@ -462,8 +486,8 @@ class PhysicalObject < ActiveRecord::Base
 assigned to a box."
       elsif !self.format.in? TechnicalMetadatumModule.box_formats
         errors[:base] << "Physical objects of format #{self.format} cannot be assigned to a box."
-      elsif box.physical_objects.any? && box.physical_objects.first.format != self.format
-        errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format (#{box.physical_objects.first.format}).  You may only assign a physical object to a box containing the matching format (#{self.format})."
+      elsif !box.format.blank? && box.format != format
+        errors[:base] << "This box (#{box.mdpi_barcode}) contains physical objects of a different format (#{box.format}).  You may only assign a physical object to a box containing the matching format (#{format})."
       end
     end
   end

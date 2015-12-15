@@ -28,6 +28,12 @@
     </td>
   </tr>
   <tr>
+    <th>Format</th>
+    <td>
+      <%= f.select(:format, TechnicalMetadatumModule.tm_formats_hash, {include_blank: "(undefined)"}, disabled: (!@edit_mode || f.object.bins.any?) ) %>
+    </td>
+  </tr>
+  <tr>
     <th>Objects Count</th>
     <td><%= @batch.physical_objects_count %></td>
   </tr>
@@ -54,12 +60,12 @@
   <%# if @batch.current_workflow_status = 'Interim Storage' %>
     <tr>
       <th>Digitization Start (Auto passed if red)</th>
-      <% if @batch.digitization_start and @batch.digitization_start + @days < Time.now %>
-        <td class="red">
-      <% else %>
-        <td class="green">
-      <% end %>
-        <%= @batch.digitization_start ? @batch.digitization_start.strftime("%B %-d, %Y") : "Digitization Not Started" %>
+        <% if @digitization_start && (@auto_accept < Time.now) %>
+          <td class="red">
+        <% else %>
+          <td class="green">
+        <% end %>
+        <%= @digitization_start ? @digitization_start.strftime("%B %-d, %Y") : "Digitization Not Started" %>
       </td>
     </tr>
 </table>

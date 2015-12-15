@@ -10,7 +10,7 @@ class ResponsesController < ActionController::Base
 
   before_action :authenticate
 
-  before_action :set_physical_object, only: [:metadata, :full_metadata, :pull_state, :push_status, :push_memnon_qc]
+  before_action :set_physical_object, only: [:metadata, :full_metadata, :grouping, :pull_state, :push_status, :push_memnon_qc]
   before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
@@ -29,6 +29,15 @@ class ResponsesController < ActionController::Base
       @success = true
     end
     render template: 'responses/full_metadata.xml.builder', layout: false, status: @status
+  end
+
+  # GET /responses/objects/:mdpi_barcode/grouping
+  def grouping
+    if @physical_object
+      @status = 200
+      @success = true
+    end
+    render template: 'responses/grouping.xml.builder', layout: false, status: @status
   end
 
   # POST /responses/notify
@@ -154,7 +163,7 @@ class ResponsesController < ActionController::Base
   def transfer_result
     po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
     unless po.nil?
-      po.update_attributes(staged: true)
+      po.update_attributes(staged: true, staging_requested: false)
       @success = true
     else
       @message = "Could not find physical object with mdpi_barcode: #{params[:mdpi_barcode]}"

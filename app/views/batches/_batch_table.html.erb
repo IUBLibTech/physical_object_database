@@ -1,6 +1,7 @@
 <table>
 	<tr>
 		<th>Batch Identifier</th>
+		<th>Format</th>
 		<th>Description</th>
 		<th>Destination</th>
 		<th>Objects Count</th>
@@ -11,10 +12,22 @@
 	<% @batches.each do |b| %>
 		<tr class=<%= count.odd? ? "odd" : "even" %> >
 			<td><%= b.identifier %></td>
+			<td><%= b.format %></td>
 			<td><%= b.description %></td>
 			<td><%= b.destination %></td>
 			<td><%= b.physical_objects_count %></td>
-			<td><%= b.current_workflow_status %></td>
+			<td>
+        <%= b.current_workflow_status %>
+        <% if b.current_workflow_status == "Interim Storage" %>
+          <br/>
+          <% auto_accept = b.auto_accept(true) %>
+          <% if auto_accept %>
+            <em class="<%= auto_accept < Time.now ? 'red' : 'green' %>">(<%= auto_accept.strftime("%B %-d %Y") %>)</em>
+          <% else %>
+            <em>(Digitization not started)</em>
+          <% end %>
+        <% end %>
+      </td>
 			<td>
 				<%= link_to("Show", {controller: 'batches',:action => 'show', :id => b.id}, :class => 'action show') if policy(b).show? %>
 		    <%= link_to("Edit", {controller: 'batches', :action => 'edit', :id => b.id}, :class => 'action edit') if policy(b).edit? %>

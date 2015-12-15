@@ -26,8 +26,8 @@ class DigitalFileProvenance < ActiveRecord::Base
         # prod for audio production master
         # mezz for video mezzanine file
         # access for access file
-        # pres-int for preservation master-intermediate files
-	FILE_USE_VALUES = [ 'pres', 'prod', 'mezz', 'access', 'pres-int']
+        # presInt for preservation master-intermediate files
+	FILE_USE_VALUES = [ 'pres', 'prod', 'mezz', 'access', 'presInt']
 
 	def display_date_digitized
 		if date_digitized.blank?
@@ -49,6 +49,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 		self.tape_fluxivity ||= 250
 		self.analog_output_voltage ||= "+4"
 		self.peak ||= -18
+		self.volume_units ||= 0
 	end
 
 	def filename_validation

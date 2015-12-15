@@ -71,4 +71,9 @@ module ApplicationHelper
 			return "<div id='environment'>#{Rails.env.capitalize} Environment</div>".html_safe
 		end
 	end
+
+  def hashify(array)
+    Hash[array.map{ |v| [v.to_s,v.to_s] }]
+  end
+
 end

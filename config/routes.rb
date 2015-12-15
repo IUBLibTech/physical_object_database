@@ -91,6 +91,7 @@ Pod::Application.routes.draw do
 
   get 'responses/objects/:mdpi_barcode/metadata', to: 'responses#metadata', as: 'metadata_response'
   get 'responses/objects/:mdpi_barcode/metadata/full', to: 'responses#full_metadata', as: 'full_metadata_response'
+  get 'responses/objects/:mdpi_barcode/grouping', to: 'responses#grouping', as: 'grouping_response'
   post 'responses/notify', to: 'responses#notify', as: 'notify_response' 
   post 'responses/objects/:mdpi_barcode/state', to: 'responses#push_status', as: 'push_status_response'
   get 'responses/objects/:mdpi_barcode/state', to: "responses#pull_state", as: "pull_state_response"
@@ -108,8 +109,13 @@ Pod::Application.routes.draw do
   get 'quality_control/statuses/:status', to: "quality_control#index", as: "quality_control_status"
   get "quality_control/", to: "quality_control#index", as: "quality_control_index"
   patch "quality_control/decide/:id", to: "quality_control#decide", as: "quality_control_decide"
+
   get 'quality_control/staging', to: "quality_control#staging_index", as: 'quality_control_staging_index_path'
   post 'quality_control/staging', to: 'quality_control#staging_post', as: 'quality_control_staging_post_path'
+
+  get 'qualit_control/iu_staging', to: 'quality_control#iu_staging_index', as: "quality_control_iu_staging_index_path"
+  post 'qualit_control/iu_staging', to: 'quality_control#iu_staging_index', as: "quality_control_iu_staging_post_path"
+
   post 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage'
   get 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage_get'
   get 'quality_control/auto_accept', to: 'quality_control#auto_accept', as: 'quality_control_auto_accept'

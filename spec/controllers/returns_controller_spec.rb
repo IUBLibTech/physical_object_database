@@ -6,8 +6,8 @@ describe ReturnsController do
   let(:batch) { FactoryGirl.create :batch, identifier: "Created Batch" }
   let(:created_batch) { FactoryGirl.create :batch, identifier: "Returned Batch" }
   let(:bin) { FactoryGirl.create :bin, batch: batch }
-  let(:other_bin) { FactoryGirl.create :bin, batch: batch, identifier: "other bin" }
-  let(:box) { FactoryGirl.create :box, bin: bin }
+  let(:other_bin) { FactoryGirl.create :bin, batch: batch, identifier: "other bin", format: batch.format }
+  let(:box) { FactoryGirl.create :box, bin: bin, format: bin.format }
   let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
@@ -170,10 +170,13 @@ describe ReturnsController do
         end
         context "physical object not associated to bin" do
           before(:each) do
-            binned_object.bin = nil
-            binned_object.save
-            box.bin = nil
-            box.save
+            if target_object.bin
+              target_object.bin = nil
+              target_object.save!
+            elsif target_object.box
+              target_object.box.bin = nil
+              target_object.box.save!
+            end
 	    target_object.reload
 	    expect(target_object.container_bin).to be_nil
             patch_action

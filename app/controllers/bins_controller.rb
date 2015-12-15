@@ -6,6 +6,9 @@ class BinsController < ApplicationController
 
 	def index
 		@bins = Bin.eager_load([:physical_objects, :boxes]).all
+    @bins = @bins.where(workflow_status: params[:workflow_status]) unless params[:workflow_status].blank?
+    @bins = @bins.where(format: params[:format]) unless params[:format].blank?
+    @boxes = @boxes.where(format: params[:format]) unless params[:format].blank?
 	end
 
 	def new
@@ -145,6 +148,7 @@ class BinsController < ApplicationController
 	end
 
 	def show_boxes
+    @boxes = @boxes.where(format: @bin.format)
 		if @bin.packed_status?
 		  flash[:warning] = Bin.packed_status_message
 		  redirect_to action: :show
@@ -188,7 +192,7 @@ class BinsController < ApplicationController
 	end
 
 	def set_unassigned_boxes
-		@boxes = Box.where(bin_id: [0, nil]).order(full: :desc)
+		@boxes = Box.eager_load(:physical_objects).where(bin_id: [0, nil]).order(full: :desc)
 	end
 
 	def bin_index(bins, bin_id)
@@ -203,7 +207,7 @@ class BinsController < ApplicationController
 
 	def bin_params
 		params.require(:bin).permit(:mdpi_barcode, :identifier, :description, :destination, :batch, :batch_id, :spreadsheet, 
-			:spreadsheet_id, :current_workflow_status, 
+			:spreadsheet_id, :current_workflow_status, :format,
 			condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :active, :user, :_destroy])
 
 	end
