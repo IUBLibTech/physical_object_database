@@ -18,7 +18,7 @@ class BetacamTm < ActiveRecord::Base
   PACK_DEFORMATION_VALUES = hashify ["", "None", "Minor", "Moderate", "Severe"]
   CASSETTE_SIZE_VALUES = hashify ["", "small", "large"]
   RECORDING_STANDARD_VALUES = hashify ["", "NTSC", "PAL", "SECAM", "Unknown"]
-  FORMAT_DURATION_VALUES = hashify ["", 90, 60, 30, 20, 10, 5 ]
+  FORMAT_DURATION_VALUES = hashify ["", 5, 6, 10, 12, 20, 22, 30, 32, 40, 60, 62, 64, 90, 94, 124, 184, 194]
   IMAGE_FORMAT_VALUES = hashify ["", "4:3", "16:9", "Unknown"]
   # TM Boolean fieldsets
   PRESERVATION_PROBLEM_FIELDS = [
