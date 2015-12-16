@@ -23,7 +23,8 @@ class InvoiceController < ApplicationController
 
 	def failed_message
 		@mis = MemnonInvoiceSubmission.find(params[:id])
-		render(partial: "invoice/failures")
+		if @mis.
+		render(partial: "invoice/failures_by_row")
 	end
 	
 
