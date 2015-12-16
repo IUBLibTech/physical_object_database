@@ -50,7 +50,8 @@ class AnalogSoundDiscTm < ActiveRecord::Base
     "Diameter in inches" => :diameter,
     "Recording type" => :groove_orientation,
     "Groove type" => :groove_size,
-    "Playback speed" => :speed
+    "Playback speed" => :speed,
+    "Equalization" => :equalization
   }
   include TechnicalMetadatumModule
   include YearModule
