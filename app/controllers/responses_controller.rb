@@ -200,6 +200,34 @@ class ResponsesController < ActionController::Base
     render template: "responses/notify.xml.builder", layout: false, status: 200
   end
 
+  def avalon_url
+    gk = GroupKey.find(params[:group_key_id])
+    unless gk.nil?
+      if request.post?
+        xml = request.body.read
+        doc = Nokogiri::XML(xml).remove_namespaces!
+        url = doc.css("pod data avalonUrl").first.content
+        begin
+          gk.update_attributes!(avalon_url: url)
+          @success = true
+          @message = "Successfully set avalon url for Group Key: #{gk.group_identifier} to: #{gk.avalon_url}"
+        rescue => e
+          o = e.message << e.backtrace.join("\n")
+          #puts o
+          @success = false
+          @message = "Something went wrong trying to set the avalon url: \n#{o}"
+        end
+      else
+        @success = true
+        @message = gk.avalon_url.blank? ? "No url set" : gk.avalon_url
+      end
+    else
+      @success = false
+      @message = "Could not find GroupKey with identifier: #{params[:group_key_id]}"
+    end
+    render template: "responses/notify.xml.builder"
+  end
+
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?
