@@ -10,7 +10,7 @@ class ResponsesController < ActionController::Base
 
   before_action :authenticate
 
-  before_action :set_physical_object, only: [:metadata, :full_metadata, :grouping, :pull_state, :push_status, :push_memnon_qc]
+  before_action :set_physical_object, only: [:metadata, :full_metadata, :grouping, :pull_state, :push_status, :push_memnon_qc, :digitizing_entity]
   before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
@@ -89,18 +89,27 @@ class ResponsesController < ActionController::Base
       doc = Nokogiri::XML(xml).remove_namespaces!
       entity = doc.css("IU Carrier Parts DigitizingEntity").first.content
       @po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first
-      unless entity == "Memnon Archiving Services Inc"
-        @success = true
-        @message = "Non-memnon xml, ignoring."
-      else
+      if entity == DigitalProvenance::MEMNON_DIGITIZING_ENTITY
         unless @po.nil?
           parse_qc_xml(@po, xml, doc)
           @success = true
-          @message = "Saved memnon digiprov xml for physical object: #{@po.mdpi_barcode}" 
+          @message = "Saved memnon digiprov xml for physical object: #{@po.mdpi_barcode}"
         else
           @success = false
           @message = "Could not find physical object: #{params[:mdpi_barcode]}"
         end
+      elsif entity == DigitalProvenance::IU_DIGITIZING_ENTITY
+        unless @po.nil?
+          @po.digital_provenance.update_attributes!(digitizing_entity: DigitalProvenance::IU_DIGITIZING_ENTITY)
+          @success = true
+          @message = "Set digitizing entity for physical object: #{@po.mdpi_barcode}, to #{DigitalProvenance::IU_DIGITIZING_ENTITY}. DigiProv was not parsed."
+        else
+          @success = false
+          @message = "Could not find physical object: #{params[:mdpi_barcode]}"
+        end
+      else
+        @success = false
+        @message = "Unknown digitizing entity: #{entity}"
       end
     rescue => e
       o = e.message << e.backtrace.join("\n")
@@ -198,6 +207,16 @@ class ResponsesController < ActionController::Base
     @success = !(unit.nil?)
     @message = unit.nil? ? "Unknown unit abbreviation: #{params[:abbreviation]}" : unit.name
     render template: "responses/notify.xml.builder", layout: false, status: 200
+  end
+
+  def digitizing_entity
+    @success = ! @physical_object.nil?
+    if @success
+      @message = @physical_object.digital_provenance.digitizing_entity.nil? ? "Digitizing entity not set" : @physical_object.digital_provenance.digitizing_entity
+    else
+      @message = "Unknown physical object: #{params[:mdpi_barcode]}"
+    end
+    render template: "responses/notify.xml.builder"
   end
 
   def avalon_url

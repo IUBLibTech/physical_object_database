@@ -668,4 +668,17 @@ describe ResponsesController do
 
   end
 
+  describe "digitizing entity" do
+    let(:po) { FactoryGirl.create(:physical_object, :cdr) }
+
+    before(:each) do
+      po.digital_provenance.update_attributes(digitizing_entity: DigitalProvenance::MEMNON_DIGITIZING_ENTITY)
+      po.save
+      get :digitizing_entity, mdpi_barcode: po.mdpi_barcode
+    end
+    it "returns digitizing entity on valid record" do
+      expect(response.body).to match "<success>true"
+      expect(repsonse.body).to match "<message>#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}"
+    end
+  end
 end

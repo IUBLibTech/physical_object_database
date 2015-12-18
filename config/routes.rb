@@ -107,6 +107,7 @@ Pod::Application.routes.draw do
   get 'responses/packager/units/:abbreviation', to: "responses#unit_full_name", as: "unit_full_name"
   post "responses/objects/avalon_url/:group_key_id", to: "responses#avalon_url", as: "push_avalon_url"
   get "responses/objects/avalon_url/:group_key_id", to: "responses#avalon_url", as: "pull_avalon_url"
+  get "responses/objects/digitizing_entity/:mdpi_barcode", to: "responses#digitizing_entity", as: "pull_digitizing_entity"
 
   get 'quality_control/statuses/:status', to: "quality_control#index", as: "quality_control_status"
   get "quality_control/", to: "quality_control#index", as: "quality_control_index"
