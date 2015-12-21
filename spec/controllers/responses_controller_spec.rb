@@ -410,7 +410,7 @@ describe ResponsesController do
     before(:each) do
       po_requested.memnon_qc_completed = false
       po_requested.digital_provenance.digitizing_entity = nil
-      po_requested.save
+      po_requested.save!
       post :push_memnon_qc, memnon_xml, mdpi_barcode: po_requested.mdpi_barcode, content_type: 'application/xml'
     end
 
@@ -669,7 +669,7 @@ describe ResponsesController do
   end
 
   describe "digitizing entity" do
-    let(:po) { FactoryGirl.create(:physical_object, :cdr) }
+    let(:po) { FactoryGirl.create(:physical_object, :cdr, :barcoded) }
 
     before(:each) do
       po.digital_provenance.update_attributes(digitizing_entity: DigitalProvenance::MEMNON_DIGITIZING_ENTITY)
@@ -678,7 +678,7 @@ describe ResponsesController do
     end
     it "returns digitizing entity on valid record" do
       expect(response.body).to match "<success>true"
-      expect(repsonse.body).to match "<message>#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}"
+      expect(response.body).to match "<message>#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}"
     end
   end
 end
