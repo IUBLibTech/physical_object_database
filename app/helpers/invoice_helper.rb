@@ -20,9 +20,11 @@ module InvoiceHelper
 			xlsx = Roo::Excelx.new(upload.tempfile.path, file_warning: :ignore)
 			xlsx.default_sheet = xlsx.sheets[0]
 
+			time = Time.now
+
 			headers = Hash.new
 			# items that can be potentially billed
-			@billable = Hash.new
+			@billable = Array.new
 			# a set containing all preservation master filenames to determine in something is being double billed
 			@preservation_files = Set.new
 			# the rows that have problems and the problem with the row formatted: "row number: problem"
@@ -49,7 +51,7 @@ module InvoiceHelper
 				pres_filename = xlsx.row(row)[headers['Preservation master File name']]
 				po = PhysicalObject.where(mdpi_barcode: barcode).first
 				problem = ""
-				problem << "bad barcode [#barcode]" if po.nil?
+				problem << "bad barcode [#{barcode}]" if po.nil?
 				problem << "missing barcode, " if barcode.blank?
 				problem << "missing preservation master filename, " if pres_filename.blank?
 				problem << "duplicate preservation master filename, " if @preservation_files.add?(pres_filename).nil?
@@ -59,7 +61,11 @@ module InvoiceHelper
 				unless po.nil?
 					problem << "not on SDA" if po.digital_start.nil?
 				end
-				@problems_by_row << "row #{row}: #{problem}" if problem.length > 0
+				if problem.length > 0
+					@problems_by_row << "row #{row}: #{problem}" if problem.length > 0
+ 				else
+					@billable << barcode
+				end
 			end
 			puts "Problems checked"
 			mis.update_attributes(problems_by_row: @problems_by_row)

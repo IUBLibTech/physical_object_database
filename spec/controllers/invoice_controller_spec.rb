@@ -17,7 +17,7 @@ RSpec.describe InvoiceController, type: :controller do
 		good_po.reload
 		expect(good_po.billed).to be false
 		@good = fixture_file_upload("Memnon Good.xlsx")
-		InvoiceHelper.process(@good)
+		InvoiceHelper.process_rows(@good)
 		mis = MemnonInvoiceSubmission.last
 		expect(mis.filename).to eq "Memnon Good.xlsx"
 		expect(mis.successful_validation).to eq true
@@ -26,43 +26,23 @@ RSpec.describe InvoiceController, type: :controller do
 		expect(good_po.spread_sheet_filename).to eq "Memnon Good.xlsx"
 	end
 
-	it "fails an invoice with missing barcode" do
-		@missing = fixture_file_upload("Memnon Missing Barcode.xlsx")
-		InvoiceHelper.process(@missing)
-		mis = MemnonInvoiceSubmission.last
-		expect(mis.filename).to eq "Memnon Missing Barcode.xlsx"
-		expect(mis.not_found.size).to eq 1
-		expect(mis.successful_validation).to eq false
-	end
+	describe "fails a bad invoice:" do
+		shared_examples "failure case" do |reason, filename, error_text|
+                  specify description do
+                    @upload = fixture_file_upload(filename)
+                    InvoiceHelper.process_rows(@upload)
+                    mis = MemnonInvoiceSubmission.last
+                    expect(mis.filename).to eq filename
+                    expect(mis.problems_by_row).not_to be_empty
+                    expect(mis.problems_by_row.last).to match error_text
+                    expect(mis.successful_validation).to eq false
+                  end
+		end
+		include_examples "failure case", "with missing barcode", "Memnon Missing Barcode.xlsx", 'bad barcode'
+		include_examples "failure case", "with barcodes not yet on SDA", "Memnon Not on SDA.xlsx", 'not on SDA'
+		include_examples "failure case", "that contains an already billed physical object", "Memnon Already Billed.xlsx", 'already billed'
+		include_examples "failure case", "with duplicate preservation master filenames", "Memnon Duplicate Pres File.xlsx", 'duplicate preservation'
 
-	it "fails an invoice with barcodes not yet on SDA" do
-		@sda = fixture_file_upload("Memnon Not on SDA.xlsx")
-		InvoiceHelper.process(@sda)
-		mis = MemnonInvoiceSubmission.last
-		expect(mis.filename).to eq "Memnon Not on SDA.xlsx"
-		expect(mis.not_on_sda.size).to eq 1
-		expect(mis.successful_validation).to eq false
 	end
-
-	it "fails an invoice that contains an already billed physical object" do
-		@already = fixture_file_upload("Memnon Already Billed.xlsx")
-		InvoiceHelper.process(@already)
-		mis = MemnonInvoiceSubmission.last
-		expect(mis.filename).to eq "Memnon Already Billed.xlsx"
-		expect(mis.already_billed.size).to eq 1
-		expect(mis.successful_validation).to eq false
-		billed_po.reload
-		expect(billed_po.spread_sheet_filename).to_not eq "Memnon Already Billed.xlsx"
-	end
-
-	it "fails with duplicate preservation master filenames" do
-		@dup = fixture_file_upload("Memnon Duplicate Pres File.xlsx")
-		InvoiceHelper.process(@dup)
-		mis = MemnonInvoiceSubmission.last
-		expect(mis.filename).to eq "Memnon Duplicate Pres File.xlsx"
-		expect(mis.preservation_file_copies.size).to eq 1
-		expect(mis.successful_validation).to eq false
-	end
-
 
 end

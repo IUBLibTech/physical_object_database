@@ -3,11 +3,19 @@
 	<thead>
 		<th>Row: Problem(s)</th>
 	</thead>
-	<% @mis.problems_by_row.each do |p| %>
-	<tr>
-		<td colspan="2">
-			<%= p %>
-		</td>
-	</tr>
+	<% if @mis.problems_by_row %>
+		<% @mis.problems_by_row.each do |p| %>
+		<tr>
+			<td colspan="2">
+				<%= p %>
+			</td>
+		</tr>
+		<% end %>
+	<% else %>
+		<tr>
+			<td colspan="2">
+				No row-by-row information on invoice problems is available.  This is the case for invoices submitted before the 1.43.1 release.
+			</td>
+		</tr>
 	<% end %>
 </table>
