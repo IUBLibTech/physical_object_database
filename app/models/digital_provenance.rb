@@ -4,10 +4,10 @@ class DigitalProvenance < ActiveRecord::Base
 	accepts_nested_attributes_for :digital_file_provenances, allow_destroy: true
 
 	IU_DIGITIZING_ENTITY = "IU Media Digitization Studios"
-	MEMNON_DIGITIZING_ENTITY = "Memnon Archiving Service"
+	MEMNON_DIGITIZING_ENTITY = "Memnon Archiving Services Inc"
 	DIGITIZING_ENTITY_VALUES = {
 	  "IU Media Digitization Studios" => "IU Media Digitization Studios",
-	  "Memnon Archiving Service" => "Memnon Archiving Service" }
+	  "Memnon Archiving Services Inc" => "Memnon Archiving Services Inc" }
 	validates :physical_object, presence: true
 	#validates :digitizing_entity, presence: true, inclusion: { in: DIGITIZING_ENTITY_VALUES.keys }
 	#validates :duration, presence: true
