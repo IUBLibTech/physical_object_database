@@ -23,7 +23,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
   MATERIAL_VALUES = hashify ['Shellac', 'Plastic', 'N/A']
   SUBSTRATE_VALUES = hashify ["Aluminum", "Glass", "Fiber", "Steel", "Zinc", "N/A"]
   COATING_VALUES = hashify ['None', 'Lacquer', 'N/A']
-  EQUALIZATION_VALUES = hashify ['', 'RIAA', 'Other', 'Unknown']
+  EQUALIZATION_VALUES = hashify ['', 'RIAA', 'ffrr LP 1953', 'CCIR', 'NAB', 'FLAT', 'US MID 30', 'WESTREX', 'HMW', 'ffrr 1949', 'Early DECCA', 'COLUMBIA', 'BSI', 'Other', 'Unknown']
   SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
   # (subtype is hidden in form)
   SUBTYPE_VALUES = hashify ['LP', 'Lacquer Disc', '45', '78', 'Other Analog Sound Disc']
@@ -50,7 +50,8 @@ class AnalogSoundDiscTm < ActiveRecord::Base
     "Diameter in inches" => :diameter,
     "Recording type" => :groove_orientation,
     "Groove type" => :groove_size,
-    "Playback speed" => :speed
+    "Playback speed" => :speed,
+    "Equalization" => :equalization
   }
   include TechnicalMetadatumModule
   include YearModule

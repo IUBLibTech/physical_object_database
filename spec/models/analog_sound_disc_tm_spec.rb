@@ -76,7 +76,7 @@ describe AnalogSoundDiscTm do
 
   describe "manifest export" do
     specify "has desired headers" do
-      expect(analog_sound_disc_tm.manifest_headers).to eq ["Year", "Label", "Diameter in inches", "Recording type", "Groove type", "Playback speed"]
+      expect(analog_sound_disc_tm.manifest_headers).to eq ["Year", "Label", "Diameter in inches", "Recording type", "Groove type", "Playback speed", "Equalization"]
     end
   end
 

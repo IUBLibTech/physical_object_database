@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151208222728) do
+ActiveRecord::Schema.define(version: 20151218200509) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -246,7 +246,7 @@ ActiveRecord::Schema.define(version: 20151208222728) do
     t.float   "duration",    limit: 24
   end
 
-  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: true do |t|
     t.string   "digitizingEntity"
@@ -282,6 +282,7 @@ ActiveRecord::Schema.define(version: 20151208222728) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "group_total"
+    t.string   "avalon_url"
   end
 
   create_table "machines", force: true do |t|
@@ -298,12 +299,9 @@ ActiveRecord::Schema.define(version: 20151208222728) do
     t.datetime "submission_date"
     t.boolean  "successful_validation"
     t.integer  "validation_completion_percent"
-    t.text     "already_billed",                limit: 2147483647
-    t.text     "not_found",                     limit: 2147483647
-    t.text     "not_on_sda",                    limit: 2147483647
-    t.text     "preservation_file_copies",      limit: 2147483647
     t.boolean  "bad_headers",                                      default: false
     t.text     "other_error",                   limit: 2147483647
+    t.text     "problems_by_row",               limit: 2147483647
   end
 
   create_table "messages", force: true do |t|
