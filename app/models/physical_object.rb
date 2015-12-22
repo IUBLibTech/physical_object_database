@@ -133,7 +133,7 @@ class PhysicalObject < ActiveRecord::Base
   # this scope grabs all unstaged physical objects of the specified format whose digital_start timestamp is with 24 hrs of the specified date
   # AND whose digitizing entity is Memnon
   scope :memnon_unstaged_by_date_and_format, lambda { |date, format|
-    PhysicalObject.joins(:digital_provenance).where(format: format,staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'")
+    PhysicalObject.joins(:digital_provenance).where(format: format,staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date))
   }
 
 
@@ -144,7 +144,7 @@ class PhysicalObject < ActiveRecord::Base
   # This scope selects all unstaged physical objects of the specified format, whose digital_start timestamp is within 24hrs of the specified date
   # AND whose digitizing entity
   scope :iu_unstaged_by_date_and_format, lambda { |date, format|
-    PhysicalObject.joins(:digital_provenance).where(format: format, staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'")
+    PhysicalObject.joins(:digital_provenance).where(format: format, staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date))
   }
 
 
