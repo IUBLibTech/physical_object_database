@@ -6,6 +6,7 @@ describe BinsController do
 
   let(:batch) { FactoryGirl.create(:batch) }
   let(:bin) { FactoryGirl.create(:bin) }
+  let(:other_bin) { FactoryGirl.create(:bin, identifier: 'other_bin') }
   let(:sealed) {FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier:"UNIQUE!", current_workflow_status: "Sealed")} 
   let(:box) { FactoryGirl.create(:box, bin: bin, format: bin.format) }
   let(:valid_boxed_object) { FactoryGirl.build(:physical_object, :boxable) }
@@ -16,6 +17,7 @@ describe BinsController do
   let(:binned_object) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: bin) }
   let(:unassigned_object) { FactoryGirl.create(:physical_object, :boxable) }
   let(:unassigned_box) { FactoryGirl.create(:box, format: box_format) }
+  let(:assigned_box) { FactoryGirl.create(:box, format: box_format, bin: other_bin) }
   let(:unassigned_mismatched_box) { FactoryGirl.create(:box, format: other_box_format) }
   let(:unassigned_unformatted_box) { FactoryGirl.create(:box) }
   let(:picklist) { FactoryGirl.create(:picklist) }
@@ -362,12 +364,35 @@ describe BinsController do
  
   describe "PATCH assign_boxes" do
     context "for an unsealed bin" do
-      before(:each) do
-        patch :assign_boxes, id: bin.id, box_ids: [unassigned_box.id]
+      context "with unassigned boxes" do
+        before(:each) do
+          patch :assign_boxes, id: bin.id, box_ids: [unassigned_box.id]
+        end
+        it "assigns boxes to bin" do
+          unassigned_box.reload
+          expect(unassigned_box.bin).to eq bin
+        end
+        it "flashes a success notice" do
+          expect(flash[:notice]).to match /success/
+        end
+        it "redirects to the bin" do
+          expect(response).to redirect_to bin
+        end
       end
-      it "assigns boxes to bin" do
-        unassigned_box.reload
-        expect(unassigned_box.bin).to eq bin
+      context "with already-assigned boxes" do
+        before(:each) do
+          patch :assign_boxes, id: bin.id, box_ids: [assigned_box.id]
+        end
+        it "does NOT assigns boxes to bin" do
+          assigned_box.reload
+          expect(assigned_box.bin).not_to eq bin
+        end
+        it "flashes an inaction warning" do
+          expect(flash[:warning]).not_to be_blank
+        end
+        it "redirects to the bin" do
+          expect(response).to redirect_to bin
+        end
       end
     end
     context "for a sealed bin" do
@@ -395,7 +420,6 @@ describe BinsController do
         expect(response).to redirect_to action: :show
       end
     end
-    it "NOTE: does not check if box is already binned in another bin"
   end
 
   describe "Patch seal Bin" do

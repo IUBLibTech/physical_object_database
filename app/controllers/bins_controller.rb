@@ -135,11 +135,24 @@ class BinsController < ApplicationController
                   redirect_to action: :show
                   return
                 end
-		#FIXME: catch case of boxes already assigned to a bin?
 		unless params[:box_ids].nil?
 			params[:box_ids].each do |b_id|
-				Box.find(b_id).update_attributes(bin_id: @bin.id)
+			  box = nil
+			  begin
+			    box = Box.find(b_id)
+			    if box.bin_id
+		              flash.warning = "Box #{box.mdpi_barcode} (#{b.id}) is already in a different bin (#{box.bin.mdpi_barcode})"
+			      box = nil
+			    else
+			      box.update_attributes!(bin_id: @bin.id)
+			    end
+		          rescue
+			    flash[:warning] = "Could not find and update box with id #{b_id}".html_safe
+			    box = nil
+			  end
+			  break if box.nil?
 			end
+			flash[:notice] = "Boxes successfully assigned" unless flash[:warning]
 		end
 		redirect_to(bin_path(@bin.id))
 	end
