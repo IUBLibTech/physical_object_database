@@ -66,16 +66,6 @@ describe PhysicalObjectsController do
     end
   end
 
-  describe "GET edit_ephemera" do
-    before(:each) { get :edit_ephemera, id: physical_object.id }
-    it "locates the requested object" do
-      expect(assigns(:physical_object)).to eq physical_object
-    end
-    it "renders the :edit_ephemera template" do
-      expect(response).to render_template(:edit_ephemera) 
-    end
-  end
-
   describe "POST create" do
     context "with valid attributes" do
       let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm)}
@@ -911,34 +901,84 @@ describe PhysicalObjectsController do
   end
 
   describe "GET edit_ephemera" do
-    pending "FIXME: needs tests"
-  end
-
-  describe "PATCH update_ephemera" do
-    pending "FIXME: needs tests"
+    before(:each) { get :edit_ephemera, id: physical_object.id }
+    it "assigns the object" do
+      expect(assigns(:physical_object)).to eq physical_object
+    end
+    it "renders the template" do
+      expect(response).to render_template :edit_ephemera
+    end
   end
 
   describe "GET contained" do
-    before(:each) { get :contained, format: "xls" }
-    it "sets @physical_objects" do
-      expect(assigns(:physical_objects)).to respond_to :size
+    let(:included_date) { Time.now }
+    let(:start_date) { included_date - 3.days }
+    let(:end_date) { included_date + 3.days }
+    let(:excluded_date) { start_date - 3.days }
+    let(:uncontained_object) { FactoryGirl.create :physical_object, :barcoded, :boxable }
+    let(:included_boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable }
+    let(:excluded_boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable }
+    let(:included_binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable }
+    let(:excluded_binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable }
+    let(:box) { FactoryGirl.create :box }
+    let(:bin) { FactoryGirl.create :bin }
+    before(:each) do
+      uncontained_object
+      included_boxed_object.box = box
+      included_boxed_object.save!
+      included_binned_object.bin = bin
+      included_binned_object.save!
+      excluded_boxed_object.box = box
+      excluded_boxed_object.save!
+      excluded_boxed_object.workflow_statuses.last.update_attributes!(created_at: excluded_date)
+      excluded_binned_object.bin = bin
+      excluded_binned_object.save!
+      excluded_binned_object.workflow_statuses.last.update_attributes!(created_at: excluded_date)
     end
-    it "renders :contained template" do
-      expect(response).to render_template :contained
+    context "basic functions" do
+      before(:each) { get :contained, format: "xls" }
+      it "sets @physical_objects" do
+        expect(assigns(:physical_objects)).to respond_to :size
+      end
+      it "renders :contained template" do
+        expect(response).to render_template :contained
+      end
     end
-    pending "sets @physical_objects to empty set if missing either date parameter"
-    pending "returns only physical_objects set to binned/boxed in provided date range"
+    context "when missing start_date" do
+      before(:each) { get :contained, format: "xls", physical_object: { end_date: end_date } }
+      it "sets @physical_objects to empty" do
+        expect(assigns(:physical_objects)).to be_empty
+      end
+    end
+    context "when missing end_date" do
+      before(:each) { get :contained, format: "xls", physical_object: { start_date: start_date } }
+      it "sets @physical_objects to empty" do
+        expect(assigns(:physical_objects)).to be_empty
+      end
+    end
+    context "when providing valid start_date and end_date" do
+      before(:each) { get :contained, format: "xls", physical_object: { start_date: start_date, end_date: end_date } }
+      it "returns only physical_objects set to binned/boxed in provided date range" do
+        expect(assigns(:physical_objects)).to include included_boxed_object
+        expect(assigns(:physical_objects)).to include included_binned_object
+        expect(assigns(:physical_objects)).not_to include uncontained_object
+        expect(assigns(:physical_objects)).not_to include excluded_boxed_object
+        expect(assigns(:physical_objects)).not_to include excluded_binned_object
+      end
+    end
   end
 
   describe "GET generate_filename" do
     let(:sequence) { 42 }
     let(:use) { "use" }
     let(:extension) { "ext" }
-    before(:each) { get :generate_filename, id: physical_object.id, sequence: 42, use: use, extension: extension }
+    before(:each) { get :generate_filename, id: physical_object.id, sequence: sequence, use: use, extension: extension }
     it "sets @physical_object" do
       expect(assigns(:physical_object)).to eq physical_object
     end
-    it "returns valid results"
+    it "returns valid results" do
+      expect(response.body).to match physical_object.generate_filename(sequence: sequence, use: use, extension: extension)
+    end
   end
 
 end
