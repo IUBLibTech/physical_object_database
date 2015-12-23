@@ -133,7 +133,6 @@ Pod::Application.routes.draw do
   resources :returns, only: [:index] do
     get :return_bins, on: :member
     get :return_bin, on: :member
-    get :physical_object_missing, on: :member
     patch :physical_object_returned, on: :member
     patch :batch_complete, on: :member
     patch :bin_unpacked, on: :member

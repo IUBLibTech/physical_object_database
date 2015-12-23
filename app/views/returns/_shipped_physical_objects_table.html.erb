@@ -1,9 +1,9 @@
 <% @shipped.each do |p| %>
-	<%= form_for(p, url: {controller: 'returns', action: "physical_object_missing", id: p.id}) do |f| %>
+	<%= form_for(p, url: {controller: 'physical_objects', action: "show", id: p.id}) do |f| %>
 		<table class="picklistTable">
 				<tr class="odd packed">
 					<td class='ephemera'>
-						<% if p.has_ephemera %>
+						<% if p.has_ephemera? %>
 							<%= image_tag "folder.png", {alt: 'had ephemera'} %>
 						<% end %>
 					</td>

@@ -148,10 +148,6 @@ describe ReturnsController do
     end
   end
 
-  describe "GET physical_object_missing (on member) -- no action?" do
-    skip "No action defined?  and no template rendered?"
-  end
-
   describe "PATCH physical_object_returned (on member)" do
     let(:patch_action) { patch :physical_object_returned, id: bin.id, mdpi_barcode: target_object.mdpi_barcode, ephemera_returned: { ephemera_returned: 0 } }
     shared_examples "physical_object_returned behaviors" do

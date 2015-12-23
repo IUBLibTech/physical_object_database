@@ -11,9 +11,6 @@ describe "returns" do
   it "routes to return_bin" do
     expect(get("/returns/:id/return_bin")).to be_routable
   end
-  it "routes to physical_object_missing" do
-    expect(get("/returns/:id/physical_object_missing")).to be_routable
-  end
   it "routes to physical_object_returned" do
     expect(patch("/returns/:id/physical_object_returned")).to be_routable
   end
