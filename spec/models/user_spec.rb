@@ -5,7 +5,7 @@ describe User do
   let(:invalid_user) { FactoryGirl.build :user, :invalid }
 
   let(:invalid_username) { "invalid username" }
-  let(:valid_username) { "aploshay" }
+  let(:valid_username) { "web_admin" }
 
   describe "FactoryGirl" do
     specify ":valid_user is valid" do
@@ -94,22 +94,40 @@ describe User do
 
   describe ".current_username" do
     before(:each) { sign_out }
+    after(:each) { Thread.current[:current_username] = nil }
     it "returns Thread.current[:current_username] if set" do
       Thread.current[:current_username] = "test_user"
       expect(User.current_username).to eq "test_user"
-      Thread.current[:current_username] = nil
     end
     it "returns UNAVAILABLE if unset" do
       expect(User.current_username).to eq "UNAVAILABLE"
     end
   end
 
-  describe ".current_user" do
-    pending "need current_user test"
+  describe ".current_username_object" do
+    before(:each) { sign_out }
+    after(:each) { Thread.current[:current_username] = nil }
+    it "returns Thread.current[:current_username] if set" do
+      Thread.current[:current_username] = "test_user"
+      expect(User.current_username_object).to eq "test_user"
+      Thread.current[:current_username] = nil
+    end
+    it "returns nil if unset" do
+      expect(User.current_username_object).to be_nil
+    end
+    
   end
 
   describe "#roles" do
-    pending "write roles tests"
+    it "returns an array of roles" do
+      expect(valid_user.roles).to respond_to :size
+    end
+    it "returns matching roles" do
+      valid_user.smart_team_user = false
+      valid_user.smart_team_admin = true
+      expect(valid_user.roles).not_to include :smart_team_user
+      expect(valid_user.roles).to include :smart_team_admin
+    end
   end
 
 end
