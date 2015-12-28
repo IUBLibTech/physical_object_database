@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<IU xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Carrier xsi:type="VinylsCarrier" type="Vinyls">
+    <Identifier>EHRET LP-S ZAe.286</Identifier>
+    <Barcode>0</Barcode>
+    <PhysicalCondition>
+      <Damage />
+      <PreservationProblem />
+    </PhysicalCondition>
+    <Parts>
+      <DigitizingEntity>Memnon Archiving Services Inc</DigitizingEntity>
+      <Part Side="1">
+        <Ingest xsi:type="VinylsIngest">
+          <Date>2015-08-12</Date>
+          <Comments>Signal - Very large number of clicks;</Comments>
+          <Created_by>chmalex</Created_by>
+          <Player_serial_number>GE2JY001246</Player_serial_number>
+          <Player_manufacturer>Technics</Player_manufacturer>
+          <Player_model>SL-1210 MKII</Player_model>
+          <Extraction_workstation>BL-UITS-DCDT027</Extraction_workstation>
+          <AD_serial_number>01504-0906-025</AD_serial_number>
+          <AD_manufacturer>Mytek</AD_manufacturer>
+          <AD_model>8X192 ADDA</AD_model>
+          <Preamp_serial_number>MD123058</Preamp_serial_number>
+          <Preamp_manufacturer>Vad Lyd</Preamp_manufacturer>
+          <Preamp_model>MD12 MK3</Preamp_model>
+          <Speed_used>33.3 rpm</Speed_used>
+        </Ingest>
+        <ManualCheck>Yes</ManualCheck>
+        <QcComment>Significant clicks due to scratch; Missing material (00:50-02:52)</QcComment>
+        <Files>
+          <File>
+            <FileName>MDPI_40000000527434_01_pres.wav</FileName>
+            <CheckSum>31C7502AE276EDEB30E0A492233BF54F</CheckSum>
+          </File>
+          <File>
+            <FileName>MDPI_40000000527434_01_prod.wav</FileName>
+            <CheckSum>F31C44FCFB29541CA874CAD345C6C32E</CheckSum>
+          </File>
+          <File>
+            <FileName>MDPI_40000000527434_01_access.mkv</FileName>
+            <CheckSum>B01FEC101B4B4283F99A7B9558834845</CheckSum>
+          </File>
+        </Files>
+      </Part>
+      <Part Side="2">
+        <Ingest xsi:type="VinylsIngest">
+          <Date>2015-08-11</Date>
+          <Comments>Disc - Physical defect disabling (continuous) playback;Disc - Stylus jump;</Comments>
+          <Created_by>chmalex</Created_by>
+          <Player_serial_number>GE2JY001246</Player_serial_number>
+          <Player_manufacturer>Technics</Player_manufacturer>
+          <Player_model>SL-1210 MKII</Player_model>
+          <Extraction_workstation>BL-UITS-DCDT027</Extraction_workstation>
+          <AD_serial_number>01504-0906-025</AD_serial_number>
+          <AD_manufacturer>Mytek</AD_manufacturer>
+          <AD_model>8X192 ADDA</AD_model>
+          <Preamp_serial_number>MD123058</Preamp_serial_number>
+          <Preamp_manufacturer>Vad Lyd</Preamp_manufacturer>
+          <Preamp_model>MD12 MK3</Preamp_model>
+          <Speed_used>33.3 rpm</Speed_used>
+        </Ingest>
+        <ManualCheck>Yes</ManualCheck>
+        <QcComment />
+        <Files />
+      </Part>
+    </Parts>
+    <Configuration xsi:type="ConfigurationVinyls">
+      <Speed>33.3 rpm</Speed>
+      <RecordingType>Lateral</RecordingType>
+    </Configuration>
+    <Cleaning>
+      <Date>2015-08-11</Date>
+      <Comment />
+    </Cleaning>
+    <Preview>
+      <Comments />
+    </Preview>
+  </Carrier>
+</IU>

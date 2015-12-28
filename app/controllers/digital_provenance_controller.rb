@@ -21,7 +21,7 @@ class DigitalProvenanceController < ApplicationController
 		  if dfp.valid? && dfp.save
 		    # do nothing
 		  else
-		    succes_flag = false
+		    success_flag = false
 		  end
 		end
 		if @dp.valid? && @dp.save

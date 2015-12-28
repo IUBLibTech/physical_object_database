@@ -21,11 +21,6 @@ class ReturnsController < ApplicationController
 	  end
 	end
 
-        # FIXME: deprecated?
-	def physical_object_missing
-		
-	end
-
 	def physical_object_returned
 		po = PhysicalObject.find_by(mdpi_barcode: params[:mdpi_barcode])
 		container_bin = po.container_bin unless po.nil?

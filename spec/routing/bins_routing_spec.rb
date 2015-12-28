@@ -1,8 +1,4 @@
 describe "bins" do
-  it "routes to add_barcode_item" do
-    expect(post("/bins/:id/add_barcode_item")).to be_routable
-  end
-
   it "routes to unbatch" do
     expect(post("/bins/:id/unbatch")).to be_routable
   end

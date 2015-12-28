@@ -1,17 +1,10 @@
-require 'rails_helper'
-
-RSpec.describe InvoiceController, type: :controller do
+describe InvoiceController do
 	render_views
-
+	before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
 	let!(:good_po) { FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000070013, digital_start: Time.now) }
 	let!(:not_sda_po) { FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000070021, digital_start: nil) }
 	let!(:billed_po) { FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000102782, digital_start: Time.now, billed: true, spread_sheet_filename: "Some Other Spreadhsheet") }
-
-	before(:each) { 
-		sign_in 
-	}
-
 
 	it "validates a good invoice" do
 		good_po.reload

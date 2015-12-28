@@ -1,9 +1,7 @@
-require 'rails_helper'
-require 'debugger'
-
 describe PicklistsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:picklist) { FactoryGirl.create(:picklist, name: 'one') }
   let(:valid_picklist) { FactoryGirl.build(:picklist, name: 'two') }
   let(:invalid_picklist) { FactoryGirl.build(:invalid_picklist) }
@@ -173,10 +171,6 @@ describe PicklistsController do
   end
 
   shared_examples_for "starting a picklist packing session" do 
-    before(:each) do
-      request.env['HTTP_REFERER'] = "Foo"
-    end
-
     context "while packing a picklist" do  
       context " starting with missing pick list param" do
         before(:each) do
@@ -363,7 +357,6 @@ describe PicklistsController do
     context "submitting with invalid bin/box combinations" do
       shared_examples "does not pack" do
         before(:each) do
-          request.env['HTTP_REFERER'] = "Foo"
           args[:pack_button] = "Pack"
           args[:tm] = po2.technical_metadatum.specific.attributes
           args[:dp] = po2.digital_provenance.attributes
@@ -397,9 +390,6 @@ describe PicklistsController do
     context "submitting from picklist packing page with a Bin" do
       let(:args) { {id: pack_picklist.id, bin_id: pack_bin.id, physical_object: {id: po2.id}} }
       
-      before(:each) do
-        request.env['HTTP_REFERER'] = "Foo"
-      end
       it "moves to previous object on previous button submission" do
         args[:previous_button] = "Previous"
         args[:tm] = po2.technical_metadatum.specific.attributes
@@ -595,10 +585,6 @@ describe PicklistsController do
     context "submitting from picklist packing page with no container specified" do
       let(:args) { {id: pack_picklist.id, bin_mdpi_barcode: pack_bin.mdpi_barcode, physical_object: {id: po2.id}} }
       
-      before(:each) do
-        request.env['HTTP_REFERER'] = "Foo"
-      end
-
       it "moves to previous object on previous button submission" do
         args[:previous_button] = "Previous"
         args[:tm] = po2.technical_metadatum.specific.attributes

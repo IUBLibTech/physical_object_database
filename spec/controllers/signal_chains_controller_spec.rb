@@ -3,7 +3,7 @@
 #
 describe SignalChainsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   
   let(:signal_chain) { FactoryGirl.create(:signal_chain) }
   let(:valid_signal_chain) { FactoryGirl.build(:signal_chain) }
@@ -146,8 +146,35 @@ describe SignalChainsController do
 
   end
 
-  describe "#reorder" do
-    pending
+  describe "PATCH #reorder" do
+    let!(:step1) { FactoryGirl.create :processing_step, signal_chain: signal_chain, position: 1 }
+    let!(:step2) { FactoryGirl.create :processing_step, signal_chain: signal_chain, position: 2 }
+    before(:each) do
+      patch :reorder, id: signal_chain.id, reorder_submission: reorder_submission
+    end
+    context "with no changes submitted" do
+      let(:reorder_submission) { "" }
+      it "flashes an inaction notice" do
+        expect(flash[:notice]).to match /no change/i
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to "source_page"
+      end
+    end
+    context "with changes submitted" do
+      let(:reorder_submission) { "#{step2.id},#{step1.id}" }
+      it "reorders processing_steps" do
+        expect(step1.position).to eq 1
+        expect(step2.position).to eq 2
+        step1.reload
+        step2.reload
+        expect(step1.position).to eq 2
+        expect(step2.position).to eq 1
+      end
+      it "redirects to back" do
+        expect(response).to redirect_to "source_page"
+      end
+    end
   end
 
 end

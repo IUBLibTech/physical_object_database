@@ -1,8 +1,7 @@
-require 'rails_helper'
-
 describe ReturnsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:batch) { FactoryGirl.create :batch, identifier: "Created Batch" }
   let(:created_batch) { FactoryGirl.create :batch, identifier: "Returned Batch" }
   let(:bin) { FactoryGirl.create :bin, batch: batch }
@@ -147,10 +146,6 @@ describe ReturnsController do
         expect(response).to redirect_to "source_page"
       end
     end
-  end
-
-  describe "GET physical_object_missing (on member) -- no action?" do
-    skip "No action defined?  and no template rendered?"
   end
 
   describe "PATCH physical_object_returned (on member)" do

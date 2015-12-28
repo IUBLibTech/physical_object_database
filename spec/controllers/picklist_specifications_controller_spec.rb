@@ -1,8 +1,7 @@
-require 'rails_helper'
-
 describe PicklistSpecificationsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:picklist_specification) { FactoryGirl.create(:picklist_specification, :cdr) }
   let(:valid_picklist_specification) { FactoryGirl.build(:picklist_specification, :cdr) }
   let(:invalid_picklist_specification) { FactoryGirl.build(:invalid_picklist_specification, :cdr) }

@@ -19,9 +19,8 @@ class SearchController < ApplicationController
   end
 
   def index
-    @physical_object = PhysicalObject.new
-    @physical_object.format = PhysicalObject.formats["CD-R"]
-    @tm = @physical_object.create_tm(@physical_object.format)
+    @physical_object = PhysicalObject.new(format: "CD-R")
+    @tm = @physical_object.ensure_tm
     @dp = @physical_object.ensure_digiprov
     @display_assigned = true
     @edit_mode = true

@@ -1,8 +1,7 @@
-require 'rails_helper'
-
 describe SpreadsheetsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:spreadsheet) { FactoryGirl.create :spreadsheet }
   let(:valid_spreadsheet) { FactoryGirl.build :spreadsheet }
   let(:invalid_spreadsheet) { FactoryGirl.build :invalid_spreadsheet }
