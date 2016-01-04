@@ -149,6 +149,18 @@ describe Box do
     end
   end
 
+  describe "#set_container_format" do
+    context "in a bin" do
+      before(:each) do
+        valid_box.format = "CD-R"
+        valid_box.bin = bin
+      end
+      let(:contained) { valid_box }
+      let(:container) { bin }
+      include_examples "nil and blank format cases"
+    end
+  end
+
   describe "::packed_status_message" do
     it "returns a message that the Box is full" do
       expect(Box.packed_status_message).to match /This box.*full/

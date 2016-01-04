@@ -33,7 +33,7 @@ class Box < ActiveRecord::Base
 	end
 
   def set_container_format
-    if format && bin && bin.format.nil?
+    if !format.blank? && bin && bin.format.blank?
       bin.format = format; bin.save
     end
   end
