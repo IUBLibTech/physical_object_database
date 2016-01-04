@@ -54,6 +54,14 @@ describe Box do
         box.reload
         expect(box.format).to eq boxed_object.format
       end
+      specify "is automatically set by bin assignment (pre-validation)" do
+        valid_bin.format = TechnicalMetadatumModule.box_formats.first
+        valid_box.bin = valid_bin
+        expect(valid_box.format).to be_blank
+        expect(valid_box).to be_valid
+        expect(valid_box.format).not_to be_blank
+        expect(valid_box.format).to eq valid_bin.format
+      end
     end
   end
 
@@ -102,11 +110,13 @@ describe Box do
       valid_box.bin = valid_bin
       expect(valid_box).not_to be_valid
     end
-    it "cannot belong to a format-specific bin if format unset" do
+    it "can belong to a format-specific bin if format unset (auto-setting format)" do
       valid_bin.format = TechnicalMetadatumModule.box_formats.first
       valid_box.format = ""
       valid_box.bin = valid_bin
-      expect(valid_box).not_to be_valid
+      expect(valid_box).to be_valid
+      expect(valid_box.format).not_to be_blank
+      expect(valid_box.format).to eq valid_bin.format
     end
     it "can belong to a spreadsheet" do
       expect(box.spreadsheet).to be_nil
@@ -146,6 +156,18 @@ describe Box do
     it "returns false if not associated to a bin" do
       box.bin = nil
       expect(box.packed_status?).to eq false
+    end
+  end
+
+  describe "#set_container_format" do
+    context "in a bin" do
+      before(:each) do
+        valid_box.format = "CD-R"
+        valid_box.bin = bin
+      end
+      let(:contained) { valid_box }
+      let(:container) { bin }
+      include_examples "nil and blank format cases"
     end
   end
 

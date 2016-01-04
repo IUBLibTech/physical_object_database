@@ -87,7 +87,7 @@ class Bin < ActiveRecord::Base
   end
 
   def set_container_format
-   if format && batch && batch.format.nil?
+   if !format.blank? && batch && batch.format.blank?
      batch.format = format; batch.save
    end
   end

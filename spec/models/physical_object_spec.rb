@@ -356,6 +356,21 @@ describe "has required attributes:" do
     end
   end
 
+  describe "#set_container_format" do
+    context "in a box" do
+      before(:each) { boxable_po.box = box }
+      let(:contained) { boxable_po }
+      let(:container) { box }
+      include_examples "nil and blank format cases"
+    end
+    context "in a bin" do
+      before(:each) { binnable_po.bin = bin }
+      let(:contained) { binnable_po }
+      let(:container) { bin }
+      include_examples "nil and blank format cases"
+    end
+  end
+
   describe "technical metadata" do
     it "is generated before validation, if missing" do
       valid_po.technical_metadatum = nil
