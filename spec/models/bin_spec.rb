@@ -226,7 +226,17 @@ describe Bin do
       expect(bin.media_format).to eq boxed_object.format
     end
   end
-
+  describe "#set_container_format" do
+    context "in a batch" do
+      before(:each) do
+        valid_bin.format = "CD-R"
+        valid_bin.batch = batch
+      end
+      let(:contained) { valid_bin }
+      let(:container) { batch }
+      include_examples "nil and blank format cases"
+    end
+  end
   describe "::packed_status_message" do
     it "returns a message that the Bin is in Sealed status" do
       expect(Bin.packed_status_message).to match /This bin has been marked as sealed/
