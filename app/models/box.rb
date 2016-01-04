@@ -6,6 +6,7 @@ class Box < ActiveRecord::Base
 	has_many :physical_objects
 
 	validates :mdpi_barcode, mdpi_barcode: true, numericality: { greater_than: 0 }
+  before_validation :set_format_from_container
   validate :validate_bin_container
 	before_save :default_values
 	after_save :set_container_format
@@ -35,6 +36,12 @@ class Box < ActiveRecord::Base
   def set_container_format
     if !format.blank? && bin && bin.format.blank?
       bin.format = format; bin.save
+    end
+  end
+
+  def set_format_from_container
+    if format.blank?  && bin && !bin.format.blank?
+      self.format = bin.format
     end
   end
 
