@@ -45,14 +45,14 @@
       <div class="menuItem">
         <%= link_to("Quality Control", quality_control_index_path) if policy(:quality_control).index? %>
       </div>
-      <!-- <div class="menuItem"> -->
-        <%# link_to("Advanced Search", :controller => 'search', :action => 'index') if policy(:search).advanced_search? %>
-      <!-- </div> -->
       <div class="menuItem">
         <%= link_to("Reports", controller: :reports, action: :index) if policy(:report).index? %>
       </div>
       <div class="left">
         <%= render 'search/basic_search_form' if policy(:search).search_results? %>
+      </div>
+      <div class="menuItem">
+        <%= link_to("Advanced Search", :controller => 'search', :action => 'index') if policy(:search).advanced_search? %>
       </div>
     </div>
     <div id="contextMenu">

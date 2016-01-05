@@ -1,6 +1,6 @@
 class PicklistSpecification < ActiveRecord::Base
 	has_many :bins
-	has_one :technical_metadatum, dependent: :destroy
+	has_one :technical_metadatum, dependent: :destroy, validate: true
 	has_many :statuses
 	before_validation :ensure_tm
 
@@ -10,6 +10,7 @@ class PicklistSpecification < ActiveRecord::Base
 	end
 	validates :format, inclusion: { in: lambda { |ps| ps.valid_formats } }
 	validates :technical_metadatum, presence: true
+	accepts_nested_attributes_for :technical_metadatum
 
 	def create_tm
 		if TechnicalMetadatumModule.tm_formats_hash[self.format]
