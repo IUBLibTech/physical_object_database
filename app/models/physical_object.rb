@@ -421,9 +421,9 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def set_container_format
-    if box && box.format.nil?
+    if box && box.format.blank?
       box.format = format; box.save
-    elsif bin && bin.format.nil?
+    elsif bin && bin.format.blank?
       bin.format = format; bin.save
     end
   end
