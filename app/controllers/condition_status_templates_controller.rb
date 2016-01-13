@@ -9,12 +9,6 @@ class ConditionStatusTemplatesController < ApplicationController
     end
   end
 
-  def condition
-    @condition_status_template = ConditionStatusTemplate.new
-    @condition_status_template.object_type = @condition_status_template.object_types["Physical Object"]
-    render('new')
-  end
-
   def new
     @condition_status_template = ConditionStatusTemplate.new
   end

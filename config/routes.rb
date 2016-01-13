@@ -116,8 +116,8 @@ Pod::Application.routes.draw do
   get 'quality_control/staging', to: "quality_control#staging_index", as: 'quality_control_staging_index_path'
   post 'quality_control/staging', to: 'quality_control#staging_post', as: 'quality_control_staging_post_path'
 
-  get 'qualit_control/iu_staging', to: 'quality_control#iu_staging_index', as: "quality_control_iu_staging_index_path"
-  post 'qualit_control/iu_staging', to: 'quality_control#iu_staging_index', as: "quality_control_iu_staging_post_path"
+  get 'quality_control/iu_staging', to: 'quality_control#iu_staging_index', as: "quality_control_iu_staging_index_path"
+  post 'quality_control/iu_staging', to: 'quality_control#iu_staging_index', as: "quality_control_iu_staging_post_path"
 
   post 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage'
   get 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage_get'
@@ -133,7 +133,6 @@ Pod::Application.routes.draw do
   resources :returns, only: [:index] do
     get :return_bins, on: :member
     get :return_bin, on: :member
-    get :physical_object_missing, on: :member
     patch :physical_object_returned, on: :member
     patch :batch_complete, on: :member
     patch :bin_unpacked, on: :member
@@ -169,7 +168,7 @@ Pod::Application.routes.draw do
 
   resources :users
 
-  resources :workflow_status_templates
+  resources :workflow_status_templates, except: [:index]
 
   #old routing scheme was:
   #match ':controller(/:action(/:id))', :via => [:get, :post, :patch]

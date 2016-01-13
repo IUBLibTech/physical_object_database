@@ -4,6 +4,7 @@ describe WorkflowStatusTemplate do
   # need to manually destroy after each creation, as this is a seed data table
   let(:workflow_status_template) { FactoryGirl.create(:workflow_status_template) }
   let(:valid_workflow_status_template) { FactoryGirl.build(:workflow_status_template) }
+  let(:invalid_workflow_status_template) { FactoryGirl.build(:workflow_status_template, :invalid) }
 
   describe "should be seeded with data:" do
     seeded_values = { "Batch" => 6, "Bin" => 5, "Physical Object" => 6 }
@@ -14,8 +15,13 @@ describe WorkflowStatusTemplate do
     end
   end
 
-  it "gets a valid workflow status template from FactoryGirl" do
-    expect(valid_workflow_status_template).to be_valid
+  describe "FactoryGirl" do
+    it "provides a valid object" do
+      expect(valid_workflow_status_template).to be_valid
+    end
+    it "provides an invalid object" do
+      expect(invalid_workflow_status_template).not_to be_valid
+    end
   end
 
   describe "has required fields:" do
@@ -39,6 +45,11 @@ describe WorkflowStatusTemplate do
 
     it "object type" do
       valid_workflow_status_template.object_type = nil
+      expect(valid_workflow_status_template).not_to be_valid
+    end
+
+    specify "object_type in allowed list" do
+      valid_workflow_status_template.object_type = "invalid value"
       expect(valid_workflow_status_template).not_to be_valid
     end
 

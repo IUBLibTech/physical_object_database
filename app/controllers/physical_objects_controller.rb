@@ -372,12 +372,12 @@ class PhysicalObjectsController < ApplicationController
   def edit_ephemera
   end
 
-  # update restricted to 2 epheemra values, with new workflow status log entry
+  # update restricted to 2 ephemera values, with new workflow status log entry
   def update_ephemera
     respond_to do |format|
       @physical_object.assign_attributes(physical_object_params)
       if @physical_object.has_ephemera_was == @physical_object.has_ephemera && @physical_object.ephemera_returned_was == @physical_object.ephemera_returned
-        format.html { flash[:warning] = 'foo'; redirect_to @physical_object, flash: { warning: 'No ephemera status changes were submitted.' } }
+        format.html { redirect_to @physical_object, flash: { warning: 'No ephemera status changes were submitted.' } }
 	format.html { head :no_content }
       elsif @physical_object.save
 	@physical_object.duplicate_workflow_status

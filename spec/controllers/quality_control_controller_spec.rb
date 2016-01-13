@@ -1,7 +1,6 @@
-require 'rails_helper'
-
-RSpec.describe QualityControlController, :type => :controller do
+describe QualityControlController do
 	render_views
+	before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
 	let!(:po) { FactoryGirl.create :physical_object, :open_reel, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
 	let!(:po1) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
@@ -10,10 +9,6 @@ RSpec.describe QualityControlController, :type => :controller do
 	let(:ds1) { FactoryGirl.create :digital_status, state: "accepted" }
 	let(:ds2) { FactoryGirl.create :digital_status, state: "transfered" }
 
-	before(:each) do
-		sign_in
-	end
-	
 	describe "#index" do
 		context "with no statuses" do
 			before(:each) do

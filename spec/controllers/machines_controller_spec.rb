@@ -3,7 +3,7 @@
 #
 describe MachinesController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   
   let(:machine) { FactoryGirl.create(:machine) }
   let(:valid_machine) { FactoryGirl.build(:machine) }

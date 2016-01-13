@@ -3,6 +3,7 @@ require 'rails_helper'
 describe ConditionStatusTemplate do
   let(:condition_status_template) { FactoryGirl.create(:condition_status_template) }
   let(:valid_condition_status_template) { FactoryGirl.build(:condition_status_template) }
+  let(:invalid_condition_status_template) { FactoryGirl.build(:condition_status_template, :invalid) }
 
   describe "should be seeded with data:" do
     seeded_values = { "Bin" => 0, "Physical Object" => 9 }
@@ -13,8 +14,13 @@ describe ConditionStatusTemplate do
     end
   end
 
-  it "gets a valid object from FactoryGirl" do
-    expect(valid_condition_status_template).to be_valid
+  describe "FactoryGirl" do
+    it "returns a valid object" do
+      expect(valid_condition_status_template).to be_valid
+    end
+    it "returns an invalid object" do
+      expect(invalid_condition_status_template).not_to be_valid
+    end
   end
 
   describe "has required fields" do
@@ -35,7 +41,11 @@ describe ConditionStatusTemplate do
     end
     it "object_type" do
       valid_condition_status_template.object_type = nil
-      expect(valid_condition_status_template.object_type).to be_nil
+      expect(valid_condition_status_template).not_to be_valid
+    end
+    it "object_type in OBJECT_TYPES list" do
+      valid_condition_status_template.object_type = "invalid value"
+      expect(valid_condition_status_template).not_to be_valid
     end
   end
 

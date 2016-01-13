@@ -2,12 +2,6 @@ class WorkflowStatusTemplatesController < ApplicationController
   before_action :set_wst, only: [:show, :edit, :update, :destroy]
   before_action :authorize_collection, only: [:index, :new, :create]
 
-	def workflow
-		@workflow_status_template = WorkflowStatusTemplate.new
-		@workflow_status_template.object_type = @workflow_status_template.object_types["Physical Object"]
-		render('new')
-	end
-
 	def new
 		@workflow_status_template = WorkflowStatusTemplate.new
 	end

@@ -1,6 +1,7 @@
 describe SearchController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:physical_object) { FactoryGirl.create :physical_object, :boxable, :barcoded, title: "test title", call_number: "test call number" }
   let(:bin) { FactoryGirl.create :bin }
   let(:box) { FactoryGirl.create :box }
@@ -10,7 +11,31 @@ describe SearchController do
     before(:each) do
       get :index
     end
-    skip "WRITE TESTS"
+    describe "assigns variables:" do
+      it "assigns @physical_object to a new CD-R object" do
+        expect(assigns(:physical_object)).to be_a_new PhysicalObject
+        expect(assigns(:physical_object).format).to eq "CD-R"
+      end
+      it "assigns @tm" do
+        expect(assigns(:tm)).to be_a_new CdrTm
+      end
+      it "assigns @dp" do
+        expect(assigns(:dp)).to be_a_new DigitalProvenance
+      end
+      { display_assigned: true,
+        edit_mode: true,
+        submit_text: 'Search',
+        controller: 'search',
+        action: 'advanced_search'
+      }.each do |variable, value|
+        specify "#{variable.to_s}: #{value}" do
+          expect(assigns(variable)).to eq value
+        end
+      end
+    end
+    it "renders :index" do
+      expect(response).to render_template :index
+    end
   end
 
   describe "GET #search_results" do

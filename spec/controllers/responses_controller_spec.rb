@@ -1,11 +1,9 @@
-require "rails_helper"
-require 'debugger'
-
 describe ResponsesController do
   render_views
   # use BasicAuth instead of CAS
   before(:each) do
     basic_auth
+    request.env['HTTP_REFERER'] = 'source_page'
   end
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
   let(:barcoded_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }

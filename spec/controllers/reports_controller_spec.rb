@@ -1,9 +1,6 @@
-require "rails_helper"
-require 'debugger'
-
 describe ReportsController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
   describe "GET index" do
     before(:each) { get :index }

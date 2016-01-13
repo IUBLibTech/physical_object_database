@@ -1,8 +1,7 @@
-require 'rails_helper'
-
 describe GroupKeysController do
   render_views
-  before(:each) { sign_in }
+  before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
+
   let(:valid_group_key) { FactoryGirl.build(:group_key) }
   let(:invalid_group_key) { FactoryGirl.build(:invalid_group_key) }
   let(:group_key) { FactoryGirl.create(:group_key) }

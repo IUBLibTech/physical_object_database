@@ -1,8 +1,9 @@
 class ConditionStatusTemplate < ActiveRecord::Base
 
 	has_many :condition_statuses
+  OBJECT_TYPES = { "Physical Object" => "Physical Object", "Bin" => "Bin" }
 	validates :name, presence: true, uniqueness: {scope: :object_type}
-	validates :object_type, presence: true
+	validates :object_type, presence: true, inclusion: { in: OBJECT_TYPES.keys }
         scope :blocking, lambda { where(blocks_packing: true) }
 	
         attr_accessor :object_types
@@ -12,8 +13,7 @@ class ConditionStatusTemplate < ActiveRecord::Base
         end
 
         def object_types
-                {"Physical Object" => "Physical Object",
-		 "Bin" => "Bin" }
+                OBJECT_TYPES
         end
 	#FIXME: why is this a name/id hash, while Workflow statuses have name/name?
         def self.select_options(object_type)

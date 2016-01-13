@@ -96,37 +96,6 @@ class BoxesController < ApplicationController
     end
   end
 
-  def add_barcode_item
-    bc = params[:barcode][:mdpi_barcode]
-    @box = Box.find(params[:box][:id])
-    @physical_objects = @box.physical_objects
-    if bc.nil? || bc.blank? || bc.to_i.zero?
-      flash[:notice] = "<strong>Invalid barcode provided.</strong>".html_safe
-    elsif Box.where(mdpi_barcode: bc).where("mdpi_barcode != ?", 0).limit(1).size == 1
-      flash[:notice] = "<strong>You cannot add a box to a box.</strong>".html_safe
-    elsif PhysicalObject.where(mdpi_barcode: bc).where("mdpi_barcode != ?", 0).limit(1).size == 1
-      po = PhysicalObject.where(mdpi_barcode: bc).first
-      po.box = @box
-      if po.save
-        flash[:notice] = "<em>Successfully added Physical Object #{po.mdpi_barcode} to Box #{@box.mdpi_barcode}.</em>".html_safe
-      else
-        flash[:notice] = "<strong>Failed to add Physical Object #{po.mdpi_barcode} to Box #{@box.mdpi_barcode}.</strong>".html_safe
-      end
-    else
-      po = PhysicalObject.new
-      po.mdpi_barcode = bc
-      po.box = @box
-      if po.save
-        flash[:notice] = "<em>Successfully created new Physical Object #{bc} and added it to Box #{@bin.identifier}</em>".html_safe
-      else
-        #don't redirect because view needs @box to display error messages
-        @box.errors.add(:physical_objects, "Failed to add/create a Physical Object with MDPI barcode: #{bc}")
-        return
-      end
-    end
-    render 'show'
-  end
-
   private
     def set_bin
       @bin = (params[:bin_id].nil? ? nil : Bin.find(params[:bin_id]))
