@@ -11,7 +11,11 @@
       <th><%= @tm.class.human_attribute_name(field) %></th>
       <% select_values = @tm.class.const_get(:SELECT_FIELDS)[field] %>
       <% if select_values %>
+        <% if @search_mode %>
+        <td><%= f.select(field.to_sym, select_values, { }, multiple: true, size: select_values.size) %>
+        <% else %>
         <td><%= f.select(field.to_sym, select_values, { include_blank: 'Select a value...'}, disabled: !@edit_mode) %>
+        <% end %>
       <% else %>
       <td><%= f.text_field(field.to_sym, readonly: !@edit_mode) %></td>
       <% end %>
@@ -29,7 +33,11 @@
       <% fields = @tm.class.const_get(fieldset) %>
         <% fields.each do |field| %>
           <% if column == 1 %></tr><% end %>
+          <% if @search_mode %>
+          <td><%= @tm.class.human_attribute_name(field) %> <%= f.select(field.to_sym, { "true" => 1, "false" => 0 }, { include_blank: ""}) %></td>
+          <% else %>
           <td><%= @tm.class.human_attribute_name(field) %> <%= f.check_box(field.to_sym) %></td>
+          <% end %>
           <% if (column += 1) > max_columns %></tr><% column = 1 %><% end %>
         <% end %>
         </tr>

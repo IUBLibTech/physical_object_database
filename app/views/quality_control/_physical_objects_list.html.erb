@@ -5,6 +5,7 @@
 		<th>MDPI Barcode</th>
 		<th>Title</th>
 		<th>Format</th>
+		<th>Digital Status</th>
 		<th><%= choice_header %></th>
 	</tr>
 	<% physical_objects.each_with_index do |p, i| %>
@@ -19,6 +20,10 @@
 			<td><%= link_to("#{p.mdpi_barcode}", physical_object_path(p.id), target: "_blank") if policy(p).show? %></td>
 			<td><%=	p.title %></td>
 			<td><%= p.format %></td>
+
+			<% #The test agains missing digital status was necessary because my local DB was bunged up %>
+			<td><%= p.current_digital_status.nil? ? "Missing digital statuses..." : p.current_digital_status.state %></td>
+
 			<td>
 				<% if choice_header =='Choice' %>
 					<%= render "decision_form", p: p %>

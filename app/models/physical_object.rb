@@ -133,18 +133,18 @@ class PhysicalObject < ActiveRecord::Base
   # this scope grabs all unstaged physical objects of the specified format whose digital_start timestamp is with 24 hrs of the specified date
   # AND whose digitizing entity is Memnon
   scope :memnon_unstaged_by_date_and_format, lambda { |date, format|
-    PhysicalObject.joins(:digital_provenance).where(format: format,staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date))
+    PhysicalObject.includes(:digital_statuses).joins(:digital_provenance).where(format: format,staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date)).order("RAND()")
   }
 
 
-  # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by Memnon
+  # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by IU
   scope :iu_unstaged_by_date_formats, lambda{ |date|
-    PhysicalObject.joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format)
+    PhysicalObject.includes(:digital_statuses).joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format)
   }
   # This scope selects all unstaged physical objects of the specified format, whose digital_start timestamp is within 24hrs of the specified date
-  # AND whose digitizing entity
+  # AND whose digitizing entity is IU
   scope :iu_unstaged_by_date_and_format, lambda { |date, format|
-    PhysicalObject.joins(:digital_provenance).where(format: format, staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date))
+    PhysicalObject.joins(:digital_provenance).where(format: format, staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).order("RAND()")
   }
 
 
@@ -329,26 +329,19 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def current_digital_status
-    #DigitalStatus.where("physical_object_id = #{self.id}").order(:id).last
     self.digital_statuses.last
   end
-  
-  # omit_picklisted is a boolean specifying whether physical objects that have been added to
-  # a picklist should be omitted from the search results
-  def physical_object_query(omit_picklisted)
-    sql = "SELECT physical_objects.* FROM physical_objects" << 
-    (!format.nil? and format.length > 0 ? ", technical_metadata, #{tm_table_name(self.format)} " : " ") << 
-    "WHERE " <<
-    (!format.nil? and format.length > 0 ? 
-      "physical_objects.format='#{format}' AND physical_objects.id=technical_metadata.physical_object_id " << 
-      "AND technical_metadata.actable_id=#{tm_table_name(self.format)}.id " 
-      : 
-      "" ) << (omit_picklisted ? "AND (picklist_id is null OR picklist_id = 0) " : "")
-    physical_object_where_clause <<
-    (!format.nil? and format.length > 0 ? technical_metadata_where_claus : "") 
+ 
+  # omit_picklisted Boolean adds search term to that effect
+  def physical_object_query(omit_picklisted, results_limit = 0)
+    symbolize = lambda { |h| h.inject({}){ |hash, (k,v)| hash.merge(k.to_sym => v) } }
+    filter_blanks = lambda { |h| h.select{ |k,v| !v.to_s.blank? } }
+    filter_forbidden = lambda { |h| h.delete_if { |k,v| k.in? [:id, :created_at, :updated_at, :physical_object_id] } }
+    get_terms = lambda { |atts| filter_forbidden.call(symbolize.call(filter_blanks.call(atts))) }
 
-
-    PhysicalObject.find_by_sql(sql)
+    po_terms = get_terms.call(self.attributes)
+    tm_terms = (self.ensure_tm ? get_terms.call(self.ensure_tm.attributes) : {})
+    PhysicalObject.physical_object_search(omit_picklisted, po_terms, tm_terms, results_limit)
   end
 
   def ensure_tm
@@ -502,10 +495,7 @@ assigned to a box."
     self.box ? self.box.bin : self.bin
   end
 
-  # deprecated because the using scope no longer needs to compare against a joined table
-  # def self.datesql(date)
-  #   date.blank? ? "" : "DATEDIFF(digital_statuses.created_at, '#{date}') = 0"
-  # end
+
   def self.datesql(date)
     date.blank? ? "" : "DATEDIFF(physical_objects.digital_start, '#{date}') = 0"
   end
@@ -520,35 +510,40 @@ assigned to a box."
   end
 
   private
-  def physical_object_where_clause
-    sql = " "
-    self.attributes.each do |name, value|
-      if name == 'id' or name == 'created_at' or name == 'updated_at' or name == 'has_ephemera' or name == "technical_metadatum"
-        next
-      elsif name =='mdpi_barcode' or name == 'iucat_barcode'
-        unless value == 0 or value.nil?
-          sql << " AND physical_objects.#{name}='#{value}'"
-        end
+  # omit_picklisted Boolean adds search term to that effect
+  # calling via physical_object_query on an individual object uses strong parameters filters,
+  #  preventing SQL injection on 'name' values for LIKE case of string searches
+  def self.physical_object_search(omit_picklisted, physical_object_terms, tm_terms, results_limit = 0)
+    query_results = PhysicalObject.all
+    query_results = query_results.where(physical_objects: { picklist_id: [0, nil] }) if omit_picklisted
+    query_results = add_search_terms(query_results, :physical_objects, physical_object_terms)
+    unless physical_object_terms[:format].blank? || tm_terms.empty?
+      tm_table = tm_table_name(physical_object_terms[:format])
+      tm_class = TechnicalMetadatumModule.tm_format_classes[physical_object_terms[:format]].to_s
+      query_results = query_results.joins(:technical_metadatum).joins("INNER JOIN #{tm_table} ON technical_metadata.actable_id=#{tm_table}.id AND technical_metadata.actable_type='#{tm_class}'")
+      query_results = add_search_terms(query_results, tm_table, tm_terms)
+    end
+    query_results = query_results.limit(results_limit) if results_limit > 0
+    query_results
+  end
+
+  def self.add_search_terms(query_results, table_name, search_terms)
+    # Database Boolean values also accept NULL, so match false to 0/NULL
+    search_terms.each do |name, value|
+      search_terms[name] = (value ? 1 : [0, nil]) if value.class.in? [TrueClass, FalseClass]
+    end
+    search_terms.each do |name, value|
+      if value.class == String && value.include?('*')
+        query_results = query_results.where("#{table_name}.#{name} LIKE ?", value.gsub(/[*]/, '%'))
       else
-        if !value.nil? and (value.class == String and value.length > 0)
-          operand = value.to_s.include?('*') ? ' like ' : '='
-          v = value.to_s.include?('*') ? value.to_s.gsub(/[*]/, '%') : value
-          sql << " AND physical_objects.#{name}#{operand}'#{v}'"
-        elsif !value.nil? and value.class == TrueClass
-          sql << " AND physical_objects.#{name}=1"
-        end
+        query_results = query_results.where(table_name => { name => value })
       end
     end
-    sql
+    query_results
   end
 
   private
-  def technical_metadata_where_claus
-    tm_where(tm_table_name(format), technical_metadatum.specific)
-  end
-
-  private
-  def tm_table_name(format)
+  def self.tm_table_name(format)
     table_name = TechnicalMetadatumModule.tm_table_names[format]
     unless table_name.nil?
       table_name
@@ -557,45 +552,16 @@ assigned to a box."
     end
   end
 
+  def tm_table_name(format)
+    PhysicalObject.tm_table_name(format)
+  end
+
   private 
   def default_values
     self.generation ||= ""
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
     self.digital_provenance ||= DigitalProvenance.new(physical_object_id: self.id)
-  end
-
-  # def open_reel_tm_where(stm)
-  #   q = ""
-  #   stm.attributes.each do |name, value|
-  #     #ignore these fields in the Sql WHERE clause
-  #     if name == 'id' or name == 'created_at' or name == 'updated_at' or name == "actable_type"
-  #       next
-  #     # a value of false in a query means we don't care whether the returned value is true OR false
-  #     elsif !value.nil? and (value.class == String and value.length > 0)
-  #       q << " AND open_reel_tms.#{name}='#{value}'"
-  #     elsif !value.nil? and value.class == TrueClass
-  #       q << " AND open_reel_tms.#{name}=1"
-  #     end
-  #   end
-  #   q
-  # end
-
-  def tm_where(table_name, tm)
-    q = ""
-    tm.attributes.each do |name, value|
-      #ignore these fields in the Sql WHERE clause
-      if name == 'id' or name == 'created_at' or name == 'updated_at' or 
-      name == "actable_type" or name == 'unknown' or name == 'none'
-        next
-      # a value of false in a query means we don't care whether the returned value is true OR false
-      elsif !value.nil? and (value.class == String and value.length > 0)
-        q << " AND #{table_name}.#{name}='#{value}'"
-      elsif !value.nil? and value.class == TrueClass
-        q << " AND #{table_name}.#{name}=1"
-      end
-    end
-    q
   end
 
 end

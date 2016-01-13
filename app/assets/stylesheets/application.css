@@ -200,7 +200,7 @@ tr.even {
 
 .left {
   float: left;
-  margin-right: 15px;
+  margin-right: 10px;
 }
  .left > table {
   width: 485px;

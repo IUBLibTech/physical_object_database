@@ -38,29 +38,31 @@ class PicklistSpecificationsController < ApplicationController
   def update
     PicklistSpecification.transaction do 
       @original_tm = @ps.technical_metadatum
+      @ps.assign_attributes(picklist_specification_params)
       tm_assigned = true
-      if ! @ps.update_attributes(picklist_specification_params)
-        @edit_mode = true
-        flash[:notice] = "Failed to update #{@ps.name}."
-        render :edit
-      else
-        @tm = @ps.ensure_tm
-	begin
-	  @tm.assign_attributes(tm_params)
-	rescue
-	  tm_assigned = false
-	end
-        if @tm.update_attributes(tm_params) && tm_assigned
-          flash[:notice] = "#{@ps.name} successfully updated."
-          redirect_to action: :index
-        else
-	  if !tm_assigned
-	    @ps.errors[:base] << "Technical Metadata format did not match, which was probably the result of a failed format change.  Verify physical object format and technical metadata, then resubmit."
-	  end
-          @edit_mode = true
-          flash[:notice] = "Failed to update #{@ps.name}."
-          render :edit
+      @tm = @ps.ensure_tm
+      begin
+        @tm.assign_attributes(tm_params)
+      rescue
+        tm_assigned = false
+      end
+      if @ps.errors.none? && @ps.valid? && @tm.valid? && tm_assigned
+        updated = @ps.save
+        @tm.reload
+        if @original_tm && @original_tm.specific && (@original_tm.specific.id != @tm.id)
+          @original_tm.destroy
         end
+      end
+      if !tm_assigned
+        @ps.errors[:base] << "Technical Metadata format did not match, which was probably the result of a failed format change.  Verify format and technical metadata, then resubmit."
+      end
+      if updated
+        flash[:notice] = "#{@ps.name} successfully updated."
+        redirect_to action: :index
+      else
+        @edit_mode = true
+        flash.now[:warning] = "Failed to update #{@ps.name}"
+        render action: :edit
       end
     end
   end
@@ -79,8 +81,18 @@ class PicklistSpecificationsController < ApplicationController
   end
 
   def query
-    po = PhysicalObject.new(format: @ps.format)
-    po.technical_metadatum = @ps.technical_metadatum
+    po = PhysicalObject.new
+    po.attributes.keys.each { |att| po[att] = nil }
+    po.format = @ps.format
+    if @ps.ensure_tm
+      tm_attributes = @ps.ensure_tm.attributes
+      tm_attributes.delete_if { |k, v| k.to_sym.in? [:id, :created_at, :updated_at] }
+      tm = po.ensure_tm
+      if tm
+        tm.attributes.keys.each { |att| tm[att] = nil }
+        tm.assign_attributes(tm_attributes)
+      end
+    end
     @physical_objects = po.physical_object_query(true)
   
     @edit_mode = true

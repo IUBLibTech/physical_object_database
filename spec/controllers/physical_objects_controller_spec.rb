@@ -3,6 +3,7 @@ describe PhysicalObjectsController do
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
   let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
+  let(:picklist_specification) { FactoryGirl.create(:picklist_specification, :cdr) }
   let(:barcoded_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded) }
   let(:second_object) { FactoryGirl.create(:physical_object, :cdr, unit: physical_object.unit, group_key: physical_object.group_key, group_position: 2) }
   let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
@@ -979,6 +980,73 @@ describe PhysicalObjectsController do
     it "returns valid results" do
       expect(response.body).to match physical_object.generate_filename(sequence: sequence, use: use, extension: extension)
     end
+  end
+
+  describe "GET tm_form" do
+    let(:params) { { format: 'CD-R' } }
+    let(:get_tm_form) { get :tm_form, params }
+    shared_examples "tm_form behaviors" do |object_type|
+      context "search" do
+        before(:each) { params[:id] = 0 }
+        before(:each) { params[:search_mode] = 'true' }
+        before(:each) { get_tm_form }
+        it "assigns @search_mode" do
+          expect(assigns(:search_mode)).to eq true
+        end
+        it "assigns new @#{object_type}" do
+          expect(assigns(object_type)).to be_a_new object_class
+        end
+        it "assigns new @tm" do
+          expect(assigns(:tm)).to be_a_new CdrTm
+        end
+        it "renders generic TM form" do
+          expect(response).to render_template partial: 'technical_metadatum/_show_generic_tm'
+        end
+      end
+      context "new" do
+        before(:each) { params[:id] = 0 }
+        before(:each) { get_tm_form }
+        it "assigns new @#{object_type}" do
+          expect(assigns(object_type)).to be_a_new object_class
+        end
+        it "assigns new @tm" do
+          expect(assigns(:tm)).to be_a_new CdrTm
+        end
+        it "renders format-specific TM form" do
+          expect(response).to render_template partial: 'technical_metadatum/_show_cdr_tm'
+        end
+      end
+      context "existing" do
+        before(:each) { params[:id] = existing_object.id }
+        before(:each) { params[:edit_mode] = 'true' }
+        before(:each) { get_tm_form }
+        it "assigns @edit_mode" do
+          expect(assigns(:edit_mode)).to eq true
+        end
+        it "assigns existing @#{object_type}" do
+          expect(assigns(object_type)).to eq existing_object
+        end
+        it "assigns existing @tm" do
+          expect(assigns(:tm)).to eq existing_object.technical_metadatum.specific
+        end
+        it "renders format-specific TM form" do
+          expect(response).to render_template partial: 'technical_metadatum/_show_cdr_tm'
+        end
+      end
+    end
+    context "for Physical Object" do
+      before(:each) { params[:type] = 'PhysicalObject' }
+      let(:object_class) { PhysicalObject }
+      let(:existing_object) { physical_object }
+      include_examples "tm_form behaviors", :physical_object
+    end
+    context "for PicklistSpecification" do
+      before(:each) { params[:type] = 'PicklistSpecification' }
+      let(:object_class) { PicklistSpecification }
+      let(:existing_object) { picklist_specification }
+      include_examples "tm_form behaviors", :picklist_specification
+    end
+
   end
 
 end
