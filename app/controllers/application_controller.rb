@@ -17,7 +17,10 @@ class ApplicationController < ActionController::Base
   def tm_form
     f = params[:format]
     @edit_mode = params[:edit_mode] == 'true'
-    if params[:type] == 'PhysicalObject'
+    @search_mode = params[:search_mode] == 'true'
+    if f.blank?
+      @tm = nil
+    elsif params[:type] == 'PhysicalObject'
       @physical_object = params[:id] == '0' ? PhysicalObject.new : PhysicalObject.find(params[:id])
       if ! @physical_object.technical_metadatum.nil?
         #this may be an edit cahnging the format
@@ -44,7 +47,14 @@ class ApplicationController < ActionController::Base
         @tm = @picklist_specification.create_tm
       end
     end
-    render(partial: 'technical_metadatum/' + TechnicalMetadatumModule.tm_partials[f])
+    if f.blank?
+      render(partial: 'technical_metadatum/show_blank_tm')
+    elsif @search_mode
+      @tm.attributes.keys.each { |att| @tm[att] = nil unless att == "subtype" }
+      render(partial: 'technical_metadatum/show_generic_tm')
+    else
+      render(partial: 'technical_metadatum/' + TechnicalMetadatumModule.tm_partials[f])
+    end
   end
 
   private
@@ -74,7 +84,11 @@ class ApplicationController < ActionController::Base
         :other_copies, :year, :bin, :bin_id, :unit, :unit_id, :current_workflow_status, :picklist_id,
         :spreadsheet, :spreadsheet_id, :box, :box_id,
         condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :active, :user, :_destroy],
-        notes_attributes: [:id, :body, :user, :export, :_destroy])
+        notes_attributes: [:id, :body, :user, :export, :_destroy],
+        #SEARCH multi-select values
+        unit_id: [], generation: [], workflow_status: [],
+        picklist_id: [], spreadsheet_id: [], box_id: [], bin_id: []
+        )
     end
   
     def tm_params
@@ -101,7 +115,31 @@ class ApplicationController < ActionController::Base
         #fields for eight mm video
         :playback_speed, :binder_system,
         #fields for umatic video
-        :size
+        :size,
+
+        # SEARCH: re-list select attributes with array values, allowing for multi-select
+        :pack_deformation => [], :reel_size => [], :track_configuration => [],
+        :tape_thickness => [], :sound_field => [], :tape_stock_brand => [], :tape_base => [], :directions_recorded => [],
+        :vinegar_syndrome => [], :fungus => [], :soft_binder_syndrome => [], :other_contaminants => [], :zero_point9375_ips => [],
+        :seven_point5_ips => [], :one_point875_ips => [], :fifteen_ips => [], :three_point75_ips => [], :thirty_ips => [], :full_track => [],
+        :half_track => [], :quarter_track => [], :unknown_track => [], :one_mils => [], :one_point5_mils => [], :zero_point5_mils => [],
+        :mono => [], :stereo => [], :unknown_sound_field => [], :acetate_base => [], :polyester_base => [], :pvc_base => [], :paper_base => [],
+        :unknown_playback_speed => [],
+        #fields for cd-r's not covered by open reel audio tape fields
+        :damage => [], :breakdown_of_materials => [], :format_duration => [],
+        #fields for dat not covered so far
+        :sample_rate_32k => [], :sample_rate_44_1_k => [], :sample_rate_48k => [], :sample_rate_96k => [],   
+        #fields for analog sound discs
+        :diameter => [], :speed => [], :groove_size => [], :groove_orientation => [], :recording_method => [], :material => [], :substrate => [],
+        :coating => [], :equalization => [], :country_of_origin => [], :delamination => [], :exudation => [], :oxidation => [], :cracked => [],
+        :warped => [], :dirty => [], :scratched => [], :worn => [], :broken => [], :label => [],
+        :subtype => [],
+        #fields for betacam
+        :format_version => [], :cassette_size => [], :recording_standard => [], :image_format => [],
+        #fields for eight mm video
+        :playback_speed => [], :binder_system => [],
+        #fields for umatic video
+        :size => []
         )
     end
 

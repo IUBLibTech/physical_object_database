@@ -1,5 +1,6 @@
 class SearchController < ApplicationController
   before_action :authorize_search
+  SEARCH_RESULTS_LIMIT = 500
   def search_results
 	@search = true
     term = params[:identifier].to_s
@@ -19,46 +20,47 @@ class SearchController < ApplicationController
   end
 
   def index
-    @physical_object = PhysicalObject.new(format: "CD-R")
+    @physical_object = PhysicalObject.new
     @tm = @physical_object.ensure_tm
     @dp = @physical_object.ensure_digiprov
-    @display_assigned = true
+    @display_assigned = false
     @edit_mode = true
+    @search_mode = true
     @submit_text = "Search"
     @controller = 'search'
     @action = "advanced_search"
+    @physical_object.attributes.keys.each { |att| @physical_object[att] = nil }
   end  
 
   def advanced_search
-    pop = params[:physical_object]
-    tmp = params[:tm]
-
+    @search_mode = true
     po = PhysicalObject.new
-    pop.each do |name, value|
-      if !value.nil? and value.to_s.length > 0
-        po[name] = value
-      end 
+    po.attributes.keys.each { |att| po[att] = nil }
+    po.assign_attributes(clean_arrays(physical_object_params))
+    if params[:tm] && (tm = po.ensure_tm)
+      tm.attributes.keys.each { |att| tm[att] = nil unless att == "subtype" }
+      tm.assign_attributes(clean_arrays(tm_params))
     end
-
-    tm = TechnicalMetadatum.new
-    po.technical_metadatum = tm
-
-    stm = po.create_tm(po.format)
-    tm.actable = stm
-    tmp.each do |name, value|
-      if !value.nil? and value.length > 0
-        stm[name] = value
-      end
-    end
-    @physical_objects = PhysicalObject.advanced_search(po)
-    #FIXME: employ pagination?
-    flash[:notice] = "Your search returns these results"
+    omit_picklisted = (params[:omit_picklisted] == 'true')
+    @physical_objects = po.physical_object_query(omit_picklisted, SEARCH_RESULTS_LIMIT)
+    @results_count = @physical_objects.size
+    flash.now[:notice] = "Your search returns these results"
+    flash.now[:warning] = "Your search results have been limited to #{SEARCH_RESULTS_LIMIT}." if @results_count >= SEARCH_RESULTS_LIMIT && SEARCH_RESULTS_LIMIT > 0
     render('physical_objects/index')
   end
 
   private
     def authorize_search
       authorize :search
+    end
+
+    #forms summit dummy initial "" in arrays from multi-selects
+    def clean_arrays(h)
+      h.each do |k,v|
+        if v.class == Array && v.first == ""
+          h[k] = ((v.size > 1) ? v[1,v.size - 1] : nil)
+        end
+      end
     end
 
 end

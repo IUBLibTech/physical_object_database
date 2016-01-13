@@ -18,6 +18,6 @@
       <%= link_to("Memnon Invoice", invoice_controller_path) if policy(Invoice).index? %>
     </div>
   <% end %>
-  <h2>Physical Objects</h2>
+  <h2>Physical Objects<%= " [#{@results_count}]" if @search_mode %></h2>
   <%# special case: need to specify full path because of inclusion in search result %>
   <%= render 'physical_objects/physical_objects_table' %>

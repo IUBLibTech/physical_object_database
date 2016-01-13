@@ -1,4 +1,21 @@
 <div id="advanced_search_div" class="left">
-	<h2>Advanced Search</h2>
-	<%= render(partial: "advanced_search")	%>
+  <h2>Advanced Search</h2>
+  <div class="accordion">
+    <h2>Notes on Search:</h2>
+    <div>
+    <ul>
+      <li>Text field searches: 
+        <ul>
+          <li>are case-insensitive; 'music' will also match against 'Music' and 'MUSIC'</li>
+          <li>are exact matches unless wildcards are used; 'Music' will not match against 'The Sound of Music'</li>
+          <li>use an asterisk (*) as a wildcard character for approximate matches; '*Music' will match against 'The Sound of Music', but not 'Music for Listening To', while '*Music*' matches against both</li>
+        </ul>
+      </li> 
+      <li>Searches are format-independent, unless a format is selected</li>
+      <li>For true/false values (normally checkboxes), the default is to accept all values, but you may select 'true' or 'false' to match only those values</li>
+      <li>Control-click to multi-select dropdown values</li>
+    </ul>
+    </div>
+  </div>
+  <%= render(partial: "advanced_search") %>
 </div>
