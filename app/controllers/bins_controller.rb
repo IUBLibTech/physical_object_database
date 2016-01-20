@@ -8,6 +8,7 @@ class BinsController < ApplicationController
 		@bins = Bin.eager_load([:physical_objects, :boxes]).all
     @bins = @bins.where(workflow_status: params[:workflow_status]) unless params[:workflow_status].blank?
     @bins = @bins.where(format: params[:format]) unless params[:format].blank?
+    @bins = @bins.where("identifier LIKE ?", '%' + params[:identifier] + '%') unless params[:identifier].blank?
     @boxes = @boxes.where(format: params[:format]) unless params[:format].blank?
 	end
 

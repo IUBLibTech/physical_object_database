@@ -56,6 +56,30 @@ describe BinsController do
         expect(response).to render_template(:index)
       end
     end
+    describe "identifier filter" do
+      before(:each) do
+        bin; sealed
+        get :index, identifier: identifier
+      end
+      context "with no value set" do
+        let(:identifier) { nil }
+        it "returns all bins" do
+          expect(assigns(:bins).sort).to eq [bin, sealed].sort
+        end
+      end
+      context "with a matching value set" do
+        let(:identifier) { sealed.identifier[0, (sealed.identifier.size - 1)] }
+        it "returns matching bins" do
+          expect(assigns(:bins)).to eq [sealed]
+        end
+      end
+      context "with a non-matching value set" do
+        let(:identifier) { "non-matching value" }
+        it "returns no bins" do
+          expect(assigns(:bins)).to be_empty
+        end
+      end
+    end
     describe "workflow status filter" do
       before(:each) do
         bin; sealed
