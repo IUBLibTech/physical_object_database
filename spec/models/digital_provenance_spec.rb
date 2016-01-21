@@ -45,4 +45,10 @@ describe DigitalProvenance, type: :model do
     end
   end
 
+  describe "#complete?" do
+    it "returns a Boolean" do
+      expect(valie_dfp.complete?).to be_in [true, false]
+    end
+  end
+
 end

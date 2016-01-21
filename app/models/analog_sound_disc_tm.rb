@@ -3,6 +3,13 @@ class AnalogSoundDiscTm < ActiveRecord::Base
   after_initialize :default_values, if: :new_record?
   extend TechnicalMetadatumClassModule
   # TM module constants
+  PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
+    speed_used: true,
+    volume_units: true,
+    stylus_size: true,
+    turnover: false,
+    rolloff: false,
+  })
   TM_FORMAT = ['LP', 'Lacquer Disc', '45', '78', 'Other Analog Sound Disc']
   TM_SUBTYPE = true
   TM_GENRE = :audio

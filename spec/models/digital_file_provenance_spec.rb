@@ -148,4 +148,10 @@ describe DigitalFileProvenance do
       expect(valid_dfp).to be_valid
     end
   end
+
+  describe "#complete?" do
+    it "returns a Boolean" do
+      expect(valie_dfp.complete?).to be_in [true, false]
+    end
+  end
 end

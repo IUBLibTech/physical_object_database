@@ -74,6 +74,15 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
     end
   end
 
+  describe "#provenance_requirements" do
+    it "returns a hash" do
+      expect(tm_object.provenance_requirements).to be_a Hash
+    end
+    it "returns the class constant" do
+      expect(tm_object.provenance_requirements).to eq tm_object.class::PROVENANCE_REQUIREMENTS
+    end
+  end
+
   describe "provides class methods" do 
     describe "::valid_headers" do
       it "returns an array of valid headers" do
@@ -93,6 +102,11 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
     describe "::parse_tm" do
       it "updates the passed tm object with the passed values" do
         skip "TODO"
+      end
+    end
+    describe "::PROVENANCE_REQUIREMENTS" do
+      specify "exist" do
+        expect{tm_object.class::PROVENANCE_REQUIREMENTS}.not_to raise_error
       end
     end
   end
