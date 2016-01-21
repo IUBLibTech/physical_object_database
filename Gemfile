@@ -4,6 +4,9 @@ source 'https://rubygems.org'
 #active_record-acts_as handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
 gem "active_record-acts_as"
 
+#allows like query syntax
+gem 'activerecord-like', '0.0.6'
+
 # counter_culture improves default count_cache handling and adds additional features
 # removed; deprecate or resolve caching issue
 # gem "counter_culture", "~> 0.1.18"
