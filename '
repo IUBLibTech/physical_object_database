@@ -341,7 +341,10 @@ class PhysicalObject < ActiveRecord::Base
 
     po_terms = get_terms.call(self.attributes)
     po_terms = po_terms.merge({ picklist_id: [0, nil]}) if omit_picklisted
-    po_terms = po_terms.merge(get_terms.call(additional_terms.delete(:association))) if additional_terms[:association]
+    #po_terms = po_terms.merge(get_terms.call(additional_terms.delete(:association))) if additional_terms[:association]
+    if additional_terms[:association]
+      po_terms = po_terms.merge(get_terms.call(additional_terms.delete(:association)))
+    end
     tm_terms = (self.ensure_tm ? get_terms.call(self.ensure_tm.attributes) : {})
     search_terms = additional_terms.merge({ physical_object: po_terms, technical_metadatum: tm_terms })
     PhysicalObject.physical_object_search(search_terms, results_limit)
@@ -522,6 +525,7 @@ assigned to a box."
     search_terms.each do |object, terms|
       if terms && terms.any?
         object_table = object.to_s.pluralize.to_sym
+        query_results = query_results.joins(object) unless object == :physical_object
         if object == :physical_object
           # no join needed
         elsif object == :technical_metadatum && !format.blank?
@@ -529,7 +533,7 @@ assigned to a box."
           tm_class = TechnicalMetadatumModule.tm_format_classes[format].to_s
           query_results = query_results.joins(:technical_metadatum).joins("INNER JOIN #{object_table} ON technical_metadata.actable_id=#{object_table}.id AND technical_metadata.actable_type='#{tm_class}'")
         else
-          query_results = query_results.joins(object_table)
+          query_results = querys_results.join(object_table)
         end
         query_results = add_search_terms(query_results, object_table.to_sym, terms)
       end
@@ -545,6 +549,7 @@ assigned to a box."
     end
     search_terms.each do |name, value|
       if value.class == String && value.include?('*')
+        #query_results = query_results.where("#{table_name}.#{name} LIKE ?", value.gsub(/[*]/, '%'))
         query_results = query_results.where.like(table_name => { name => value.gsub(/[*]/, '%')})
       else
         query_results = query_results.where(table_name => { name => value })

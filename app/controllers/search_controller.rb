@@ -42,10 +42,14 @@ class SearchController < ApplicationController
       tm.assign_attributes(clean_arrays(tm_params))
     end
     omit_picklisted = (params[:omit_picklisted] == 'true')
-    @physical_objects = po.physical_object_query(omit_picklisted, SEARCH_RESULTS_LIMIT)
+    additional_params = { association: clean_arrays(association_params)}
+    additional_params = additional_params.merge({ condition_status: clean_arrays(condition_status_params)}) if params[:condition_status]
+    additional_params = additional_params.merge({ note: clean_arrays(note_params)}) if params[:note]
+    @physical_objects = po.physical_object_query(omit_picklisted, additional_params, SEARCH_RESULTS_LIMIT)
+    @full_results = po.physical_object_query(omit_picklisted, additional_params)
     @results_count = @physical_objects.size
     flash.now[:notice] = "Your search returns these results"
-    flash.now[:warning] = "Your search results have been limited to #{SEARCH_RESULTS_LIMIT}." if @results_count >= SEARCH_RESULTS_LIMIT && SEARCH_RESULTS_LIMIT > 0
+    flash.now[:warning] = "Your search returned #{@full_results.size} results, but display has been limited to the first #{SEARCH_RESULTS_LIMIT}." if @results_count >= SEARCH_RESULTS_LIMIT && SEARCH_RESULTS_LIMIT > 0
     render('physical_objects/index')
   end
 
@@ -62,5 +66,18 @@ class SearchController < ApplicationController
         end
       end
     end
+
+    # association parameters for physical object, passed separately as physical_object will not hold array of values in an _id field
+    def association_params
+      params.require(:physical_object).permit(unit_id: [], picklist_id: [], spreadsheet_id: [], box_id: [], bin_id: [])
+    end
+
+   def condition_status_params
+     params.require(:condition_status).permit(:notes, :active, :user, condition_status_template_id: [])
+   end
+
+   def note_params
+     params.require(:note).permit(:body, :user, :export)
+   end
 
 end

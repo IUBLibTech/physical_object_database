@@ -145,7 +145,7 @@ describe SearchController do
         end
       end
       context "with a multi-select term" do
-        context "set to one value (withi initial dummy value)" do
+        context "set to one value (with initial dummy value)" do
           let(:po_terms) { {generation: ["", "Unknown"]} }
           let(:returned) { items_1 }
           include_examples "returns item set", "matching items"
@@ -161,6 +161,29 @@ describe SearchController do
           include_examples "returns item set", "all items"
         end
       end
+      context "with an association term" do
+        before(:each) do
+          (0..3).each do |i|
+             items_all[i].unit = Unit.all[i]
+             items_all[i].save!
+          end
+        end
+        context "set to one value (with initial dummy value)" do
+          let(:po_terms) { {unit_id: ["", items_all[0].unit_id]} }
+          let(:returned) { [items_all[0]] }
+          include_examples "returns item set", "matching item"
+        end
+        context "set to one value" do
+          let(:po_terms) { {unit_id: [items_all[0].unit_id]} }
+          let(:returned) { [items_all[0]] }
+          include_examples "returns item set", "matching item"
+        end
+        context "set to multiple values" do
+          let(:po_terms) { {unit_id: [items_1[0].unit_id, items_1[1].unit_id]} }
+          let(:returned) { items_1 }
+          include_examples "returns item set", "matching items"
+        end
+      end
       context "with a text term" do
         context "for an exact match" do
           let(:po_terms) { {title: "TITLE"} }
@@ -171,6 +194,11 @@ describe SearchController do
           let(:po_terms) { {title: "TITLE*"} }
           let(:returned) { items_all }
           include_examples "returns item set", "wildly matching items"
+        end
+        context "with an injection attempt" do
+          let(:po_terms) { {title: "unused*' OR 1=1); -- "} }
+          let(:returned) { PhysicalObject.none }
+          include_examples "returns item set", "(no items)"
         end
       end
     end
@@ -184,6 +212,38 @@ describe SearchController do
         let(:po_terms) { {format: "CD-R"} }
         let(:tm_terms) { {fungus: true} }
         let(:returned) { [cdr_1] }
+        include_examples "returns item set", "matching items"
+      end
+    end
+    context "searching condition_status" do
+      before(:each) do
+        items_1.each do |item|
+          cs = item.condition_statuses.new(active: true, condition_status_template_id: ConditionStatusTemplate.first.id)
+          cs.save!
+        end
+      end
+      before(:each) { post :advanced_search, omit_picklisted: omit_picklisted, physical_object: po_terms, tm: tm_terms, condition_status: cs_terms }
+      describe "applies condition_status search terms" do
+        let(:po_terms) { { title: ""} }
+        let(:tm_terms) { {} }
+        let(:cs_terms) { {active: true, condition_status_template_id: [ConditionStatusTemplate.first.id]} }
+        let(:returned) { items_1 }
+        include_examples "returns item set", "matching items"
+      end
+    end
+    context "searching notes" do
+      before(:each) do
+        items_1.each do |item|
+          note = item.notes.new(body: 'note test')
+          note.save!
+        end
+      end
+      before(:each) { post :advanced_search, omit_picklisted: omit_picklisted, physical_object: po_terms, tm: tm_terms, note: note_terms }
+      describe "applies note search terms" do
+        let(:po_terms) { { title: ""} }
+        let(:tm_terms) { {} }
+        let(:note_terms) { {body: '*test*'} }
+        let(:returned) { items_1 }
         include_examples "returns item set", "matching items"
       end
     end

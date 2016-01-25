@@ -85,9 +85,9 @@ class ApplicationController < ActionController::Base
         :spreadsheet, :spreadsheet_id, :box, :box_id,
         condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :active, :user, :_destroy],
         notes_attributes: [:id, :body, :user, :export, :_destroy],
-        #SEARCH multi-select values
-        unit_id: [], generation: [], workflow_status: [],
-        picklist_id: [], spreadsheet_id: [], box_id: [], bin_id: []
+        # SEARCH multi-select values
+        generation: [], workflow_status: []
+        # multi-select _id attributes are handled in the search controller
         )
     end
   
