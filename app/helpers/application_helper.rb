@@ -64,6 +64,14 @@ module ApplicationHelper
 		render(partial: 'application/error_messages', locals: {object: object})		
 	end
 
+        def dp_requirement(field)
+          "<span style='color: red;'>*</span>".html_safe if @tm.provenance_requirements[field]
+        end
+
+        def dp_na(field)
+          true if @tm.provenance_requirements[field].nil?
+        end
+
 	def environment_notice
 		if Rails.env.production?
 			return ""
