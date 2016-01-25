@@ -20,8 +20,7 @@ class DigitalProvenance < ActiveRecord::Base
     complete = true
     if self.physical_object && self.physical_object.ensure_tm
       self.attributes.keys.map { |a| a.to_sym }.select { |a| !a.in? [:id] }.each do |att|
-        if self[att].blank? && self.physical_object.ensure_tm.provenance_requirement
-  s[att]
+        if self[att].blank? && self.physical_object.ensure_tm.provenance_requirements[att]
           complete = false
           break
         end
