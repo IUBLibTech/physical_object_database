@@ -1,6 +1,9 @@
 module InvoiceHelper
 	require 'roo'
 
+	def logger
+		@@logger ||= Logger.new("#{Rails.root}/log/invoice_logger.log")
+	end
 
 	@@mutex = Mutex.new
 
@@ -15,7 +18,7 @@ module InvoiceHelper
 	def self.process_rows(upload)
 		mis = MemnonInvoiceSubmission.new(filename: upload.original_filename, submission_date: Time.now, successful_validation: false, validation_completion_percent: 0)
 		mis.save
-		# puts "Starting invoice parse..."
+		logger.unknown "\n\n\n\nProcessing uploaded invoice: #{upload.original_filename}"
 		begin
 			xlsx = Roo::Excelx.new(upload.tempfile.path, file_warning: :ignore)
 			xlsx.default_sheet = xlsx.sheets[0]
@@ -35,6 +38,7 @@ module InvoiceHelper
 				headers[header] = i
 			}
 			if headers['Object barcode'].nil? or headers['Preservation master File name'].nil?
+				logger.unknown "Bad headers..."
 				mis.update_attributes(successful_validation: false, bad_headers: true, validation_completion_percent: 100)
 				return
 			end
@@ -47,7 +51,7 @@ module InvoiceHelper
 			#   e) is the physical object on SDA?
 			((xlsx.first_row + 1)..(xlsx.last_row)).each do |row|
 				barcode = xlsx.row(row)[headers['Object barcode']].to_i
-				# puts "row #{row}: #{barcode}"
+				logger.unknown "Parsing row #{row}"
 				pres_filename = xlsx.row(row)[headers['Preservation master File name']]
 				po = PhysicalObject.where(mdpi_barcode: barcode).first
 				problem = ""
@@ -63,29 +67,39 @@ module InvoiceHelper
 				end
 				if problem.length > 0
 					@problems_by_row << "row #{row}: #{problem}" if problem.length > 0
+					logger.unknown "Problem with row #{row}: problem: #{problem}"
  				else
 					@billable << barcode
 				end
 			end
-			# puts "Problems checked"
+
 			mis.update_attributes(problems_by_row: @problems_by_row)
+			logger.unknown "Memnon invoice submission updated - total problems: #{@problems_by_row.length}"
 			if @problems_by_row.length == 0
 				begin
 					mis.update_attributes(validation_completion_percent: 50)
+					logger.unknown "Updating physical objects..."
 					PhysicalObject.transaction do
 						@billable.each do |barcode|
-							#update_attributes will not throw and exception (the only thing that triggers a rollback in rails) - must use update_attributes!
+							# update_attributes will not throw and exception (the only thing that triggers a rollback in rails) -
+							# must use update_attributes!
 							po = PhysicalObject.where(mdpi_barcode: barcode).where.not(digital_start: nil).first
 							po.update_attributes!(billed: true, spread_sheet_filename: upload.original_filename, date_billed: time)
+							logger.unknown "Updated physical object: #{barcode}"
 						end
 						mis.update_attributes!(successful_validation: true, validation_completion_percent: 100)
+						logger.unknown "All physical objects marked as billed."
 					end
 				rescue => error
-					mis.update_attributes(other_error: error.to_s << error.backtrace.to_s, successful_validation: false, validation_completion_percent: 100)
+					logger.error "An error occurred while marking physical objects as billed - rolling back the transaction..."
+					logger.error "Error caused by: #{error.message}"
+					logger.error "#{error.backtrace.join("\n")}"
+					saved = mis.update_attributes(other_error: error.to_s << error.backtrace.to_s, successful_validation: false, validation_completion_percent: 100)
+					logger.error "Memnon Invoice Submission #{saved ? 'was' : 'was not'} saved successfully..."
 				end
 			else
-				# puts "I SHOULD be saving the validation as unsuccessful..."
-				mis.update_attributes(successful_validation: false, validation_completion_percent: 100)
+				saved = mis.update_attributes(successful_validation: false, validation_completion_percent: 100)
+				logger.unknown "Validation should be saved as failed... Did it happen? #{saved}"
 			end
 		end
 	end
