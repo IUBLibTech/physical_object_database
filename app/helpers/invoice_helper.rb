@@ -1,7 +1,7 @@
 module InvoiceHelper
 	require 'roo'
 
-	def logger
+	def self.logger
 		@@logger ||= Logger.new("#{Rails.root}/log/invoice_logger.log")
 	end
 
