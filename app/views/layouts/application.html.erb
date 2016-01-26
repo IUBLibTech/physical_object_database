@@ -51,9 +51,6 @@
       <div class="left">
         <%= render 'search/basic_search_form' if policy(:search).search_results? %>
       </div>
-      <div class="menuItem">
-        <%= link_to("Advanced Search", :controller => 'search', :action => 'index') if policy(:search).advanced_search? %>
-      </div>
     </div>
     <div id="contextMenu">
       <%= yield :context_menu %>
