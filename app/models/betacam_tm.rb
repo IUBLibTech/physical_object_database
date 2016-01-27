@@ -49,6 +49,6 @@ class BetacamTm < ActiveRecord::Base
     pack_deformation
   end
 
-  # master_coipies default of 1
+  # master_copies default of 1
 
 end
