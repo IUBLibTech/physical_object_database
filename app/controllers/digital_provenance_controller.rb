@@ -18,18 +18,20 @@ class DigitalProvenanceController < ApplicationController
 		success_flag = true
 		@dp.assign_attributes(dp_params)
 		@dp.digital_file_provenances.each do |dfp|
-		  if dfp.valid? && dfp.save
-		    # do nothing
+		  if dfp.valid? && dfp.save && dfp.persisted?
+puts dfp.inspect
+		    flash[:warning] = "Digital File Provenance has been saved, but is not complete." unless dfp.complete? || dfp._destroy
 		  else
 		    success_flag = false
 		  end
 		end
 		if @dp.valid? && @dp.save
-		  # do nothing
+		  flash[:warning] = "Digital Provenance has been saved, but is not complete." unless @dp.complete?
 		else
 		  success_flag = false
 		end
 		if success_flag
+			flash[:notice] = "Digital Provenance has been saved."
 			redirect_to action: :show
 		else
 			@edit_mode = true

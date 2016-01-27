@@ -69,4 +69,18 @@ class DigitalFileProvenance < ActiveRecord::Base
 	    errors.add(:filename, "must follow pattern: MDPI_(barcode)_(face)_(use).(ext)") unless components.size == 4 && components.last.size == 2
 	  end
 	end
+
+  def complete?
+    complete = true
+    if self.digital_provenance && self.digital_provenance.physical_object && self.digital_provenance.physical_object.ensure_tm
+      self.attributes.keys.map { |a| a.to_sym }.select { |a| !a.in? [:id] }.each do |att|
+        if self[att].blank? && self.digital_provenance.physical_object.ensure_tm.provenance_requirements[att]
+          complete = false
+          break
+        end
+      end
+    end
+    complete
+  end
+
 end

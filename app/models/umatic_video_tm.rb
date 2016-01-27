@@ -4,6 +4,9 @@ class UmaticVideoTm < ActiveRecord::Base
   extend TechnicalMetadatumClassModule
 
   # TM module constants
+  PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
+    baking_date: false,
+  })
   TM_FORMAT = ['U-matic']
   TM_SUBTYPE = false
   TM_GENRE = :video

@@ -51,6 +51,24 @@ describe DigitalProvenanceController do
         expect(response).to redirect_to controller: :digital_provenance, id: physical_object.id, action: :show
       end
     end
+    context "with incomplete digital_file_provenance" do
+      before(:each) do
+        dfp = physical_object.digital_provenance.digital_file_provenances.new(filename: "MDPI_#{physical_object.mdpi_barcode}_01_pres.wav")
+        dfp.save!
+      end
+      before(:each) { patch :update, id: physical_object.id, digital_provenance: { duration: new_duration, digital_file_provenances_attributes: { "1" => physical_object.digital_provenance.digital_file_provenances.first.attributes  } } }
+      it "updates attributes" do
+        expect(physical_object.digital_provenance.duration).to eq original_duration
+        physical_object.digital_provenance.reload
+        expect(physical_object.digital_provenance.duration).not_to eq original_duration
+      end
+      it "flashes incomplete warning" do
+        expect(flash[:warning]).to match /complete/
+      end
+      it "redirects to show" do
+        expect(response).to redirect_to controller: :digital_provenance, id: physical_object.id, action: :show
+      end
+    end
     # invalid by means of invalid digital_file_provenance
     context "with invalid attributes" do
       before(:each) { patch :update, id: physical_object.id, digital_provenance: { digital_file_provenances_attributes: { "1" => {} } } }

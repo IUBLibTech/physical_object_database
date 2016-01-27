@@ -2,6 +2,9 @@ class BetacamTm < ActiveRecord::Base
   acts_as :technical_metadatum, validates_actable: false
   extend TechnicalMetadatumClassModule
   # TM module constants
+  PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
+    baking_date: false,
+  })
   TM_FORMAT = ['Betacam']
   TM_SUBTYPE = false
   TM_GENRE = :video

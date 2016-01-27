@@ -50,4 +50,30 @@ describe ApplicationHelper do
     end
   end
 
+  describe "::dp_na(field)" do
+    before(:each) { @tm = physical_object.ensure_tm }
+    it "returns nil value for required field" do
+      expect(dp_na(:filename)).to be_nil
+    end
+    it "returns nil value for optional field" do
+      expect(dp_na(:comments)).to be_nil
+    end
+    it "returns true value for na field" do
+      expect(dp_na(:baking_date)).to eq true
+    end
+  end
+
+  describe "::dp_requirement(field)" do
+    before(:each) { @tm = physical_object.ensure_tm }
+    it "returns string value for required field" do
+      expect(dp_requirement(:filename)).not_to be_blank
+    end
+    it "returns nil value for optional field" do
+      expect(dp_requirement(:comments)).to be_blank
+    end
+    it "returns nil value for na field" do
+      expect(dp_requirement(:baking_date)).to be_blank
+    end
+  end
+
 end

@@ -4,6 +4,16 @@ class OpenReelTm < ActiveRecord::Base
   before_validation :infer_values
   extend TechnicalMetadatumClassModule
   # TM module constants
+  PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
+    baking_date: false,
+
+    speed_used: true,
+    tape_fluxivity: true,
+    volume_units: true,
+    analog_output_voltage: true,
+    peak: true,
+  })
+
   TM_FORMAT = ['Open Reel Audio Tape']
   TM_SUBTYPE = false
   TM_GENRE = :audio
