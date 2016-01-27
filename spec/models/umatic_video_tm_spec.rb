@@ -1,4 +1,4 @@
-describe EightMillimeterVideoTm do
+describe UmaticVideoTm do
   let(:umatic) { FactoryGirl.create :umatic_tm, :valid }
   let(:valid_umatic) { FactoryGirl.build :umatic_tm, :valid }
   let(:invalid_umatic) { FactoryGirl.build :umatic_tm, :invalid }

@@ -40,15 +40,8 @@ describe OpenReelTm do
     end
   end
 
-  describe "has virtual fields" do
-    specify "#year" do
-      physical_object = FactoryGirl.create(:physical_object, :open_reel, year: 1985)
-      open_reel_tm.physical_object = physical_object
-      expect(open_reel_tm.year).to eq 1985
-    end
-  end
-
   it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:open_reel_tm) 
+  it_behaves_like "includes year module behaviors", FactoryGirl.build(:open_reel_tm) 
 
   describe "#master_copies" do
     cases_hash = { { full_track: true } => 1,

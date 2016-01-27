@@ -58,7 +58,6 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
     end
   end
 
-
   describe "#export_headers" do
     it "returns a non-empty array of header values" do
       expect(tm_object.export_headers.size).to be > 0

@@ -28,16 +28,21 @@ describe BetacamTm do
     specify "#damage for pack_deformation" do
       expect(valid_betacam.damage).to eq valid_betacam.pack_deformation
     end
-    specify "#year" do
-      physical_object = FactoryGirl.create(:physical_object, :betacam, year: 1985)
-      valid_betacam.physical_object = physical_object
-      expect(valid_betacam.year).to eq 1985
-    end
   end
 
   describe "manifest export" do
     specify "has desired headers" do
       expect(valid_betacam.manifest_headers).to eq ["Year", "Recording standard", "Image format", "Tape stock brand", "Size", "Format duration"]
+    end
+  end
+
+  it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:betacam_tm, :valid)
+  it_behaves_like "includes year module behaviors", FactoryGirl.build(:betacam_tm, :valid)
+
+
+  describe "#master_copies" do
+    it "returns 1" do
+      expect(valid_betacam.master_copies).to eq 1
     end
   end
 
