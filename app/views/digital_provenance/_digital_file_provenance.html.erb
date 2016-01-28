@@ -48,7 +48,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Gain<%= dp_requirement(:volume_units) %></th>
+			<th>Gain (dB)<%= dp_requirement(:volume_units) %></th>
 			<td>
 				<%= f.text_field :volume_units, readonly: !@edit_mode, disabled: dp_na(:volume_units) %>
 			</td>

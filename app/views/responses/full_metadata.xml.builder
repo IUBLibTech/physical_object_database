@@ -55,7 +55,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
               xml.digital_file_provenance do
                 xml.filename dfp.filename
                 if dfp.date_digitized
-                  xml.date_digitized dfp.date_digitized.to_s.sub(" ", "T").sub(" ","").sub("0400", "04:00")
+                  xml.date_digitized dfp.date_digitized.to_s.sub(" ", "T").sub(" ","").sub("0400", "04:00").sub("0500", "05:00")
                 else
                   xml.date_digitized("xsi:nil" => "true")
                 end
