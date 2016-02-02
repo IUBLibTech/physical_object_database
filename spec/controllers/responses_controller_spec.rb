@@ -110,13 +110,13 @@ describe ResponsesController do
 
   describe "#digiprov_metadata" do
     context "with a valid barcode" do
-      before(:each) { get :digiprov_metadata, mdpi_barcode: barcoded_object.mdpi_barcode }
+      let(:get_digiprov) { get :digiprov_metadata, mdpi_barcode: barcoded_object.mdpi_barcode }
       context "with complete digiprov" do
         before(:each) do
-          #barcoded_object.digital_provenance.update_attributes!(duration: 100)
           dp = barcoded_object.digital_provenance
           dp.duration = 100
           dp.save!
+          get_digiprov
         end
         it "assigns @physical_object" do
           expect(assigns(:physical_object)).to eq barcoded_object
@@ -128,7 +128,6 @@ describe ResponsesController do
         it "returns data XML" do
           expect(response.body).to match /<data>/
           expect(response.body).to match /<format>#{physical_object.format}<\/format>/
-          expect(response.body).to match /<files>#{physical_object.technical_metadatum.specific.master_copies}<\/files>/
         end
         it "returns a 200 status" do
           expect(response).to have_http_status(200)
@@ -137,7 +136,7 @@ describe ResponsesController do
       context "with incomplete digiprov" do
         before(:each) do
           dfp = barcoded_object.digital_provenance.digital_file_provenances.create!(filename: "MDPI_#{barcoded_object.mdpi_barcode}_01_pres.wav")
-          #dfp.save!
+          get_digiprov
         end
         it "assigns @physical_object" do
           expect(assigns(:physical_object)).to eq barcoded_object
