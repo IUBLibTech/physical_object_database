@@ -10,7 +10,7 @@ class ResponsesController < ActionController::Base
 
   before_action :authenticate
 
-  before_action :set_physical_object, only: [:metadata, :full_metadata, :grouping, :pull_state, :push_status, :push_memnon_qc, :digitizing_entity]
+  before_action :set_physical_object, only: [:metadata, :full_metadata, :digiprov_metadata, :grouping, :pull_state, :push_status, :push_memnon_qc, :digitizing_entity]
   before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
@@ -29,6 +29,21 @@ class ResponsesController < ActionController::Base
       @success = true
     end
     render template: 'responses/full_metadata.xml.builder', layout: false, status: @status
+  end
+
+  # GET /responses/objects/:mdpi_barcode/metadata/digital_provenance
+  def digiprov_metadata
+    if @physical_object
+      if @physical_object.digital_provenance.complete? && @physical_object.digital_provenance.digital_file_provenances.all? { |dfp| dfp.complete? }
+        @status = 200
+        @success = true
+      else
+        @status = 400
+        @success = false
+        @message = "Digital Provenance is missing or incomplete."
+      end
+    end
+    render template: 'responses/digiprov_metadata.xml.builder', layout: false, status: @status
   end
 
   # GET /responses/objects/:mdpi_barcode/grouping

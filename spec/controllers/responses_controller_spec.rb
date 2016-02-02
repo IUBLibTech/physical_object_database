@@ -108,6 +108,61 @@ describe ResponsesController do
     end
   end
 
+  describe "#digiprov_metadata" do
+    context "with a valid barcode" do
+      before(:each) { get :digiprov_metadata, mdpi_barcode: barcoded_object.mdpi_barcode }
+      context "with complete digiprov" do
+        before(:each) do
+          #barcoded_object.digital_provenance.update_attributes!(duration: 100)
+          dp = barcoded_object.digital_provenance
+          dp.duration = 100
+          dp.save!
+        end
+        it "assigns @physical_object" do
+          expect(assigns(:physical_object)).to eq barcoded_object
+          expect(assigns(:physical_object).digital_provenance).to be_complete
+        end
+        it "returns success=true XML" do
+          expect(response.body).to match /<success.*true<\/success>/
+        end
+        it "returns data XML" do
+          expect(response.body).to match /<data>/
+          expect(response.body).to match /<format>#{physical_object.format}<\/format>/
+          expect(response.body).to match /<files>#{physical_object.technical_metadatum.specific.master_copies}<\/files>/
+        end
+        it "returns a 200 status" do
+          expect(response).to have_http_status(200)
+        end
+      end
+      context "with incomplete digiprov" do
+        before(:each) do
+          dfp = barcoded_object.digital_provenance.digital_file_provenances.create!(filename: "MDPI_#{barcoded_object.mdpi_barcode}_01_pres.wav")
+          #dfp.save!
+        end
+        it "assigns @physical_object" do
+          expect(assigns(:physical_object)).to eq barcoded_object
+        end
+        it "returns success=false XML" do
+          expect(response.body).to match /<success.*false<\/success>/
+        end
+        it "returns failure message XML" do
+          expect(response.body).to match /<message>/
+        end
+        it "returns a 400 status" do
+          expect(response).to have_http_status(400)
+        end
+      end
+    end
+    context "with a 0 barcode" do
+      before(:each) { get :digiprov_metadata, mdpi_barcode: physical_object.mdpi_barcode }
+      include_examples "barcode 0"
+    end
+    context "with an unmatched barcode" do
+      before(:each) { get :digiprov_metadata, mdpi_barcode: unmatched_barcode }
+      include_examples "barcode not found"
+    end
+  end
+
   describe "#grouping" do
     context "with a valid barcode" do
       before(:each) { get :grouping, mdpi_barcode: barcoded_object.mdpi_barcode }
