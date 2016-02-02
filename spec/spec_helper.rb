@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] ||= 'test'
+ENV["skip"] ||= 'false'
 require 'simplecov'
-SimpleCov.start('rails')
+SimpleCov.start('rails') unless ENV["skip"]=='true'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'pundit/rspec'

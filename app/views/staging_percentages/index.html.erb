@@ -1,0 +1,30 @@
+<%= render "quality_control/context_menu" %>
+<%= error_messages_for(@percentage) %>
+<table>
+  <tr>
+    <th>Format</th>
+    <th>Memnon %</th>
+    <th>IU %</th>
+  </tr>
+	<% @percentages.each do |p| %>
+		<%= form_for p do |f| %>
+    <tr>
+      <td>
+	      <%= p.format %>
+      </td>
+      <td>
+	      <%= f.text_field :memnon_percent %>
+      </td>
+      <td>
+	      <%= f.text_field :iu_percent %>
+      </td>
+      <td>
+	      <%= f.submit "Update" %>
+      </td>
+    </tr>
+		<% end %>
+	<% end %>
+</table>
+<script type="text/javascript">
+
+</script>
