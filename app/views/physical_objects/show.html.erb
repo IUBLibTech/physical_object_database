@@ -9,7 +9,7 @@
     <% if @physical_object.bin.nil? && @physical_object.box.nil? %>
       <%= link_to("Split Record", {:controller => 'physical_objects', :action => 'split_show', :id => @physical_object.id}, :class => 'action split') if policy(@physical_object).split_show? %>
     <% else %>
-      <strong><strike>Split Record</strong></strike>
+      <strong><strike>Split Record</strike></strong>
     <% end %>
   </div>
   <div class="contextMenuItem">
