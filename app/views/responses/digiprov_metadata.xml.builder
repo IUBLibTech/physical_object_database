@@ -31,7 +31,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
        #tm source
        xml.damage @tm.damage.gsub(', ',',')
        xml.preservation_problems @tm.preservation_problems.gsub(', ',',')
-       xml.directions_recorded (@tm.respond_to?(:direction_recorded) ? @tm.directions_recorded : "")
+       xml.directions_recorded (@tm.respond_to?(:directions_recorded) ? @tm.directions_recorded : "")
        xml.sound_field (@tm.respond_to?(:sound_field) ? @tm.sound_field : "").gsub(', ',',')
        xml.tape_stock_brand (@tm.respond_to?(:tape_stock_brand) ? @tm.tape_stock_brand : "")
        xml.tape_thickness (@tm.respond_to?(:tape_thickness) ? @tm.tape_thickness : "").gsub(', ',',')
@@ -40,7 +40,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
        xml.playback_speed (@tm.respond_to?(:playback_speed) ? @tm.playback_speed : "").gsub(', ',',')
        xml.image_format (@tm.respond_to?(:image_format) ? @tm.image_format : "").gsub(', ',',')
        xml.recording_standard (@tm.respond_to?(:recording_standard) ? @tm.recording_standard : "").gsub(', ',',')
-       xml.track_configuration (@tm.respond_to?(:format_version) ? @tm.format_version : "").gsub(', ',',')
+       xml.format_version (@tm.respond_to?(:format_version) ? @tm.format_version : "").gsub(', ',',')
        #dfp
        xml.digital_files do
          @dp.digital_file_provenances.order(:filename).each do |dfp|

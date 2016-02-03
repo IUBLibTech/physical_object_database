@@ -3,7 +3,7 @@ class BetacamTm < ActiveRecord::Base
   extend TechnicalMetadatumClassModule
   # TM module constants
   PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
-    baking_date: false,
+    baking: false,
   })
   TM_FORMAT = ['Betacam']
   TM_SUBTYPE = false
