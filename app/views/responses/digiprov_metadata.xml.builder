@@ -40,7 +40,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
        if @tm.respond_to?(:playback_speed)
 	 xml.playback_speed @tm.playback_speed.gsub(', ',',')
        elsif @tm.respond_to?(:speed)
-	 xml.playback_speed @tm.speed.gsub(', ',',')
+	 xml.playback_speed @tm.speed + (@tm.speed.blank? ? "" : " rpm")
        else
 	 xml.playback_speed ""
        end
