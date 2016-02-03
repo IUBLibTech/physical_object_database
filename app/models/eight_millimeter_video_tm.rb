@@ -4,7 +4,7 @@ class EightMillimeterVideoTm < ActiveRecord::Base
 
   # TM module constants
   PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
-    baking_date: false,
+    baking: false,
   })
   TM_FORMAT = ['8mm Video']
   TM_SUBTYPE = false

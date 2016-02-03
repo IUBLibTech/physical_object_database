@@ -5,7 +5,7 @@ class OpenReelTm < ActiveRecord::Base
   extend TechnicalMetadatumClassModule
   # TM module constants
   PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
-    baking_date: false,
+    baking: false,
 
     speed_used: true,
     tape_fluxivity: true,
