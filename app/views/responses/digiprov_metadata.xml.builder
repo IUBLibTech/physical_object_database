@@ -1,6 +1,6 @@
 xml.instruct! :xml, :version=>"1.0"
 
-xml.pod do
+xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
    if @success
      xml.success true
      xml.data do
@@ -15,10 +15,19 @@ xml.pod do
          @dp[att] = nil if @tm.provenance_requirements[att.to_sym].nil?
        end
        xml.digitizing_entity @dp.digitizing_entity
-       xml.baking_date (@dp.baking ? @dp.baking.in_time_zone.in_time_zone("UTC").strftime("%Y-%m-%dT%H:%M:%SZ") : "")
-       xml.cleaning_date (@dp.cleaning_date ? @dp.cleaning_date.in_time_zone("UTC").strftime("%Y-%m-%dT%H:%M:%SZ") : "")
+       if @dp.baking
+         xml.baking_date @dp.baking.in_time_zone.in_time_zone("UTC").strftime("%Y-%m-%dT%H:%M:%SZ")
+       else
+         xml.baking_date("xsi:nil" => "true")
+       end
+       if @dp.cleaning_date
+         xml.cleaning_date @dp.cleaning_date.in_time_zone.in_time_zone("UTC").strftime("%Y-%m-%dT%H:%M:%SZ")
+       else
+         xml.cleaning_date("xsi:nil" => "true")
+       end
        xml.cleaning_comment @dp.cleaning_comment
        xml.repaired @dp.repaired
+       xml.comments @dp.comments
        #tm source
        xml.damage @tm.damage.gsub(', ',',')
        xml.preservation_problems @tm.preservation_problems.gsub(', ',',')
@@ -28,6 +37,7 @@ xml.pod do
        xml.tape_thickness (@tm.respond_to?(:tape_thickness) ? @tm.tape_thickness : "").gsub(', ',',')
        xml.tape_base (@tm.respond_to?(:tape_base) ? @tm.tape_base : "").gsub(', ',',')
        xml.track_configuration (@tm.respond_to?(:track_configuration) ? @tm.track_configuration : "").gsub(', ',',')
+       xml.playback_speed (@tm.respond_to?(:playback_speed) ? @tm.playback_speed : "").gsub(', ',',')
        xml.image_format (@tm.respond_to?(:image_format) ? @tm.image_format : "").gsub(', ',',')
        xml.recording_standard (@tm.respond_to?(:recording_standard) ? @tm.recording_standard : "").gsub(', ',',')
        xml.track_configuration (@tm.respond_to?(:format_version) ? @tm.format_version : "").gsub(', ',',')
@@ -42,7 +52,7 @@ xml.pod do
              if dfp.date_digitized
                xml.date_digitized dfp.date_digitized.in_time_zone("UTC").strftime("%Y-%m-%dT%H:%M:%SZ")
              else
-               xml.date_digitized ""
+               xml.date_digitized("xsi:nil" => "true")
              end
              xml.comment dfp.comment.to_s
              xml.created_by dfp.created_by.to_s
