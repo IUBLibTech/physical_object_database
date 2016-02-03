@@ -15,6 +15,9 @@ describe Batch do
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
   let(:other_boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
+  let!(:later_time) { Time.now.in_time_zone.change(usec: 0) }
+  let!(:earlier_time) { later_time - 1000 }
+
   describe "FactoryGirl" do
     it "provides a valid batch" do
       expect(valid_batch).to be_valid
@@ -198,9 +201,9 @@ describe Batch do
     end
     context "on a batch with directly binned objects" do
       before(:each) do
-        binned_object.digital_start = Time.now.in_time_zone.change(usec: 0)
+        binned_object.digital_start = later_time
         binned_object.save!
-        other_binned_object.digital_start = Time.now.in_time_zone.change(usec: 0) - 1000
+        other_binned_object.digital_start = earlier_time
         other_binned_object.save!
       end
       context "asking for the first (implicitly)" do
@@ -218,9 +221,9 @@ describe Batch do
     end
     context "on a batch with boxed objects" do
       before(:each) do
-        boxed_object.digital_start = Time.now.in_time_zone.change(usec: 0)
+        boxed_object.digital_start = later_time
         boxed_object.save!
-        other_boxed_object.digital_start = Time.now.in_time_zone.change(usec: 0) - 1000
+        other_boxed_object.digital_start = earlier_time
         other_boxed_object.save!
       end
       context "asking for the first (implicitly)" do
@@ -251,9 +254,9 @@ describe Batch do
     end
     context "on a batch with directly binned objects" do
       before(:each) do
-        binned_object.digital_start = Time.now.in_time_zone.change(usec: 0)
+        binned_object.digital_start = later_time
         binned_object.save!
-        other_binned_object.digital_start = Time.now.in_time_zone.change(usec: 0) - 1000
+        other_binned_object.digital_start = earlier_time
         other_binned_object.save!
       end
       context "asking for the first (implicitly)" do
@@ -271,9 +274,9 @@ describe Batch do
     end
     context "on a batch with boxed objects" do
       before(:each) do
-        boxed_object.digital_start = Time.now.in_time_zone.change(usec: 0)
+        boxed_object.digital_start = later_time
         boxed_object.save!
-        other_boxed_object.digital_start = Time.now.in_time_zone.change(usec: 0) - 1000
+        other_boxed_object.digital_start = earlier_time
         other_boxed_object.save!
       end
       context "asking for the first (implicitly)" do
