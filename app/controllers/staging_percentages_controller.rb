@@ -20,7 +20,6 @@ class StagingPercentagesController < ApplicationController
 		# all formats that are represented in the POD - from the technical metadata table
 		all_formats = PhysicalObject.valid_formats
 		difference = (all_formats - defined) | (defined - all_formats)
-		puts "Difference in formats: #{difference}"
 		difference.each do |format|
 			sp = StagingPercentage.new(format: format, memnon_percent: StagingPercentage::default_percentage, iu_percent: StagingPercentage::default_percentage)
 			saved = sp.save

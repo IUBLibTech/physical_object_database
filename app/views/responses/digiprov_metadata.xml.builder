@@ -11,10 +11,10 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
        xml.unit @physical_object.unit.name
        xml.mdpi_barcode @physical_object.mdpi_barcode
        #digital_provenance source
+       xml.digitizing_entity @dp.digitizing_entity
        @dp.attributes.keys.each do |att|
          @dp[att] = nil if @tm.provenance_requirements[att.to_sym].nil?
        end
-       xml.digitizing_entity @dp.digitizing_entity
        if @dp.baking
          xml.baking_date @dp.baking.in_time_zone.in_time_zone("UTC").strftime("%Y-%m-%dT%H:%M:%SZ")
        else
