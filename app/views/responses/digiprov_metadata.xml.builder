@@ -37,7 +37,13 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
        xml.tape_thickness (@tm.respond_to?(:tape_thickness) ? @tm.tape_thickness : "").gsub(', ',',')
        xml.tape_base (@tm.respond_to?(:tape_base) ? @tm.tape_base : "").gsub(', ',',')
        xml.track_configuration (@tm.respond_to?(:track_configuration) ? @tm.track_configuration : "").gsub(', ',',')
-       xml.playback_speed (@tm.respond_to?(:playback_speed) ? @tm.playback_speed : "").gsub(', ',',')
+       if @tm.respond_to?(:playback_speed)
+	 xml.playback_speed @tm.playback_speed.gsub(', ',',')
+       elsif @tm.respond_to?(:speed)
+	 xml.playback_speed @tm.speed.gsub(', ',',')
+       else
+	 xml.playback_speed ""
+       end
        xml.image_format (@tm.respond_to?(:image_format) ? @tm.image_format : "").gsub(', ',',')
        xml.recording_standard (@tm.respond_to?(:recording_standard) ? @tm.recording_standard : "").gsub(', ',',')
        xml.format_version (@tm.respond_to?(:format_version) ? @tm.format_version : "").gsub(', ',',')
