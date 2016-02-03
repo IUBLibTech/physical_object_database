@@ -1,6 +1,6 @@
 class QualityControlController < ApplicationController
 	before_action :set_header_title
-	before_action :set_staging, only: [:staging_index]
+	before_action :set_memnon_staging, only: [:staging_index]
 	before_action :set_iu_staging, only: [:iu_staging_index]
 
 	def index
@@ -11,16 +11,10 @@ class QualityControlController < ApplicationController
 	end
 
 	def iu_staging_index
-		# This call is necessary as it initializes any staging percentages for formats that are present in the POD but not
-		# present in the staging percentages table.
-		StagingPercentagesController::validate_formats
 		render 'staging'
 	end
 
 	def staging_index
-		# This call is necessary as it initializes any staging percentages for formats that are present in the POD but not
-		# present in the staging percentages table.
-		StagingPercentagesController::validate_formats
 		render 'staging'
 	end
 
@@ -31,7 +25,7 @@ class QualityControlController < ApplicationController
 			end
 		end
 		# this can't be done before the action it's reassigning staged/unstaged objects 
-		set_staging
+		##set_staging
 		# render 'staging'
 		redirect_to :back
 	end
@@ -65,7 +59,11 @@ class QualityControlController < ApplicationController
 
 	def self.percent(format, entity)
 		sp = StagingPercentage.where(format: format).first
-		entity == 'Memnon' ? sp.memnon_percent / 100.0 : sp.iu_percent / 100.0
+		if sp.nil?
+			0.0
+		else
+			entity == 'Memnon' ? sp.memnon_percent / 100.0 : sp.iu_percent / 100.0
+		end
 	end
 
 	private
@@ -74,32 +72,37 @@ class QualityControlController < ApplicationController
 		authorize :quality_control
 	end
 
-	def set_staging
+        def set_staging
+		# This call is necessary as it initializes any staging percentages for formats
+		# that are present in the POD but not present in the staging percentages table.
+		StagingPercentagesController::validate_formats
+                @date = DateTime.new(Time.now.year, Time.now.month, Time.now.day)
+                if params[:staging] && params[:staging][:date] && !params[:staging][:date].blank?
+                        @date = DateTime.strptime(params[:staging][:date], '%m/%d/%Y')
+                end
+                @format_to_physical_objects = ActiveSupport::OrderedHash.new
+		@formats = []
+                if params[:staging] && params[:staging][:format] && params[:staging][:format] != 'All'
+                        @formats << params[:staging][:format]
+                end
+        end
+
+	def set_memnon_staging
+		set_staging
 		@action = 'staging_index'
-		@date = Time.now
-		if params[:staging] && params[:staging][:date]
-			@date = params[:staging][:date].blank? ? now : DateTime.strptime(params[:staging][:date], '%m/%d/%Y')
-		end
 		@d_entity = 'Memnon'
-		formats = params[:staging].blank? || params[:staging][:format] == 'All' ? PhysicalObject.memnon_unstaged_by_date_formats(@date) : [] << params[:staging][:format]
-		@format_to_physical_objects = ActiveSupport::OrderedHash.new
-		formats.each do |format|
+                @formats = PhysicalObject.memnon_unstaged_by_date_formats(@date) if @formats.empty?
+		@formats.each do |format|
 			@format_to_physical_objects[format] = PhysicalObject.memnon_unstaged_by_date_and_format(@date, format)
 		end
 	end
 
 	def set_iu_staging
+		set_staging
 		@action = 'iu_staging_index'
-		now = Time.now
-		if params[:staging] && params[:staging][:date]
-				@date = params[:staging][:date].blank? ? Time.new(now.year, now.month, now.day) : DateTime.strptime(params[:staging][:date], '%m/%d/%Y')
-		else
-			@date = Time.new(now.year, now.month, now.day)
-		end
 		@d_entity = 'IU'
-		formats = params[:staging].blank? || params[:staging][:format] == 'All' ? PhysicalObject.iu_unstaged_by_date_formats(@date) : [] << params[:staging][:format]
-		@format_to_physical_objects = ActiveSupport::OrderedHash.new
-		formats.each do |format|
+		@formats = PhysicalObject.iu_unstaged_by_date_formats(@date) if @formats.empty?
+		@formats.each do |format|
 			@format_to_physical_objects[format] = PhysicalObject.iu_unstaged_by_date_and_format(@date, format)
 		end
 	end
