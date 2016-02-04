@@ -192,6 +192,9 @@ describe QualityControlController do
 					expect(object.staging_request_timestamp).not_to be_nil
 				end
 			end
+			it "redirects to :back" do
+				expect(response).to redirect_to 'source_page'
+			end
 		end
 	end
 	describe "#stage" do #Q: update staging_request_timestamp?
