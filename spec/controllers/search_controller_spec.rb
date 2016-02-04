@@ -102,10 +102,10 @@ describe SearchController do
     let!(:picklist) { FactoryGirl.create :picklist }
     let!(:attributes_1) { { title: "TITLE", has_ephemera: true, generation: "Unknown", picklist: nil } }
     let!(:attributes_2) { { title: "TITLE 2", has_ephemera: nil, generation: "", picklist: picklist } }
-    let!(:cdr_1) { FactoryGirl.create :physical_object, :cdr, **attributes_1 }
-    let!(:cdr_2) { FactoryGirl.create :physical_object, :cdr, **attributes_2 }
-    let!(:betacam_1) { FactoryGirl.create :physical_object, :betacam, **attributes_1 }
-    let!(:betacam_2) { FactoryGirl.create :physical_object, :betacam, **attributes_2 }
+    let!(:cdr_1) { FactoryGirl.create :physical_object, :cdr, unit: Unit.all[0], **attributes_1 }
+    let!(:cdr_2) { FactoryGirl.create :physical_object, :cdr, unit: Unit.all[1], **attributes_2 }
+    let!(:betacam_1) { FactoryGirl.create :physical_object, :betacam, unit: Unit.all[2], **attributes_1 }
+    let!(:betacam_2) { FactoryGirl.create :physical_object, :betacam, unit: Unit.all[3], **attributes_2 }
     let(:omit_picklisted) { nil }
     let(:po_terms) { {format: ""} }
     let(:tm_terms) { {fungus: ""} }
