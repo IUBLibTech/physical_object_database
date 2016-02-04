@@ -35,7 +35,7 @@ class QualityControlController < ApplicationController
 		@msg = ''
 		begin
 			po = PhysicalObject.find(params[:id])
-			po.update_attributes(staging_requested: true)
+			po.update_attributes(staging_requested: true, staging_request_timestamp: DateTime.now)
 			@success = true
 			@msg = "Staging was successfully requested for PhysicalObject #{po.mdpi_barcode}."
 		rescue ActiveRecord::RecordNotFound
