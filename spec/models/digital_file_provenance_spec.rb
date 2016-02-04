@@ -148,4 +148,37 @@ describe DigitalFileProvenance do
       expect(valid_dfp).to be_valid
     end
   end
+
+  describe "#complete?" do
+    it "returns a Boolean" do
+      expect(valid_dfp.complete?).to be_in [true, false]
+    end
+  end
+
+  describe "#nullify_na_values" do
+    it "nullifies an na value as defined by the TM" do
+      expect(valid_dfp.tape_fluxivity).not_to be_nil
+      valid_dfp.nullify_na_values
+      expect(valid_dfp.digital_provenance.physical_object.ensure_tm.provenance_requirements[:tape_fluxivity]).to be_nil
+      expect(valid_dfp.tape_fluxivity).to be_nil
+    end
+    it "leaves alone required/optional values as defined by the TM" do
+      expect(valid_dfp.tape_fluxivity).not_to be_nil
+      valid_dfp.digital_provenance.physical_object.format = "Open Reel Audio Tape"
+      valid_dfp.nullify_na_values
+      expect(valid_dfp.tape_fluxivity).not_to be_nil
+    end
+    it "leaves alone values if no TM can be referenced" do
+      expect(valid_dfp.tape_fluxivity).not_to be_nil
+      valid_dfp.digital_provenance = nil
+      valid_dfp.nullify_na_values
+      expect(valid_dfp.tape_fluxivity).not_to be_nil
+    end
+    it "is called before save" do
+      dfp.tape_fluxivity = "100"
+      expect(dfp.tape_fluxivity).not_to be_nil
+      dfp.save!
+      expect(dfp.tape_fluxivity).to be_nil
+    end
+  end
 end

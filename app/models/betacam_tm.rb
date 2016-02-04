@@ -2,6 +2,9 @@ class BetacamTm < ActiveRecord::Base
   acts_as :technical_metadatum, validates_actable: false
   extend TechnicalMetadatumClassModule
   # TM module constants
+  PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
+    baking: false,
+  })
   TM_FORMAT = ['Betacam']
   TM_SUBTYPE = false
   TM_GENRE = :video
@@ -49,6 +52,6 @@ class BetacamTm < ActiveRecord::Base
     pack_deformation
   end
 
-  # master_coipies default of 1
+  # master_copies default of 1
 
 end

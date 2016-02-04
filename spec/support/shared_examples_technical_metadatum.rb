@@ -58,7 +58,6 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
     end
   end
 
-
   describe "#export_headers" do
     it "returns a non-empty array of header values" do
       expect(tm_object.export_headers.size).to be > 0
@@ -71,6 +70,15 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
     end
     it "returns a value for each export header" do
       expect(tm_object.export_values.size).to eq tm_object.export_headers.size
+    end
+  end
+
+  describe "#provenance_requirements" do
+    it "returns a hash" do
+      expect(tm_object.provenance_requirements).to be_a Hash
+    end
+    it "returns the class constant" do
+      expect(tm_object.provenance_requirements).to eq tm_object.class::PROVENANCE_REQUIREMENTS
     end
   end
 
@@ -93,6 +101,11 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
     describe "::parse_tm" do
       it "updates the passed tm object with the passed values" do
         skip "TODO"
+      end
+    end
+    describe "::PROVENANCE_REQUIREMENTS" do
+      specify "exist" do
+        expect{tm_object.class::PROVENANCE_REQUIREMENTS}.not_to raise_error
       end
     end
   end

@@ -3,6 +3,13 @@ class AnalogSoundDiscTm < ActiveRecord::Base
   after_initialize :default_values, if: :new_record?
   extend TechnicalMetadatumClassModule
   # TM module constants
+  PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
+    speed_used: true,
+    volume_units: true,
+    stylus_size: true,
+    turnover: false,
+    rolloff: false,
+  })
   TM_FORMAT = ['LP', 'Lacquer Disc', '45', '78', 'Other Analog Sound Disc']
   TM_SUBTYPE = true
   TM_GENRE = :audio
@@ -23,7 +30,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
   MATERIAL_VALUES = hashify ['Shellac', 'Plastic', 'N/A']
   SUBSTRATE_VALUES = hashify ["Aluminum", "Glass", "Fiber", "Steel", "Zinc", "N/A"]
   COATING_VALUES = hashify ['None', 'Lacquer', 'N/A']
-  EQUALIZATION_VALUES = hashify ['', 'RIAA', 'ffrr LP 1953', 'CCIR', 'NAB', 'FLAT', 'US MID 30', 'WESTREX', 'HMW', 'ffrr 1949', 'Early DECCA', 'COLUMBIA', 'BSI', 'Other', 'Unknown']
+  EQUALIZATION_VALUES = hashify ['', 'RIAA', 'ffrr LP 1953', 'CCIR', 'NAB', 'NAB+80Hz', 'FLAT', 'US MID 30', 'WESTREX', 'HMW', 'ffrr 1949', 'Early DECCA', 'COLUMBIA', 'BSI', 'Other', 'Unknown']
   SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
   # (subtype is hidden in form)
   SUBTYPE_VALUES = hashify ['LP', 'Lacquer Disc', '45', '78', 'Other Analog Sound Disc']

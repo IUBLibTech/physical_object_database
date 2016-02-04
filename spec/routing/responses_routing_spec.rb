@@ -8,6 +8,10 @@ describe ResponsesController do
       expect(get: "/responses/objects/1/metadata/full").to route_to("responses#full_metadata", mdpi_barcode: "1")
     end
 
+    it "routes to #digiprov_metadata" do
+      expect(get: "/responses/objects/1/metadata/digital_provenance").to route_to("responses#digiprov_metadata", mdpi_barcode: "1")
+    end
+
     it "routes to #grouping" do
       expect(get: "/responses/objects/1/grouping").to route_to("responses#grouping", mdpi_barcode: "1")
     end

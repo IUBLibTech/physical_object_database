@@ -2,7 +2,8 @@ class CdrTm < ActiveRecord::Base
   acts_as :technical_metadatum, validates_actable: false
   after_initialize :default_values, if: :new_record?
   extend TechnicalMetadatumClassModule
-  #TM module constants
+  # TM module constants
+  # PROVENANCE_REQUIREMENTS unchanged from default
   TM_FORMAT = ['CD-R']
   TM_SUBTYPE = false
   TM_GENRE = :audio

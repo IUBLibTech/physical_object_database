@@ -31,25 +31,11 @@ class Batch < ActiveRecord::Base
       if self.bins.none?
         return nil
       elsif self.format.in? TechnicalMetadatumModule.bin_formats
-  	    date = PhysicalObject.connection.execute(
-  		    "SELECT physical_objects.digital_start
-			    FROM bins, physical_objects
-			    WHERE bins.batch_id = #{self.id} and physical_objects.bin_id = bins.id 
-			    and physical_objects.digital_start is not null
-			    ORDER by digital_start #{"DESC" if descending}
-			    LIMIT 1"
-  	    )
+            date = PhysicalObject.joins(:bin).where(bins: { batch_id: self.id }).where.not(digital_start: nil).order(digital_start: ( descending ? :desc : :asc )).limit(1)
       else
-  	    date = PhysicalObject.connection.execute(
-  		    "SELECT physical_objects.digital_start
-			    FROM bins, boxes, physical_objects
-			    WHERE bins.batch_id = #{self.id} and boxes.bin_id = bins.id and physical_objects.box_id = boxes.id 
-			    and physical_objects.digital_start is not null
-			    ORDER by digital_start #{"DESC" if descending}
-			    LIMIT 1"
-  	    )
+            date = PhysicalObject.joins(:box).joins("INNER JOIN bins ON boxes.bin_id = bins.id").where(bins: { batch_id: self.id }).where.not(digital_start: nil).order(digital_start: ( descending ? :desc : :asc )).limit(1)
       end
-  	  return date.size == 0 ? nil : date.first[0]
+  	  return date.any? ? date.first.digital_start : nil
     else
       return nil
     end

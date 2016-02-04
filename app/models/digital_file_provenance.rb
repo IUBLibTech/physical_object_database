@@ -1,5 +1,6 @@
 class DigitalFileProvenance < ActiveRecord::Base
 	after_initialize :default_values, if: :new_record?
+	before_save :nullify_na_values
 	belongs_to :digital_provenance
 	belongs_to :signal_chain
 
@@ -50,6 +51,15 @@ class DigitalFileProvenance < ActiveRecord::Base
 		self.analog_output_voltage ||= "+4"
 		self.peak ||= -18
 		self.volume_units ||= 0
+		nullify_na_values
+	end
+
+	def nullify_na_values
+		if digital_provenance && digital_provenance.physical_object && tm = digital_provenance.physical_object.ensure_tm
+			[:tape_fluxivity, :analog_output_voltage, :peak, :volume_units].each do |att|
+				self[att]= nil if tm.provenance_requirements[att.to_sym].nil?
+			end
+		end
 	end
 
 	def filename_validation
@@ -69,4 +79,18 @@ class DigitalFileProvenance < ActiveRecord::Base
 	    errors.add(:filename, "must follow pattern: MDPI_(barcode)_(face)_(use).(ext)") unless components.size == 4 && components.last.size == 2
 	  end
 	end
+
+  def complete?
+    complete = true
+    if self.digital_provenance && self.digital_provenance.physical_object && self.digital_provenance.physical_object.ensure_tm
+      self.attributes.keys.map { |a| a.to_sym }.select { |a| !a.in? [:id] }.each do |att|
+        if self[att].blank? && self.digital_provenance.physical_object.ensure_tm.provenance_requirements[att]
+          complete = false
+          break
+        end
+      end
+    end
+    complete
+  end
+
 end

@@ -8,45 +8,45 @@
 			<%= dp.hidden_field :digitizing_entity, value: "IU Media Digitization Studios" %>
 			<table>
 				<tr>
-					<th rowspan="4">Comments</th>
+					<th rowspan="4">Comments<%= dp_requirement(:comments) %></th>
 					<td rowspan="4">
-						<%= dp.text_area(:comments, rows: "6", readonly: !@edit_mode) %>
+						<%= dp.text_area(:comments, rows: "6", readonly: !@edit_mode, disabled: dp_na(:comments)) %>
 					</td>
-					<th rowspan="4">Cleaning Comment</th>
+					<th rowspan="4">Cleaning Comment<%= dp_requirement(:cleaning_comment) %></th>
 					<td rowspan="4">
-						<%= dp.text_area(:cleaning_comment, rows: "6", readonly: !@edit_mode) %>
+						<%= dp.text_area(:cleaning_comment, rows: "6", readonly: !@edit_mode, disabled: dp_na(:cleaning_comment)) %>
 					</td>
-					<th>Cleaning Date</th>
+					<th>Cleaning Date<%= dp_requirement(:cleaning_date) %></th>
 					<td>
-						<%= dp.text_field(:cleaning_date, readonly: !@edit_mode, class: @edit_mode ? "date" : "", value: @dp.cleaning_date.blank? ? "" : @dp.cleaning_date.in_time_zone("UTC").strftime("%m/%d/%Y")) %>
+						<%= dp.text_field(:cleaning_date, readonly: !@edit_mode, class: @edit_mode ? "date" : "", value: @dp.cleaning_date.blank? ? "" : @dp.cleaning_date.in_time_zone("UTC").strftime("%m/%d/%Y"), disabled: dp_na(:cleaning_date)) %>
 					</td>
 				</tr>
 				<tr>
-					<th>Baking Date</th>
+					<th>Baking Date<%= dp_requirement(:baking_date) %></th>
 					<td>
-						<%= dp.text_field(:baking, readonly: !@edit_mode, class: @edit_mode ? "date" : "", value: @dp.baking.blank? ? "" : @dp.baking.in_time_zone("UTC").strftime("%m/%d/%Y")) %>
+						<%= dp.text_field(:baking, readonly: !@edit_mode, class: @edit_mode ? "date" : "", value: @dp.baking.blank? ? "" : @dp.baking.in_time_zone("UTC").strftime("%m/%d/%Y"), disabled: dp_na(:baking_date)) %>
 					</td>
 				</tr>
 				<tr>
-					<th>Repaired</th>
+					<th>Repaired<%= dp_requirement(:repaired) %></th>
 					<td>
-						<%= dp.check_box(:repaired, disabled: !@edit_mode) %>
+						<%= dp.check_box(:repaired, readonly: !@edit_mode || dp_na(:repaired)) %>
 					</td>
 				</tr>
 				<tr>
-					<th>Digitization Time (in minutes)</th>
+					<th>Digitization Time (in minutes)<%= dp_requirement(:duration) %></th>
 					<td>
 						<% if @edit_mode %>
-						  <%= dp.number_field(:duration, readonly: !@edit_mode) %>
+						  <%= dp.number_field(:duration, readonly: !@edit_mode, disabled: dp_na(:duration)) %>
 						<% else %>
-						  <%= dp.text_field(:duration, readonly: !@edit_mode) %>
+						  <%= dp.text_field(:duration, readonly: !@edit_mode, disabled: dp_na(:duration)) %>
 						<% end %>
 					</td>
 				</tr>
 				<tr>
-					<th>Batch Processing Flag</th>
+					<th>Batch Processing Flag<%= dp_requirement(:batch_processing_flag) %></th>
 					<td colspan="5">
-						<%= dp.text_field(:batch_processing_flag, readonly: !@edit_mode) %>
+						<%= dp.text_field(:batch_processing_flag, readonly: !@edit_mode, disabled: dp_na(:batch_processing_flag)) %>
 					</td>
 				</tr>
 			</table>				

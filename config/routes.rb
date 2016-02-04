@@ -1,6 +1,6 @@
 Pod::Application.routes.draw do
 
-  root "physical_objects#index"
+  root 'physical_objects#index'
 
   resources :batches do
     patch :add_bin, on: :member
@@ -77,7 +77,7 @@ Pod::Application.routes.draw do
     get :pack_list, on: :collection
     patch :pack_list, on: :member
     get :pack_list, on: :member
-    
+
     # these 5 routes were deprecated in sprint-22 and replaced with the pack_list route - these action are no more
     # patch :assign_to_container, on: :collection
     # patch :remove_from_container, on: :collection
@@ -91,33 +91,36 @@ Pod::Application.routes.draw do
 
   get 'responses/objects/:mdpi_barcode/metadata', to: 'responses#metadata', as: 'metadata_response'
   get 'responses/objects/:mdpi_barcode/metadata/full', to: 'responses#full_metadata', as: 'full_metadata_response'
+  get 'responses/objects/:mdpi_barcode/metadata/digital_provenance', to: 'responses#digiprov_metadata', as: 'digiprov_metadata_response'
   get 'responses/objects/:mdpi_barcode/grouping', to: 'responses#grouping', as: 'grouping_response'
-  post 'responses/notify', to: 'responses#notify', as: 'notify_response' 
+  post 'responses/notify', to: 'responses#notify', as: 'notify_response'
   post 'responses/objects/:mdpi_barcode/state', to: 'responses#push_status', as: 'push_status_response'
-  get 'responses/objects/:mdpi_barcode/state', to: "responses#pull_state", as: "pull_state_response"
-  get 'responses/objects/:mdpi_barcode/flags', to: "responses#flags", as: "flags_response"
-  post 'responses/transfers', to: "responses#transfer_request", as: "transfer_request_response"
-  get 'responses/transfers', to: "responses#transfers_index", as: "transfers_index_response"
-  post 'responses/transfers/:mdpi_barcode', to: "responses#transfer_result", as: "transfer_result_response"
-  get 'responses/objects/:mdpi_barcode/clear_statuses', to: "responses#clear", as: "clear_statuses"
-  get 'responses/objects/clear_all_statuses', to: "responses#clear_all", as: "clear_all_statuses"
-  post 'responses/objects/memnon_qc/:mdpi_barcode', to: "responses#push_memnon_qc", as: "push_memnon_qc"
-  get 'responses/objects/memnon_qc/:mdpi_barcode', to: "responses#pull_memnon_qc", as: "pull_memnon_qc"
-  get 'responses/objects/states', to: "responses#pull_states", as: "pull_states"
-  get 'responses/packager/units/:abbreviation', to: "responses#unit_full_name", as: "unit_full_name"
-  post "responses/objects/avalon_url/:group_key_id", to: "responses#avalon_url", as: "push_avalon_url"
-  get "responses/objects/avalon_url/:group_key_id", to: "responses#avalon_url", as: "pull_avalon_url"
-  get "responses/objects/digitizing_entity/:mdpi_barcode", to: "responses#digitizing_entity", as: "pull_digitizing_entity"
+  get 'responses/objects/:mdpi_barcode/state', to: 'responses#pull_state', as: 'pull_state_response'
+  get 'responses/objects/:mdpi_barcode/flags', to: 'responses#flags', as: 'flags_response'
+  post 'responses/transfers', to: 'responses#transfer_request', as: 'transfer_request_response'
+  get 'responses/transfers', to: 'responses#transfers_index', as: 'transfers_index_response'
+  post 'responses/transfers/:mdpi_barcode', to: 'responses#transfer_result', as: 'transfer_result_response'
+  get 'responses/objects/:mdpi_barcode/clear_statuses', to: 'responses#clear', as: 'clear_statuses'
+  get 'responses/objects/clear_all_statuses', to: 'responses#clear_all', as: 'clear_all_statuses'
+  post 'responses/objects/memnon_qc/:mdpi_barcode', to: 'responses#push_memnon_qc', as: 'push_memnon_qc'
+  get 'responses/objects/memnon_qc/:mdpi_barcode', to: 'responses#pull_memnon_qc', as: 'pull_memnon_qc'
+  get 'responses/objects/states', to: 'responses#pull_states', as: 'pull_states'
+  get 'responses/packager/units/:abbreviation', to: 'responses#unit_full_name', as: 'unit_full_name'
+  post 'responses/objects/avalon_url/:group_key_id', to: 'responses#avalon_url', as: 'push_avalon_url'
+  get 'responses/objects/avalon_url/:group_key_id', to: 'responses#avalon_url', as: 'pull_avalon_url'
+  get 'responses/objects/digitizing_entity/:mdpi_barcode', to: 'responses#digitizing_entity', as: 'pull_digitizing_entity'
 
-  get 'quality_control/statuses/:status', to: "quality_control#index", as: "quality_control_status"
-  get "quality_control/", to: "quality_control#index", as: "quality_control_index"
-  patch "quality_control/decide/:id", to: "quality_control#decide", as: "quality_control_decide"
+  get 'quality_control/statuses/:status', to: 'quality_control#index', as: 'quality_control_status'
+  get 'quality_control/', to: 'quality_control#index', as: 'quality_control_index'
+  patch 'quality_control/decide/:id', to: 'quality_control#decide', as: 'quality_control_decide'
 
-  get 'quality_control/staging', to: "quality_control#staging_index", as: 'quality_control_staging_index_path'
-  post 'quality_control/staging', to: 'quality_control#staging_post', as: 'quality_control_staging_post_path'
+  get 'quality_control/staging', to: 'quality_control#staging_index', as: 'quality_control_memnon_staging_index'
+  post 'quality_control/staging', to: 'quality_control#staging_index', as: 'quality_control_memnon_staging_post'
 
-  get 'quality_control/iu_staging', to: 'quality_control#iu_staging_index', as: "quality_control_iu_staging_index_path"
-  post 'quality_control/iu_staging', to: 'quality_control#iu_staging_index', as: "quality_control_iu_staging_post_path"
+  get 'quality_control/iu_staging', to: 'quality_control#iu_staging_index', as: 'quality_control_iu_staging_index_path'
+  post 'quality_control/iu_staging', to: 'quality_control#iu_staging_index', as: 'quality_control_iu_staging_post_path'
+
+  post 'quality_control/staging_post', to: 'quality_control#staging_post', as: 'quality_control_staging_post'
 
   post 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage'
   get 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage_get'
@@ -125,10 +128,12 @@ Pod::Application.routes.draw do
 
   get 'invoice/index', to: 'invoice#index', as: 'invoice_controller'
   post 'invoice/index', to: 'invoice#submit', as: 'invoice_controller_submit'
-  get 'invoice/failed_message/:id', to: "invoice#failed_message", as: 'invoice_failed_message_ajax'
+  get 'invoice/failed_message/:id', to: 'invoice#failed_message', as: 'invoice_failed_message_ajax'
 
   get 'xml_tester', to: 'xml_tester#index', as: 'xml_tester_index'
   post 'xml_tester_submit', to: 'xml_tester#submit', as: 'xml_tester_submit'
+
+  resources :staging_percentages
 
   resources :returns, only: [:index] do
     get :return_bins, on: :member
@@ -148,7 +153,7 @@ Pod::Application.routes.draw do
     patch :include, on: :member
     patch :reorder, on: :member
   end
-  get "signal_chains/ajax_show/:id", to: "signal_chains#ajax_show", as: 'signal_chain_ajax_show'
+  get 'signal_chains/ajax_show/:id', to: 'signal_chains#ajax_show', as: 'signal_chain_ajax_show'
 
   resources :digital_provenance, only: [:show, :edit, :update]
 
@@ -174,9 +179,9 @@ Pod::Application.routes.draw do
   #match ':controller(/:action(/:id))', :via => [:get, :post, :patch]
 
   # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
+  # See how all your routes lay out with 'rake routes'.
 
-  # You can have the root of your site routed with "root"
+  # You can have the root of your site routed with 'root'
   # root 'welcome#index'
 
   # Example of regular route:

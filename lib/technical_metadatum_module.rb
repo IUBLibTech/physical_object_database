@@ -53,6 +53,21 @@ module TechnicalMetadatumModule
   MULTIVALUED_FIELDSETS = {} # associates description to boolean fieldset
   FIELDSET_COLUMNS = {} # sets boolean fields shown per row
   MANIFEST_EXPORT = {} # configures headers, fields for shipping manifest export
+  # configures uniform required (true)/optional (false)/na (nil) provenance fields
+  PROVENANCE_REQUIREMENTS = {
+    comments: false,
+    cleaning_comment: false,
+    cleaning_date: false,
+    repaired: false,
+    duration: true,
+    batch_processing_flag: false,
+
+    filename: true,
+    date_digitized: true,
+    comment: false,
+    created_by: true,
+    signal_chain_id: true
+  } 
 
   # Track values from including classes
   def self.included(base)
@@ -213,6 +228,10 @@ module TechnicalMetadatumModule
 
   def auto_accept_days
     TechnicalMetadatumModule.format_auto_accept_days(format)
+  end
+
+  def provenance_requirements
+    self.class::PROVENANCE_REQUIREMENTS
   end
 
 end
