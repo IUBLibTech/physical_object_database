@@ -22,9 +22,9 @@
 					</td>
 				</tr>
 				<tr>
-					<th>Baking Date<%= dp_requirement(:baking_date) %></th>
+					<th>Baking Date<%= dp_requirement(:baking) %></th>
 					<td>
-						<%= dp.text_field(:baking, readonly: !@edit_mode, class: @edit_mode ? "date" : "", value: @dp.baking.blank? ? "" : @dp.baking.in_time_zone("UTC").strftime("%m/%d/%Y"), disabled: dp_na(:baking_date)) %>
+						<%= dp.text_field(:baking, readonly: !@edit_mode, class: @edit_mode ? "date" : "", value: @dp.baking.blank? ? "" : @dp.baking.in_time_zone("UTC").strftime("%m/%d/%Y"), disabled: dp_na(:baking)) %>
 					</td>
 				</tr>
 				<tr>
