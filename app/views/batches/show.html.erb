@@ -38,6 +38,7 @@
 			    <th>MDPI barcode</th>
 			    <th>Identifier</th>
 			    <th>Item Count</th>
+			    <th>Physical Location</th>
 			    <th>Description</th>
 			    <th>Add</th>
 			  </tr>
@@ -57,6 +58,9 @@
 							<% elsif b.boxes.any? %>
 							  <%= b.boxed_physical_objects.size %>
 							<% end %>
+						</td>
+						<td>
+							<%= b.physical_location %>
 						</td>
 						<td>
 							<%= b.description %>
