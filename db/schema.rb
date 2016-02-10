@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160127163741) do
+ActiveRecord::Schema.define(version: 20160210200702) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 20160127163741) do
     t.integer  "workflow_index"
     t.string   "destination"
     t.string   "format"
+    t.string   "physical_location"
   end
 
   add_index "bins", ["batch_id"], name: "index_bins_on_batch_id", using: :btree

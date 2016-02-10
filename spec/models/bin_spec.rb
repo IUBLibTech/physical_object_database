@@ -59,6 +59,25 @@ describe Bin do
         expect(bin.format).to eq box.format
       end
     end
+    describe "physical location" do
+      it "can be blank" do
+        valid_bin.physical_location = ''
+        expect(valid_bin).to be_valid
+      end
+      it "cannot be nil" do
+        valid_bin.physical_location = nil
+        expect(valid_bin).not_to be_valid
+      end
+      it "must be a valid value from list" do
+        valid_bin.physical_location = "invalid value"
+        expect(valid_bin).not_to be_valid
+      end
+      it "is set as a default value" do
+        valid_bin.physical_location = nil
+        valid_bin.default_values
+        expect(valid_bin.physical_location).not_to be_nil
+      end
+    end
   end
 
   describe "has relationships:" do
