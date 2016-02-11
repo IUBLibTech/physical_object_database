@@ -17,8 +17,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 	validates :peak, numericality: {only_integer: true, less_than: 0, message: "must be an integer value less than 0."}, allow_blank: true
 
 	validate :filename_validation
-
-
+	validate :validate_signal_chain
 
 	default_scope { order(:filename) }
 
@@ -91,6 +90,12 @@ class DigitalFileProvenance < ActiveRecord::Base
       end
     end
     complete
+  end
+
+  def validate_signal_chain
+    if signal_chain && digital_provenance && digital_provenance.physical_object
+      errors[:signal_chain] << "Physical Object format (#{digital_provenance.physical_object.format}) is not among formats supported by the selected signal chain (#{signal_chain.formats.join(', ')})" unless signal_chain.formats.include? digital_provenance.physical_object.format
+    end
   end
 
 end
