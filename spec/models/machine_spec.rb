@@ -19,6 +19,9 @@ describe Machine do
     specify "signal chains" do
       expect(valid_machine.signal_chains.size).to be > -1
     end
+    specify "machine formats" do
+      expect(valid_machine.machine_formats).to respond_to :size
+    end
   end
 
   describe "has attributes:" do
@@ -35,6 +38,17 @@ describe Machine do
           expect(valid_machine).not_to be_valid
         end
       end
+    end
+  end
+
+  describe "#formats" do
+    it "returns an array" do
+      expect(valid_machine.formats).to be_a Array
+    end
+    let(:format) { "CD-R" }
+    it "includes format values" do
+      valid_machine.machine_formats.new(format: format)
+      expect(valid_machine.formats).to include format
     end
   end
 

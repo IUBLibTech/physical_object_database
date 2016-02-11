@@ -25,6 +25,9 @@ describe SignalChain do
     specify "machines" do
       expect(valid_signal_chain.machines.size).to be > -1
     end
+    specify "signal chain formats" do
+      expect(valid_signal_chain.signal_chain_formats).to respond_to :size
+    end
   end
 
   describe "has attributes:" do
@@ -49,6 +52,17 @@ describe SignalChain do
         valid_signal_chain.name = signal_chain.name
         expect(valid_signal_chain).not_to be_valid
       end
+    end
+  end
+
+  describe "#formats" do
+    it "returns an array" do
+      expect(valid_signal_chain.formats).to be_a Array 
+    end
+    let(:format) { "CD-R" }
+    it "includes format values" do
+      valid_signal_chain.signal_chain_formats.new(format: format)
+      expect(valid_signal_chain.formats).to include format
     end
   end
 
