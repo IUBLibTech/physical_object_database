@@ -9,7 +9,7 @@ class ProcessingStep < ActiveRecord::Base
 
   def validate_format_compatibility
     if signal_chain && machine
-      errors[:base] << "None of the formats supported by this signal chain (#{signal_chain.formats}) are supported by the chosen machine (#{machine.formats})" if (signal_chain.formats & machine.formats).empty?
+      errors[:base] << "None of the formats supported by this signal chain (#{signal_chain.formats.join(', ')}) are supported by the chosen machine (#{machine.formats.join(', ')})" if (signal_chain.formats & machine.formats).empty?
     end
   end
 end

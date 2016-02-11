@@ -1,0 +1,16 @@
+<table>
+  <tr><th colspan="2">Machine Format</th></tr>
+  <% if f.object.errors.any? %>
+  <tr><th>ERRORS</th><td><%= render 'shared/error_messages', object: f.object %></td></tr>
+  <% end %>
+  <% if @edit_mode && policy(@machine).destroy? %>
+    <tr>
+      <th></th>
+      <td><%= f.link_to_remove("Delete machine format", data: {confirm: 'Are you sure you want to mark this machine format for deletion?  The machine format will be deleted when you submit the form.'}) %></td>
+    </tr>
+  <% end %>
+  <tr>
+    <th>Format</th>
+    <td><%= f.select :format, TechnicalMetadatumModule.tm_formats_hash, {include_blank: 'Select a format...'}, disabled: !@edit_mode %></td>
+  </tr>
+</table>

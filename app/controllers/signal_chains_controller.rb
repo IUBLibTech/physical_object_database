@@ -127,6 +127,7 @@ class SignalChainsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def signal_chain_params
-      params.require(:signal_chain).permit(:name)
+      params.require(:signal_chain).permit(:name,
+        signal_chain_formats_attributes: [:id, :format, :_destroy])
     end
 end
