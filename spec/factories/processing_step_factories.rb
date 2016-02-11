@@ -9,6 +9,23 @@ FactoryGirl.define do
       position 0
     end
 
+    trait :with_formats do
+      transient do
+        formats []
+      end
+      after(:build) do |ps, evaluator|
+        evaluator.formats.each do |format|
+          ps.signal_chain.signal_chain_formats.new(format: format)
+          ps.machine.machine_formats.new(format: format)
+        end
+      end
+      after(:create) do |ps, evaluator|
+        evaluator.formats.each do |format|
+          ps.signal_chain.signal_chain_formats.create(format: format)
+          ps.machine.machine_formats.create(format: format)
+        end
+      end
+    end
   end
 
 end

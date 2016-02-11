@@ -1,7 +1,8 @@
 describe SignalChain do
+  let(:format) { "CD-R" }
   let(:signal_chain) { FactoryGirl.create :signal_chain }
   let(:machine) { FactoryGirl.create :machine }
-  let(:processing_step) { FactoryGirl.create :processing_step, signal_chain: signal_chain, machine: machine }
+  let(:processing_step) { FactoryGirl.create :processing_step, :with_formats, formats: [format], signal_chain: signal_chain, machine: machine }
   let(:valid_signal_chain) { FactoryGirl.build :signal_chain }
   let(:invalid_signal_chain) { FactoryGirl.build :signal_chain, :invalid }
 
