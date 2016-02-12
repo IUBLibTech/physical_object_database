@@ -32,7 +32,7 @@ describe SignalChain do
   end
 
   describe "has attributes:" do
-    [:name].each do |attr|
+    [:name, :studio].each do |attr|
       specify "#{attr}" do
         expect(valid_signal_chain).to respond_to(attr)
         expect(valid_signal_chain.attributes.keys).to include(attr.to_s)
