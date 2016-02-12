@@ -1,7 +1,8 @@
 describe SignalChain do
+  let(:format) { "CD-R" }
   let(:signal_chain) { FactoryGirl.create :signal_chain }
   let(:machine) { FactoryGirl.create :machine }
-  let(:processing_step) { FactoryGirl.create :processing_step, signal_chain: signal_chain, machine: machine }
+  let(:processing_step) { FactoryGirl.create :processing_step, :with_formats, formats: [format], signal_chain: signal_chain, machine: machine }
   let(:valid_signal_chain) { FactoryGirl.build :signal_chain }
   let(:invalid_signal_chain) { FactoryGirl.build :signal_chain, :invalid }
 
@@ -24,6 +25,9 @@ describe SignalChain do
     end
     specify "machines" do
       expect(valid_signal_chain.machines.size).to be > -1
+    end
+    specify "signal chain formats" do
+      expect(valid_signal_chain.signal_chain_formats).to respond_to :size
     end
   end
 
@@ -49,6 +53,17 @@ describe SignalChain do
         valid_signal_chain.name = signal_chain.name
         expect(valid_signal_chain).not_to be_valid
       end
+    end
+  end
+
+  describe "#formats" do
+    it "returns an array" do
+      expect(valid_signal_chain.formats).to be_a Array 
+    end
+    let(:format) { "CD-R" }
+    it "includes format values" do
+      valid_signal_chain.signal_chain_formats.new(format: format)
+      expect(valid_signal_chain.formats).to include format
     end
   end
 

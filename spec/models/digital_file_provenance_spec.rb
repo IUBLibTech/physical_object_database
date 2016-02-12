@@ -2,6 +2,9 @@ describe DigitalFileProvenance do
   let(:new_dfp) { DigitalFileProvenance.new }
   let(:dfp) { FactoryGirl.create :digital_file_provenance }
   let(:valid_dfp) { FactoryGirl.build(:digital_file_provenance, digital_provenance: FactoryGirl.build(:digital_provenance), signal_chain:(FactoryGirl.build :signal_chain)) }
+  before(:each) do
+    valid_dfp.signal_chain.signal_chain_formats.new(format: valid_dfp.digital_provenance.physical_object.format)
+  end
   let(:invalid_dfp) { FactoryGirl.build(:digital_file_provenance, :invalid, digital_provenance: FactoryGirl.build(:digital_provenance), signal_chain:(FactoryGirl.build :signal_chain)) }
   describe "has default values" do
     specify "created_by" do
@@ -129,12 +132,19 @@ describe DigitalFileProvenance do
       end
     end
     describe "signal chain" do
+      let(:signal_chain) { FactoryGirl.build :signal_chain }
       it "belongs to" do
         expect(valid_dfp).to respond_to :signal_chain_id
       end
       it "is optional" do
         valid_dfp.signal_chain = nil
         expect(valid_dfp).to be_valid
+      end
+      it "must match format" do
+        expect(valid_dfp).to be_valid
+        valid_dfp.signal_chain = signal_chain
+        expect(signal_chain.formats).not_to include valid_dfp.digital_provenance.physical_object.format
+        expect(valid_dfp).not_to be_valid
       end
     end
   end
@@ -175,6 +185,7 @@ describe DigitalFileProvenance do
       expect(valid_dfp.tape_fluxivity).not_to be_nil
     end
     it "is called before save" do
+puts dfp.signal_chain.inspect
       dfp.tape_fluxivity = "100"
       expect(dfp.tape_fluxivity).not_to be_nil
       dfp.save!

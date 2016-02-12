@@ -9,8 +9,14 @@ class Machine < ActiveRecord::Base
   }
   has_many :processing_steps
   has_many :signal_chains, through: :processing_steps
+  has_many :machine_formats
+  accepts_nested_attributes_for :machine_formats, allow_destroy: true
 
   def full_name
   	"[#{self.category}] #{self.manufacturer} #{self.model} - #{self.serial}"
+  end
+
+  def formats
+    machine_formats.map { |mf| mf.format }
   end
 end

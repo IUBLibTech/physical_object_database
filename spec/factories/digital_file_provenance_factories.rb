@@ -4,7 +4,7 @@ FactoryGirl.define do
     created_by "FactoryGirl User"
     filename "temporary filename" #replaced in after(:build) call
     date_digitized Time.now
-    association :signal_chain, factory: :signal_chain
+    #association :signal_chain #nil
 
     tape_fluxivity 1
     volume_units 0

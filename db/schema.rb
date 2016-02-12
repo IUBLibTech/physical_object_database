@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160210200702) do
+ActiveRecord::Schema.define(version: 20160211202256) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -286,6 +286,15 @@ ActiveRecord::Schema.define(version: 20160210200702) do
     t.string   "avalon_url"
   end
 
+  create_table "machine_formats", force: true do |t|
+    t.integer  "machine_id"
+    t.string   "format"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "machine_formats", ["machine_id"], name: "index_machine_formats_on_machine_id", using: :btree
+
   create_table "machines", force: true do |t|
     t.string   "category"
     t.string   "serial"
@@ -452,6 +461,15 @@ ActiveRecord::Schema.define(version: 20160210200702) do
 
   add_index "processing_steps", ["machine_id"], name: "index_processing_steps_on_machine_id", using: :btree
   add_index "processing_steps", ["signal_chain_id"], name: "index_processing_steps_on_signal_chain_id", using: :btree
+
+  create_table "signal_chain_formats", force: true do |t|
+    t.integer  "signal_chain_id"
+    t.string   "format"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "signal_chain_formats", ["signal_chain_id"], name: "index_signal_chain_formats_on_signal_chain_id", using: :btree
 
   create_table "signal_chains", force: true do |t|
     t.string   "name"

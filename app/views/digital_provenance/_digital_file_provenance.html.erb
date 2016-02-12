@@ -81,7 +81,7 @@
 			<th>Signal Chain<%= dp_requirement(:signal_chain_id) %></th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.collection_select(:signal_chain_id, SignalChain.order('name'), :id, :name, {include_blank: true}, {disabled: !@edit_mode, class: "signal_chain_select"}) %>
+					<%= f.collection_select(:signal_chain_id, SignalChain.joins(:signal_chain_formats).where(signal_chain_formats: { format: @physical_object.format }).order('name'), :id, :name, {prompt: "Select a signal chain..."}, {disabled: !@edit_mode, class: "signal_chain_select"}) %>
 				<% else %>
 					<%= f.object.signal_chain ? f.object.signal_chain.name : "Not assigned" %>
 				<% end %>
