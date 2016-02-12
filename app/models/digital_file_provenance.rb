@@ -27,7 +27,13 @@ class DigitalFileProvenance < ActiveRecord::Base
         # mezz for video mezzanine file
         # access for access file
         # presInt for preservation master-intermediate files
-	FILE_USE_VALUES = [ 'pres', 'prod', 'mezz', 'access', 'presInt']
+	FILE_USE_HASH = { 'pres' => 'Preservation Master',
+		 'prod' => 'Production Master',
+		 'mezz' => 'Mezzanine File Version',
+		 'access' => 'Access File Version',
+		 'presInt' => 'Preservation Master - Intermediate'
+		}
+	FILE_USE_VALUES = FILE_USE_HASH.keys
 
 	def display_date_digitized
 		if date_digitized.blank?
@@ -96,6 +102,53 @@ class DigitalFileProvenance < ActiveRecord::Base
     if signal_chain && digital_provenance && digital_provenance.physical_object
       errors[:signal_chain] << "Physical Object format (#{digital_provenance.physical_object.format}) is not among formats supported by the selected signal chain (#{signal_chain.formats.join(', ')})" unless signal_chain.formats.include? digital_provenance.physical_object.format
     end
+  end
+
+  def file_use
+    use = ""
+    unless self.filename.blank?
+      m = self.filename.match /(.*)_(.*?)\.(...)$/
+      if m.size >= 3
+        use = m[2]
+      end
+    end
+    use
+  end
+
+  def full_file_use
+    DigitalFileProvenance::FILE_USE_HASH[file_use]
+  end
+
+  def file_prefix
+    prefix = nil
+    unless self.filename.blank?
+      m = self.filename.match /(.*)\..*$/
+      if m.size >= 1
+        prefix = m[1]
+      end
+    end
+    prefix
+  end
+
+  def file_ext
+    ext = nil
+    unless self.filename.blank?
+      m = self.filename.match /.*\.(.*)$/
+      if m.size >= 2
+        ext = m[1]
+      end
+    end
+    ext
+  end
+
+  def digital_file_bext
+    bext_text = full_file_use
+    bext_text += ". " unless bext_text.blank?
+    bext_text += file_prefix
+    if self.digital_provenance && self.digital_provenance.physical_object
+      bext_text = self.digital_provenance.physical_object.file_bext + bext_text
+    end
+    bext_text
   end
 
 end

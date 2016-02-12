@@ -10,6 +10,9 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
        xml.title @physical_object.title
        xml.unit @physical_object.unit.name
        xml.mdpi_barcode @physical_object.mdpi_barcode
+       xml.file_iarl @physical_object.file_iarl.sub(/\.$/,'')
+       xml.file_icmt @physical_object.file_icmt
+       xml.file_bext @physical_object.file_bext
        #digital_provenance source
        xml.digitizing_entity @dp.digitizing_entity
        @dp.attributes.keys.each do |att|
@@ -51,7 +54,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
        xml.digital_files do
          @dp.digital_file_provenances.order(:filename).each do |dfp|
            dfp.attributes.keys.each do |att|
-             dfp[att] = nil if @tm.provenance_requirements[att.to_sym].nil?
+             dfp[att] = nil if (@tm.provenance_requirements[att.to_sym].nil? && !(att.to_sym.in? [:digital_provenance_id, :filename]))
            end
            xml.digital_file_provenance do
              xml.filename dfp.filename
@@ -82,6 +85,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
                  end
                end
              end
+             xml.digital_file_bext dfp.digital_file_bext
            end
          end
        end
