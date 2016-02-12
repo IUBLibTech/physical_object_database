@@ -4,7 +4,7 @@
     <tr>
       <th>Device</th>
       <td>
-        <%= select_tag :machine_id, options_for_select(Machine.all.map { |m| ["#{m.category} | #{m.serial} | #{m.manufacturer} | #{m.model}", m.id ] }), { prompt: "Select a device..." } %></td>
+        <%= select_tag :machine_id, options_for_select(Machine.all.order(:category, :manufacturer, :model).joins(:machine_formats).where(machine_formats: { format: @signal_chain.formats }).map { |m| ["#{m.category} | #{m.serial} | #{m.manufacturer} | #{m.model}", m.id ] }), { prompt: "Select a device..." } %></td>
        <%= hidden_field_tag :position, @signal_chain.processing_steps.any? ? @signal_chain.processing_steps.last.position + 1 : 1, readonly: true %>
       </td>
     </tr>

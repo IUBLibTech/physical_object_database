@@ -5,7 +5,7 @@ class SignalChainsController < ApplicationController
   # GET /signal_chains
   # GET /signal_chains.json
   def index
-    @signal_chains = SignalChain.all
+    @signal_chains = SignalChain.all.eager_load(:signal_chain_formats).order(:name)
   end
 
   # GET /signal_chains/1
@@ -93,10 +93,15 @@ class SignalChainsController < ApplicationController
   # DELETE /signal_chains/1
   # DELETE /signal_chains/1.json
   def destroy
-    @signal_chain.destroy
-    respond_to do |format|
-      format.html { redirect_to signal_chains_url }
-      format.json { head :no_content }
+    if @signal_chain.destroy
+      flash[:notice] = "Signal chain was successfully destroyed.".html_safe
+      respond_to do |format|
+        format.html { redirect_to signal_chains_url }
+        format.json { head :no_content }
+      end
+    else
+      flash.now[:warning] = "Signal Chain could not be deleted.".html_safe
+      render :show
     end
   end
 
