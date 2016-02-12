@@ -4,6 +4,7 @@
     <th>Serial</th>
     <th>Manufacturer</th>
     <th>Model</th>
+    <th>Formats</th>
     <th>Actions</th>
   </tr>
   <% count = 0 %>
@@ -14,6 +15,7 @@
       <td><%= machine.serial %></td>
       <td><%= machine.manufacturer %></td>
       <td><%= machine.model %></td>
+      <td><%= machine.formats.join(', ') %></td>
       <td>
         <%= link_to "Show", machine_path(machine) if policy(machine).show? %>
         <%= link_to "Edit", edit_machine_path(machine) if policy(machine).edit? %>

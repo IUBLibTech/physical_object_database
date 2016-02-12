@@ -5,7 +5,7 @@ class SignalChainsController < ApplicationController
   # GET /signal_chains
   # GET /signal_chains.json
   def index
-    @signal_chains = SignalChain.all
+    @signal_chains = SignalChain.all.eager_load(:signal_chain_formats).order(:name)
   end
 
   # GET /signal_chains/1

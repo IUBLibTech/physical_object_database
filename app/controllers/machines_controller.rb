@@ -5,7 +5,7 @@ class MachinesController < ApplicationController
   # GET /machines
   # GET /machines.json
   def index
-    @machines = Machine.all
+    @machines = Machine.all.eager_load(:machine_formats).order(:category, :manufacturer, :model)
   end
 
   # GET /machines/1
