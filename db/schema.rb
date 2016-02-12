@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160211202256) do
+ActiveRecord::Schema.define(version: 20160212162722) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -475,6 +475,7 @@ ActiveRecord::Schema.define(version: 20160211202256) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "studio"
   end
 
   create_table "spreadsheets", force: true do |t|
