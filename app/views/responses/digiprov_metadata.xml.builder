@@ -10,7 +10,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
        xml.title @physical_object.title
        xml.unit @physical_object.unit.name
        xml.mdpi_barcode @physical_object.mdpi_barcode
-       xml.file_iarl @physical_object.file_iarl
+       xml.file_iarl @physical_object.file_iarl.sub(/\.$/,'')
        xml.file_icmt @physical_object.file_icmt
        xml.file_bext @physical_object.file_bext
        #digital_provenance source
