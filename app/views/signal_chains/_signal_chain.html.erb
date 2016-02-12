@@ -5,6 +5,13 @@
       <th>Name</th>
       <td><%= @edit_mode ? f.text_field(:name) : @signal_chain.name %></td>
     </tr>
+    <%# don't reveal studio in interface, yet %>
+    <% if false %>
+    <tr>
+      <th>Studio</th>
+      <td><%= f.select :studio, {}, {include_blank: 'Select a studio...'}, disabled: !@edit_mode %></td>
+    </tr>
+    <% end %>
     <% if !@edit_mode %>
       <tr>
         <th>Formats</th>
