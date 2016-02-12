@@ -54,7 +54,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
        xml.digital_files do
          @dp.digital_file_provenances.order(:filename).each do |dfp|
            dfp.attributes.keys.each do |att|
-             dfp[att] = nil if @tm.provenance_requirements[att.to_sym].nil?
+             dfp[att] = nil if (@tm.provenance_requirements[att.to_sym].nil? && !(att.to_sym.in? [:digital_provenance_id, :filename]))
            end
            xml.digital_file_provenance do
              xml.filename dfp.filename
@@ -85,6 +85,7 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
                  end
                end
              end
+             xml.digital_file_bext dfp.digital_file_bext
            end
          end
        end

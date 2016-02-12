@@ -185,11 +185,58 @@ describe DigitalFileProvenance do
       expect(valid_dfp.tape_fluxivity).not_to be_nil
     end
     it "is called before save" do
-puts dfp.signal_chain.inspect
       dfp.tape_fluxivity = "100"
       expect(dfp.tape_fluxivity).not_to be_nil
       dfp.save!
       expect(dfp.tape_fluxivity).to be_nil
+    end
+  end
+
+  describe "filename operations" do
+    describe "#file_use" do
+      it "extracts the use portion" do
+        expect(valid_dfp.file_use).to eq 'pres'
+      end
+    end
+    describe "#full_file_use" do
+      it "looks up the full file use description" do
+        expect(valid_dfp.full_file_use).to eq 'Preservation Master'
+      end
+    end
+    describe "#file_prefix" do
+      it "returns the filename without extension (or preceding period)" do
+        expect(valid_dfp.file_prefix).not_to be_blank
+        expect(valid_dfp.file_prefix + ".wav").to match valid_dfp.filename
+      end
+    end
+    describe "#file_ext" do
+      it "returns the file extension (without preceding period)" do
+        expect(valid_dfp.file_ext).to eq "wav"
+      end
+    end
+    describe "#digital_file_bext" do
+      it "returns '[file_bext][full_file_use]. [file_prefix]" do
+        expect(valid_dfp.digital_file_bext).to eq "#{valid_dfp.digital_provenance.physical_object.file_bext}#{valid_dfp.full_file_use}. #{valid_dfp.file_prefix}"
+      end
+    end
+  end
+
+  describe "class constants:" do
+    describe "FILE-USE_HASH" do
+      it "is a Hash" do
+        expect(DigitalFileProvenance::FILE_USE_HASH).to be_a Hash
+      end
+      it "is not empty" do
+        expect(DigitalFileProvenance::FILE_USE_HASH).not_to be_empty
+      end
+    end
+    describe "FILE_USE_VALUES" do
+      it "is an Array" do
+        expect(DigitalFileProvenance::FILE_USE_VALUES).to be_a Array
+      end
+      it "is not empty" do
+        expect(DigitalFileProvenance::FILE_USE_VALUES).not_to be_empty
+      end
     end
   end
 end
