@@ -55,10 +55,15 @@ class MachinesController < ApplicationController
   # DELETE /machines/1
   # DELETE /machines/1.json
   def destroy
-    @machine.destroy
-    respond_to do |format|
-      format.html { redirect_to machines_url }
-      format.json { head :no_content }
+    if @machine.destroy
+      flash[:notice] = "Machine successfully deleted".html_safe
+      respond_to do |format|
+        format.html { redirect_to machines_url }
+        format.json { head :no_content }
+      end
+    else
+      flash.now[:warning] = "Machine could not be deleted.".html_safe
+      render :show
     end
   end
 

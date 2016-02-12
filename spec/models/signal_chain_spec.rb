@@ -1,6 +1,7 @@
 describe SignalChain do
   let(:format) { "CD-R" }
   let(:signal_chain) { FactoryGirl.create :signal_chain }
+  let(:dfp) { FactoryGirl.create :digital_file_provenance, signal_chain: signal_chain }
   let(:machine) { FactoryGirl.create :machine }
   let(:processing_step) { FactoryGirl.create :processing_step, :with_formats, formats: [format], signal_chain: signal_chain, machine: machine }
   let(:valid_signal_chain) { FactoryGirl.build :signal_chain }
@@ -28,6 +29,20 @@ describe SignalChain do
     end
     specify "signal chain formats" do
       expect(valid_signal_chain.signal_chain_formats).to respond_to :size
+    end
+    specify "signal chain formats destroyed if signal chain is destroyed" do
+      signal_chain.signal_chain_formats.create!(format: format)
+      expect { signal_chain.destroy }.to change(SignalChainFormat, :count).by(-1)
+    end
+    specify "digital_file_provenances" do
+      expect(valid_signal_chain).to respond_to :digital_file_provenances
+    end
+    specify "digital_file_provenances block deletion" do
+      signal_chain.signal_chain_formats.create!(format: format)
+      dfp
+      expect { signal_chain.destroy }.not_to change(SignalChain, :count)
+      expect(signal_chain.errors).not_to be_empty
+      expect(signal_chain.errors.full_messages.join).to match /dependent digital file provenances/
     end
   end
 
