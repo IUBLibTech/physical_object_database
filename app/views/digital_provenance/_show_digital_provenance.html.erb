@@ -63,10 +63,14 @@
 					<%= render 'digital_provenance/digital_file_provenance', f: df, dp: dp %>
 				<% end %>
 			<% end %>
-	    <% if @edit_mode && policy(@dp).edit? %>
-	      <%= dp.link_to_add "Add Digital File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
-	    <% end %>
 		</div>
+    <div>
+      <% if @edit_mode && policy(@dp).edit? %>
+        <%= dp.link_to_add "Add Digital Master File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+        &nbsp-&nbsp
+        <%= dp.link_to_add "Add PresInt File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+      <% end %>
+    </div>
 	<% end %>
 	<div class="clear">
 		<h2>Digital Statuses</h2>
@@ -81,31 +85,42 @@
 			// the "Add Digital File/PrestInt" link
 			var trig = event.currentTarget.activeElement;
 			el = $('.filename').last();
-			var v = "mmm";
+			var v = "";
 			if ( el.val().length == 0) {
 				bc = $("#barcode").first().text();
-				if (trig.text == "Add Digital File") {
-					seq = ("000" + ($('.filename').size())).slice(-2);
+				if (trig.text == "Add Digital Master File") {
+					var visibleMasterTables = $('.fields').filter(function() {
+						return this.style.display != 'none';
+					});
+					visibleMasterTables = $(visibleMasterTables).find('.filename').filter(function() {
+						return this.value.indexOf('_pres.') != -1;
+					});
+					var fn = $(visibleMasterTables).last().val()
+					var pattern = "_[0-9]{2}_";
+					var seq = ("000" + (parseFloat(fn.substring(fn.search(pattern)+1, fn.search(pattern)+3)) + 1)).slice(-2);
+					//seq = ("000" + $(visibleMasterTables).last().val()).slice(-2);
 					v = "MDPI_"+bc+"_"+seq+"_pres."+ext;
 				} else {
-					masterFilename = event.currentTarget.activeElement.parentNode.parentNode.parentNode.children[1].children[1].children[0].value;
-					pattern = "_[0-9]{2}_";
-					seq = masterFilename.substring(masterFilename.search(pattern)+1, masterFilename.search(pattern)+3);
+					var visibleTables = $('.fields').filter(function () { return this.style.display != 'none'; });
+					visibleTables = $(visibleTables).find('table.digiprov');
+					var masterFilename = $('.digiprov')[$('.digiprov').length - 2].children[0].children[1].children[1].children[0].value
+					var pattern = "_[0-9]{2}_";
+					var seq = masterFilename.substring(masterFilename.search(pattern)+1, masterFilename.search(pattern)+3);
 					v = "MDPI_"+bc+"_"+seq+"_presInt."+ext;
-					//remove the "add presInt" link
-					$(".presInt").last().empty();
 
 					//copy over all values from the master file.
-					srcComment = ($(trig)).closest('.digiprov').find('td > textarea').val();
-					$('.digiprov').last().find('td > textarea').val(srcComment);
-//					for (x = 4; x <12; x++) {
-//						val = ($(trig)).closest('.digiprov').find('td > input')[x].value;
-//						$('.digiprov').last().find('td > input')[x].value = val;
-//					}
-					$('.digiprov').last().find('th').addClass('presInt');
+					var copyTable = visibleTables[visibleTables.length - 2];
+					var tds = $(copyTable).find('td > input');
+					var selectIndex = $(copyTable).find('select').first().prop('selectedIndex');
+					for (x = 4; x <12; x++) {
+						val =  tds[x].value;
+						$(visibleTables).last().find('td > input')[x].value = val;
+					}
+					$(visibleTables).last().find('select option').eq(selectIndex).prop('selected', true);
+					$(visibleTables).last().addClass('presInt');
 				}
 				el.val(v);
 			}
-		})
+		});
 	</script>
 </div>

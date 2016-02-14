@@ -448,6 +448,6 @@ tr.packed {
   font-size: 85%;
 }
 
-th.presInt {
+table.presInt >tbody > tr > th {
     background-color: #F5D7D5;
 }
