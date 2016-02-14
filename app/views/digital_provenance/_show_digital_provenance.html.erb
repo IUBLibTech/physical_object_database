@@ -54,19 +54,23 @@
 		<%# the fields for kluge %>
 		<% dp.fields_for :physical_object do |df| %>
 		<% end %>
-		<div>
+		<div id="file_holder">
 			<h2>Digital Files</h2>
 			<% if @dp.digital_file_provenances.size == 0 and !@edit_mode %>
 				Digital files have not been received yet...
 			<% else %>
 				<%= dp.fields_for :digital_file_provenances do |df| %>
-					<%= render 'digital_provenance/digital_file_provenance', f: df %>
-				<% end %>
-				<% if @edit_mode && policy(@dp).edit? %>
-					<%= dp.link_to_add "Add Digital File", :digital_file_provenances if policy(@dp).edit? %>
+					<%= render 'digital_provenance/digital_file_provenance', f: df, dp: dp %>
 				<% end %>
 			<% end %>
 		</div>
+    <div>
+      <% if @edit_mode && policy(@dp).edit? %>
+        <%= dp.link_to_add "Add Digital Master File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+        &nbsp-&nbsp
+        <%= dp.link_to_add "Add PresInt File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+      <% end %>
+    </div>
 	<% end %>
 	<div class="clear">
 		<h2>Digital Statuses</h2>
@@ -75,6 +79,48 @@
 	<script type='text/javascript'>
 		$(function (){
 			$('.date').datepicker();
+		});
+		$(document).on('nested:fieldAdded', function(event){
+			var ext = <%= (TechnicalMetadatumModule.tm_genres[@physical_object.format] == :audio ? "'wav'" : "'mkv'").html_safe%>;
+			// the "Add Digital File/PrestInt" link
+			var trig = event.currentTarget.activeElement;
+			el = $('.filename').last();
+			var v = "";
+			if ( el.val().length == 0) {
+				bc = $("#barcode").first().text();
+				if (trig.text == "Add Digital Master File") {
+					var visibleMasterTables = $('.fields').filter(function() {
+						return this.style.display != 'none';
+					});
+					visibleMasterTables = $(visibleMasterTables).find('.filename').filter(function() {
+						return this.value.indexOf('_pres.') != -1;
+					});
+					var fn = $(visibleMasterTables).last().val()
+					var pattern = "_[0-9]{2}_";
+					var seq = ("000" + (parseFloat(fn.substring(fn.search(pattern)+1, fn.search(pattern)+3)) + 1)).slice(-2);
+					//seq = ("000" + $(visibleMasterTables).last().val()).slice(-2);
+					v = "MDPI_"+bc+"_"+seq+"_pres."+ext;
+				} else {
+					var visibleTables = $('.fields').filter(function () { return this.style.display != 'none'; });
+					visibleTables = $(visibleTables).find('table.digiprov');
+					var masterFilename = $('.digiprov')[$('.digiprov').length - 2].children[0].children[1].children[1].children[0].value
+					var pattern = "_[0-9]{2}_";
+					var seq = masterFilename.substring(masterFilename.search(pattern)+1, masterFilename.search(pattern)+3);
+					v = "MDPI_"+bc+"_"+seq+"_presInt."+ext;
+
+					//copy over all values from the master file.
+					var copyTable = visibleTables[visibleTables.length - 2];
+					var tds = $(copyTable).find('td > input');
+					var selectIndex = $(copyTable).find('select').first().prop('selectedIndex');
+					for (x = 4; x <12; x++) {
+						val =  tds[x].value;
+						$(visibleTables).last().find('td > input')[x].value = val;
+					}
+					$(visibleTables).last().find('select option').eq(selectIndex).prop('selected', true);
+					$(visibleTables).last().addClass('presInt');
+				}
+				el.val(v);
+			}
 		});
 	</script>
 </div>
