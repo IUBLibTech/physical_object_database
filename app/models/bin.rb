@@ -26,7 +26,7 @@ class Bin < ActiveRecord::Base
         validates :workflow_status, presence: true
 
         scope :available_bins, -> {
-                where(batch_id: [0, nil])
+                where(batch_id: [0, nil]).where(workflow_status: 'Created')
         }
 
         def display_workflow_status

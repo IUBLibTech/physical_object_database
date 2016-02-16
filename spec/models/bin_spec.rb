@@ -262,5 +262,19 @@ describe Bin do
     let(:class_title) { "Bin" }
   end
 
+  describe ".available_bins scope" do
+    let!(:batched_bin) { bin }
+    let!(:created_bin) { FactoryGirl.create :bin, identifier: 'created' }
+    let!(:sealed_bin) { FactoryGirl.create :bin, identifier: 'sealed' }
+    before(:each) do
+      sealed_bin.current_workflow_status = "Sealed"
+      sealed_bin.save!
+      expect(sealed_bin.workflow_status).to eq "Sealed"
+    end
+    it "returns only bins without batches, in 'Created' status" do
+      expect(Bin.available_bins).to eq [created_bin]
+    end
+  end
+
 end
 

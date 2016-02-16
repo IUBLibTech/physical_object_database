@@ -59,7 +59,7 @@ describe ApplicationHelper do
       expect(dp_na(:comments)).to be_nil
     end
     it "returns true value for na field" do
-      expect(dp_na(:baking_date)).to eq true
+      expect(dp_na(:baking)).to eq true
     end
   end
 
@@ -72,7 +72,7 @@ describe ApplicationHelper do
       expect(dp_requirement(:comments)).to be_blank
     end
     it "returns nil value for na field" do
-      expect(dp_requirement(:baking_date)).to be_blank
+      expect(dp_requirement(:baking)).to be_blank
     end
   end
 
