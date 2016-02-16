@@ -4,10 +4,11 @@
 describe SignalChainsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
-  
-  let(:signal_chain) { FactoryGirl.create(:signal_chain) }
-  let(:valid_signal_chain) { FactoryGirl.build(:signal_chain) }
-  let(:invalid_signal_chain) { FactoryGirl.build(:signal_chain, :invalid) }
+ 
+  let(:formats) { ['CD-R'] } 
+  let(:signal_chain) { FactoryGirl.create(:signal_chain, :with_formats, formats: formats) }
+  let(:valid_signal_chain) { FactoryGirl.build(:signal_chain, :with_formats, formats: formats) }
+  let(:invalid_signal_chain) { FactoryGirl.build(:signal_chain, :invalid, :with_formats, formats: formats) }
 
   let(:valid_attributes) { FactoryGirl.attributes_for(:signal_chain) }
   let(:invalid_attributes) { FactoryGirl.attributes_for(:signal_chain, :invalid) }
@@ -133,7 +134,7 @@ describe SignalChainsController do
   end
 
   describe "#include" do
-    let!(:machine) { FactoryGirl.create(:machine) }
+    let!(:machine) { FactoryGirl.create(:machine, :with_formats, formats: formats) }
     before(:each) do
       @request.env['HTTP_REFERER'] = '/signal_chain'
     end
@@ -147,8 +148,8 @@ describe SignalChainsController do
   end
 
   describe "PATCH #reorder" do
-    let!(:step1) { FactoryGirl.create :processing_step, signal_chain: signal_chain, position: 1 }
-    let!(:step2) { FactoryGirl.create :processing_step, signal_chain: signal_chain, position: 2 }
+    let!(:step1) { FactoryGirl.create :processing_step, :with_formats, signal_chain: signal_chain, position: 1, formats: formats }
+    let!(:step2) { FactoryGirl.create :processing_step, :with_formats, signal_chain: signal_chain, position: 2, formats: formats }
     before(:each) do
       patch :reorder, id: signal_chain.id, reorder_submission: reorder_submission
     end

@@ -1,7 +1,8 @@
 describe ProcessingStep do
-  let(:processing_step) { FactoryGirl.create :processing_step }
-  let(:valid_processing_step) { FactoryGirl.build :processing_step }
-  let(:invalid_processing_step) { FactoryGirl.build :processing_step, :invalid }
+  let(:formats) { ["CD-R"] }
+  let(:processing_step) { FactoryGirl.create :processing_step, :with_formats, formats: formats }
+  let(:valid_processing_step) { FactoryGirl.build :processing_step, :with_formats, formats: formats }
+  let(:invalid_processing_step) { FactoryGirl.build :processing_step, :invalid, :with_formats, formats: formats }
 
   describe "FactoryGirl object generation" do
     it "returns a valid object" do
@@ -18,6 +19,10 @@ describe ProcessingStep do
     end
     specify "machine" do
       expect(processing_step.machine).to be_a Machine
+    end
+    specify "machine formats must overlap with signal chain formats" do
+      valid_processing_step.machine.machine_formats.destroy_all
+      expect(valid_processing_step).not_to be_valid
     end
   end
 

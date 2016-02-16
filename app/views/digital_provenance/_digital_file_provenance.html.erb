@@ -1,20 +1,18 @@
 <div class="left">
 	<%= error_messages_for(f.object) %>
-	<%# need to generate a unique id for use in the table and select %>
-	<table class="digiprov">
-	<%#= fields_for :digital_file_provenance do |f|%>
+	<% cssClass = (!f.object.filename.nil? and f.object.filename.include? 'presInt') ? 'presInt' : '' %>
+	<table class='digiprov <%= cssClass %>'>
 		<% if @edit_mode %>
 		<tr>
-			<td></td>
-			<td>
-				<%= f.link_to_remove("Delete Digital File", data: {confirm: 'Are you sure you want to delete this Digital File? The file will be deleted when you submit the form.'}) if policy(@dp).destroy? %>
+			<td colspan='2'>
+				<%= f.link_to_remove('Delete Digital File', data: {confirm: 'Are you sure you want to delete this Digital File? The file will be deleted when you submit the form.'}) if policy(@dp).destroy? %>
 			</td>
 		</tr>
 		<% end %>
 		<tr>
 			<th>Filename<%= dp_requirement(:filename) %></th>
 			<td>
-				<%= f.text_field :filename, { class: "filename", readonly: !@edit_mode, disabled: dp_na(:filename) } %>
+				<%= f.text_field :filename, { class: 'filename', readonly: !@edit_mode, disabled: dp_na(:filename) } %>
 			</td>
 		</tr>
 		<tr>
@@ -26,7 +24,7 @@
 		<tr>
 			<th>Comment<%= dp_requirement(:comments) %></th>
 			<td>
-				<%= f.text_area :comment, cols: "37", readonly: !@edit_mode, disabled: dp_na(:comment) %>
+				<%= f.text_area :comment, cols: '37', readonly: !@edit_mode, disabled: dp_na(:comment) %>
 			</td>
 		</tr>
 		<tr>
@@ -81,9 +79,9 @@
 			<th>Signal Chain<%= dp_requirement(:signal_chain_id) %></th>
 			<td>
 				<% if @edit_mode %>
-					<%= f.collection_select(:signal_chain_id, SignalChain.order('name'), :id, :name, {include_blank: true}, {disabled: !@edit_mode, class: "signal_chain_select"}) %>
+					<%= f.collection_select(:signal_chain_id, SignalChain.joins(:signal_chain_formats).where(signal_chain_formats: { format: @physical_object.format }).order('name'), :id, :name, {prompt: "Select a signal chain..."}, {disabled: !@edit_mode, class: "signal_chain_select"}) %>
 				<% else %>
-					<%= f.object.signal_chain ? f.object.signal_chain.name : "Not assigned" %>
+					<%= f.object.signal_chain ? f.object.signal_chain.name : 'Not assigned' %>
 				<% end %>
 			</td>
 		</tr>
@@ -91,23 +89,13 @@
 			<% if @edit_mode %>
 			$(function (){
 				$('.date').datepicker();
-				// remove the if check and just execute the contained code to rename all files based on sequence order
-				// this will ALWAYS make files _01_, _02_, _03_, etc
-				var ext = <%= (TechnicalMetadatumModule.tm_genres[@physical_object.format] == :audio ? "'wav'" : "'mkv'").html_safe%>;
-				el = $('.filename').last();
-				if ( el.val().length == 0) {
-					bc = $("#barcode").first().text();
-					seq = ("000" + ($('.filename').size())).slice(-2);
-					v = "MDPI_"+bc+"_"+seq+"_pres."+ext;
-					el.val(v);
-				}
 			});
 			<% end %>
 			$(function() {
 				$(".signal_chain_select").change(
 					function() {
 						signal_chain_id = $(this).val();
-						table = $(this).parent().parent().parent().parent()
+						table = $(this).parent().parent().parent().parent();
 						$.ajax({
 							url: "../../signal_chains/ajax_show/"+signal_chain_id,
 							async: false,

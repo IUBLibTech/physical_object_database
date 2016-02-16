@@ -447,3 +447,7 @@ tr.packed {
 .po_links {
   font-size: 85%;
 }
+
+table.presInt >tbody > tr > th {
+    background-color: #F5D7D5;
+}

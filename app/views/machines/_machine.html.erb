@@ -1,5 +1,5 @@
 <%= error_messages_for(@machine) %>
-<%= form_for(@machine) do |f| %>
+<%= nested_form_for(@machine) do |f| %>
   <table>
   <tr>
     <th>Category</th>
@@ -17,8 +17,20 @@
     <th>Model</th>
     <td><%= @edit_mode ? f.text_field(:model) : @machine.model %></td>
   </tr>
+  <% if !@edit_mode %>
+    <tr>
+      <th>Formats</th>
+      <td><%= @machine.formats.join(", ") %></td>
+    </tr>
+  <% end %>
   </table>
   <% if @edit_mode %>
+    <div id="machine_formats_div">
+      <%= f.fields_for :machine_formats do |machine_format| %>
+         <%= render 'machine_format', f: machine_format %>
+      <% end %>
+      <%= f.link_to_add "Add a format", :machine_formats %>
+    </div>
     <%= f.submit(@submit_text) %>
   <% end %>
 <% end %>

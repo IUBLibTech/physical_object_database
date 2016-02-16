@@ -2,6 +2,9 @@ describe DigitalFileProvenance do
   let(:new_dfp) { DigitalFileProvenance.new }
   let(:dfp) { FactoryGirl.create :digital_file_provenance }
   let(:valid_dfp) { FactoryGirl.build(:digital_file_provenance, digital_provenance: FactoryGirl.build(:digital_provenance), signal_chain:(FactoryGirl.build :signal_chain)) }
+  before(:each) do
+    valid_dfp.signal_chain.signal_chain_formats.new(format: valid_dfp.digital_provenance.physical_object.format)
+  end
   let(:invalid_dfp) { FactoryGirl.build(:digital_file_provenance, :invalid, digital_provenance: FactoryGirl.build(:digital_provenance), signal_chain:(FactoryGirl.build :signal_chain)) }
   describe "has default values" do
     specify "created_by" do
@@ -129,12 +132,19 @@ describe DigitalFileProvenance do
       end
     end
     describe "signal chain" do
+      let(:signal_chain) { FactoryGirl.build :signal_chain }
       it "belongs to" do
         expect(valid_dfp).to respond_to :signal_chain_id
       end
       it "is optional" do
         valid_dfp.signal_chain = nil
         expect(valid_dfp).to be_valid
+      end
+      it "must match format" do
+        expect(valid_dfp).to be_valid
+        valid_dfp.signal_chain = signal_chain
+        expect(signal_chain.formats).not_to include valid_dfp.digital_provenance.physical_object.format
+        expect(valid_dfp).not_to be_valid
       end
     end
   end
@@ -179,6 +189,54 @@ describe DigitalFileProvenance do
       expect(dfp.tape_fluxivity).not_to be_nil
       dfp.save!
       expect(dfp.tape_fluxivity).to be_nil
+    end
+  end
+
+  describe "filename operations" do
+    describe "#file_use" do
+      it "extracts the use portion" do
+        expect(valid_dfp.file_use).to eq 'pres'
+      end
+    end
+    describe "#full_file_use" do
+      it "looks up the full file use description" do
+        expect(valid_dfp.full_file_use).to eq 'Preservation Master'
+      end
+    end
+    describe "#file_prefix" do
+      it "returns the filename without extension (or preceding period)" do
+        expect(valid_dfp.file_prefix).not_to be_blank
+        expect(valid_dfp.file_prefix + ".wav").to match valid_dfp.filename
+      end
+    end
+    describe "#file_ext" do
+      it "returns the file extension (without preceding period)" do
+        expect(valid_dfp.file_ext).to eq "wav"
+      end
+    end
+    describe "#digital_file_bext" do
+      it "returns '[file_bext][full_file_use]. [file_prefix]" do
+        expect(valid_dfp.digital_file_bext).to eq "#{valid_dfp.digital_provenance.physical_object.file_bext}#{valid_dfp.full_file_use}. #{valid_dfp.file_prefix}"
+      end
+    end
+  end
+
+  describe "class constants:" do
+    describe "FILE-USE_HASH" do
+      it "is a Hash" do
+        expect(DigitalFileProvenance::FILE_USE_HASH).to be_a Hash
+      end
+      it "is not empty" do
+        expect(DigitalFileProvenance::FILE_USE_HASH).not_to be_empty
+      end
+    end
+    describe "FILE_USE_VALUES" do
+      it "is an Array" do
+        expect(DigitalFileProvenance::FILE_USE_VALUES).to be_a Array
+      end
+      it "is not empty" do
+        expect(DigitalFileProvenance::FILE_USE_VALUES).not_to be_empty
+      end
     end
   end
 end

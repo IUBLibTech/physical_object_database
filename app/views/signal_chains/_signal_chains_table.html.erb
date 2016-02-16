@@ -1,6 +1,7 @@
 <table>
   <tr class="header">
-      <th>Name</th>
+    <th>Name</th>
+    <th>Formats</th>
     <th>Actions</th>
   </tr>
   <% count = 0 %>
@@ -8,6 +9,7 @@
     <% count += 1 %>
     <tr class=<%= count.odd? ? 'odd' : 'even'%>>
           <td><%= signal_chain.name %></td>
+          <td><%= signal_chain.formats.join(', ') %></td>
           <td>
         <%= link_to "Show", signal_chain if policy(signal_chain).show? %>
         <%= link_to "Edit", edit_signal_chain_path(signal_chain) if policy(signal_chain).edit? %>

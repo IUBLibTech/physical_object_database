@@ -1,5 +1,6 @@
 class Bin < ActiveRecord::Base
 	default_scope { order(:identifier) }
+	after_initialize :default_values
         
         belongs_to :batch
         belongs_to :picklist_specification
@@ -24,10 +25,16 @@ class Bin < ActiveRecord::Base
         validates :identifier, presence: true, uniqueness: true
         validates :mdpi_barcode, mdpi_barcode: true, uniqueness: true, numericality: { greater_than: 0 }
         validates :workflow_status, presence: true
+	PHYSICAL_LOCATION_VALUES = ['', 'ALF', 'ML', 'ATM', 'IC', 'At Unit']
+        validates :physical_location, inclusion: { in: PHYSICAL_LOCATION_VALUES }
 
         scope :available_bins, -> {
                 where(batch_id: [0, nil]).where(workflow_status: 'Created')
         }
+
+	def default_values
+		self.physical_location ||= ''
+	end
 
         def display_workflow_status
 	  if self.current_workflow_status == "Batched"

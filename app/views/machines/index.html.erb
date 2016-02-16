@@ -2,6 +2,9 @@
   <div class="contextMenuItem">
     <%= link_to "Create Device", new_machine_path if policy(Machine).new? %>
   </div>
+  <div class="contextMenuItem">
+    <%= link_to "Signal Chains", signal_chains_path if policy(SignalChain).index? %>
+  </div>
 <% end %>
 <div>
   <h2>Devices</h2>

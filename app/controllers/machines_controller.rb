@@ -5,7 +5,7 @@ class MachinesController < ApplicationController
   # GET /machines
   # GET /machines.json
   def index
-    @machines = Machine.all
+    @machines = Machine.all.eager_load(:machine_formats).order(:category, :manufacturer, :model)
   end
 
   # GET /machines/1
@@ -55,10 +55,15 @@ class MachinesController < ApplicationController
   # DELETE /machines/1
   # DELETE /machines/1.json
   def destroy
-    @machine.destroy
-    respond_to do |format|
-      format.html { redirect_to machines_url }
-      format.json { head :no_content }
+    if @machine.destroy
+      flash[:notice] = "Machine successfully deleted".html_safe
+      respond_to do |format|
+        format.html { redirect_to machines_url }
+        format.json { head :no_content }
+      end
+    else
+      flash.now[:warning] = "Machine could not be deleted.".html_safe
+      render :show
     end
   end
 
@@ -75,6 +80,7 @@ class MachinesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def machine_params
-      params.require(:machine).permit(:category, :serial, :manufacturer, :model)
+      params.require(:machine).permit(:category, :serial, :manufacturer, :model,
+        machine_formats_attributes: [:id, :format, :_destroy])
     end
 end
