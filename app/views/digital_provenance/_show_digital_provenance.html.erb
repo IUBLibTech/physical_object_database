@@ -103,7 +103,7 @@
 					});
 					var fn = $(visibleMasterTables);
 					var pattern = "_[0-9]{2}_";
-					var seq = fn.length > 0 ? fn.last().val().substring(fn.search(pattern)+1, fn.search(pattern)+3) : "00";
+					var seq = fn.length > 0 ? fn.last().val().substring(fn.last().val().search(pattern)+1, fn.last().val().search(pattern)+3) : "00";
 					seq = ("000" + (parseFloat(seq) + 1)).slice(-2);
 					//seq = ("000" + $(visibleMasterTables).last().val()).slice(-2);
 					v = "MDPI_"+bc+"_"+seq+"_pres."+ext;
