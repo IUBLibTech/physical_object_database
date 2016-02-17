@@ -42,15 +42,19 @@ class SearchController < ApplicationController
       tm.assign_attributes(clean_arrays(tm_params))
     end
     omit_picklisted = (params[:omit_picklisted] == 'true')
-    additional_params = { association: clean_arrays(association_params)}
-    additional_params = additional_params.merge({ condition_status: clean_arrays(condition_status_params)}) if params[:condition_status]
-    additional_params = additional_params.merge({ note: clean_arrays(note_params)}) if params[:note]
     @physical_objects = po.physical_object_query(omit_picklisted, additional_params, SEARCH_RESULTS_LIMIT)
     @full_results = po.physical_object_query(omit_picklisted, additional_params)
     @results_count = @physical_objects.size
     flash.now[:notice] = "Your search returns these results"
     flash.now[:warning] = "Your search returned #{@full_results.size} results, but display has been limited to the first #{SEARCH_RESULTS_LIMIT}." if @results_count >= SEARCH_RESULTS_LIMIT && SEARCH_RESULTS_LIMIT > 0
-    render('physical_objects/index')
+    respond_to do |format|
+      format.html { render :advanced_search_results }
+      format.xls do
+        @block_metadata = true if po.format.blank?
+        @physical_objects = @full_results
+        render '/spreadsheets/show' 
+      end
+    end
   end
 
   private
@@ -70,6 +74,13 @@ class SearchController < ApplicationController
     # association parameters for physical object, passed separately as physical_object will not hold array of values in an _id field
     def association_params
       params.require(:physical_object).permit(unit_id: [], picklist_id: [], spreadsheet_id: [], box_id: [], bin_id: [])
+    end
+
+    def additional_params
+      modified_params = { association: clean_arrays(association_params)}
+      modified_params = modified_params.merge({ condition_status: clean_arrays(condition_status_params)}) if params[:condition_status]
+      modified_params = modified_params.merge({ note: clean_arrays(note_params)}) if params[:note]
+      modified_params
     end
 
    def condition_status_params
