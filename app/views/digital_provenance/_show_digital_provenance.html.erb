@@ -101,9 +101,10 @@
 					visibleMasterTables = $(visibleMasterTables).find('.filename').filter(function() {
 						return this.value.indexOf('_pres.') != -1;
 					});
-					var fn = $(visibleMasterTables).last().val()
+					var fn = $(visibleMasterTables);
 					var pattern = "_[0-9]{2}_";
-					var seq = ("000" + (parseFloat(fn.substring(fn.search(pattern)+1, fn.search(pattern)+3)) + 1)).slice(-2);
+					var seq = fn.length > 0 ? fn.last().val().substring(fn.search(pattern)+1, fn.search(pattern)+3) : "00";
+					seq = ("000" + (parseFloat(seq) + 1)).slice(-2);
 					//seq = ("000" + $(visibleMasterTables).last().val()).slice(-2);
 					v = "MDPI_"+bc+"_"+seq+"_pres."+ext;
 				} else {
