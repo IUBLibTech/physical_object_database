@@ -30,7 +30,7 @@
 	<h2>Available Bins: <%= @available_bins.size %></h2>
 	<% if @batch.packed_status? %>
 	  <b class='warning'><%= Batch.packed_status_message %></b>
-	<% end %>
+	<% else %>
 	<%= form_for(@batch, url: {action: 'add_bin'}) do |f| %>
 		<table>
 			<thead>
@@ -69,5 +69,6 @@
 			 </tbody>
 		</table>
 		<%= f.submit("Add selected bins to #{@batch.identifier}", { disabled: @batch.packed_status? }) %>
+	<% end %>
 	<% end %>
 </div>
