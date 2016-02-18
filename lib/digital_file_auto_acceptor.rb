@@ -5,6 +5,14 @@ class DigitalFileAutoAcceptor
 
 	WINDOW_START = 23 * 60 # 11pm, in minutes
 	WINDOW_STOP = 24 * 60 # midnight, in minutes
+	STATE_UPDATES = {
+		'qc_wait' => 'qc_passed',
+		'rejected' => 'to_archive',
+		'failed' => 'to_archive',
+		'qc_failed' => 'to_archive',
+		'investigate' => 'to_archive',
+		'dist_failed' => nil #no change
+	}
 	@@thread ||= nil
 
 	def aa_logger
@@ -81,22 +89,40 @@ class DigitalFileAutoAcceptor
 			audio = DigitalStatus.expired_audio_physical_objects
 			aa_logger.info("Expired audio objects: #{audio.size}")
 			audio.each do |po|
-				if po.current_digital_status.state == 'qc_wait'
-					po.current_digital_status.update_attributes(decided: 'qc_passed')
+				current_state = po.current_digital_status.state
+				decided = STATE_UPDATES[current_state]
+				if decided
+					po.current_digital_status.update_attributes(decided: decided)
+					if po.current_digital_status.errors.any?
+						aa_logger.info("ERROR Auto accepting #{po.mdpi_barcode}, #{current_state} -> #{decided}: #{po.current_digital_status.errors.full_messages.join(', ')}")
+					else
+						aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{current_state} -> #{decided}")
+
+					end
+				elsif STATE_UPDATES.keys.include? current_state
+					aa_logger.info("No change for #{po.mdpi_barcode}, #{current_state}")
 				else
-					po.current_digital_status.update_attributes(decided: 'to_archive')
+					aa_logger.info("UNKNOWN STATE: No change for #{po.mdpi_barcode}, #{current_state}")
 				end
-				aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{po.current_digital_status.state} -> #{po.current_digital_status.decided}")
 			end
 			video = DigitalStatus.expired_video_physical_objects
 			aa_logger.info("Expired video objects: #{video.size}")
 			video.each do |po|
-				if po.current_digital_status.state == 'qc_wait'
-					po.current_digital_status.update_attributes(decided: 'qc_passed')
-				else
-					po.current_digital_status.update_attributes(decided: 'to_archive')
-				end
-				aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{po.current_digital_status.state} -> #{po.current_digital_status.decided}")
+                               current_state = po.current_digital_status.state
+                                decided = STATE_UPDATES[current_state]
+                                if decided
+                                        po.current_digital_status.update_attributes(decided: decided)
+                                        if po.current_digital_status.errors.any?
+                                                aa_logger.info("ERROR Auto accepting #{po.mdpi_barcode}, #{current_state} -> #{decided}: #{po.current_digital_status.errors.full_messages.join(', ')}")
+                                        else
+                                                aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{current_state} -> #{decided}")
+
+                                        end
+                                elsif STATE_UPDATES.keys.include? current_state
+                                        aa_logger.info("No change for #{po.mdpi_barcode}, #{current_state}")
+                                else
+                                        aa_logger.info("UNKNOWN STATE: No change for #{po.mdpi_barcode}, #{current_state}")
+                                end
 			end
 		rescue Exception => e
 			aa_logger.info("EXCEPTION IN AUTO_ACCEPT: #{e.message << e.backtrace.join("\n")}")
