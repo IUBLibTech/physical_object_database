@@ -290,8 +290,8 @@ describe Bin do
       sealed_bin.save!
       expect(sealed_bin.workflow_status).to eq "Sealed"
     end
-    it "returns only bins without batches, in 'Created' status" do
-      expect(Bin.available_bins).to eq [created_bin]
+    it "returns only bins without batches" do
+      expect(Bin.available_bins.sort).to eq [created_bin, sealed_bin].sort
     end
   end
 
