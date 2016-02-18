@@ -48,8 +48,9 @@ Pod::Application.configure do
   # Prepend all log lines with the following tags.
   # config.log_tags = [ :subdomain, :uuid ]
 
-  # Use a different logger for distributed setups.
-  # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
+  # this sets up log rotating first arg the log file location, second arg the number of files to rotate through
+  # third arg the size of each file
+  config.logger = Logger.new("#{Rails.root}/log/#{Rails.env}.log", 10, 100.megabytes)
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
