@@ -48,5 +48,10 @@ describe ResponsesController do
         expect(post: "/responses/objects/memnon_qc/1").to route_to("responses#push_memnon_qc", mdpi_barcode: "1")
     end
 
+
+    it "routes to all_units" do
+      expect(get: "/responses/packager/all_units/").to route_to("responses#all_units")
+    end
+
   end
 end

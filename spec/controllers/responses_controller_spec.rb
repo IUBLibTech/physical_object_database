@@ -684,6 +684,18 @@ describe ResponsesController do
     end
   end
 
+  describe "#all_units" do
+    it "gets a lits of all units" do
+      get :all_units
+      expect(response.body).to match "<success>true"
+      expect(response.body).to match "<units>"
+      doc = Nokogiri::XML(response.body).remove_namespaces!
+      units = doc.css("unit").size
+      count = Unit.all.size
+      expect(units).to eq count
+    end
+  end
+
   describe "#flags" do
     let(:no_flag) { FactoryGirl.create :physical_object, :cdr, :barcoded}
     let(:flag) { FactoryGirl.create :physical_object, :cdr, :barcoded}
