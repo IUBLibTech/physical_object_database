@@ -105,6 +105,7 @@ Pod::Application.routes.draw do
   post 'responses/objects/memnon_qc/:mdpi_barcode', to: 'responses#push_memnon_qc', as: 'push_memnon_qc'
   get 'responses/objects/memnon_qc/:mdpi_barcode', to: 'responses#pull_memnon_qc', as: 'pull_memnon_qc'
   get 'responses/objects/states', to: 'responses#pull_states', as: 'pull_states'
+  get 'responses/packager/all_units/', to: 'responses#all_units', as: 'all_units'
   get 'responses/packager/units/:abbreviation', to: 'responses#unit_full_name', as: 'unit_full_name'
   post 'responses/objects/avalon_url/:group_key_id', to: 'responses#avalon_url', as: 'push_avalon_url'
   get 'responses/objects/avalon_url/:group_key_id', to: 'responses#avalon_url', as: 'pull_avalon_url'

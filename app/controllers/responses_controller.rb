@@ -224,6 +224,13 @@ class ResponsesController < ActionController::Base
     render template: "responses/notify.xml.builder", layout: false, status: 200
   end
 
+  def all_units
+    @units = Unit.all.order(:abbreviation)
+    @success = true
+    @message = "returning all units"
+    render template: "responses/all_units_response.xml.builder", layout: false, status: 200
+  end
+
   def digitizing_entity
     @success = ! @physical_object.nil?
     if @success
