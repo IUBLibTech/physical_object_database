@@ -29,7 +29,7 @@ class Bin < ActiveRecord::Base
         validates :physical_location, inclusion: { in: PHYSICAL_LOCATION_VALUES }
 
         scope :available_bins, -> {
-                where(batch_id: [0, nil]).where(workflow_status: 'Created')
+                where(batch_id: [0, nil])
         }
 
 	def default_values
