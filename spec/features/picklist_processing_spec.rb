@@ -2,7 +2,7 @@ require "rails_helper"
 
 feature "Picklist Processing", js: true do
 
-  skip "Rewrite tests using new pick list processing functionality" do 
+  pending "Rewrite tests using new pick list processing functionality" do 
     let(:picklist) { FactoryGirl.create :picklist }
     let(:bin) { FactoryGirl.create :bin }
     let(:physical_object) { FactoryGirl.create :physical_object, :cdr, picklist: picklist, bin: bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }

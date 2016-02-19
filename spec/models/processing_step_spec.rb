@@ -45,7 +45,12 @@ describe ProcessingStep do
       valid_processing_step.position = 0
       expect(valid_processing_step).not_to be_valid
     end
-    pending "position must be unique for a given signal chain"
+    specify "position must be unique for a given signal chain" do
+      duplicate_step = processing_step.dup
+      expect(duplicate_step).not_to be_valid
+      duplicate_step.position = processing_step.position + 1
+      expect(duplicate_step).to be_valid
+    end
   end
 
 end
