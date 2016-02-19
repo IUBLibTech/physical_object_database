@@ -179,7 +179,7 @@ class ResponsesController < ActionController::Base
   end
   
   def transfers_index
-    @pos = PhysicalObject.where("staging_requested = true AND staged = false")
+    @pos = PhysicalObject.where("staging_requested = true")
     @success = true
     render template: 'responses/transfers_index.xml.builder', layout: false, status: 200
   end
