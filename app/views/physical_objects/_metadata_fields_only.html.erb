@@ -51,17 +51,20 @@
             <th>Batch</th>
             <td>
               <% p = @physical_object %>
+              <% batch = nil %>
               <% name = nil %>
               <% bid = nil %>
               <% if !p.bin.nil? and !p.bin.batch.nil? %>
-                <% name = p.bin.batch.identifier %>
-                <% bid = p.bin.batch.id %>
+                <% batch = p.bin.batch %>
               <% elsif !p.box.nil? and !p.box.bin.nil? and !p.box.bin.batch.nil?%>
-                <% name = p.box.bin.batch.identifier %>
-                <% bid = p.box.bin.batch.id %>
+                <% batch = p.box.bin.batch %>
+              <% end %>
+              <% if batch %>
+                <% name = batch.identifier %>
+                <% bid = batch.id %>
               <% end %>
               <% if !name.nil? %>
-                <%= link_to(name, controller: :batches, action: :show, id: bid) %>
+                <%= link_to(name, controller: :batches, action: :show, id: bid) if policy(batch).show? %>
               <% else %>
                 Not Assigned
               <% end %>
@@ -178,7 +181,7 @@
         <th>Group key</th>
         <td>
           <% unless @group_key.nil? %>
-            <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id), target: "_blank") %>
+            <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id), target: "_blank") if policy(@group_key).show? %>
           <% else %>
             Not assigned
           <% end %>
@@ -200,7 +203,7 @@
         <th>Imported from spreadsheet</th>
         <td>
           <% if !@physical_object.spreadsheet.nil? %>
-            <%= link_to("#{@physical_object.spreadsheet.filename}", @physical_object.spreadsheet) %>
+            <%= link_to("#{@physical_object.spreadsheet.filename}", @physical_object.spreadsheet) if policy(@physical_object.spreadsheet).show? %>
           <% end %>
         </td>
       </tr>
@@ -216,17 +219,17 @@
       </tr>
     </table>
     <% unless @search_mode %>
-    <%# FIXME: kludge workaround for 1st link_to_add being broken, bug POD-648 %>
+    <%# FIXME: kludge workaround for 1st link_to_add being broken, bug POD-648 %><%# no policy check for just mentioning link_to_add here %>
     <% f.fields_for :workflow_statuses do |ws| %>
     <% end %>
-    <% f.link_to_add "WS", :workflow_statuses %>
+    <% f.link_to_add "WS", :workflow_statuses if policy(@physical_object).edit? %>
     <%# end kludge %>
     <div id="condition_statuses_div">
       <%= f.fields_for :condition_statuses do |condition| %>
         <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @physical_object %>
       <% end %>
       <% if @edit_mode %>
-        <%= f.link_to_add "Add a condition status", :condition_statuses %>
+        <%= f.link_to_add "Add a condition status", :condition_statuses if policy(@physical_object).edit? %>
       <% end %>
     </div>
     <div id="notes_div">
@@ -234,7 +237,7 @@
         <%= render 'notes/note_fields', f: note%>
       <% end %>
       <% if @edit_mode %>
-        <%= f.link_to_add "Add a note", :notes %>
+        <%= f.link_to_add "Add a note", :notes if policy(@physical_object).edit? %>
       <% end %>
     </div>
     <% end %>

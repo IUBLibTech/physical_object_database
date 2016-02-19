@@ -1,12 +1,12 @@
 <% content_for :context_menu do %>
 	<div class="contextMenuItem">
-	  <%= link_to("Edit Bin", {:action => 'edit', :id => @bin.id}) %>
+	  <%= link_to("Edit Bin", {:action => 'edit', :id => @bin.id}) if policy(@bin).edit? %>
 	</div>
 	<div class="contextMenuItem">
-	  <%= link_to("Delete", @bin, method: :delete, data: {:confirm=>'Are you sure you want to delete this Bin?'})%>
+	  <%= link_to("Delete", @bin, method: :delete, data: {:confirm=>'Are you sure you want to delete this Bin?'}) if policy(@bin).destroy? %>
 	</div>
 	<div class="contextMenuItem">
-	  <%= link_to "View Workflow History", workflow_history_bin_path(@bin) %>
+	  <%= link_to "View Workflow History", workflow_history_bin_path(@bin) if policy(@bin).show? %>
 	</div>
 <% end %>
 

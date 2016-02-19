@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Cancel", controller: 'physical_objects', action: 'index') %>
+    <%= link_to("Cancel", controller: 'physical_objects', action: 'index') if policy(PhysicalObject).index? %>
   </div>
 <% end %>
 <div>

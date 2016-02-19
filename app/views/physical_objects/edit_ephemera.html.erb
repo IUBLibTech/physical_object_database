@@ -1,11 +1,11 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'show', :id => @physical_object.id}, :class => 'action split')%>
+    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'show', :id => @physical_object.id}, :class => 'action split') if policy(@physical_object).show?%>
   </div>
 <% end %>
 <div>
   <h2>Update Ephemera Status of Physical Object</h2>
-  "Has ephemera" is normally set during the packing process, and "Ephemera returned" during the returns process, and is not generally editable.  This service allows you to edit the ephemera tracking values in exceptional circumstances, and will update the <%= link_to "workflow history log", workflow_history_physical_object_path(@physical_object) %> with a new entry recording the changed values.
+  "Has ephemera" is normally set during the packing process, and "Ephemera returned" during the returns process, and is not generally editable.  This service allows you to edit the ephemera tracking values in exceptional circumstances, and will update the <%= link_to "workflow history log", workflow_history_physical_object_path(@physical_object) %><%# no policy check for inline link %> with a new entry recording the changed values.
   <% @submit_text = "Update Ephemera Status" %>
   <% @controller ||= 'physical_objects' %>
   <%= error_messages_for(@physical_object) %>
