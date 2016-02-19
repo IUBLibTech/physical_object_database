@@ -29,7 +29,7 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
       describe "#{description}" do
         tm_object.class.const_get(constant_key).each do |field|
           it "includes boolean field: #{field}" do
-            expect(tm_object.send(field.to_sym)).to eq false
+            expect([true, false]).to include tm_object[field]
 	  end
         end
       end
@@ -99,8 +99,60 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
       end
     end
     describe "::parse_tm" do
-      it "updates the passed tm object with the passed values" do
-        skip "TODO"
+      let!(:multivalued_fieldsets) { tm_object.class.const_get(:MULTIVALUED_FIELDSETS) }
+      let!(:simple_fields) { tm_object.class.const_get(:SIMPLE_FIELDS) }
+      let!(:row) { {} }
+      context "with valid values" do
+        before(:each) do
+          simple_fields.each do |field|
+            tm_object[field] = "old value"
+            row[tm_object.class.human_attribute_name(field)] = "new value"
+          end
+          multivalued_fieldsets.each do |name, fieldset_constant|
+            fields = tm_object.class.const_get(fieldset_constant)
+            row[name] = fields.map { |x| tm_object.class.human_attribute_name(x) }.join(",")
+            fields.each do |field|
+              tm_object[field] = false
+            end
+          end
+        end
+        describe "updates simple values:" do
+          tm_object.class.const_get(:SIMPLE_FIELDS).each do |field|
+            unless field.in? ["directions_recorded"] #exemption for calculated fields
+              specify field do
+                expect(tm_object[field]).to eq "old value"
+                tm_object.class.parse_tm(tm_object, row)
+                expect(tm_object[field]).to eq "new value"
+              end 
+            end
+          end
+        end
+        describe "updates boolean fieldsets:" do
+          tm_object.class.const_get(:MULTIVALUED_FIELDSETS).each do |name, fieldset_constant|
+            describe name do
+              tm_object.class.const_get(fieldset_constant).each do |field|
+                specify field do
+                  expect(tm_object[field]).to eq false
+                  tm_object.class.parse_tm(tm_object, row)
+                  expect(tm_object[field]).to eq true
+                  tm_object[field] = false
+                end
+              end
+            end
+          end
+        end
+      end
+      if tm_object.class.const_get(:MULTIVALUED_FIELDSETS).any?
+        context "with invalid values" do
+          before(:each) do
+            row[tm_object.class.const_get(:MULTIVALUED_FIELDSETS).first.first] = "Invalid Value"
+          end
+          it "reports an error" do
+            tm_object.class.parse_tm(tm_object, row)
+            expect(tm_object.errors[:base]).not_to be_empty
+            expect(tm_object.errors[:base].first).to match /not a valid value/
+          end
+        end
       end
     end
     describe "::PROVENANCE_REQUIREMENTS" do
