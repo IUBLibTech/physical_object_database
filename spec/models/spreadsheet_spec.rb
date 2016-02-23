@@ -56,4 +56,12 @@ describe Spreadsheet do
     end
   end
 
+  describe "virtual methods" do
+    describe "#spreadsheet_descriptor" do
+      it "returns filename" do
+        expect(valid_spreadsheet.filename).to eq valid_spreadsheet.spreadsheet_descriptor
+      end
+    end
+  end
+
 end

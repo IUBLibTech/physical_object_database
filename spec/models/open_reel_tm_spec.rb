@@ -51,7 +51,8 @@ describe OpenReelTm do
                    { quarter_track: true, stereo: true } => 2,
                    { quarter_track: true, stereo: true, unknown_sound_field: true } => 4,
                    { quarter_track: true, mono: true } => 4,
-                   { unknown_track: true} => 4
+                   { unknown_track: true} => 4,
+                   { unknown_track: false, quarter_track: false, half_track: false, full_track: false} => 4
                  }
     cases_hash.each do |params, result|
       it "returns #{result} for #{params.inspect}" do

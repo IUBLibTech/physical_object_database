@@ -3,13 +3,15 @@ class DigitalStatus < ActiveRecord::Base
 
 	serialize :options, Hash
 	belongs_to :physical_object
+	validates :physical_object, presence: true
+	validates :physical_object_mdpi_barcode, presence: true
 
 	DIGITAL_STATUS_START = "transferred"
-
-	AUDIO_OBJECT_AUTO_ACCEPT = 40
-
 	serialized_empty_hash = "--- {}\n"
-
+	# the number of hours after digitization start that a video physical object is auto-accepted
+	@@Video_File_Auto_Accept = 30 * 24
+	# the number of hours after digitization start that an audio physical object is auto-accepted
+	@@Audio_File_Auto_Accept = 40 * 24
 	
 	# This scope returns an array of arrays containing all of the current digital statuses
 	# and their respective counts: [['failed', 3], ['queued', 10], etc]
@@ -105,10 +107,7 @@ class DigitalStatus < ActiveRecord::Base
 		)
   }
 
-  # the number of hours after digitization start that a video physical object is auto-accepted
-	@@Video_File_Auto_Accept = 30 * 24
-	# the number of hours after digitization start that an audio physical object is auto-accepted
-	@@Audio_File_Auto_Accept = 40 * 24
+
 
 	scope :expired_audio_physical_objects, -> {
 		PhysicalObject.find_by_sql(
@@ -234,14 +233,6 @@ class DigitalStatus < ActiveRecord::Base
     self.options = options_hash
     self
   end
-
-	def requires_attention?
-		attention and !decided.blank?
-	end
-
-	def decided?
-		!decided.blank?
-	end
 
 	# need to nil out the options hash if there are no options.
 	def before_save(record)

@@ -1,4 +1,5 @@
 class StagingPercentage < ActiveRecord::Base
+	validates :format, presence: true
 	validates :memnon_percent,
 		presence: true,
 		numericality: { only_integer: true, message: "#%{value} is not a number" },

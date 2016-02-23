@@ -130,4 +130,39 @@ describe User do
     end
   end
 
+  describe "#permissions" do
+    before(:each) { valid_user.web_admin = false }
+    context "with no roles" do
+      before(:each) { expect(valid_user.roles).to be_empty }
+      it "returns an empty array" do
+        expect(valid_user.permissions).to be_empty
+      end
+    end
+    context "with roles assigned" do
+      before(:each) { valid_user.qc_user = true; valid_user.smart_team_user = true }
+      before(:each) { expect(valid_user.roles).not_to be_empty }
+      it "returns an array of permissions hashes" do
+        expect(valid_user.permissions.size).to eq valid_user.roles.size
+        valid_user.permissions.each do |p|
+          expect(p[BatchesController]).not_to be_nil
+        end
+      end
+    end
+  end
+
+  describe "#permit?(controller, action, record)" do
+    context "when no roles permit" do
+      before(:each) { valid_user.web_admin = false }
+      it "returns false" do
+        expect(valid_user.permit?(BoxesController, :index, Box)).to eq false
+      end
+    end
+    context "when at least one role permits" do
+      before(:each) { valid_user.web_admin = true }
+      it "returns true" do
+        expect(valid_user.permit?(BoxesController, :index, Box)).to eq true
+      end
+    end
+  end
+
 end

@@ -304,5 +304,11 @@ describe Batch do
     let(:class_title) { "Batch" }
   end
 
+  describe "::packed_status_message" do
+    it "returns a message that the Batch is past Created status" do
+      expect(Batch.packed_status_message).to match /This batch cannot have.*bins assigned/
+    end
+  end
+
 end
 

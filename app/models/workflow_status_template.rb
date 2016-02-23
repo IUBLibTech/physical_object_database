@@ -2,7 +2,7 @@ class WorkflowStatusTemplate < ActiveRecord::Base
 	
 	has_many :workflow_statuses, dependent: :destroy
 	validates :name, presence: true, uniqueness: {scope: :object_type}
-  OBJECT_TYPES = {"Physical Object" => "Physical Object",
+	OBJECT_TYPES = {"Physical Object" => "Physical Object",
 		 "Batch" => "Batch",
 		 "Bin" => "Bin"}
 	validates :object_type, presence: true, inclusion: { in: OBJECT_TYPES }
@@ -10,7 +10,7 @@ class WorkflowStatusTemplate < ActiveRecord::Base
 
 	attr_accessor :object_types
 	def object_types
-    OBJECT_TYPES
+		OBJECT_TYPES
 	end
 
 	def self.select_options(object_type)

@@ -102,5 +102,24 @@ describe AnalogSoundDiscTm do
     end
   end
 
+  describe "#default_values" do
+    context "with no subtype set" do
+      before(:each) { analog_sound_disc_tm.subtype = nil }
+      it "does nothing" do
+        analog_sound_disc_tm.diameter = nil
+        analog_sound_disc_tm.default_values
+        expect(analog_sound_disc_tm.diameter).to be_nil
+      end
+    end
+    context "with a subtype set" do
+      before(:each) { analog_sound_disc_tm.subtype = AnalogSoundDiscTm::TM_FORMAT.first }
+      it "assigns default values" do
+        analog_sound_disc_tm.diameter = nil
+        analog_sound_disc_tm.default_values
+        expect(analog_sound_disc_tm.diameter).not_to be_nil
+      end
+    end
+  end
+
 end
 

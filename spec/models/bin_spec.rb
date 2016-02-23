@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Bin do
 
   let(:batch) {FactoryGirl.create :batch }
@@ -179,6 +177,11 @@ describe Bin do
 	expect(bin.display_workflow_status).not_to match />>/
 	expect(bin.display_workflow_status).not_to match /Created$/
       end
+      specify "when Batched, display (No batch assigned) if no Batch assigned" do
+        bin.workflow_status = "Batched"
+        bin.batch = nil
+        expect(bin.display_workflow_status).to match /No batch assigned/
+      end
     end
     describe "#inferred_workflow_status" do
       ["Created", "Sealed"].each do |status|
@@ -259,6 +262,11 @@ describe Bin do
   describe "::packed_status_message" do
     it "returns a message that the Bin is in Sealed status" do
       expect(Bin.packed_status_message).to match /This bin has been marked as sealed/
+    end
+  end
+  describe "::invalid_box_assignment_message" do
+    it "returns a message that the Bin contains physical objects" do
+      expect(Bin.invalid_box_assignment_message).to match /This bin contains physical objects/
     end
   end
 

@@ -66,4 +66,10 @@ describe Machine do
     end
   end
 
+  describe "#full_name" do
+    it "returns [category] manufacturer model - serial" do
+      expect(valid_machine.full_name).to eq "[#{valid_machine.category}] #{valid_machine.manufacturer} #{valid_machine.model} - #{valid_machine.serial}"
+    end
+  end
+
 end

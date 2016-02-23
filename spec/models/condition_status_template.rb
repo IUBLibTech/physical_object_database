@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ConditionStatusTemplate do
   let(:condition_status_template) { FactoryGirl.create(:condition_status_template) }
   let(:valid_condition_status_template) { FactoryGirl.build(:condition_status_template) }
@@ -82,6 +80,27 @@ describe ConditionStatusTemplate do
     it "returns name/id hash" do
       expect(select_options[condition_status_template.name]).to eq condition_status_template.id
       condition_status_template.destroy
+    end
+  end
+
+  describe "#object_types" do
+    it "returns ConditionStatusTemplate::OBJECT_TYPES" do
+      expect(valid_condition_status_template.object_types).to eq ConditionStatusTemplate::OBJECT_TYPES
+    end
+  end
+
+  describe ".blocking_ids" do
+    it "returns ids of blocking templates" do
+      expect(ConditionStatusTemplate.blocking_ids).not_to be_empty
+      expect(ConditionStatusTemplate.blocking_ids).to eq ConditionStatusTemplate.where(blocks_packing: true).map { |cst| cst.id }
+    end
+  end
+
+  describe "scopes" do
+    describe "blocking" do
+      it "returns blocks_packing templates" do
+        expect(ConditionStatusTemplate.blocking).to eq ConditionStatusTemplate.where(blocks_packing: true)
+      end
     end
   end
 

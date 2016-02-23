@@ -10,9 +10,9 @@ describe QualityControlController do
 	let(:iu_objects) { [po, po1] }
 	let(:memnon_objects) { [po2, po3] }
 
-	let(:ds) { FactoryGirl.create :digital_status, state: "failed" }
-	let(:ds1) { FactoryGirl.create :digital_status, state: "accepted" }
-	let(:ds2) { FactoryGirl.create :digital_status, state: "transfered" }
+	let(:ds) { FactoryGirl.create :digital_status, :valid, state: "failed" }
+	let(:ds1) { FactoryGirl.create :digital_status, :valid, state: "accepted" }
+	let(:ds2) { FactoryGirl.create :digital_status, :valid, state: "transfered" }
 
 	describe "#index" do
 		context "with no statuses" do

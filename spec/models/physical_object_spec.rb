@@ -773,4 +773,24 @@ describe "has required attributes:" do
     let(:class_title) { "Physical Object" }
   end
 
+# self.formats
+#scopes
+# *
+# init_start_digital_status
+# carrier_stream_index
+# active_blockers
+# format_class
+# digital_start_readable
+# expires
+# physical_object_query
+# ensure_digiprov
+# display_date_billed
+# validate_bin_container
+# validate_box_container
+# datesql
+# privatex3
+# .physical_object_search
+# .add_search_terms
+# tm_table_name, tm_table_name
+# default_values
 end

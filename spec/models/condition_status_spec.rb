@@ -69,6 +69,24 @@ describe ConditionStatus do
     it "description returns condition_status_template_name" do
       expect(valid_condition_status.description).to eq valid_condition_status.condition_status_template.description
     end
+    specify "condition_note returns note" do
+      valid_condition_status.notes = "note text"
+      expect(valid_condition_status.condition_note).to eq valid_condition_status.notes
+    end
+    describe "#blocks_packing" do
+      context "when there is no associated template" do
+        before(:each) { valid_condition_status.condition_status_template = nil }
+        it "returns nil" do
+          expect(valid_condition_status.blocks_packing).to be_nil
+        end
+      end
+      context "when there is an associated template" do
+        before(:each) { expect(valid_condition_status.condition_status_template).not_to be_nil }
+        it "returns template block_packing? value" do
+          expect(valid_condition_status.blocks_packing).to eq valid_condition_status.condition_status_template.blocks_packing?
+        end
+      end
+    end
   end
 
   include_examples "has user field" do

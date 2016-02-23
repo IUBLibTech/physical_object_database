@@ -105,6 +105,66 @@ describe WorkflowStatus do
     it "sequence_index returns template sequence_index" do
       expect(valid_workflow_status.sequence_index).to eq valid_workflow_status.workflow_status_template.sequence_index
     end
+    specify "workflow_note returns notes" do
+      valid_workflow_status.notes = "note text"
+      expect(valid_workflow_status.workflow_note).to eq valid_workflow_status.notes
+    end
+    describe "#past_status?(status_name)" do
+      context "with an invalid template" do
+        let(:status_name) { "Invalid status" }
+        it "raises an error" do
+          expect{valid_workflow_status.past_status?(status_name)}.to raise_error RuntimeError
+        end
+      end
+      context "with a current status" do
+        let(:status_name) { valid_workflow_status.name }
+        it "returns false" do
+          expect(valid_workflow_status.past_status?(status_name)).to eq false
+        end
+      end
+      context "with a past status" do
+        before(:each) { valid_workflow_status.workflow_status_template = WorkflowStatusTemplate.where(object_type: "Physical Object").order(:sequence_index).last }
+        let(:status_name) { WorkflowStatusTemplate.where(object_type: "Physical Object").order(:sequence_index).first.name }
+        it "returns true" do
+          expect(valid_workflow_status.past_status?(status_name)).to eq true
+        end
+      end
+      context "with a future status" do
+        before(:each) { valid_workflow_status.workflow_status_template = WorkflowStatusTemplate.where(object_type: "Physical Object").order(:sequence_index).first }
+        let(:status_name) { WorkflowStatusTemplate.where(object_type: "Physical Object").order(:sequence_index).last.name }
+        it "returns false" do
+          expect(valid_workflow_status.past_status?(status_name)).to eq false
+        end
+      end
+    end
+    describe "#past_or_equal_status?(status_name)" do
+      context "with an invalid template" do
+        let(:status_name) { "Invalid status" }
+        it "raises an error" do
+          expect{valid_workflow_status.past_or_equal_status?(status_name)}.to raise_error RuntimeError
+        end
+      end
+      context "with a current status" do
+        let(:status_name) { valid_workflow_status.name }
+        it "returns true" do
+          expect(valid_workflow_status.past_or_equal_status?(status_name)).to eq true
+        end
+      end
+      context "with a past status" do
+        before(:each) { valid_workflow_status.workflow_status_template = WorkflowStatusTemplate.where(object_type: "Physical Object").order(:sequence_index).last }
+        let(:status_name) { WorkflowStatusTemplate.where(object_type: "Physical Object").order(:sequence_index).first.name }
+        it "returns true" do
+          expect(valid_workflow_status.past_or_equal_status?(status_name)).to eq true
+        end
+      end
+      context "with a future status" do
+        before(:each) { valid_workflow_status.workflow_status_template = WorkflowStatusTemplate.where(object_type: "Physical Object").order(:sequence_index).first }
+        let(:status_name) { WorkflowStatusTemplate.where(object_type: "Physical Object").order(:sequence_index).last.name }
+        it "returns false" do
+          expect(valid_workflow_status.past_or_equal_status?(status_name)).to eq false
+        end
+      end
+    end
   end
 
   include_examples "has user field" do

@@ -95,6 +95,28 @@ describe Picklist do
     specify "#spreadsheet_descriptor returns name" do
       expect(picklist.spreadsheet_descriptor).to be == picklist.name
     end
+    describe "#all_packed?" do
+      context "with no objects" do
+        before(:each) { expect(picklist.physical_objects).to be_empty }
+        it "returns true" do
+          expect(picklist.all_packed?).to eq true
+        end
+      end
+      context "with any unpacked objects" do
+        before(:each) { FactoryGirl.create(:physical_object, :barcoded, :boxable, picklist: picklist) }
+        before(:each) { expect(picklist.physical_objects).not_to be_empty }
+        it "returns true" do
+          expect(picklist.all_packed?).to eq false
+        end
+      end
+      context "with only packed objects" do
+        before(:each) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: box, picklist: picklist) }
+        before(:each) { expect(picklist.physical_objects).not_to be_empty }
+        it "returns false" do
+          expect(picklist.all_packed?).to eq true
+        end
+      end
+    end
   end
 
 end

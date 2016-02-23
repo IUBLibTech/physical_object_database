@@ -8,6 +8,19 @@ FactoryGirl.define do
   	message "It has begun"
   	options nil
   	decided nil
+
+	trait :valid do
+		after(:build) do |ds, evaluator|
+			if ds.physical_object.nil?
+				ds.physical_object = FactoryGirl.build :physical_object, :cdr, :barcoded
+				ds.physical_object_mdpi_barcode = ds.physical_object.mdpi_barcode
+			end	
+		end
+	end
+
+	trait :invalid do
+		physical_object_id nil
+	end
   end
 
 end
