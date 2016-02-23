@@ -23,7 +23,6 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :bin
   belongs_to :group_key
   belongs_to :picklist
-  belongs_to :container
   belongs_to :spreadsheet
   belongs_to :unit
   

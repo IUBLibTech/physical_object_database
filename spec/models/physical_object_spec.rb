@@ -240,12 +240,6 @@ describe "has required attributes:" do
         expect(valid_po.picklist).to be_nil
       end
     end
-    describe "container" do
-      specify "can belong to a container" do
-        expect(valid_po).to respond_to :container_id
-        expect(valid_po.container).to be_nil
-      end
-    end
     describe "spreadsheet" do
       specify "can belong to a spreadsheet" do
         expect(valid_po).to respond_to :spreadsheet_id

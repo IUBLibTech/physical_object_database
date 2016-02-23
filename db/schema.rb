@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160216154638) do
+ActiveRecord::Schema.define(version: 20160223184957) do
 
   create_table "analog_sound_disc_tms", force: true do |t|
     t.string   "diameter"
@@ -160,11 +160,6 @@ ActiveRecord::Schema.define(version: 20160216154638) do
   add_index "condition_statuses", ["condition_status_template_id"], name: "index_condition_statuses_on_condition_status_template_id", using: :btree
   add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
   add_index "condition_statuses", ["physical_object_id"], name: "index_condition_statuses_on_physical_object_id", using: :btree
-
-  create_table "containers", force: true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "dat_tms", force: true do |t|
     t.boolean  "sample_rate_32k"
