@@ -9,7 +9,7 @@
 		<th><%= choice_header %></th>
 	</tr>
 	<% physical_objects.each_with_index do |p, i| %>
-		<% # ci begins at 0 so flip the odd/even css class %>
+		<% # i begins at 0 so flip the odd/even css class %>
 		<% if i.odd? %>
 			<tr class="even">
 		<% else %>
@@ -21,15 +21,14 @@
 			<td><%=	p.title %></td>
 			<td><%= p.format %></td>
 
-			<% #The test agains missing digital status was necessary because my local DB was bunged up %>
+			<% #The test against missing digital status was necessary because my local DB was bunged up %>
 			<td><%= p.current_digital_status.nil? ? "Missing digital statuses..." : p.current_digital_status.state %></td>
 
 			<td>
 				<% if choice_header =='Choice' %>
 					<%= render "decision_form", p: p %>
 				<% elsif choice_header=='Stage' or choice_header == 'Unstage' %>
-					<%# convoluted way of choosing at least 1 item in the checked: bit... brain still not wrapped around ruby%>
-					<%= render "staging_form", p: p, checked: !(i >= Array.new([1,(physical_objects.size * percent).round]).max) %>
+					<%= render "staging_form", p: p, checked: !(i >= (physical_objects.size * percent).round) %>
 				<% end %>
 			</td>
 		</tr>
