@@ -104,48 +104,47 @@ class PhysicalObject < ActiveRecord::Base
     po.physical_object_query(false)
   }
 
-  # no longer used
-  # scope :unstaged_by_date, lambda { |date|
-  #   PhysicalObject.joins(:digital_statuses).joins("LEFT JOIN digital_statuses as ds2
-  #     ON digital_statuses.physical_object_id = ds2.physical_object_id
-  #     AND digital_statuses.state = ds2.state
-  #     AND digital_statuses.id < ds2.id").where("ds2.id IS NULL").where(staging_requested: false, digital_statuses: { state: DigitalStatus::DIGITAL_STATUS_START}).where(datesql(date))
-  #
-  # }
-  # No longer used
-  # scope :staging_requested, lambda { where(staging_requested: true, staged: false) }
-  # scope :staged, lambda { where(staged: true) }
+  scope :unstaged_formats_by_date_entity, lambda { |date, entity|
+    PhysicalObject.joins(:digital_provenance).where("digitizing_entity = '#{entity}'").
+        where(digital_start: date..(date + 1.day), staging_requested: false).pluck(:format).uniq
+  }
+
+  scope :unstaged_by_date_format_entity, lambda { |date, format, entity|
+     PhysicalObject.joins(:digital_provenance).where("digitizing_entity = '#{entity}'").
+         where("digital_start is not null").
+         where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
+   }
 
   # This scope grabs all formats, for all unstaged physical objects whose digitization_start timestamp is within 24 hrs of the specified date
-  scope :unstaged_by_date_formats, lambda { |date|
-    PhysicalObject.where(staging_requested: false).where(datesql(date)).pluck(:format)
-  }
-
+  # scope :unstaged_by_date_formats, lambda { |date|
+  #   PhysicalObject.where(staging_requested: false).where(datesql(date)).pluck(:format)
+  # }
   # this scope grabs all physical objects of the specified format whose digital_start timestamp is within 24 hrs of the specified date
-  scope :unstaged_by_date_by_format, lambda { |date, format|
-    PhysicalObject.where(staging_requested: false, format: format).where(datesql(date)).order("RAND()")
-  }
-
+  # scope :unstaged_by_date_by_format, lambda { |date, format|
+  #   PhysicalObject.where(staging_requested: false, format: format).where(datesql(date)).order("RAND()")
+  # }
   # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by Memnon
-  scope :memnon_unstaged_by_date_formats, lambda{ |date|
-    PhysicalObject.joins(:digital_provenance).where('staging_requested = false').where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format).uniq
-  }
+  # scope :memnon_unstaged_by_date_formats, lambda{ |date|
+  #   PhysicalObject.joins(:digital_provenance).where('staging_requested = false').where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format).uniq
+  # }
   # this scope grabs all unstaged physical objects of the specified format whose digital_start timestamp is with 24 hrs of the specified date
   # AND whose digitizing entity is Memnon
-  scope :memnon_unstaged_by_date_and_format, lambda { |date, format|
-    PhysicalObject.includes(:digital_statuses).joins(:digital_provenance).where(format: format,staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date)).order("RAND()")
-  }
-
-
+  # scope :memnon_unstaged_by_date_and_format, lambda { |date, format|
+  #   PhysicalObject.joins(:digital_provenance).
+  #     where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").
+  #     where(digital_start:date..(date + 1.day), staging_requested: false, format: "Open Reel Audio Tape").order("RAND()")
+  # }
   # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by IU
-  scope :iu_unstaged_by_date_formats, lambda{ |date|
-    PhysicalObject.includes(:digital_statuses).joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format).uniq
-  }
+  # scope :iu_unstaged_by_date_formats, lambda{ |date|
+  #   PhysicalObject.includes(:digital_statuses).joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format).uniq
+  # }
   # This scope selects all unstaged physical objects of the specified format, whose digital_start timestamp is within 24hrs of the specified date
   # AND whose digitizing entity is IU
-  scope :iu_unstaged_by_date_and_format, lambda { |date, format|
-    PhysicalObject.joins(:digital_provenance).where(format: format, staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).order("RAND()")
-  }
+  # scope :iu_unstaged_by_date_and_format, lambda { |date, format|
+  #    PhysicalObject.joins(:digital_provenance).
+  #     where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").
+  #     where(digital_start:date..(date + 1.day), staging_requested: false, format: "Open Reel Audio Tape").order("RAND()")
+  # }
 
 
   attr_accessor :generation_values
@@ -499,9 +498,9 @@ assigned to a box."
   end
 
 
-  def self.datesql(date)
-    date.blank? ? "" : "DATEDIFF(physical_objects.digital_start, '#{date}') = 0"
-  end
+  # def self.datesql(date)
+  #   date.blank? ? "" : "DATEDIFF(physical_objects.digital_start, '#{date}') = 0"
+  # end
 
   # See DigitalFileProvenance::FILE_USE_VALUES for list of valid use codes
   def generate_filename(sequence: 1, use: 'pres', extension: nil)

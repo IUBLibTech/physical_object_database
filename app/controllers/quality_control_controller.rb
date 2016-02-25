@@ -91,9 +91,10 @@ class QualityControlController < ApplicationController
 		set_staging
 		@action = 'staging_index'
 		@d_entity = 'Memnon'
-                @formats = PhysicalObject.memnon_unstaged_by_date_formats(@date) if @formats.empty?
+    @entity = DigitalProvenance::MEMNON_DIGITIZING_ENTITY
+		@formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity)
 		@formats.each do |format|
-			@format_to_physical_objects[format] = PhysicalObject.memnon_unstaged_by_date_and_format(@date, format)
+			@format_to_physical_objects[format] = PhysicalObject.unstaged_by_date_format_entity(@date, format, @entity)
 		end
 	end
 
@@ -101,9 +102,10 @@ class QualityControlController < ApplicationController
 		set_staging
 		@action = 'iu_staging_index'
 		@d_entity = 'IU'
-		@formats = PhysicalObject.iu_unstaged_by_date_formats(@date) if @formats.empty?
+		@entity = DigitalProvenance::IU_DIGITIZING_ENTITY
+		@formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity)
 		@formats.each do |format|
-			@format_to_physical_objects[format] = PhysicalObject.iu_unstaged_by_date_and_format(@date, format)
+			@format_to_physical_objects[format] = PhysicalObject.unstaged_by_date_format_entity(@date, format, @entity)
 		end
 	end
 
