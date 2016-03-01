@@ -178,14 +178,8 @@ describe Box do
     end
   end
 
-  describe "#default_values" do
-    { full: false, description: '' }.each do |att, val|
-      it "sets #{att} to #{val.nil? ? 'nil' : val.to_s }" do
-        valid_box.send("#{att}=", nil)
-        valid_box.default_values
-        expect(valid_box.send(att)).to eq val
-      end
-    end
+  include_examples "default_values examples", { full: false, description: '' } do
+    let(:target_object) { valid_box }
   end
 
   describe "#set_format_from_container" do

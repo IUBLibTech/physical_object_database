@@ -1,94 +1,7 @@
 describe DigitalStatus do
-	let!(:po) { FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
-	let!(:po_vid) { FactoryGirl.create(:physical_object, :betacam, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
-	let!(:start) { FactoryGirl.create(:digital_status, :valid, physical_object_id: po.id, physical_object_mdpi_barcode: po.mdpi_barcode) }
-	let!(:start_vid) { FactoryGirl.create(:digital_status, :valid, physical_object_id: po_vid.id, physical_object_mdpi_barcode: po_vid.mdpi_barcode) }
+  let(:po) { FactoryGirl.create(:physical_object, :cdr, :barcoded) }
   let(:valid_ds) { FactoryGirl.build(:digital_status, :valid) }
   let(:invalid_ds) { FactoryGirl.build(:digital_status, :invalid) }
-
-	describe "auto accept finds the object" do
-
-		context "with only a non-expired start time" do
-			it "does nothing - po has not expired" do
-				DigitalFileAutoAcceptor.instance.auto_accept
-				expect(po.current_digital_status.decided).to be_nil 
-			end
-		end
-
-		context "with an expired start time and in qc_wait" do
-			let!(:qc_wait) {
-				FactoryGirl.create(:digital_status,
-					physical_object_id: po.id,
-					physical_object_mdpi_barcode: po.mdpi_barcode,
-					state: 'qc_wait',
-					attention: true,
-					message: 'waiting on manual QC',
-					options: {"a"=>"to_distribute","b"=>"to_archive","c"=>"to_delete"},
-					decided: nil
-				)
-			}
-
-			let!(:qc_wait_vid) {
-				FactoryGirl.create(:digital_status,
-					physical_object_id: po_vid.id,
-					physical_object_mdpi_barcode: po_vid.mdpi_barcode,
-					state: 'qc_wait',
-					attention: true,
-					message: 'waiting on manual QC',
-					options: {"a"=>"to_distribute","b"=>"to_archive","c"=>"to_delete"},
-					decided: nil
-				)
-			}
-
-			before(:each) do
-				time = start.created_at - 41.day
-				vid_time = start.created_at - 31.day
-				start.update_attributes(created_at: time)
-				start_vid.update_attributes(created_at: vid_time)
-				po.update_attributes(digital_start: time)
-				po_vid.update_attributes(digital_start: vid_time)
-			end
-
-			it "is in qc_wait state" do
-				expect(po.current_digital_status.state).to eq 'qc_wait'
-				expect(po_vid.current_digital_status.state).to eq 'qc_wait'
-
-				expect(DigitalStatus.expired_audio_physical_objects).to include po
-				expect(DigitalStatus.expired_audio_physical_objects).not_to include po_vid
-				expect(DigitalStatus.expired_video_physical_objects).not_to include po
-				expect(DigitalStatus.expired_video_physical_objects).to include po_vid
-
-
-				DigitalFileAutoAcceptor.instance.auto_accept
-
-				expect(po.current_digital_status.decided).to eq "qc_passed"
-				expect(po_vid.current_digital_status.decided).to eq "qc_passed"
-			end
-
-			it "is in investigate" do
-				qc_wait.state = "investigate"
-				qc_wait_vid.state = "investigate"
-				qc_wait.save
-				qc_wait_vid.save
-
-				expect(po.current_digital_status.state).to eq 'investigate'
-				expect(po_vid.current_digital_status.state).to eq 'investigate'
-
-				expect(DigitalStatus.expired_audio_physical_objects).to include po
-				expect(DigitalStatus.expired_audio_physical_objects).not_to include po_vid
-				expect(DigitalStatus.expired_video_physical_objects).not_to include po
-				expect(DigitalStatus.expired_video_physical_objects).to include po_vid
-
-				DigitalFileAutoAcceptor.instance.auto_accept
-
-				expect(po.current_digital_status.decided).to eq "to_archive"
-				expect(po_vid.current_digital_status.decided).to eq "to_archive"
-				
-			end
-		end
-
-
-	end
 
   describe "FactoryGirl" do
     it "provides a valid object" do
@@ -98,7 +11,8 @@ describe DigitalStatus do
       expect(invalid_ds).not_to be_valid
     end
   end
-  { required: [:physical_object, :physical_object_mdpi_barcode],
+  { required: [:physical_object],
+    # :physical_object_mdpi_barcode is also required, but automatically set via the physical_object
     optional: [:state, :message, :accepted, :attention, :decided, :options, :decided_manually, :created_at, :updated_at] }.each do |type, attributes|
     describe "has #{type.to_s} attributes:" do
       attributes.each do |att|
@@ -109,7 +23,6 @@ describe DigitalStatus do
       end
     end
   end
-  # test serialization of options?
   describe "has class constants:" do
     { :DIGITAL_STATUS_START => 'transferred'}.each do |constant, value|
       specify "#{constant.to_s} has value #{value}" do
@@ -140,7 +53,13 @@ describe DigitalStatus do
     results = { failed: 3, queued: 4 }
     before(:each) do
       results.each do |status, count|
-        FactoryGirl.create_list(:digital_status, count, :valid, state: status.to_s, options: { foo: 1, bar: 2})
+        ds_list = FactoryGirl.create_list(:digital_status, count, :valid, state: status.to_s, options: { foo: 1, bar: 2})
+        ds_list.each do |ds|
+          po = FactoryGirl.create :physical_object, :cdr, :barcoded
+          ds.physical_object = po
+#ds.decided = status.to_s + ' decision'
+          ds.save!
+        end
       end
     end
     describe "unique_statuses" do
@@ -152,44 +71,228 @@ describe DigitalStatus do
         end
       end
     end
-    describe "current_status(state)" do
-      before(:each) { DigitalStatus.where(state: 'transferred').each { |ds| ds.options = { foo: 1, bar: 2 } } }
-      describe "returns physical_objects in that state" do
-        results.each do |status, count|
-          specify "#{status}: #{count}" do
-            expect(DigitalStatus.current_status(status.to_s).size).to eq count
-          end
-        end
-      end
-    end
     describe "current_actionable_status(state)" do
-      before(:each) { DigitalStatus.where(state: 'transferred').each { |ds| ds.options = { foo: 1, bar: 2 } } }
       describe "returns physical_objects in that state" do
         results.each do |status, count|
           specify "#{status}: #{count}" do
-            expect(DigitalStatus.current_status(status.to_s).size).to eq count
+            expect(DigitalStatus.current_actionable_status(status.to_s).size).to eq count
           end
         end 
       end
     end
+    describe "action_statuses" do
+      describe "returns state, count pairs for actionable states" do
+        results.each do |status, count|
+          specify "#{status}: #{count}" do
+            expect(DigitalStatus.action_statuses).to include [status.to_s, count]
+          end
+        end
+      end
+    end
+    describe "decided_action_barcodes" do
+      describe "returns mdpi_barcode, decided pairs for actionable states" do
+        context "with no decided states" do
+          it "returns no results" do
+            expect(DigitalStatus.decided_action_barcodes.to_a).to be_empty
+          end
+        end
+        context "with decided states" do
+          before(:each) do
+            DigitalStatus.all.each do |ds|
+              ds.decided = "#{ds.physical_object.mdpi_barcode} decided"
+              ds.save!
+            end
+          end
+          it "returns the decided states" do
+            DigitalStatus.all.each do |ds|
+              expect(DigitalStatus.decided_action_barcodes).to include [ds.physical_object.mdpi_barcode, "#{ds.physical_object.mdpi_barcode} decided"]
+            end
+          end
+        end
+      end
+    end
+    describe "expired object scopes:" do
+      let!(:unexpired_time) { Time.now }
+      let!(:expired_time) { unexpired_time - 365.days }
+      let!(:unexpired_audio) { FactoryGirl.create :physical_object, :cdr, digital_start: unexpired_time }
+      let!(:expired_audio) { FactoryGirl.create :physical_object, :cdr, digital_start: expired_time }
+      let!(:unexpired_video) { FactoryGirl.create :physical_object, :umatic, digital_start: unexpired_time }
+      let!(:expired_video) { FactoryGirl.create :physical_object, :umatic, digital_start: expired_time }
+      before(:each) do
+        [unexpired_audio, expired_audio, unexpired_video, expired_video].each do |po|
+          ds = FactoryGirl.build :digital_status, physical_object: po, options: { foo: 'bar' }
+          ds.save!
+        end
+      end
+      describe "expired_audio_physical_objects" do
+        it "returns expired audio objects" do
+          expect(DigitalStatus.expired_audio_physical_objects).to eq [expired_audio]
+        end
+      end
+      describe "expired_video_physical_objects" do
+        it "returns expired video objects" do
+          expect(DigitalStatus.expired_video_physical_objects).to eq [expired_video]
+        end
+      end
+    end
   end
-  #
-  # scopes
-  # :action_statuses
-  # :decided_action_barcodes
-  # :expired_audio_physical_objects
-  # :expired_video_physical_objects
-  #
-  # methods
-  # DigitalStatus.test
-  # self.unique_statuses_query
-  # from_json
-  # from_xml
-  # select_options
-  # from_xml**
-  #
-  # virtual attributes
-  # requires_attention? DEPRECATED
-  # decided? DEPRECATED
-  # before_save NOT RUNNING??
+
+  describe "object methods:" do
+    describe "from_json(json)" do
+      before(:each) { valid_ds.attributes.keys.each { |att| valid_ds[att] = nil }; valid_ds.physical_object = nil }
+      JSON_TEXT = ""
+      let(:json) { "{\"barcode\":#{mdpi_barcode},\"state\":\"test json state\",\"message\":\"test json message\",\"message\":\"test json message\",\"attention\":\"test json attention\",\"options\":{}}" }
+      shared_examples "from_json examples" do
+        it "assigns mdpi_barcode" do
+          expect(valid_ds.physical_object_mdpi_barcode).to be_nil
+          valid_ds.from_json(json)
+          expect(valid_ds.physical_object_mdpi_barcode).to eq mdpi_barcode
+        end
+        it "assigns po based on barcode match" do
+          expect(valid_ds.physical_object).to be_nil
+          valid_ds.from_json(json)
+          expect(valid_ds.physical_object).to eq target_object
+        end
+        describe "assigns attributes from json:" do
+          [:state, :message, :accepted, :attention, :options].each do |att|
+            specify att do
+              expect(valid_ds[att].to_s).to be_blank
+              valid_ds.from_json(json)
+              expect(valid_ds[att].to_s).not_to be_blank
+            end
+          end
+        end
+        specify "sets decided to nil" do
+          valid_ds.decided = true
+          expect(valid_ds.decided).not_to be_nil
+          valid_ds.from_json(json)
+          expect(valid_ds.decided).to be_nil
+        end
+      end
+      context "with matching mdpi_barcode" do
+        let(:mdpi_barcode) { po.mdpi_barcode }
+        let(:target_object) { po }
+        include_examples "from_json examples"
+      end
+      context "with non-matching mdpi_barcode" do
+        let(:mdpi_barcode) { invalid_mdpi_barcode }
+        let(:target_object) { nil }
+        include_examples "from_json examples"
+      end
+    end
+    describe "from_xml(mdpi_barcode, xml)" do
+      before(:each) { valid_ds.attributes.keys.each { |att| valid_ds[att] = nil }; valid_ds.physical_object = nil }
+      XML_TEXT = "<pod>
+				<data>
+					<state>test state</state>
+					<message>test message</message>
+					<attention>test attention</attention>
+					<options>
+						<option>
+							<state>test option state</state>
+							<description>test option description</description>
+						</option>
+					</options>
+				</data>
+		</pod>"
+      let(:xml) { Nokogiri::XML(XML_TEXT) }
+      shared_examples "from_xml examples" do
+        it "assigns mdpi_barcode" do
+          expect(valid_ds.physical_object_mdpi_barcode).to be_nil
+          valid_ds.from_xml(mdpi_barcode, xml)
+          expect(valid_ds.physical_object_mdpi_barcode).to eq mdpi_barcode
+        end
+        it "assigns po based on barcode match" do
+          expect(valid_ds.physical_object).to be_nil
+          valid_ds.from_xml(mdpi_barcode, xml)
+          expect(valid_ds.physical_object).to eq target_object
+        end
+        describe "assigns attributes from xml:" do
+          [:state, :message, :accepted, :attention, :options].each do |att|
+            specify att do
+              expect(valid_ds[att].to_s).to be_blank
+              valid_ds.from_xml(mdpi_barcode, xml)
+              expect(valid_ds[att].to_s).not_to be_blank
+            end
+          end
+        end
+        specify "sets decided to nil" do
+          valid_ds.decided = true
+          expect(valid_ds.decided).not_to be_nil
+          valid_ds.from_xml(mdpi_barcode, xml)
+          expect(valid_ds.decided).to be_nil
+        end
+      end
+      context "with matching mdpi_barcode" do
+        let(:mdpi_barcode) { po.mdpi_barcode }
+        let(:target_object) { po }
+        include_examples "from_xml examples"
+      end
+      context "with non-matching mdpi_barcode" do
+        let(:mdpi_barcode) { invalid_mdpi_barcode }
+        let(:target_object) { nil }
+        include_examples "from_xml examples"
+      end
+    end
+    describe "select_options" do
+      context "with any options set" do
+        before(:each) { valid_ds.options = { foo: :bar } }
+        it "converts serialized options hash to array of paired value arrays" do
+          valid_ds.options 
+          expect(valid_ds.select_options).to eq valid_ds.options.map{|key, value| [value, key.to_s]}
+        end
+      end
+      context "with no options set" do
+        before(:each) { valid_ds.options = nil }
+        it "returns an empty array" do
+          expect(valid_ds.select_options).to eq []
+        end
+      end
+    end
+  end
+
+  describe "#set_mdpi_barcode_from_object" do
+    context "with no object" do
+      before(:each) { valid_ds.physical_object = nil; valid_ds.physical_object_mdpi_barcode = nil }
+      it "returns nil" do
+        expect(valid_ds.set_mdpi_barcode_from_object).to be_nil
+      end
+      it "does not assign a barcode" do
+        valid_ds.set_mdpi_barcode_from_object
+        expect(valid_ds.physical_object_mdpi_barcode).to be_nil
+      end
+    end
+    context "with an object, but no barcode" do
+      before(:each) { valid_ds.physical_object_mdpi_barcode = nil; expect(valid_ds.physical_object).not_to be_nil }
+      it "returns the barcode" do
+        expect(valid_ds.set_mdpi_barcode_from_object).to eq valid_ds.physical_object.mdpi_barcode
+      end
+      it "assigns the barcode" do
+        valid_ds.set_mdpi_barcode_from_object
+        expect(valid_ds.physical_object_mdpi_barcode).to eq valid_ds.physical_object.mdpi_barcode
+      end
+
+    end
+  end
+
+  describe "#nullify_empty_options_hash" do
+    context "with an empty options hash" do
+      before(:each) { valid_ds.options = {} }
+      it "sets options to nil" do
+        expect(valid_ds.options).not_to be_nil
+        valid_ds.nullify_empty_options_hash
+        expect(valid_ds.options).to be_nil
+      end
+    end
+    context "with a non-empty options hash" do
+      before(:each) { valid_ds.options = {foo: :bar} }
+      it "does not nullify options" do
+        expect(valid_ds.options).not_to be_nil
+        valid_ds.nullify_empty_options_hash
+        expect(valid_ds.options).not_to be_nil
+      end
+    end
+
+  end
+
 end

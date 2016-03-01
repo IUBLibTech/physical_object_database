@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe ConditionStatus do
   let(:condition_status) { FactoryGirl.create(:condition_status, :physical_object) }
   let(:valid_condition_status) { FactoryGirl.build(:condition_status, :physical_object) }
@@ -85,6 +83,30 @@ describe ConditionStatus do
         it "returns template block_packing? value" do
           expect(valid_condition_status.blocks_packing).to eq valid_condition_status.condition_status_template.blocks_packing?
         end
+      end
+    end
+  end
+
+  include_examples "default_values examples", {active: true} do
+    let(:target_object) { valid_condition_status }
+  end
+
+  describe "scopes" do
+    describe "blocking" do
+      before(:each) do
+        [{ active: true, condition_status_template_id: ConditionStatusTemplate.where(blocks_packing: true).first.id },
+         { active: false, condition_status_template_id: ConditionStatusTemplate.where(blocks_packing: true).last.id },
+         { active: true, condition_status_template_id: ConditionStatusTemplate.where(blocks_packing: false).first.id },
+         { active: false, condition_status_template_id: ConditionStatusTemplate.where(blocks_packing: false).last.id }].each do |values_hash|
+          cs = physical_object.condition_statuses.new
+          cs.assign_attributes(values_hash)
+          cs.save!
+        end
+      end
+      it "returns active, blocking records" do
+        expect(physical_object.condition_statuses.size).to eq 4
+        expect(physical_object.condition_statuses.blocking.size).to eq 1
+        expect(physical_object.condition_statuses.blocking).to eq [physical_object.condition_statuses.first]
       end
     end
   end

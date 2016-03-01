@@ -9,7 +9,6 @@ describe StagingPercentagesController do
 			formats = PhysicalObject.valid_formats
 			expect(formats.size).not_to be 0
 			StagingPercentagesController::validate_formats
-puts StagingPercentage.all.inspect
 			expect(StagingPercentage.all.size).to eq formats.size
 		end
 
