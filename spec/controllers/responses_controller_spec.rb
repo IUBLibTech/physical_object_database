@@ -349,7 +349,7 @@ describe ResponsesController do
   let!(:po_requested) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: true, staged: false }
   let!(:po_nothing) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: false, staged: false }
   let!(:po_staged) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: true, staged: true }
-  describe "#trasfers_index" do    
+  describe "#transfers_index" do    
     before(:each) do 
       get :transfers_index
     end

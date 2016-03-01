@@ -1,7 +1,4 @@
-require 'rails_helper'
-require 'debugger'
-
-RSpec.describe StagingPercentagesController, type: :controller do
+describe StagingPercentagesController do
 	before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
 	describe "percentages present?" do
@@ -12,6 +9,7 @@ RSpec.describe StagingPercentagesController, type: :controller do
 			formats = PhysicalObject.valid_formats
 			expect(formats.size).not_to be 0
 			StagingPercentagesController::validate_formats
+puts StagingPercentage.all.inspect
 			expect(StagingPercentage.all.size).to eq formats.size
 		end
 

@@ -18,7 +18,7 @@ class StagingPercentagesController < ApplicationController
 		# those formats for which there exists a staging percent for memnon/iu
 		defined = StagingPercentage.uniq.pluck("format")
 		# all formats that are represented in the POD - from the technical metadata table
-		all_formats = PhysicalObject.uniq.pluck(:format)
+		all_formats = (PhysicalObject.uniq.pluck(:format).sort | TechnicalMetadatumModule.tm_formats_array.sort )
 		difference = all_formats - defined
 		difference.each do |format|
 			sp = StagingPercentage.new(format: format, memnon_percent: StagingPercentage::default_percentage, iu_percent: StagingPercentage::default_percentage)
