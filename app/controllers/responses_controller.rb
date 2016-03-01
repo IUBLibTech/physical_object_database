@@ -179,7 +179,7 @@ class ResponsesController < ActionController::Base
   end
   
   def transfers_index
-    @pos = PhysicalObject.where("staging_requested = true AND staged = false")
+    @pos = PhysicalObject.where(staging_requested: true)
     @success = true
     render template: 'responses/transfers_index.xml.builder', layout: false, status: 200
   end
@@ -222,6 +222,13 @@ class ResponsesController < ActionController::Base
     @success = !(unit.nil?)
     @message = unit.nil? ? "Unknown unit abbreviation: #{params[:abbreviation]}" : unit.name
     render template: "responses/notify.xml.builder", layout: false, status: 200
+  end
+
+  def all_units
+    @units = Unit.all.order(:abbreviation)
+    @success = true
+    @message = "returning all units"
+    render template: "responses/all_units_response.xml.builder", layout: false, status: 200
   end
 
   def digitizing_entity

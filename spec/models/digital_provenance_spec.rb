@@ -1,6 +1,4 @@
 describe DigitalProvenance, type: :model do
-  #let!(:physical_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
-  #let(:dp) { physical_object.digital_provenance }
   let(:dp) { FactoryGirl.create :digital_provenance }
   let(:valid_dp) { FactoryGirl.build :digital_provenance }
   let(:invalid_dp) { FactoryGirl.build :digital_provenance, :invalid }
@@ -14,14 +12,14 @@ describe DigitalProvenance, type: :model do
     end
   end
 
-  skip "has required attributes:" do
-    describe "duration" do
+  describe "has required attributes:" do
+    skip "duration" do
       it "must be present" do
         valid_dp.duration = nil
 	expect(valid_dp).not_to be_valid
       end
     end
-    describe "digitizing entity" do
+    skip "digitizing entity" do
       it "must be present" do
         valid_dp.digitizing_entity = nil
 	expect(valid_dp).not_to be_valid

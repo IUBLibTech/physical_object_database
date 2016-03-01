@@ -349,7 +349,7 @@ describe ResponsesController do
   let!(:po_requested) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: true, staged: false }
   let!(:po_nothing) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: false, staged: false }
   let!(:po_staged) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: true, staged: true }
-  describe "#trasfers_index" do    
+  describe "#transfers_index" do    
     before(:each) do 
       get :transfers_index
     end
@@ -681,6 +681,18 @@ describe ResponsesController do
     it "fails on bad abbreviation" do
       get :unit_full_name, abbreviation: "foobar"
       expect(response.body).to match "<success>false"
+    end
+  end
+
+  describe "#all_units" do
+    it "gets a lits of all units" do
+      get :all_units
+      expect(response.body).to match "<success>true"
+      expect(response.body).to match "<units>"
+      doc = Nokogiri::XML(response.body).remove_namespaces!
+      units = doc.css("unit").size
+      count = Unit.all.size
+      expect(units).to eq count
     end
   end
 
