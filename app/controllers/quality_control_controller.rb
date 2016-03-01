@@ -72,27 +72,27 @@ class QualityControlController < ApplicationController
 		authorize :quality_control
 	end
 
-        def set_staging
+  def set_staging
 		# This call is necessary as it initializes any staging percentages for formats
 		# that are present in the POD but not present in the staging percentages table.
 		StagingPercentagesController::validate_formats
-                @date = DateTime.new(Time.now.year, Time.now.month, Time.now.day)
-                if params[:staging] && params[:staging][:date] && !params[:staging][:date].blank?
-                        @date = DateTime.strptime(params[:staging][:date], '%m/%d/%Y')
-                end
-                @format_to_physical_objects = ActiveSupport::OrderedHash.new
+    @date = DateTime.new(Time.now.year, Time.now.month, Time.now.day)
+    if params[:staging] && params[:staging][:date] && !params[:staging][:date].blank?
+      @date = DateTime.strptime(params[:staging][:date], '%m/%d/%Y')
+    end
+    @format_to_physical_objects = ActiveSupport::OrderedHash.new
 		@formats = []
-                if params[:staging] && params[:staging][:format] && params[:staging][:format] != 'All'
-                        @formats << params[:staging][:format]
-                end
-        end
+    if params[:staging] && params[:staging][:format] && params[:staging][:format] != 'All'
+      @formats << params[:staging][:format]
+    end
+  end
 
 	def set_memnon_staging
 		set_staging
 		@action = 'staging_index'
 		@d_entity = 'Memnon'
     @entity = DigitalProvenance::MEMNON_DIGITIZING_ENTITY
-		@formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity)
+		@formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity) if @formats.empty?
 		@formats.each do |format|
 			@format_to_physical_objects[format] = PhysicalObject.unstaged_by_date_format_entity(@date, format, @entity)
 		end
@@ -103,7 +103,7 @@ class QualityControlController < ApplicationController
 		@action = 'iu_staging_index'
 		@d_entity = 'IU'
 		@entity = DigitalProvenance::IU_DIGITIZING_ENTITY
-		@formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity)
+		@formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity) if @formats.empty?
 		@formats.each do |format|
 			@format_to_physical_objects[format] = PhysicalObject.unstaged_by_date_format_entity(@date, format, @entity)
 		end
