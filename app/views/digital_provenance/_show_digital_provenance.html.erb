@@ -118,7 +118,10 @@
 					//copy over all values from the master file.
 					var copyTable = visibleTables[visibleTables.length - 2];
 					var tds = $(copyTable).find('td > input');
-					var selectIndex = $(copyTable).find('select').first().prop('selectedIndex');
+					// because collection_select pads the options with a "select signal chain" - the index can be off when
+					// the creating a presInt file from an existing/already saved master file. Determine whether to add one
+					var add = $(copyTable).find('select > option').first()[0].firstChild.textContent.startsWith("Select a signal") ? 0 : 1;
+					var selectIndex = $(copyTable).find('select').first().prop('selectedIndex') + add;
 					for (x = 4; x <12; x++) {
 						val =  tds[x].value;
 						$(visibleTables).last().find('td > input')[x].value = val;
