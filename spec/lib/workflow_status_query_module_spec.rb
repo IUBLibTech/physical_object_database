@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe WorkflowStatusQueryModule do
 
   skip "write tests?  or deprecate?"
