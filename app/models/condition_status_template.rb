@@ -1,6 +1,6 @@
 class ConditionStatusTemplate < ActiveRecord::Base
 
-	has_many :condition_statuses
+	has_many :condition_statuses, dependent: :restrict_with_error
 	OBJECT_TYPES = { "Physical Object" => "Physical Object", "Bin" => "Bin" }
 	validates :name, presence: true, uniqueness: {scope: :object_type}
 	validates :object_type, presence: true, inclusion: { in: OBJECT_TYPES.keys }

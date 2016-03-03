@@ -10,6 +10,9 @@ describe PhysicalObjectsController do
   let(:invalid_physical_object) { FactoryGirl.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
   let(:group_key) { FactoryGirl.create(:group_key) }
   let(:picklist) { FactoryGirl.create(:picklist) }
+  let(:full_box) { FactoryGirl.create(:box, full: true) }
+  let(:bin) { FactoryGirl.create(:bin) }
+  let(:sealed_bin) { bin.current_workflow_status = "Sealed"; bin.save!; bin }
 
   describe "GET index" do
     before(:each) do
@@ -27,14 +30,31 @@ describe PhysicalObjectsController do
   end
 
   describe "GET show" do
-    before(:each) { get :show, id: physical_object.id }
-
-    it "assigns the requested physical object to @physical_object" do
-      expect(assigns(:physical_object)).to eq physical_object
+    shared_examples "common GET show behaviors" do
+      [action: "show", edit_mode: false, display_assigned: true].each do |var, value|
+        it "assigns @#{var} to '#{value}'" do
+          expect(assigns(var)).to eq value
+        end
+      end
+      it "assigns the requested physical object to @physical_object" do
+        expect(assigns(:physical_object)).to eq physical_object
+      end
     end
-
-    it "renders the :show template" do
-      expect(response).to render_template(:show)
+    context "from quality_control" do
+      before(:each) do
+        request.env['HTTP_REFERER'] = 'quality_control'
+        get :show, id: physical_object.id
+      end
+      it "redirects to digital_provenance_path" do
+        expect(response).to redirect_to digital_provenance_path(physical_object.id)
+      end
+    end
+    context "from anywhere else" do
+      before(:each) { get :show, id: physical_object.id }
+      include_examples "common GET show behaviors"
+      it "renders the :show template" do
+        expect(response).to render_template(:show)
+      end
     end
   end
 
@@ -68,25 +88,7 @@ describe PhysicalObjectsController do
   end
 
   describe "POST create" do
-    context "with valid attributes" do
-      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm)}
-      it "saves the new physical object in the database" do
-        physical_object
-        expect{ creation }.to change(PhysicalObject, :count).by(1)
-      end
-      it "redirects to the objects index" do
-        creation
-        expect(response).to redirect_to(controller: :physical_objects, action: :index) 
-      end
-      it "saved digiprov" do
-        physical_object.reload
-        expect(physical_object.digital_provenance).not_to be nil
-      end
-    end
-
-    context "with invalid attributes" do
-      #FIXME: test that invalid object is invalid?
-      let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+    shared_examples "common failed POST create behaviors" do
       it "does not save the new physical object in the database" do
         physical_object
         expect{ creation }.not_to change(PhysicalObject, :count)
@@ -95,6 +97,72 @@ describe PhysicalObjectsController do
         creation
         expect(response).to render_template(:new)
       end
+    end
+    context "with valid attributes" do
+      shared_examples "common succcessful POST create behaviors" do
+        it "saves the new physical object in the database" do
+          physical_object
+          expect{ creation }.to change(PhysicalObject, :count).by(1)
+        end
+        it "saved digiprov" do
+          physical_object
+          expect(PhysicalObject.last.digital_provenance).not_to be nil
+        end
+      end
+      context "without repeat" do
+        let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm)}
+        include_examples "common succcessful POST create behaviors"
+        it "redirects to the objects index" do
+          creation
+          expect(response).to redirect_to(controller: :physical_objects, action: :index) 
+        end
+      end
+      context "with repeat: true" do
+        let(:title) { "repeated title" }
+        let(:creation) { post :create, repeat: 'true', physical_object: valid_physical_object.attributes.symbolize_keys.merge(title: title), tm: FactoryGirl.attributes_for(:cdr_tm)}
+        include_examples "common succcessful POST create behaviors"
+        it "assigns a new @physical_object with attribute carry-over" do
+          creation
+          expect(assigns(:physical_object)).to be_a_new PhysicalObject
+          expect(assigns(:physical_object).title).to eq title
+        end
+        it "renders the :new template" do
+          creation
+          expect(response).to render_template :new
+        end
+      end
+    end
+    context "with invalid attributes" do
+      let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+      include_examples "common failed POST create behaviors"
+    end
+    context "assigning to a full box" do
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: full_box.mdpi_barcode }
+      include_examples "common failed POST create behaviors"
+      it "assigns errors[:box]" do
+        creation
+        expect(assigns(:physical_object).errors[:box]).not_to be_empty
+        expect(assigns(:physical_object).errors[:box].first).to match /is full/
+      end
+    end
+    context "assigning to a sealed bin" do
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), bin_mdpi_barcode: sealed_bin.mdpi_barcode }
+      include_examples "common failed POST create behaviors"
+      it "assigns errors[:bin]" do
+        creation
+        expect(assigns(:physical_object).errors[:bin]).not_to be_empty
+        expect(assigns(:physical_object).errors[:bin].first).to match /is sealed/
+      end
+    end
+  end
+
+  describe "GET create_multiple" do
+    before(:each) { get :create_multiple }
+    it "assigns @repeat=true" do
+      expect(assigns(:repeat)).to eq true
+    end
+    it "renders :create_multiple template" do
+      expect(response).to render_template :create_multiple
     end
   end
 
@@ -192,6 +260,24 @@ describe PhysicalObjectsController do
       end
       it "re-renders the :edit template" do
         expect(response).to render_template(:edit)
+      end
+    end
+    context "assigning to a full box" do
+      before(:each) do
+        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: full_box.mdpi_barcode
+      end
+      it "assigns errors[:box]" do
+        expect(assigns(:physical_object).errors[:box]).not_to be_empty
+        expect(assigns(:physical_object).errors[:box].first).to match /is full/
+      end
+    end
+    context "assigning to a sealed bin" do
+      before(:each) do
+        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), bin_mdpi_barcode: sealed_bin.mdpi_barcode 
+      end
+      it "assigns errors[:bin]" do
+        expect(assigns(:physical_object).errors[:bin]).not_to be_empty
+        expect(assigns(:physical_object).errors[:bin].first).to match /is sealed/
       end
     end
     describe "sets correct automatic status values:" do
@@ -1048,5 +1134,4 @@ describe PhysicalObjectsController do
     end
 
   end
-
 end

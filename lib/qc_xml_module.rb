@@ -20,6 +20,9 @@ module QcXmlModule
       end
       po.memnon_qc_completed ||= checked
     end
+puts po.valid?
+puts po.errors.inspect
+puts "YO"
     po.save!
     dp.save!
     true

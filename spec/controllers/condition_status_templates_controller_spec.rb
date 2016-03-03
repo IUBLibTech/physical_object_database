@@ -4,6 +4,7 @@ describe ConditionStatusTemplatesController do
 
   let(:cst) { ConditionStatusTemplate.first }
   let(:temp_cst) { FactoryGirl.create :condition_status_template }
+  let(:temp_cs) { FactoryGirl.create(:condition_status, condition_status_template: temp_cst) }
   let(:valid_attributes) { FactoryGirl.attributes_for(:condition_status_template) }
   let(:invalid_attributes) { FactoryGirl.attributes_for(:condition_status_template, :invalid) }
 
@@ -122,12 +123,38 @@ describe ConditionStatusTemplatesController do
   describe "DELETE destroy" do
     let(:delete_destroy) { delete :destroy, id: temp_cst.id }
     before(:each) { temp_cst }
-    it "destroys the requested object" do
-      expect { delete_destroy }.to change(ConditionStatusTemplate, :count).by(-1)
+    context "when failed" do
+      before(:each) do
+        temp_cst; temp_cs
+      end
+      after(:each) do
+        temp_cs.destroy
+        temp_cst.destroy
+      end
+      it "does not destroy the requested object" do
+        expect { delete_destroy }.not_to change(ConditionStatusTemplate, :count)
+      end
+      it "flashes failure warning" do
+        delete_destroy
+        expect(flash[:warning]).to match /unable to delete/i
+      end
+      it "renders the show template" do
+        delete_destroy
+        expect(response).to render_template :show
+      end
     end
-    it "redirects to the status_templates_path" do
-      delete_destroy
-      expect(response).to redirect_to status_templates_path
+    context "when successful" do
+      it "destroys the requested object" do
+        expect { delete_destroy }.to change(ConditionStatusTemplate, :count).by(-1)
+      end
+      it "flashes success notice" do
+        delete_destroy
+        expect(flash[:notice]).to match /success/i
+      end
+      it "redirects to the status_templates_path" do
+        delete_destroy
+        expect(response).to redirect_to status_templates_path
+      end
     end
   end
 

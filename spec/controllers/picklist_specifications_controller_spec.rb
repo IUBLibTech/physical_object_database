@@ -87,23 +87,37 @@ describe PicklistSpecificationsController do
 
   describe "PUT update" do
     context "with valid attributes" do
-      before(:each) do
-        put :update, id: picklist_specification.id, ps: FactoryGirl.attributes_for(:picklist_specification, name: "Updated Test Picklist Specification"), tm: FactoryGirl.attributes_for(:cdr_tm)
+      shared_examples "successful PUT update examples" do
+        it "locates the requested object" do
+          expect(assigns(:ps)).to eq picklist_specification
+        end
+        it "changes the object's attributes" do
+          expect(picklist_specification.name).not_to eq "Updated Test Picklist Specification"
+          picklist_specification.reload
+          expect(picklist_specification.name).to eq "Updated Test Picklist Specification"
+        end
+        it "redirects to the picklist_specification specficications index" do
+          expect(response).to redirect_to(controller: :picklist_specifications, action: :index) 
+        end
       end
-
-      it "locates the requested object" do
-        expect(assigns(:ps)).to eq picklist_specification
+      context "with same format" do
+        before(:each) do
+          put :update, id: picklist_specification.id, ps: FactoryGirl.attributes_for(:picklist_specification, name: "Updated Test Picklist Specification"), tm: FactoryGirl.attributes_for(:cdr_tm)
+        end
+        include_examples "successful PUT update examples"
       end
-      it "changes the object's attributes" do
-        expect(picklist_specification.name).not_to eq "Updated Test Picklist Specification"
-        picklist_specification.reload
-        expect(picklist_specification.name).to eq "Updated Test Picklist Specification"
-      end
-      it "redirects to the picklist_specification specficications index" do
-        expect(response).to redirect_to(controller: :picklist_specifications, action: :index) 
+      context "with changed format" do
+        before(:each) do
+          put :update, id: picklist_specification.id, ps: FactoryGirl.attributes_for(:picklist_specification, name: "Updated Test Picklist Specification", format: "DAT"), tm: FactoryGirl.attributes_for(:dat_tm)
+        end
+        include_examples "successful PUT update examples"
+        it "destroys original tm" do
+          original_tm = assigns(:original_tm)
+          expect{ original_tm.reload }.to raise_error ActiveRecord::RecordNotFound
+        end
       end
     end
-    context "with invalid attributes" do
+    context "with invalid object attributes" do
       before(:each) do
         put :update, id: picklist_specification.id, ps: FactoryGirl.attributes_for(:invalid_picklist_specification), tm: FactoryGirl.attributes_for(:cdr_tm)
       end
@@ -119,8 +133,23 @@ describe PicklistSpecificationsController do
       it "re-renders the :edit template" do
         expect(response).to render_template(:edit)
       end
-
     end
+    context "with invalid tm attributes" do
+      before(:each) do
+        put :update, id: picklist_specification.id, ps: FactoryGirl.attributes_for(:picklist_specification), tm: FactoryGirl.attributes_for(:dat_tm)
+      end
+      it "locates the requested object" do
+        expect(assigns(:ps)).to eq picklist_specification
+      end
+      it "adds :base error" do
+        expect(assigns(:ps).errors[:base]).not_to be_empty
+        expect(assigns(:ps).errors[:base].first).to match /format did not match/
+      end
+      it "re-renders the :edit template" do
+        expect(response).to render_template(:edit)
+      end
+    end
+
   end
 
   describe "DELETE destroy" do
@@ -174,6 +203,13 @@ describe PicklistSpecificationsController do
       it "flashes inaction" do
         query_add
         expect(flash[:notice]).to match /no objects selected/i
+      end
+    end
+    context "with no params[:picklist]" do
+      let(:query_add) { patch :query_add, id: picklist_specification.id, type: 'existing', po_ids: [1,2] }
+      it "flashes inaction" do
+        query_add
+        expect(flash[:warning]).to match /Picklist hash/i
       end
     end
     shared_examples "updates workflow status" do

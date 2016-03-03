@@ -9,8 +9,6 @@ class DigitalProvenance < ActiveRecord::Base
 	  IU_DIGITIZING_ENTITY => IU_DIGITIZING_ENTITY,
 	  MEMNON_DIGITIZING_ENTITY => MEMNON_DIGITIZING_ENTITY }
 	validates :physical_object, presence: true
-	#validates :digitizing_entity, presence: true, inclusion: { in: DIGITIZING_ENTITY_VALUES.keys }
-	#validates :duration, presence: true
 
 	def digitizing_entity_values
 		DIGITIZING_ENTITY_VALUES

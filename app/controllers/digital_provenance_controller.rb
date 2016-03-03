@@ -1,4 +1,5 @@
 class DigitalProvenanceController < ApplicationController
+	include ApplicationHelper
 
 	before_action :set_po, only: [:show, :edit, :update]
 
@@ -38,9 +39,10 @@ class DigitalProvenanceController < ApplicationController
 		end
 	end
 
+  #destroy action not available, but listed for policy method creation
   def destroy
-    flash[:warning] = "Digital Provenance may not be deleted."
-    redirect_to action: :show
+    flash[:warning] = 'Destroy action unavailable.'
+    redirect_to action: show
   end
 
 	private

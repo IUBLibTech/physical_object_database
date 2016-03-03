@@ -177,8 +177,6 @@ module PhysicalObjectsHelper
               #error
             elsif tm.errors.any?
               failed << [index, tm]
-            #elsif !tm.save
-            #  failed << [index, tm]
             elsif po.save
               succeeded << po.id
 
@@ -210,37 +208,6 @@ module PhysicalObjectsHelper
               notes.each do |body_text|
                 note = po.notes.new(body: body_text, export: true )
                 failed << [index, note] unless note.save
-              end
-              
-              #create duplicated records if there was a "Quantity" column specified
-              q = r["Quantity"]
-              # disable Quantity import
-              q = 0
-              unless q.to_s.blank? || q.to_i < 2
-                (q.to_i - 1).times do |i|
-                  po_clone = po.dup
-                  po_clone.group_key = nil
-                  tm_clone = tm.dup
-                  tm_clone.physical_object = po_clone
-                  if !tm_clone.save
-                    failed << [index, tm_clone]
-                  elsif !po_clone.save
-                    tm_clone.destroy
-                    failed << [index, po_clone]
-                  else
-                    succeeded << po_clone.id
-                    po.notes.each do |note|
-                      note_clone = note.dup
-                      note_clone.physical_object = po_clone
-                      failed << [index, note_clone] unless note_clone.save
-                    end
-                    po.condition_statuses.each do |cs|
-                      cs_clone = cs.dup
-                      cs_clone.physical_object = po_clone
-                      failed << [index, cs_clone] unless cs_clone.save
-                    end
-                  end
-                end
               end
             else
               #need to remove tm

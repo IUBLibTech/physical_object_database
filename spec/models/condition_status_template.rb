@@ -1,5 +1,6 @@
 describe ConditionStatusTemplate do
   let(:condition_status_template) { FactoryGirl.create(:condition_status_template) }
+  let(:condition_status) { FactoryGirl.create(:condition_status, condition_status_template: condition_status_template) }
   let(:valid_condition_status_template) { FactoryGirl.build(:condition_status_template) }
   let(:invalid_condition_status_template) { FactoryGirl.build(:condition_status_template, :invalid) }
 
@@ -70,8 +71,18 @@ describe ConditionStatusTemplate do
 
 
   describe "has relationships:" do
-    it "many condition_statuses" do
-      expect(valid_condition_status_template.condition_statuses.size).to eq 0
+    describe "condition_statuses" do
+      after(:each) do
+        condition_status.destroy
+        condition_status_template.destroy
+      end
+      specify "many condition_statuses" do
+        expect(valid_condition_status_template.condition_statuses.size).to eq 0
+      end
+      specify "prevent deletion" do
+        condition_status
+        expect{ condition_status_template.destroy! }.to raise_error ActiveRecord::RecordNotDestroyed
+      end
     end
   end
 

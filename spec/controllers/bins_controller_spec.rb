@@ -149,34 +149,57 @@ describe BinsController do
   end
 
   describe "GET show" do
-    before(:each) do
-      bin
-      box
-      #binned_object
-      other_boxed_object
-      boxed_object
-      unassigned_object
-      picklist
-      get :show, id: bin.id
-    end
-
-    it "assigns the requested object to @bin" do
-      expect(assigns(:bin)).to eq bin
-    end
-    it "assigns boxes to @boxes" do
-      expect(assigns(:boxes)).to eq [box]
-    end
-    describe "assigns contained physical objects to @physical_objects" do
-      it "assigns boxed objects (only)" do
-        expect(assigns(:physical_objects)).to eq [boxed_object]
+    shared_examples "common GET show behaviors" do
+      it "assigns the requested object to @bin" do
+        expect(assigns(:bin)).to eq bin
       end
-      include_examples "provides pagination", :physical_objects
+      it "assigns boxes to @boxes" do
+        expect(assigns(:boxes)).to eq [box] if bin.boxes.any?
+        expect(assigns(:boxes)).to be_empty if bin.physical_objects.any?
+      end
+      describe "assigns contained physical objects to @physical_objects" do
+        it "assigns objects" do
+          expect(assigns(:physical_objects)).to eq [boxed_object] if bin.boxes.any?
+          expect(assigns(:physical_objects)).to eq [binned_object] if bin.physical_objects.any?
+        end
+        include_examples "provides pagination", :physical_objects
+      end
+      it "assigns @picklists to picklists dropdown values" do
+        expect(assigns(:picklists)).to eq [[picklist.name, picklist.id]]
+      end
+      it "renders the :show template" do
+        expect(response).to render_template(:show)
+      end
     end
-    it "assigns @picklists to picklists dropdown values" do
-      expect(assigns(:picklists)).to eq [[picklist.name, picklist.id]]
+    context "with no physical objects" do
+      before(:each) do
+        bin
+        picklist
+        get :show, id: bin.id
+      end
+      include_examples "common GET show behaviors" 
     end
-    it "renders the :show template" do
-      expect(response).to render_template(:show)
+    context "with binned objects" do
+      before(:each) do
+        bin
+        binned_object
+        picklist
+        get :show, id: bin.id
+      end
+      include_examples "common GET show behaviors"
+    end
+    context "with boxed objects" do
+      before(:each) do
+        bin
+        box
+        #binned_object
+        other_boxed_object
+        boxed_object
+        unassigned_object
+        picklist
+        get :show, id: bin.id
+      end
+      include_examples "common GET show behaviors"
     end
   end
 
@@ -210,6 +233,20 @@ describe BinsController do
   end
 
   describe "POST create" do
+    context "for a batch" do
+      let(:creation) { post :create, batch: { id: batch.id }, bin: valid_bin.attributes.symbolize_keys }
+      it "saves the new object in the database" do
+        expect{ creation }.to change(Bin, :count).by(1)
+      end
+      it "assigns the newly created Bin to the specified Batch" do
+        creation
+        expect(Bin.last.batch).to eq batch
+      end
+      it "redirects to the objects index" do
+        creation
+        expect(response).to redirect_to(controller: :bins, action: :index) 
+      end
+    end
     context "with valid attributes" do
       let(:creation) { post :create, bin: valid_bin.attributes.symbolize_keys }
       it "saves the new object in the database" do
@@ -220,7 +257,6 @@ describe BinsController do
         expect(response).to redirect_to(controller: :bins, action: :index) 
       end
     end
-
     context "with invalid attributes" do
       let(:creation) { post :create, bin: invalid_bin.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
       it "does not save the new physical object in the database" do
@@ -302,23 +338,41 @@ describe BinsController do
   end
 
   describe "POST unbatch" do
-    before(:each) do
-      bin.batch = batch
-      bin.save
-      post :unbatch, id: bin.id
+    before(:each) { bin.batch = batch; bin.save! }
+    context "when successful" do
+      before(:each) do
+        post :unbatch, id: bin.id
+      end
+      it "removes the batch association from the bin" do
+        expect(bin.batch).not_to be_nil
+        bin.reload
+        expect(bin.batch).to be_nil
+      end
+      it "updates the bin workflow status" do
+        expect(bin.current_workflow_status).to eq "Batched"
+        bin.reload
+        expect(bin.current_workflow_status).not_to eq "Batched"
+      end
+      it "flashes a success notice" do
+        expect(flash[:notice]).to match /success/i
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to "source_page"
+      end
     end
-    it "removes the batch association from the bin" do
-      expect(bin.batch).not_to be_nil
-      bin.reload
-      expect(bin.batch).to be_nil
-    end
-    it "updates the bin workflow status" do
-      expect(bin.current_workflow_status).to eq "Batched"
-      bin.reload
-      expect(bin.current_workflow_status).not_to eq "Batched"
-    end
-    it "redirects to :back" do
-      expect(response).to redirect_to "source_page"
+    context "with failure to save" do
+      before(:each) do
+        bin.mdpi_barcode = 0
+        bin.save!(validate: false)
+        expect(bin).not_to be_valid
+        post :unbatch, id: bin.id
+      end
+      it "flashes a failure warning" do
+        expect(flash[:warning]).to match /fail/i
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to "source_page"
+      end
     end
   end
   
@@ -507,7 +561,27 @@ describe BinsController do
         expect(bin.current_workflow_status).to eq "Batched"
       end
       it "flashes a notification that the bin must be unbatched " do
-        expect(flash[:notice]).to match /must be unbatched/
+        expect(flash[:warning]).to match /must be unbatched/
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to bin_path
+      end
+    end
+    context "on a Returned to Staging Area, Complete bin" do
+      let(:status) { "Returned to Staging Area" }
+      before(:each) do
+        bin.batch = batch
+        bin.current_workflow_status = status
+        bin.save!
+        post :unseal, id: bin.id
+      end
+      it "does not change the workflow status" do
+        expect(bin.current_workflow_status).to eq status
+        bin.reload
+        expect(bin.current_workflow_status).to eq status
+      end
+      it "flashes a notification that Unsealing is inapplicable" do
+        expect(flash[:warning]).to match /Unsealing.*is not applicable/
       end
       it "redirects to :back" do
         expect(response).to redirect_to bin_path

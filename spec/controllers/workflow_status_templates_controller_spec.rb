@@ -109,6 +109,7 @@ describe WorkflowStatusTemplatesController do
   end
 
   describe "DELETE destroy" do
+#case: cascading decrement of following items
     let(:delete_destroy) { delete :destroy, id: temp_wst.id }
     before(:each) { temp_wst }
     it "destroys the requested object" do
@@ -120,4 +121,5 @@ describe WorkflowStatusTemplatesController do
     end
   end
 
+#privates: insert_sequence, move_sequence
 end

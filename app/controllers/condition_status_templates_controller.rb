@@ -44,7 +44,7 @@ class ConditionStatusTemplatesController < ApplicationController
       redirect_to status_templates_path
     else 
       flash[:warning] = "Unable to delete #{@condition_status_template.name}."
-      render('delete')
+      render('show')
     end
    end
 

@@ -1,6 +1,3 @@
-# SignalChains is table with seed data, protected from automated test cleanup
-# Manual record deletion is necessary for each test, where applicable
-#
 describe SignalChainsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
@@ -18,7 +15,6 @@ describe SignalChainsController do
       signal_chain
       get :index
     end
-    after(:each) { signal_chain.destroy }
     it "assigns all signal_chains as @signal_chains" do
       expect(assigns(:signal_chains)).to include signal_chain 
     end
@@ -29,7 +25,6 @@ describe SignalChainsController do
 
   describe "GET #show" do
     before(:each) { get :show, id: signal_chain.id }
-    after(:each) { signal_chain.destroy }
     it "assigns the requested signal_chain as @signal_chain" do
       expect(assigns(:signal_chain)).to eq(signal_chain)
     end
@@ -50,7 +45,6 @@ describe SignalChainsController do
 
   describe "GET #edit" do
     before(:each) { get :edit, id: signal_chain.id }
-    after(:each) { signal_chain.destroy }
     it "assigns the requested signal_chain as @signal_chain" do
       expect(assigns(:signal_chain)).to eq(signal_chain)
     end
@@ -63,7 +57,6 @@ describe SignalChainsController do
     let(:post_create) { post :create, signal_chain: create_attributes }
     context "with valid params" do
       let(:create_attributes) { valid_attributes }
-      after(:each) { assigns(:signal_chain).destroy }
       it "creates a new SignalChain" do
         expect { post_create }.to change(SignalChain, :count).by(1)
       end
@@ -94,7 +87,6 @@ describe SignalChainsController do
   describe "PUT #update" do
     let(:put_update) { put :update, id: signal_chain.id, signal_chain: update_attributes }
     before(:each) { put_update }
-    after(:each) { signal_chain.destroy }
     context "with valid params" do
       let(:original_name) { signal_chain.name }
       let(:update_attributes) { { name: original_name + " updated" } }
@@ -122,29 +114,62 @@ describe SignalChainsController do
   end
 
   describe "DELETE #destroy" do
-    let(:delete_destroy) { delete :destroy, id: signal_chain.id }
     before(:each) { signal_chain }
-    it "destroys the requested signal_chain" do
-      expect { delete_destroy }.to change(SignalChain, :count).by(-1)
+    let(:delete_destroy) { delete :destroy, id: signal_chain.id }
+    context "when successful" do
+      it "destroys the requested signal_chain" do
+        expect { delete_destroy }.to change(SignalChain, :count).by(-1)
+      end
+      it "redirects to the signal_chains list" do
+        delete_destroy
+        expect(response).to redirect_to(signal_chains_path)
+      end
     end
-    it "redirects to the signal_chains list" do
-      delete_destroy
-      expect(response).to redirect_to(signal_chains_path)
+    context "when failed" do
+      before(:each) { FactoryGirl.create :digital_file_provenance, signal_chain: signal_chain }
+      it "does not destroy the signal_chain" do
+        expect{ delete_destroy }.not_to change(SignalChain, :count)
+      end
+      it "flashes a warning" do
+        delete_destroy
+        expect(flash.now[:warning]).to match /not.*deleted/i
+      end
+      it "renders :show" do
+        delete_destroy
+        expect(response).to render_template :show
+      end
     end
   end
 
   describe "#include" do
     let!(:machine) { FactoryGirl.create(:machine, :with_formats, formats: formats) }
-    before(:each) do
-      @request.env['HTTP_REFERER'] = '/signal_chain'
+    context "when successful" do
+      before(:each) do
+        put :include, id: signal_chain.id, machine_id: machine.id, position: signal_chain.processing_steps.size + 1
+      end
+      it "includes the machine" do
+        expect(signal_chain.processing_steps).to be_empty
+        signal_chain.reload
+        expect(signal_chain.processing_steps[signal_chain.processing_steps.size - 1].machine_id).to eq machine.id
+      end
+      it "flashes success notice" do
+        expect(flash[:notice]).to match /success/
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to 'source_page'
+      end
     end
-   
-    it "includes the machine" do
-      put :include, id: signal_chain.id, machine_id: machine.id, position: signal_chain.processing_steps.size + 1
-      signal_chain.reload
-      expect(signal_chain.processing_steps[signal_chain.processing_steps.size - 1].machine_id).to eq machine.id
+    context "when failed" do
+      before(:each) do
+        put :include, id: signal_chain.id, machine_id: machine.id, position: 0
+      end
+      it "flashes error warning" do
+        expect(flash[:warning]).to match /error/i
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to 'source_page'
+      end
     end
-
   end
 
   describe "PATCH #reorder" do
@@ -174,6 +199,24 @@ describe SignalChainsController do
       end
       it "redirects to back" do
         expect(response).to redirect_to "source_page"
+      end
+    end
+  end
+
+  describe "#ajax_show" do
+    context "with a valid id" do
+      before(:each) { get :ajax_show, id: signal_chain.id }
+      it "assigns @signal_chain" do
+        expect(assigns(:signal_chain)).to eq signal_chain
+      end
+      it "renders partial: 'ajax_show_signal_chain'" do
+        expect(response).to render_template partial: '_ajax_show_signal_chain'
+      end
+    end
+    context "with an invalid id" do
+      before(:each) { get :ajax_show, id: 'invalid id' }
+      it "renders partial: 'ajax_show_signal_chain'" do
+        expect(response).to render_template partial: '_ajax_show_signal_chain'
       end
     end
   end

@@ -170,19 +170,4 @@ class PicklistSpecificationsController < ApplicationController
       params.require(:ps).permit(:format, :name, :description)
     end
 
-  def format_tm_where(tm)
-    q = ""
-    stm = tm.specific
-    stm.attributes.each do |name, value|
-      if name == 'id' or name == 'created_at' or name == 'updated_at'
-        next
-      else
-        if !value.nil? and value.length > 0
-          q << " AND open_reel_tms.#{name}='#{value}'"
-        end
-      end
-    end
-    q
-  end
-  
 end

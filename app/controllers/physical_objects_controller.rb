@@ -1,4 +1,5 @@
 class PhysicalObjectsController < ApplicationController
+  include ApplicationHelper
   before_action :set_physical_object, only: [:show, :edit, :edit_ephemera, :update, :update_ephemera, :destroy, :workflow_history, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup, :generate_filename]  
   before_action :set_new_physical_object, only: [:new, :create_multiple]
   before_action :set_new_physical_object_with_params, only: [:create]
@@ -446,16 +447,6 @@ class PhysicalObjectsController < ApplicationController
     def packing_redirect
     end
     
-    # helper for re-rendering pick list if updating failed in some way
-    def init_picklist_params
-      @picklist = @physical_object.picklist
-      @box = @physical_object.box
-      @bin = @physical_object.bin
-      @edit_mode = true
-      @picklisting = true
-      @display_assigned = true
-    end
-
     def authorize_collection
       authorize PhysicalObject
     end
