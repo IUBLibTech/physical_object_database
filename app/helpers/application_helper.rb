@@ -52,14 +52,6 @@ module ApplicationHelper
 		false
 	end
 
-	def ApplicationHelper.assigned_real_barcode?(object)
-		unless object.respond_to? :mdpi_barcode
-			raise "Attempting to check assigned MDPI Barcode on object that does not have an MDPI Barcode field."
-		end
-		a = ApplicationHelper.barcode_assigned?(object.mdpi_barcode)
-		return ApplicationHelper.real_barcode?(object.mdpi_barcode) && (a == false || a == object)
-	end
-
 	def error_messages_for(object)
 		render(partial: 'application/error_messages', locals: {object: object})		
 	end

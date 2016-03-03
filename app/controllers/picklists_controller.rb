@@ -227,7 +227,7 @@ def pack_list
 		def pack
 			# lookup the values passed for box_mdpi_barcode and bin_mdpi_barcode
 			if updated?
-				if ApplicationHelper.assigned_real_barcode?(@physical_object)
+				if ApplicationHelper.real_barcode?(@physical_object.mdpi_barcode)
 					if @physical_object.workflow_blocked?
 						@physical_object.errors[:condition_statuses] = "- One or more active Condition Statuses prevent the packing of this record.".html_safe
 						render 'pack_list'

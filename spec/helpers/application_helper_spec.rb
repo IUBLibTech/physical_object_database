@@ -1,6 +1,7 @@
 describe ApplicationHelper do
   let(:valid_barcode) { 40152053079381 }
   let(:invalid_barcode) { 40152053079380 }
+  let(:zero_barcode) { 0 }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: valid_barcode }
   let(:bin) { FactoryGirl.create :bin, mdpi_barcode: valid_barcode }
   let(:box) { FactoryGirl.create :box, mdpi_barcode: valid_barcode }
@@ -26,9 +27,33 @@ describe ApplicationHelper do
     end
   end
 
-  #::real_barcode?(barcode)
-  #::assigned_real_barcode?(object)
-  #error_messages_for(object)
+  describe "::real_barcode?(barcode)" do
+    context "with a invalid barcode" do
+      it "returns false" do
+        expect(ApplicationHelper.real_barcode?(invalid_barcode)).to eq false
+      end
+    end
+    context "with a valid barcode" do
+      context "of zero" do
+        it "returns false" do
+          expect(ApplicationHelper.real_barcode?(zero_barcode)).to eq false
+        end
+      end
+      context "(non-zero)" do
+        it "returns true" do
+          expect(ApplicationHelper.real_barcode?(valid_barcode)).to eq true
+        end
+      end
+    end
+  end
+
+  describe "#error_messages_for(object)" do
+    it "renders application/error_message" do
+      allow(helper).to receive(:render)
+      helper.error_messages_for(physical_object)
+      expect(helper).to have_received(:render).with(partial: 'application/error_messages', locals: {object: physical_object})
+    end
+  end
 
   describe "::barcode_assigned?" do
     it "returns bin, if assigned to bin" do
@@ -49,6 +74,9 @@ describe ApplicationHelper do
     it "prevents barcode re-use" do
       bin
       expect{ box }.to raise_error "Validation failed: Mdpi barcode #{valid_barcode} has already been assigned to a Bin"
+    end
+    it "returns false, if 0" do
+      expect(ApplicationHelper.barcode_assigned?(0)).to eq false
     end
   end
 
@@ -78,7 +106,24 @@ describe ApplicationHelper do
     end
   end
 
-  #environment_notice
-  #hashify(array)
+  describe "#environment_notice" do
+    it "returns an environment notice string" do
+      expect(helper.environment_notice).to be_a String
+      if Rails.env.production?
+        expect(helper.environment_notice).to be_blank
+      else
+        expect(helper.environment_notice).to match Rails.env.capitalize
+        expect(helper.environment_notice).to match /Environment/
+      end
+    end
+  end
+
+  describe "#hashify(array)" do
+    let(:array) { [:foo, :bar] }
+    let(:hash) { { "foo" => "foo", "bar" => "bar" } }
+    it "returns a hash of reflexive string values" do
+      expect(helper.hashify(array)).to eq hash
+    end
+  end
 
 end
