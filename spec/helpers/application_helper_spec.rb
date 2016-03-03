@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe ApplicationHelper do
   let(:valid_barcode) { 40152053079381 }
   let(:invalid_barcode) { 40152053079380 }
@@ -27,6 +25,10 @@ describe ApplicationHelper do
       expect(ApplicationHelper.valid_barcode?(valid_barcode)).to eq true
     end
   end
+
+  #::real_barcode?(barcode)
+  #::assigned_real_barcode?(object)
+  #error_messages_for(object)
 
   describe "::barcode_assigned?" do
     it "returns bin, if assigned to bin" do
@@ -75,5 +77,8 @@ describe ApplicationHelper do
       expect(dp_requirement(:baking)).to be_blank
     end
   end
+
+  #environment_notice
+  #hashify(array)
 
 end
