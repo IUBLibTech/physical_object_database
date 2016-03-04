@@ -744,7 +744,7 @@ describe "has required attributes:" do
           end
         end
 
-        it_behaves_like "includes ConditionStatusModule:" do
+        it_behaves_like "includes ConditionStatusModule" do
           let(:condition_status) { FactoryGirl.create(:condition_status, :physical_object, physical_object: po) }
           let(:target_object) { po }
           let(:class_title) { "Physical Object" }
@@ -752,7 +752,7 @@ describe "has required attributes:" do
 
         status_list = ["Unassigned", "On Pick List", "Boxed", "Binned", "Unpacked", "Returned to Unit"] 
   # pass status_list arg here to test previous/next methods
-  it_behaves_like "includes Workflow Status Module" do
+  it_behaves_like "includes WorkflowStatusModule" do
     let(:object) { valid_po }
     let(:default_status) { "Unassigned" }
     let(:new_status) { "On Pick List" }

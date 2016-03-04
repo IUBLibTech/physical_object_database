@@ -25,7 +25,7 @@ describe CdrTm do
     end
   end
 
-  it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:cdr_tm) 
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:cdr_tm) 
 
   describe "#master_copies" do
     it "returns 1" do

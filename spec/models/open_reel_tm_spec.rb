@@ -38,8 +38,8 @@ describe OpenReelTm do
     end
   end
 
-  it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:open_reel_tm) 
-  it_behaves_like "includes year module behaviors", FactoryGirl.build(:open_reel_tm) 
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:open_reel_tm) 
+  it_behaves_like "includes YearModule", FactoryGirl.build(:open_reel_tm) 
 
   describe "#master_copies" do
     cases_hash = { { full_track: true } => 1,

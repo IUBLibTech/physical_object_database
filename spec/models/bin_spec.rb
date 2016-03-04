@@ -13,7 +13,7 @@ describe Bin do
     expect(valid_bin).to be_valid
   end
 
-  include_examples "destination module examples", FactoryGirl.build(:bin)
+  include_examples "includes DestinationModule", FactoryGirl.build(:bin)
 
   describe "has required fields:" do
     it "identifier" do
@@ -281,7 +281,7 @@ describe Bin do
 
   status_list = ["Created", "Sealed", "Batched", "Returned to Staging Area", "Unpacked"]
   # pass status_list arg here to test previous/next methods
-  it_behaves_like "includes Workflow Status Module" do
+  it_behaves_like "includes WorkflowStatusModule" do
     let(:object) { valid_bin }
     let(:default_status) { "Created" }
     let(:new_status) { "Sealed" }

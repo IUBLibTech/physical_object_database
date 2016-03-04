@@ -2,7 +2,7 @@
 #requires let statements:
 #object, default_status, new_status, valid_status_values, class_title
 #
-shared_examples "includes Workflow Status Module" do |status_list|
+shared_examples "includes WorkflowStatusModule" do |status_list|
   describe "#assign_default_workflow_status" do
     it "assigns default status" do
       object.assign_default_workflow_status

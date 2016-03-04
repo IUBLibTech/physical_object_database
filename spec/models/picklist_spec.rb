@@ -34,7 +34,7 @@ describe Picklist do
     end
 
     # destination handled by shared examples
-    include_examples "destination module examples", FactoryGirl.build(:picklist)
+    include_examples "includes DestinationModule", FactoryGirl.build(:picklist)
 
     describe "complete indicator:" do
       before(:each) { picklist.complete = true }

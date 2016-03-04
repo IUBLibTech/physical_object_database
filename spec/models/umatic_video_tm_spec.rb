@@ -35,7 +35,7 @@ describe UmaticVideoTm do
     end
   end
 
-  it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:umatic_tm)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:umatic_tm)
 
   describe "has virtual fields:" do
     specify "#damage for pack_deformation" do

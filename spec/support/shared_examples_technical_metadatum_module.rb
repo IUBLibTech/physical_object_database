@@ -2,7 +2,7 @@
 # requires arguments for:
 # tm_object
 #
-shared_examples "includes technical metadatum behaviors" do |tm_object|
+shared_examples "includes TechnicalMetadatumModule" do |tm_object|
 
   describe "provides class constants:" do
     specify "TM_FORMAT as Array of Strings" do

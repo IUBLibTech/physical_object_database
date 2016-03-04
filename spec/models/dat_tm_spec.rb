@@ -19,7 +19,7 @@ describe DatTm do
     end
   end
 
-  it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:dat_tm) 
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:dat_tm) 
 
   describe "#master_copies" do
     it "returns 1" do
