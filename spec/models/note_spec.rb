@@ -25,7 +25,7 @@ describe Note do
     let(:target_object) { valid_note }
   end
 
-  it_behaves_like "includes XMLExportModule" do
+  include_examples "includes XMLExportModule", :body, :export do
     let(:target_object) { valid_note }
   end
 

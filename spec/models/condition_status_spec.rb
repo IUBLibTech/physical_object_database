@@ -115,7 +115,7 @@ describe ConditionStatus do
     let(:target_object) { valid_condition_status }
   end
 
-  it_behaves_like "includes XMLExportModule" do
+  include_examples "includes XMLExportModule", :notes, :active do
     let(:target_object) { valid_condition_status }
   end
  

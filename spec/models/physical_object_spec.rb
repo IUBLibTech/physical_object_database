@@ -760,8 +760,8 @@ describe "has required attributes:" do
     let(:class_title) { "Physical Object" }
   end
 
-  it_behaves_like "includes XMLExportModule" do
-    let(:target_object) { po }
+  include_examples "includes XMLExportModule", :title, :has_ephemera do
+    let(:target_object) { valid_po }
   end
 
   describe "self.formats" do

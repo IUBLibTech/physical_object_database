@@ -169,7 +169,7 @@ describe WorkflowStatus do
     let(:target_object) { valid_workflow_status }
   end
 
-  it_behaves_like "includes XMLExportModule" do
+  include_examples "includes XMLExportModule", :notes, :has_ephemera do
     let(:target_object) { valid_workflow_status }
   end
 
