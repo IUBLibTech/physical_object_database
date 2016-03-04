@@ -1,3 +1,4 @@
+# RSpec testing is via direct library testing
 module QcXmlModule
   
   # parses XML and assigns attributes to po's constituent DigitalProvenance model, OR it

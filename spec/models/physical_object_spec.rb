@@ -760,6 +760,10 @@ describe "has required attributes:" do
     let(:class_title) { "Physical Object" }
   end
 
+  it_behaves_like "includes XMLExportModule" do
+    let(:target_object) { po }
+  end
+
   describe "self.formats" do
     it "returns TechnicalMetadumModule.tm_formats_hash" do
       expect(PhysicalObject.formats).to eq TechnicalMetadatumModule.tm_formats_hash

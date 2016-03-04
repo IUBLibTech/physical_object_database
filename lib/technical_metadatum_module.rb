@@ -4,6 +4,8 @@
 # Including classes update the instance variables, which must be set
 # as constants by calling set_tm_constants.
 # The last 2 lines of this file take care of this, after the module is loaded.
+#
+# RSpec testing is via shared shared examples call in including models
 module TechnicalMetadatumModule
 
   TMM_ERROR_CODE = 1000

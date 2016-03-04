@@ -5,6 +5,8 @@
 # Object controller should permit :condition_statuses param array as a param
 # ConditionStatusTemplate model should have belongs_to :object reference
 # condition_status_templates table should have object_id field
+#
+# RSpec testing is via shared shared examples call in including models
 module ConditionStatusModule
 
   def condition_status_options

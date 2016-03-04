@@ -114,5 +114,9 @@ describe ConditionStatus do
   include_examples "has user field" do
     let(:target_object) { valid_condition_status }
   end
+
+  it_behaves_like "includes XMLExportModule" do
+    let(:target_object) { valid_condition_status }
+  end
  
 end

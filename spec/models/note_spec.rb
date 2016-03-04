@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Note do
   let(:note) { FactoryGirl.create(:note) }
   let(:valid_note) { FactoryGirl.build(:note) }
@@ -24,6 +22,10 @@ describe Note do
   end
 
   include_examples "has user field" do
+    let(:target_object) { valid_note }
+  end
+
+  it_behaves_like "includes XMLExportModule" do
     let(:target_object) { valid_note }
   end
 

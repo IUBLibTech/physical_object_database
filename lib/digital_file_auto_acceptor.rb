@@ -1,3 +1,4 @@
+# RSpec testing is via direct library testing
 require 'singleton'
 
 class DigitalFileAutoAcceptor

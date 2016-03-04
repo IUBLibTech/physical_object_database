@@ -1,5 +1,6 @@
 # Cleans up nil attributes before XML export
 #
+# RSpec testing is via shared shared examples call in including models
 module XMLExportModule
   def self.included(base)
     self.const_set(:XML_INCLUDE, []) unless self.const_defined?(:XML_INCLUDE)

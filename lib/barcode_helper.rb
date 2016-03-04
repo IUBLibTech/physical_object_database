@@ -6,6 +6,7 @@
 #   BarcodeHelper.valid_mdpi_barcode
 #   BarcodeHelper.invalid_mdpi_barcode
 #
+# RSpec testing is via direct library testing
 
 module BarcodeHelper
   extend self

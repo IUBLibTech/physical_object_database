@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe WorkflowStatus do
   let(:workflow_status) { FactoryGirl.create(:workflow_status, :physical_object) }
   let(:valid_workflow_status) { FactoryGirl.build(:workflow_status, :physical_object) }
@@ -168,6 +166,10 @@ describe WorkflowStatus do
   end
 
   include_examples "has user field" do
+    let(:target_object) { valid_workflow_status }
+  end
+
+  it_behaves_like "includes XMLExportModule" do
     let(:target_object) { valid_workflow_status }
   end
 
