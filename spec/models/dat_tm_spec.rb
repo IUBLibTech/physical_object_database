@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe DatTm do
 
   let(:dat_tm) {FactoryGirl.build :dat_tm }

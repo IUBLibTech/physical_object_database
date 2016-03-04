@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe "physical_objects/index" do
 
   let(:po_cdr) { FactoryGirl.create :physical_object, :cdr }

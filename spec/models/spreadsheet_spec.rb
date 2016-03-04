@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Spreadsheet do
   let(:spreadsheet) { FactoryGirl.create :spreadsheet }
   let(:valid_spreadsheet) { FactoryGirl.build :spreadsheet }

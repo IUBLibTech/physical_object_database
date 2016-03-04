@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Picklist do
 
   let(:picklist) { FactoryGirl.create :picklist }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe OpenReelTm do
 
   let(:open_reel_tm) {FactoryGirl.build :open_reel_tm }

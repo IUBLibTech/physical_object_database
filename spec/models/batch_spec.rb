@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Batch do
 
   let(:batch) { FactoryGirl.create :batch }

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe UnitsController, type: :routing do
   describe "routing" do
 

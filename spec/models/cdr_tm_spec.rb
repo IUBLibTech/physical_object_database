@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe CdrTm do
 
   let(:cdr_tm) {FactoryGirl.build :cdr_tm }

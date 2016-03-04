@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe BetacamTm do
   let(:betacam) { FactoryGirl.create :betacam_tm, :valid }
   let(:valid_betacam) { FactoryGirl.build :betacam_tm, :valid }

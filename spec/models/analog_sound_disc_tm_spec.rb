@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe AnalogSoundDiscTm do
 
   let(:analog_sound_disc_tm) {FactoryGirl.build :analog_sound_disc_tm }
