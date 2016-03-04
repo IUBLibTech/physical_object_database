@@ -30,14 +30,14 @@ shared_examples "includes Workflow Status Module" do |status_list|
   end
   describe "#current_workflow_status=" do
     before(:each) { object.assign_default_workflow_status }
-    describe "(invalid status)" do
+    context "(invalid status)" do
       it "does not add a new invalid status" do
         expect{ object.current_workflow_status = "invalid status" }.to raise_error RuntimeError
         expect(object.current_workflow_status).to eq default_status
         expect(object.workflow_statuses.size).to eq 1
       end
     end
-    describe "(same status)" do
+    context "(same status)" do
       it "does not add a new WorkflowStatus object" do
         expect{ object.current_workflow_status = object.current_workflow_status }.not_to change{object.workflow_statuses.size} 
       end
@@ -45,7 +45,7 @@ shared_examples "includes Workflow Status Module" do |status_list|
         expect(object.current_workflow_status = object.current_workflow_status).to eq object.workflow_status
       end
     end
-    describe "(new valid status)" do
+    context "(new valid status)" do
       it "sets a new valid status" do
         object.current_workflow_status = new_status
         expect(object.current_workflow_status).to eq new_status

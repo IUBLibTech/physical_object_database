@@ -30,7 +30,6 @@ module WorkflowStatusModule
     workflow_status_template = WorkflowStatusTemplate.find_by(name: workflow_status_name, object_type: self.class_title)
     if workflow_status_template.nil?
       raise RuntimeError, "Status value of \"#{workflow_status_name}\" cannot be assigned to a #{self.class_title}"
-      return nil
     end
     self.workflow_status = workflow_status_name
     self.workflow_index = workflow_status_template.sequence_index
