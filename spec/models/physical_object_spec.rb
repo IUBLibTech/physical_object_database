@@ -413,6 +413,12 @@ describe "has required attributes:" do
     end
   end
 
+  describe "#auto_accept_days" do
+    it "returns TechnicalMetadatumModule.format_auto_accept_days(format)" do
+      expect(valid_po.auto_accept_days).to eq TechnicalMetadatumModule.format_auto_accept_days(valid_po.format)
+    end
+  end
+
   describe "provides virtual attributes:" do
     describe "#auto_accept" do
       context "when .digital_start is nil" do

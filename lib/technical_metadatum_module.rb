@@ -228,10 +228,6 @@ module TechnicalMetadatumModule
     GENRE_AUTO_ACCEPT_DAYS[tm_genres[format]]
   end
 
-  def auto_accept_days
-    TechnicalMetadatumModule.format_auto_accept_days(format)
-  end
-
   def provenance_requirements
     self.class::PROVENANCE_REQUIREMENTS
   end

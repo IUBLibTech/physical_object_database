@@ -132,6 +132,10 @@ class PhysicalObject < ActiveRecord::Base
     self.group_key.group_total
   end
 
+  def auto_accept_days
+    TechnicalMetadatumModule.format_auto_accept_days(format)
+  end
+
   def auto_accept
     digital_start ? (digital_start + auto_accept_days.days) : nil
   end

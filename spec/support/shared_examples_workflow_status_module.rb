@@ -87,6 +87,16 @@ shared_examples "includes WorkflowStatusModule" do |status_list|
       expect(object.default_workflow_status).to eq default_status
     end
   end
+  describe "#inferred_workflow_status" do
+    it "returns a string" do
+      expect(object.inferred_workflow_status).to be_a String
+    end
+  end
+  describe "#display_workflow_status" do
+    it "returns current_workflow_status" do
+      expect(object.display_workflow_status).to eq object.current_workflow_status
+    end
+  end
   describe "#workflow_status_options" do
     it "returns workflow status options for object type" do
       expect(object.workflow_status_options.keys.sort).to eq valid_status_values.sort
