@@ -3,7 +3,6 @@ class PhysicalObject < ActiveRecord::Base
   XML_EXCLUDE = [:box_id, :bin_id, :picklist_id, :spreadsheet_id, :unit_id, :workflow_index, :group_key_id, :workflow_status, :format_duration]
   include XMLExportModule
   include WorkflowStatusModule
-  extend WorkflowStatusQueryModule
   include ConditionStatusModule
   include ActiveModel::Validations
   include TechnicalMetadatumModule
