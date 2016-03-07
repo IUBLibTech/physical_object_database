@@ -15,7 +15,7 @@
 <div id="assign_bin_dialog" title="Assign Bin" class="dialog"></div>
 
 <%= error_messages_for(@bin) %>
-<div id="bin_div" class="left">
+<div id="bin_div" class="left" >
   <h2>Bin</h2>
   <%= render 'bin' %>
   <% packed_status = @bin.packed_status? %>
@@ -53,13 +53,13 @@
 					</tr>
 				</table>
 	  </div>
-	</div>
 </div>
+
 <div class="left">
 	<h2>Boxes: <%= @bin.boxes.size %></h2>
 	<%= render 'boxes/boxes_table' %>
 </div>
-<div class="left">
+<div class="clear">
 	<h2>Physical Objects packed in this Bin</h2>
 	<span>(via boxes, or directly)</span>
 	<%= render 'physical_objects/physical_objects_table' %>
