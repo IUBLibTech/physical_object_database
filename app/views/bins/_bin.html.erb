@@ -87,3 +87,12 @@
 	  <div class="clear" ><%= submit_tag(@submit_text) %></div>
 	<% end %>
 <% end %>
+<% if action_name == 'new' %>
+	<script type="text/javascript" >
+		$(document).ready(function() {
+			el = $("#bin_mdpi_barcode")
+			el.focus();
+			el.select();
+		});
+	</script>
+<% end %>
