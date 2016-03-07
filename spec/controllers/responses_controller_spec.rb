@@ -346,9 +346,10 @@ describe ResponsesController do
 
   end
 
-  let!(:po_requested) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: true, staged: false }
-  let!(:po_nothing) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: false, staged: false }
-  let!(:po_staged) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, staging_requested: true, staged: true }
+  let!(:po_requested) { FactoryGirl.create :physical_object, :cdr, :barcoded, staging_requested: true, staged: false }
+  let!(:po_nothing) { FactoryGirl.create :physical_object, :cdr, :barcoded, staging_requested: false, staged: false }
+  # Below case should not happen -- but if it did, it would be included in results
+  let!(:po_staged) { FactoryGirl.create :physical_object, :cdr, :barcoded, staging_requested: true, staged: true }
   describe "#transfers_index" do    
     before(:each) do 
       get :transfers_index
@@ -357,7 +358,7 @@ describe ResponsesController do
     it "finds only stageable objects" do
       expect(assigns(:pos)).to include(po_requested)
       expect(assigns(:pos)).to_not include(po_nothing)
-      expect(assigns(:pos)).to_not include(po_staged)
+      expect(assigns(:pos)).to include(po_staged)
     end
 
   end
