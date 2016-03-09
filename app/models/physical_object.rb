@@ -105,14 +105,72 @@ class PhysicalObject < ActiveRecord::Base
   }
 
   scope :unstaged_formats_by_date_entity, lambda { |date, entity|
-    PhysicalObject.joins(:digital_provenance).where("digitizing_entity = '#{entity}'").
-        where(digital_start: date..(date + 1.day), staging_requested: false).pluck(:format).uniq
+    b_dest = entity == DigitalProvenance::MEMNON_DIGITIZING_ENTITY ? 'Memnon' : 'IU'
+    ActiveRecord::Base.connection.execute(
+      "SELECT distinct(physical_objects.format) "+
+      "FROM physical_objects, bins, batches, digital_provenances "+
+      "WHERE "+
+        "physical_objects.id = digital_provenances.physical_object_id AND "+
+        "bins.batch_id = batches.id AND "+
+        "physical_objects.bin_id = bins.id AND "+
+        "physical_objects.digital_start is not null AND "+
+        "physical_objects.staging_requested = false AND "+
+        "physical_objects.digital_start BETWEEN '#{date}' and '#{date + 1.day}' AND "+
+        "batches.destination = '#{b_dest}'"
+    ).map{ |e| e[0] } +
+    ActiveRecord::Base.connection.execute(
+      "SELECT distinct(physical_objects.format) "+
+          "FROM physical_objects, boxes, bins, batches, digital_provenances "+
+          "WHERE "+
+          "physical_objects.id = digital_provenances.physical_object_id AND "+
+          "bins.batch_id = batches.id AND "+
+          "physical_objects.box_id = boxes.id AND boxes.bin_id = bins.id AND "+
+          "physical_objects.digital_start is not null AND "+
+          "physical_objects.staging_requested = false AND "+
+          "physical_objects.digital_start BETWEEN '#{date}' and '#{date + 1.day}' AND "+
+          "batches.destination = '#{b_dest}'"
+    ).map{ |e| e[0] }
+
+    # PhysicalObject.joins(:digital_provenance).joins(:bin).joins(:batch).where("digitizing_entity = '#{entity}' or batches.destination = '#{b_dest}'").
+    #   where(digital_start: date..(date + 1.day), staging_requested: false).pluck(:format).uniq
+    # PhysicalObject.joins(:digital_provenance).where("digitizing_entity = '#{entity}'").
+    #   where(digital_start: date..(date + 1.day), staging_requested: false).pluck(:format).uniq
   }
 
   scope :unstaged_by_date_format_entity, lambda { |date, format, entity|
-     PhysicalObject.joins(:digital_provenance).where("digitizing_entity = '#{entity}'").
-         where("digital_start is not null").
-         where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
+    b_dest = entity == DigitalProvenance::MEMNON_DIGITIZING_ENTITY ? 'Memnon' : 'IU'
+    PhysicalObject.find_by_sql(
+      "SELECT physical_objects.* "+
+      "FROM physical_objects, bins, batches, digital_provenances "+
+      "WHERE "+
+        "physical_objects.id = digital_provenances.physical_object_id AND "+
+        "bins.batch_id = batches.id AND "+
+        "physical_objects.bin_id = bins.id AND "+
+        "physical_objects.digital_start is not null AND "+
+        "physical_objects.staging_requested = false AND "+
+        "physical_objects.digital_start BETWEEN '#{date}' AND '#{date + 1.day}' AND "+
+        "physical_objects.format = '#{format}' AND "+
+        "(batches.destination = '#{b_dest}' OR digital_provenances.digitizing_entity = '#{entity}')"
+    ) +
+        PhysicalObject.find_by_sql(
+            "SELECT physical_objects.* "+
+                "FROM physical_objects, boxes, bins, batches, digital_provenances "+
+                "WHERE "+
+                "physical_objects.id = digital_provenances.physical_object_id AND "+
+                "bins.batch_id = batches.id AND "+
+                "physical_objects.box_id = boxes.id AND boxes.bin_id = bins.id AND "+
+                "physical_objects.digital_start is not null AND "+
+                "physical_objects.staging_requested = false AND "+
+                "physical_objects.digital_start BETWEEN '#{date}' AND '#{date + 1.day}' AND "+
+                "physical_objects.format = '#{format}' AND "+
+                "(batches.destination = '#{b_dest}' OR digital_provenances.digitizing_entity = '#{entity}')"
+        )
+    # PhysicalObject.joins(:digital_provenance).joins(:bin).joins(:batch).where("digitizing_entity = '#{entity}' or batches.destination = '#{b_dest}'").
+    #   where("digital_start is not null").
+    #   where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order('RAND()')
+    # PhysicalObject.joins(:digital_provenance).where("digitizing_entity = '#{entity}'").
+    #   where("digital_start is not null").
+    #   where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
    }
 
   # This scope grabs all formats, for all unstaged physical objects whose digitization_start timestamp is within 24 hrs of the specified date

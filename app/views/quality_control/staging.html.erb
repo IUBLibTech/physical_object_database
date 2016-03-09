@@ -15,8 +15,8 @@
 <div >
 	<h2>[<%= @d_entity %>] Unstaged Physical Objects for <%= @date.strftime("%m/%d/%Y") %></h2>
 	<h2><%= @format_to_physical_objects.keys %></h2>
-	<button typ="button" onclick="uncheck()">Uncheck Selected</button>
-	<%= form_tag quality_control_staging_post_path do %>
+	<button id="uncheck_selected_button" typ="button" onclick="uncheck()">Uncheck Selected</button>
+	<%= form_tag quality_control_staging_post_path, id: 'stage_form' do %>
 		<%= submit_tag "Stage Selected Objects" %>
 		<% @format_to_physical_objects.keys.each do |key| %>
 			<h2><%= key %> [<%= @format_to_physical_objects[key].size %> items]</h2>

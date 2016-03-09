@@ -451,3 +451,9 @@ tr.packed {
 table.presInt >tbody > tr > th {
     background-color: #F5D7D5;
 }
+
+#uncheck_selected_button {
+    position: relative;
+    left: 880px;
+    top: 20px;
+}
