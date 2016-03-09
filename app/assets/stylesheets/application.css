@@ -452,11 +452,8 @@ table.presInt >tbody > tr > th {
     background-color: #F5D7D5;
 }
 
-#stage_form {
-    margin-top: 20px;
-}
-
 #uncheck_selected_button {
-    left: 922px;
-    position: absolute;
+    position: relative;
+    left: 880px;
+    top: 20px;
 }
