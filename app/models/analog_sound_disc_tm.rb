@@ -23,7 +23,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
     "equalization", "sound_field", "country_of_origin", "label"
   ]
   DIAMETER_VALUES = hashify [5, 6, 7, 8, 9, 10, 12, 16]
-  SPEED_VALUES = hashify [33.3, 45, 78]
+  SPEED_VALUES = hashify [33.3, 45, 78, 'Unknown', 'Mixed']
   GROOVE_SIZE_VALUES = hashify ['Coarse', 'Micro']
   GROOVE_ORIENTATION_VALUES = hashify ['Lateral', 'Vertical']
   RECORDING_METHOD_VALUES = hashify ['Pressed', 'Cut', 'Pregrooved']

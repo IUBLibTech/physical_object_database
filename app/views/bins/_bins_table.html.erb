@@ -2,6 +2,7 @@
 <table>
   <tr class="header">
     <th>Barcode / Identifier</th>
+    <th>Location</th>
     <th>Desc.</th>
     <% if @batch.nil? %>
     <th>Batch</th>
@@ -14,6 +15,7 @@
   <% @bins.each do |bin|%>
     <tr>
       <td><%= bin.mdpi_barcode %><br/><%= bin.identifier %></td>
+      <td><%= bin.physical_location %></td>
       <td><%= bin.description %></td>
       <% if @batch.nil? %>
       <% batch_string = bin.batch.nil? ? "" : bin.batch.identifier %>
