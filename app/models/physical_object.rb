@@ -273,16 +273,27 @@ class PhysicalObject < ActiveRecord::Base
  
   # omit_picklisted Boolean adds search term to that effect
   def physical_object_query(omit_picklisted, additional_terms = {}, results_limit = 0)
-    symbolize = lambda { |h| h.inject({}){ |hash, (k,v)| hash.merge(k.to_sym => v) } }
     filter_blanks = lambda { |h| h.select{ |k,v| !v.to_s.blank? } }
     filter_forbidden = lambda { |h| h.delete_if { |k,v| k.in? [:id, :created_at, :updated_at, :physical_object_id] } }
-    get_terms = lambda { |atts| filter_forbidden.call(symbolize.call(filter_blanks.call(atts))) }
+    get_terms = lambda { |atts| filter_forbidden.call(filter_blanks.call(atts.symbolize_keys)) }
 
     po_terms = get_terms.call(self.attributes)
     po_terms = po_terms.merge({ picklist_id: [0, nil]}) if omit_picklisted
     po_terms = po_terms.merge(get_terms.call(additional_terms.delete(:association))) if additional_terms[:association]
     tm_terms = (self.ensure_tm ? get_terms.call(self.ensure_tm.attributes) : {})
     search_terms = additional_terms.merge({ physical_object: po_terms, technical_metadatum: tm_terms })
+    PhysicalObject.physical_object_search(search_terms, results_limit)
+  end
+
+  #class version does not pass through po, tm object
+  def PhysicalObject.physical_object_query(search_terms = {}, results_limit = 0)
+    filter_blanks = lambda { |h| h.select{ |k,v| !v.to_s.blank? } }
+    filter_forbidden = lambda { |h| h.delete_if { |k,v| k.in? [:id, :created_at, :updated_at, :physical_object_id] } }
+    get_terms = lambda { |atts| filter_forbidden.call(filter_blanks.call(atts.symbolize_keys)) }
+
+    search_terms.each do |object, terms|
+      search_terms[object] = get_terms.call(terms)
+    end 
     PhysicalObject.physical_object_search(search_terms, results_limit)
   end
 
@@ -443,7 +454,6 @@ assigned to a box."
   end
 
 private
-  # omit_picklisted Boolean adds search term to that effect
   # strong parameters in controller prevent SQL injection on attribute names, and ActiveRecord
   # query calls (with activerecord-like gem) prevent SQL injection on attribute values
   def self.physical_object_search(search_terms, results_limit = 0)

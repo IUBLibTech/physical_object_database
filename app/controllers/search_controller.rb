@@ -34,23 +34,15 @@ class SearchController < ApplicationController
 
   def advanced_search
     @search_mode = true
-    po = PhysicalObject.new
-    po.attributes.keys.each { |att| po[att] = nil }
-    po.assign_attributes(clean_arrays(physical_object_params))
-    if params[:tm] && (tm = po.ensure_tm)
-      tm.attributes.keys.each { |att| tm[att] = nil unless att == "subtype" }
-      tm.assign_attributes(clean_arrays(tm_params))
-    end
-    omit_picklisted = (params[:omit_picklisted] == 'true')
-    @physical_objects = po.physical_object_query(omit_picklisted, additional_params, SEARCH_RESULTS_LIMIT)
-    @full_results = po.physical_object_query(omit_picklisted, additional_params)
+    @full_results = PhysicalObject.physical_object_query(search_params)
+    @physical_objects = @full_results.limit(SEARCH_RESULTS_LIMIT)
     @results_count = @physical_objects.size
     flash.now[:notice] = "Your search returns these results"
     flash.now[:warning] = "Your search returned #{@full_results.size} results, but display has been limited to the first #{SEARCH_RESULTS_LIMIT}." if @results_count >= SEARCH_RESULTS_LIMIT && SEARCH_RESULTS_LIMIT > 0
     respond_to do |format|
       format.html { render :advanced_search_results }
       format.xls do
-        @block_metadata = true if po.format.blank?
+        @block_metadata = format_param.blank?
         @physical_objects = @full_results
         render '/spreadsheets/show' 
       end
@@ -73,22 +65,44 @@ class SearchController < ApplicationController
 
     # association parameters for physical object, passed separately as physical_object will not hold array of values in an _id field
     def association_params
-      params.require(:physical_object).permit(unit_id: [], picklist_id: [], spreadsheet_id: [], box_id: [], bin_id: [])
+      clean_arrays(params.require(:physical_object).permit(unit_id: [], picklist_id: [], spreadsheet_id: [], box_id: [], bin_id: []))
     end
 
-    def additional_params
-      modified_params = { association: clean_arrays(association_params)}
-      modified_params = modified_params.merge({ condition_status: clean_arrays(condition_status_params)}) if params[:condition_status]
-      modified_params = modified_params.merge({ note: clean_arrays(note_params)}) if params[:note]
-      modified_params
+    def po_search_params
+      clean_arrays(physical_object_params).merge(association_params)
     end
 
-   def condition_status_params
-     params.require(:condition_status).permit(:notes, :active, :user, condition_status_template_id: [])
-   end
+    def tm_search_params
+      clean_arrays(tm_params)
+    end
 
-   def note_params
-     params.require(:note).permit(:body, :user, :export)
-   end
+    def condition_status_params
+      clean_arrays(params.require(:condition_status).permit(:notes, :active, :user, condition_status_template_id: []))
+    end
+
+    def note_params
+      clean_arrays(params.require(:note).permit(:body, :user, :export))
+    end
+
+    def omit_picklisted_param
+      params[:omit_picklisted].to_s == 'true'
+    end
+
+    def format_param
+      params[:physical_object] ? params[:physical_object][:format] : nil
+    end
+
+    def search_params
+      search_parameters = {}
+      search_parameters[:physical_object] = po_search_params if params[:physical_object]
+      if omit_picklisted_param
+        search_parameters[:physical_object] ||= {}
+        search_parameters[:physical_object][:picklist_id] = [0, nil]
+      end
+      search_parameters[:technical_metadatum] = tm_search_params if params[:tm] && format_param
+      search_parameters[:condition_status] = condition_status_params if params[:condition_status]
+      search_parameters[:note] = note_params if params[:note]
+      search_parameters
+    end
 
 end
