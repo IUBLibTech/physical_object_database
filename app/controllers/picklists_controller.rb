@@ -46,14 +46,7 @@ class PicklistsController < ApplicationController
 	end
 
 	def update
-		#FIXME: do we need this manual check?  Just add it as a model validation?
-		if Picklist.where("id != ? AND name=?", @picklist.id, params[:picklist][:name]).size > 0 && false
-			flash[:notice] = "There is another picklist with name #{params[:picklist][:name]}."
-			@edit_mode = true
-			@action = 'update'
-			@submit_text = "Update Picklist"
-			render('edit')
-		elsif @picklist.update_attributes(picklist_params)
+		if @picklist.update_attributes(picklist_params)
 			flash[:notice] = "Successfully updated #{@picklist.name}"
 			redirect_to(controller: 'picklist_specifications', action: 'index')	
 		else
@@ -227,7 +220,7 @@ def pack_list
 		def pack
 			# lookup the values passed for box_mdpi_barcode and bin_mdpi_barcode
 			if updated?
-				if ApplicationHelper.assigned_real_barcode?(@physical_object)
+				if ApplicationHelper.real_barcode?(@physical_object.mdpi_barcode)
 					if @physical_object.workflow_blocked?
 						@physical_object.errors[:condition_statuses] = "- One or more active Condition Statuses prevent the packing of this record.".html_safe
 						render 'pack_list'
@@ -309,18 +302,6 @@ def pack_list
 
 		def picklist_params
 			params.require(:picklist).permit(:name, :description, :destination, :complete)
-		end
-
-		def set_container(physical_object, box, bin)
-			if (box or bin)
-				PhysicalObject.transaction do
-				        #FIXME: WHOA THIS WAS SETTING _ID VALUES TO 0 INSTEAD OF NIL, AND THAT'S A PROBLEM
-				        physical_object.update_attributes(bin_id: (bin.nil? ? nil : bin.id), box_id: (box.nil? ? nil : box.id))
-					# workflow status automatically updated
-				end
-			else
-				return false
-			end
 		end
 
 		def surrounding_physical_objects

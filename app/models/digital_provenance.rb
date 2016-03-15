@@ -6,11 +6,9 @@ class DigitalProvenance < ActiveRecord::Base
 	IU_DIGITIZING_ENTITY = "IU Media Digitization Studios"
 	MEMNON_DIGITIZING_ENTITY = "Memnon Archiving Services Inc"
 	DIGITIZING_ENTITY_VALUES = {
-	  "IU Media Digitization Studios" => "IU Media Digitization Studios",
-	  "Memnon Archiving Services Inc" => "Memnon Archiving Services Inc" }
+	  IU_DIGITIZING_ENTITY => IU_DIGITIZING_ENTITY,
+	  MEMNON_DIGITIZING_ENTITY => MEMNON_DIGITIZING_ENTITY }
 	validates :physical_object, presence: true
-	#validates :digitizing_entity, presence: true, inclusion: { in: DIGITIZING_ENTITY_VALUES.keys }
-	#validates :duration, presence: true
 
 	def digitizing_entity_values
 		DIGITIZING_ENTITY_VALUES

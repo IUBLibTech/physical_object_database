@@ -1,7 +1,7 @@
 #
 # requires test object as argument
 #
-shared_examples "destination module examples" do |test_object|
+shared_examples "includes DestinationModule" do |test_object|
 
   describe "destination module effects:" do
     it "requires a destination" do

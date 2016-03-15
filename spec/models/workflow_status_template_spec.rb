@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe WorkflowStatusTemplate do
   # need to manually destroy after each creation, as this is a seed data table
   let(:workflow_status_template) { FactoryGirl.create(:workflow_status_template) }
@@ -92,5 +90,9 @@ describe WorkflowStatusTemplate do
     end
   end
 
-  
+  describe ".template_by_status_name(object_type, name)" do
+    it "returns matching template" do
+      expect(WorkflowStatusTemplate.template_by_status_name("Physical Object", "Boxed")).to eq WorkflowStatusTemplate.where(object_type: "Physical Object", name: "Boxed").first
+    end
+  end  
 end

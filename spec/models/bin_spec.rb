@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Bin do
 
   let(:batch) {FactoryGirl.create :batch }
@@ -15,7 +13,7 @@ describe Bin do
     expect(valid_bin).to be_valid
   end
 
-  include_examples "destination module examples", FactoryGirl.build(:bin)
+  include_examples "includes DestinationModule", FactoryGirl.build(:bin)
 
   describe "has required fields:" do
     it "identifier" do
@@ -179,6 +177,11 @@ describe Bin do
 	expect(bin.display_workflow_status).not_to match />>/
 	expect(bin.display_workflow_status).not_to match /Created$/
       end
+      specify "when Batched, display (No batch assigned) if no Batch assigned" do
+        bin.workflow_status = "Batched"
+        bin.batch = nil
+        expect(bin.display_workflow_status).to match /No batch assigned/
+      end
     end
     describe "#inferred_workflow_status" do
       ["Created", "Sealed"].each do |status|
@@ -261,6 +264,11 @@ describe Bin do
       expect(Bin.packed_status_message).to match /This bin has been marked as sealed/
     end
   end
+  describe "::invalid_box_assignment_message" do
+    it "returns a message that the Bin contains physical objects" do
+      expect(Bin.invalid_box_assignment_message).to match /This bin contains physical objects/
+    end
+  end
 
   # it_behaves_like "includes ConditionStatusModule:"
   describe "includes ConditionStatusModule:" do
@@ -273,7 +281,7 @@ describe Bin do
 
   status_list = ["Created", "Sealed", "Batched", "Returned to Staging Area", "Unpacked"]
   # pass status_list arg here to test previous/next methods
-  it_behaves_like "includes Workflow Status Module" do
+  it_behaves_like "includes WorkflowStatusModule" do
     let(:object) { valid_bin }
     let(:default_status) { "Created" }
     let(:new_status) { "Sealed" }

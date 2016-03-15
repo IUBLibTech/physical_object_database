@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe OpenReelTm do
 
   let(:open_reel_tm) {FactoryGirl.build :open_reel_tm }
@@ -40,8 +38,8 @@ describe OpenReelTm do
     end
   end
 
-  it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:open_reel_tm) 
-  it_behaves_like "includes year module behaviors", FactoryGirl.build(:open_reel_tm) 
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:open_reel_tm) 
+  it_behaves_like "includes YearModule", FactoryGirl.build(:open_reel_tm) 
 
   describe "#master_copies" do
     cases_hash = { { full_track: true } => 1,
@@ -51,7 +49,8 @@ describe OpenReelTm do
                    { quarter_track: true, stereo: true } => 2,
                    { quarter_track: true, stereo: true, unknown_sound_field: true } => 4,
                    { quarter_track: true, mono: true } => 4,
-                   { unknown_track: true} => 4
+                   { unknown_track: true} => 4,
+                   { unknown_track: false, quarter_track: false, half_track: false, full_track: false} => 4
                  }
     cases_hash.each do |params, result|
       it "returns #{result} for #{params.inspect}" do

@@ -2,7 +2,7 @@
 # requires arguments for:
 # tm_object
 #
-shared_examples "includes technical metadatum behaviors" do |tm_object|
+shared_examples "includes TechnicalMetadatumModule" do |tm_object|
 
   describe "provides class constants:" do
     specify "TM_FORMAT as Array of Strings" do
@@ -38,10 +38,10 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
 
   describe "has relationships:" do
     it "can belong to a picklist specification" do
-      expect(tm_object.picklist_specification).to be_nil
+      expect(tm_object).to respond_to :picklist_specification_id
     end
     it "can belong to a physical object" do
-      expect(tm_object.physical_object).to be_nil
+      expect(tm_object).to respond_to :physical_object_id
     end
   end
 
@@ -161,5 +161,67 @@ shared_examples "includes technical metadatum behaviors" do |tm_object|
       end
     end
   end
-end
 
+  describe "#hashify" do
+    it "turns an array into a hash of reflexive string values" do
+      expect(tm_object.hashify([1, :foo])).to eq Hash[[["1","1"],["foo","foo"]]]
+    end
+  end
+
+  describe "#preservation_problems" do
+    it "returns humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS)" do
+     expect(tm_object.preservation_problems).to eq tm_object.humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS)
+   end
+  end
+
+  describe "#to_xml" do
+    it "returns an XML string" do
+      expect(tm_object.to_xml).to be_a String
+    end
+    context "specifying a format" do
+      let(:format) { "test format" }
+      it "uses the specifed format" do
+        expect(tm_object.to_xml(format: format)).to match "<format>#{format}</format>"
+      end
+    end
+    context "without specifying a format" do
+      context "with an object" do
+        before(:each) do
+          tm_object.physical_object = FactoryGirl.build(:physical_object, :cdr) if tm_object.respond_to?(:physical_object)
+          expect(tm_object.physical_object).not_to be_nil
+        end
+        it "uses the object format" do
+          expect(tm_object.to_xml()).to match "<format>#{tm_object.physical_object.format}</format>"
+        end
+      end
+      context "without an object" do
+        before(:each) do
+          tm_object.physical_object = nil if tm_object.respond_to?(:physical_object)
+          expect(tm_object.physical_object).to be_nil
+        end
+        it "returns an Unknown format value" do
+          expect(tm_object.to_xml()).to match "<format>Unknown</format>"
+        end
+      end
+    end
+  end
+  describe "#manifest_values" do
+    it "returns an Array" do
+      expect(tm_object.manifest_values).to be_a Array
+      expect(tm_object.manifest_values.size).to eq tm_object.class.const_get(:MANIFEST_EXPORT).size
+    end
+  end
+  describe "::format_auto_accept_days" do
+    shared_examples "format_auto_accept_days examples" do |format, format_days|
+      specify "TechnicalMetadatumModule::format_auto_accept_days(format) returns GENRE_AUTO_ACCEPT_DAYS for the format genre" do
+        expect(TechnicalMetadatumModule.format_auto_accept_days(format)).to eq format_days
+      end
+    end
+    context "for an audio format" do
+      include_examples "format_auto_accept_days examples", "CD-R", 45
+    end
+    context "for a video format" do
+      include_examples "format_auto_accept_days examples", "U-matic", 30
+    end
+  end
+end

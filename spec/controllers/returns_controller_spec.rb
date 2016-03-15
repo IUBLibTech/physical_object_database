@@ -113,6 +113,19 @@ describe ReturnsController do
         expect(response).to redirect_to "source_page"
       end
     end
+    context "with an unknown workflow status" do
+      before(:each) do
+        bin.workflow_status = "Unknown workflow status"
+        bin.save!(validate: false)
+        patch_action
+      end
+      it "flashes an error warning" do
+        expect(flash[:warning]).to match /unknown workflow status/i
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to "source_page"
+      end
+    end
     context "on an unloaded bin" do
       ["Returned to Staging Area", "Unpacked"].each do |status|
         context "in #{status} status" do
@@ -131,19 +144,39 @@ describe ReturnsController do
       end
     end
     context "on a loaded bin" do
-      before(:each) do
-        patch_action
+      context "when successful" do
+        before(:each) do
+          patch_action
+        end
+        it "sets the bin workflow status to Returned to Staging Area" do
+          expect(bin.current_workflow_status).to eq "Batched"
+          bin.reload
+          expect(bin.current_workflow_status).to eq "Returned to Staging Area"
+        end
+        it "flashes a success message" do
+          expect(flash[:notice]).to match /success/
+        end
+        it "redirects to :back" do
+          expect(response).to redirect_to "source_page"
+        end
       end
-      it "sets the bin workflow status to Returned to Staging Area" do
-        expect(bin.current_workflow_status).to eq "Batched"
-        bin.reload
-        expect(bin.current_workflow_status).to eq "Returned to Staging Area"
-      end
-      it "flashes a success message" do
-        expect(flash[:notice]).to match /success/
-      end
-      it "redirects to :back" do
-        expect(response).to redirect_to "source_page"
+      context "when failed" do
+        before(:each) do
+          bin.identifier = ""
+          bin.save!(validate: false)
+          patch_action
+        end
+        it "does not update workflow status" do
+          expect(bin.current_workflow_status).to eq "Batched"
+          bin.reload
+          expect(bin.current_workflow_status).to eq "Batched"
+        end
+        it "flashes an error warning" do
+          expect(flash[:warning]).to match /error/i
+        end
+        it "redirects to :back" do
+          expect(response).to redirect_to "source_page"
+        end
       end
     end
   end
@@ -220,28 +253,41 @@ describe ReturnsController do
         end
 	context "not already returned" do
           context "without ephemera" do
-            before(:each) do
-              target_object.has_ephemera = false
-              target_object.save
-              patch_action
+            context "when failed" do
+              before(:each) do
+                target_object.has_ephemera = false
+                target_object.mdpi_barcode = 42
+                target_object.save!(validate: false)
+                patch_action
+              end
+              it "flashes error warning" do
+                expect(flash[:warning]).to match /errors/i
+              end
             end
-            it "assigns @bin" do
-              expect(assigns(:bin)).to eq bin
-            end
-            it "updates the workflow status" do
-              expect(target_object.current_workflow_status).not_to eq "Unpacked"
-              target_object.reload
-              expect(target_object.current_workflow_status).to eq "Unpacked"
-            end
-            it "sets ephemera_returned field to false" do
-              target_object.reload
-              expect(target_object.ephemera_returned).to be false
-            end
-            it "flashes a success message" do
-              expect(flash[:notice]).to match /Physical Object.*was successfully returned/
-            end
-            it "redirects to return_bin action" do
-              expect(response).to redirect_to return_bin_return_path(bin.id)
+            context "when successful" do
+              before(:each) do
+                target_object.has_ephemera = false
+                target_object.save!
+                patch_action
+              end
+              it "assigns @bin" do
+                expect(assigns(:bin)).to eq bin
+              end
+              it "updates the workflow status" do
+                expect(target_object.current_workflow_status).not_to eq "Unpacked"
+                target_object.reload
+                expect(target_object.current_workflow_status).to eq "Unpacked"
+              end
+              it "sets ephemera_returned field to false" do
+                target_object.reload
+                expect(target_object.ephemera_returned).to be false
+              end
+              it "flashes a success message" do
+                expect(flash[:notice]).to match /Physical Object.*was successfully returned/
+              end
+              it "redirects to return_bin action" do
+                expect(response).to redirect_to return_bin_return_path(bin.id)
+              end
             end
           end
 	  context "with ephemera," do
@@ -331,21 +377,36 @@ describe ReturnsController do
     context "with all bins Unpacked" do
       before(:each) do
         bin.current_workflow_status = "Unpacked"
-        bin.save
+        bin.save!
         batch.current_workflow_status = "Returned"
-        batch.save
-        patch_action
+        batch.save!
       end
-      it "updates the batch status to Complete" do
-        expect(batch.current_workflow_status).not_to eq "Complete"
-        batch.reload
-        expect(batch.current_workflow_status).to eq "Complete"
+      context "when successful" do
+        before(:each) { patch_action }
+        it "updates the batch status to Complete" do
+          expect(batch.current_workflow_status).not_to eq "Complete"
+          batch.reload
+          expect(batch.current_workflow_status).to eq "Complete"
+        end
+        it "flashes a success notice" do
+          expect(flash[:notice]).to match /success/
+        end
+        it "redirects to returns_path" do
+          expect(response).to redirect_to returns_path
+        end
       end
-      it "flashes a success notice" do
-        expect(flash[:notice]).to match /success/
-      end
-      it "redirects to returns_path" do
-        expect(response).to redirect_to returns_path
+      context "when failed" do
+        before(:each) do
+          batch.identifier = nil
+          batch.save!(validate: false)
+          patch_action
+        end
+        it "flashes error warning" do
+          expect(flash[:warning]).to match /error/
+        end
+        it "redirects to return_bins_return_path for batch" do
+          expect(response).to redirect_to return_bins_return_path(batch)
+        end
       end
     end
     context "with NOT all bins Unpacked" do

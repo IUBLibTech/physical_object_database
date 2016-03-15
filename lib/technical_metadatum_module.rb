@@ -4,6 +4,8 @@
 # Including classes update the instance variables, which must be set
 # as constants by calling set_tm_constants.
 # The last 2 lines of this file take care of this, after the module is loaded.
+#
+# RSpec testing is via shared shared examples call in including models
 module TechnicalMetadatumModule
 
   TMM_ERROR_CODE = 1000
@@ -224,10 +226,6 @@ module TechnicalMetadatumModule
 
   def TechnicalMetadatumModule.format_auto_accept_days(format)
     GENRE_AUTO_ACCEPT_DAYS[tm_genres[format]]
-  end
-
-  def auto_accept_days
-    TechnicalMetadatumModule.format_auto_accept_days(format)
   end
 
   def provenance_requirements

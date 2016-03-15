@@ -20,7 +20,7 @@ gem "nested_form"
 #gem 'simple_enum'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.1.0'
+gem 'rails', '~> 4.2.0'
 
 # Use mysql as the database for Active Record
 # hold back mysql2 gem as newer ones are actually broken with newer activerecord
@@ -83,7 +83,7 @@ group :development, :test do
   #allows capybara access to session variable
   gem 'rack_session_access'
   gem 'rspec-rails'
-  gem 'debugger'
+  gem 'byebug'
 end
 
 group :development do

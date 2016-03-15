@@ -16,7 +16,6 @@ class Bin < ActiveRecord::Base
 	before_destroy :remove_physical_objects, prepend: true
   after_save :set_container_format
         include WorkflowStatusModule
-        extend WorkflowStatusQueryModule
         has_many :condition_statuses, :dependent => :destroy
         accepts_nested_attributes_for :condition_statuses, allow_destroy: true
         include ConditionStatusModule

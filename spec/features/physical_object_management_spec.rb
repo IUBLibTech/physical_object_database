@@ -1,5 +1,3 @@
-require "rails_helper"
-
 feature "Physical Object management" do
 
   context "unauthenticated user" do

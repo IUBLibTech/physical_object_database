@@ -9,6 +9,7 @@ describe Box do
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
   let(:open_reel) { FactoryGirl.create :physical_object, :open_reel, :barcoded, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
+  let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
 
   describe "FactoryGirl" do
     it "gets a valid object by default" do
@@ -177,6 +178,91 @@ describe Box do
     end
   end
 
+  include_examples "default_values examples", { full: false, description: '' } do
+    let(:target_object) { valid_box }
+  end
 
+  describe "#set_format_from_container" do
+    context "with a format already set" do
+      before(:each) { valid_box.format = "CD-R" }
+      it "returns nil" do
+        expect(valid_box.set_format_from_container).to be_nil
+      end
+    end
+    context "without a format" do
+      before(:each) { expect(valid_box.format).to be_nil }
+      context "with no bin" do
+        before(:each) { expect(valid_box.bin).to be_nil }
+        it "returns nil" do
+          expect(valid_box.set_format_from_container).to be_nil
+        end
+      end
+      context "with an assigned bin" do
+        before(:each) { valid_box.bin = bin }
+        context "without a format" do
+          before(:each) { bin.format = nil }
+          it "returns nil" do
+            expect(valid_box.set_format_from_container).to be_nil
+          end
+        end
+        context "with a format" do
+          before(:each) { bin.format = "CD-R" }
+          it "assigns the bin format to the box" do
+            expect(valid_box.set_format_from_container).to eq bin.format
+            expect(valid_box.format).to eq bin.format
+          end
+        end
+      end
+    end
+  end
+
+  describe "#validate_bin_container" do
+    context "with no bin" do
+      before(:each) { expect(valid_box.bin).to be_nil }
+      it "returns nil" do
+        expect(valid_box.validate_bin_container).to be_nil
+        expect(valid_box.errors).to be_empty
+      end
+    end
+    context "with an bin with objects" do
+      before(:each) { valid_box.bin = bin; binned_object }
+      it "adds error" do
+        expect(valid_box.validate_bin_container).not_to be_nil
+        expect(valid_box.errors.full_messages.first).to match /contains physical objects/
+      end
+    end
+    context "with an empty bin" do
+      before(:each) { valid_box.bin = bin; bin.format }
+      context "with an unformatted bin" do
+        before(:each) { bin.format = nil }
+        it "returns nil" do
+          expect(valid_box.validate_bin_container).to be_nil
+          expect(valid_box.errors).to be_empty
+        end
+      end
+      context "with a formatted bin" do
+        context "with no box format" do
+          before(:each) { bin.format = "CD-R" }
+          it "returns error" do
+            expect(valid_box.validate_bin_container).not_to be_nil
+            expect(valid_box.errors.full_messages.first).to match /must have a format/
+          end
+        end
+        context "with mismatching format" do
+          before(:each) { bin.format = "CD-R"; valid_box.format = "CD-R" }
+          it "returns nil" do
+            expect(valid_box.validate_bin_container).to be_nil
+            expect(valid_box.errors).to be_empty
+          end
+        end
+        context "with mismatching format" do
+          before(:each) { bin.format = "Betacam"; valid_box.format = "CD-R" }
+          it "returns error" do
+            expect(valid_box.validate_bin_container.first).to match /different format/
+          end
+        end
+      end
+    end
+  end
 end
 

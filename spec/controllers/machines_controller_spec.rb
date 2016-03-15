@@ -1,6 +1,3 @@
-# Machines is table with seed data, protected from automated test cleanup
-# Manual record deletion is necessary for each test, where applicable
-#
 describe MachinesController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
@@ -123,12 +120,27 @@ describe MachinesController do
   describe "DELETE #destroy" do
     let(:delete_destroy) { delete :destroy, id: machine.id }
     before(:each) { machine }
-    it "destroys the requested machine" do
-      expect { delete_destroy }.to change(Machine, :count).by(-1)
+    context "when failed" do
+      before(:each) do
+        FactoryGirl.create :machine_format, machine: machine, format: "CD-R"
+        FactoryGirl.create :processing_step, :with_formats, machine: machine, formats: ["CD-R"]
+      end
+      it "does not destroy the requested machine" do
+        expect { delete_destroy }.not_to change(Machine, :count)
+      end
+      it "renders the show template" do
+        delete_destroy
+        expect(response).to render_template :show
+      end
     end
-    it "redirects to the machines list" do
-      delete_destroy
-      expect(response).to redirect_to(machines_path)
+    context "when successful" do
+      it "destroys the requested machine" do
+        expect { delete_destroy }.to change(Machine, :count).by(-1)
+      end
+      it "redirects to the machines list" do
+        delete_destroy
+        expect(response).to redirect_to(machines_path)
+      end
     end
   end
 

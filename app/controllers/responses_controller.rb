@@ -128,7 +128,6 @@ class ResponsesController < ActionController::Base
       end
     rescue => e
       o = e.message << e.backtrace.join("\n")
-      #puts o
       @success = false
       @message = "Something went wrong while parsing DigitizingEntity and/or ManualCheck: \n#{o}"
     end
@@ -232,7 +231,7 @@ class ResponsesController < ActionController::Base
   end
 
   def digitizing_entity
-    @success = ! @physical_object.nil?
+    @success = !@physical_object.nil?
     if @success
       @message = @physical_object.digital_provenance.digitizing_entity.nil? ? "Digitizing entity not set" : @physical_object.digital_provenance.digitizing_entity
     else
@@ -242,19 +241,18 @@ class ResponsesController < ActionController::Base
   end
 
   def avalon_url
-    gk = GroupKey.find(params[:group_key_id])
+    gk = GroupKey.where(id: params[:group_key_id]).first
     unless gk.nil?
       if request.post?
-        xml = request.body.read
-        doc = Nokogiri::XML(xml).remove_namespaces!
-        url = doc.css("pod data avalonUrl").first.content
         begin
+          xml = request.body.read
+          doc = Nokogiri::XML(xml).remove_namespaces!
+          url = doc.css("pod data avalonUrl").first.content
           gk.update_attributes!(avalon_url: url)
           @success = true
           @message = "Successfully set avalon url for Group Key: #{gk.group_identifier} to: #{gk.avalon_url}"
         rescue => e
           o = e.message << e.backtrace.join("\n")
-          #puts o
           @success = false
           @message = "Something went wrong trying to set the avalon url: \n#{o}"
         end

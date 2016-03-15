@@ -1,3 +1,4 @@
+# RSpec testing: ???
 module HeadlessPolicyModule
   attr_reader :user, :record
 

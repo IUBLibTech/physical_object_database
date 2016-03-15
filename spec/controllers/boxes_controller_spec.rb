@@ -116,6 +116,20 @@ describe BoxesController do
   end
 
   describe "POST create" do
+    context "for a bin" do
+      let(:creation) { post :create, bin_id: bin.id, box: valid_box.attributes.symbolize_keys }
+      it "saves the new object in the database" do
+        expect{ creation }.to change(Box, :count).by(1)
+      end
+      it "assigns the new Box to the specified Bin" do
+        creation
+        expect(Box.last.bin).to eq bin
+      end
+      it "redirects to the object" do
+        creation
+        expect(response).to redirect_to assigns(:box)
+      end
+    end
     context "with valid attributes" do
       let(:creation) { post :create, box: valid_box.attributes.symbolize_keys }
       it "saves the new object in the database" do
@@ -214,8 +228,8 @@ describe BoxesController do
       end
       context "when binned, but in a different bin" do
         before(:each) { put :unbin, id: binned_box, bin_id: other_bin.id }
-	it "flashes a different association notice" do
-	  expect(flash[:notice]).to match /different/
+	it "flashes a different association warning" do
+	  expect(flash[:warning]).to match /different/
 	end
 	it "redirects to the bin" do
 	  expect(response).to redirect_to other_bin
@@ -223,8 +237,8 @@ describe BoxesController do
       end
       context "when not in a bin" do
         before(:each) { put :unbin, id: box.id, bin_id: bin.id }
-        it "flashes a not associated notice" do
-          expect(flash[:notice]).to match /not associated/
+        it "flashes a not associated warning" do
+          expect(flash[:warning]).to match /not associated/
         end
         it "redirects to the bin" do
           expect(response).to redirect_to bin
@@ -233,22 +247,42 @@ describe BoxesController do
     end
     context "not specifying a bin" do
       context "when binned" do
-        before(:each) { put :unbin, id: binned_box.id }
-        it "unbins the box" do
-          binned_box.reload
-          expect(binned_box.bin).to be_nil
+        context "when successful" do
+          before(:each) { put :unbin, id: binned_box.id }
+          it "unbins the box" do
+            binned_box.reload
+            expect(binned_box.bin).to be_nil
+          end
+          it "flashes a success notice" do
+            expect(flash[:notice]).to match /Success/
+          end
+          it "redirects to the box" do
+            expect(response).to redirect_to binned_box
+          end
         end
-        it "flashes a success notice" do
-          expect(flash[:notice]).to match /Success/
-        end
-        it "redirects to the box" do
-          expect(response).to redirect_to binned_box
+        context "when failed" do
+          before(:each) do
+            binned_box.mdpi_barcode = 42
+            binned_box.save!(validate: false)
+            put :unbin, id: binned_box.id
+          end
+          it "does not unbin the box" do
+            binned_box.reload
+            expect(binned_box.bin).not_to be_nil
+          end
+          it "flashes a failure warning" do
+            expect(flash[:warning]).to match /fail/i
+          end
+          it "redirects to the box" do
+            expect(response).to redirect_to binned_box
+          end
+
         end
       end
       context "when not in a bin" do
         before(:each) { put :unbin, id: box.id }
-        it "flashes a not associated notice" do
-          expect(flash[:notice]).to match /not associated/
+        it "flashes a not associated warning" do
+          expect(flash[:warning]).to match /not associated/
         end
         it "redirects to the box" do
           expect(response).to redirect_to box

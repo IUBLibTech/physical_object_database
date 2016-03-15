@@ -7,9 +7,11 @@ class StagingPercentagesController < ApplicationController
 
 	def update
 		@percentage = StagingPercentage.find(params[:id])
-		success = @percentage.update_attributes(staging_percentage_params)
-		flash.now[:notice] = "#{@percentage.format} updated. Memnon: #{@percentage.memnon_percent}%, IU: #{@percentage.iu_percent}%" if success
-		flash.now[:warning] = "#{@percentage.format} could not be saved" if !success
+		if @percentage.update_attributes(staging_percentage_params)
+			flash.now[:notice] = "#{@percentage.format} updated. Memnon: #{@percentage.memnon_percent}%, IU: #{@percentage.iu_percent}%"
+		else
+			flash.now[:warning] = "#{@percentage.format} could not be saved"
+		end
 		@percentages = StagingPercentage.all.order(:format)
 		render :index
 	end
@@ -30,11 +32,5 @@ class StagingPercentagesController < ApplicationController
 	def staging_percentage_params
 		params.require(:staging_percentage).permit(:memnon_percent, :iu_percent)
 	end
-
-	def error_messages_for(object)
-		render(partial: 'application/error_messages', locals: {object: object})
-	end
-
-
 
 end

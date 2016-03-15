@@ -6,6 +6,8 @@
 # Object controller should permit :current_workflow_status as a param
 # WorkflowStatusTemplate model should have belongs_to :object reference
 # workflow_status_templates table should have object_id field
+#
+# RSpec testing is via shared shared examples call in including models
 module WorkflowStatusModule
 
   def assign_default_workflow_status
@@ -28,7 +30,6 @@ module WorkflowStatusModule
     workflow_status_template = WorkflowStatusTemplate.find_by(name: workflow_status_name, object_type: self.class_title)
     if workflow_status_template.nil?
       raise RuntimeError, "Status value of \"#{workflow_status_name}\" cannot be assigned to a #{self.class_title}"
-      return nil
     end
     self.workflow_status = workflow_status_name
     self.workflow_index = workflow_status_template.sequence_index

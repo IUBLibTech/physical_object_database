@@ -76,17 +76,15 @@ class BoxesController < ApplicationController
 
   def unbin
     if @box.bin.nil?
-      flash[:notice] = "<strong>Box was not associated to a Bin.</strong>".html_safe
+      flash[:warning] = "Box was not associated to a Bin.".html_safe
     elsif @bin and @box.bin != @bin
-      flash[:notice] = "<strong>Box is associated to a different Bin. </strong>".html_safe
+      flash[:warning] = "Box is associated to a different Bin.".html_safe
     else 
       @box.bin = nil
       if @box.save
 	flash[:notice] = "<em>Successfully removed Box from Bin.</em>".html_safe
-        # physical_objects in the box would have been associated with the bin as well
-        PhysicalObject.where(box_id: @box.id).update_all(bin_id: nil)
       else
-        flash[:notice] = "<strong>Failed to remove this Box from Bin.</strong>".html_safe
+        flash[:warning] = "Failed to remove this Box from Bin.".html_safe
       end
     end
     unless @bin.nil?

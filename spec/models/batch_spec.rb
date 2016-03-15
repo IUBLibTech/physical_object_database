@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Batch do
 
   let(:batch) { FactoryGirl.create :batch }
@@ -27,7 +25,7 @@ describe Batch do
     end
   end
 
-  include_examples "destination module examples", FactoryGirl.build(:batch)
+  include_examples "includes DestinationModule", FactoryGirl.build(:batch)
 
   describe "has required fields:" do
     it "requires an identifier" do
@@ -296,12 +294,18 @@ describe Batch do
 
   status_list = ["Created", "Assigned", "Shipped", "Interim Storage", "Returned", "Complete"]
   # pass status_list arg here to test previous/next methods
-  it_behaves_like "includes Workflow Status Module", status_list do
+  it_behaves_like "includes WorkflowStatusModule", status_list do
     let(:object) { valid_batch }
     let(:default_status) { "Created" }
     let(:new_status) { "Assigned" }
     let(:valid_status_values) { status_list }
     let(:class_title) { "Batch" }
+  end
+
+  describe "::packed_status_message" do
+    it "returns a message that the Batch is past Created status" do
+      expect(Batch.packed_status_message).to match /This batch cannot have.*bins assigned/
+    end
   end
 
 end

@@ -1,4 +1,5 @@
 # adds authorization methods for all public instance methods
+# RSpec testing: ???
 module PolicyModule
   def self.included(base)
     if base.const_defined?(:POLICY_CONTROLLER) && base.const_get(:POLICY_CONTROLLER).respond_to?(:instance_methods)

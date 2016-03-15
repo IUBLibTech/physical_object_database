@@ -1,5 +1,6 @@
 # Provides class methods for physical objects, technical metadatum types.
 #
+# RSpec testing is via shared shared examples call in extending models
 module TechnicalMetadatumClassModule
 
    # overridden to provide for more human readable attribute names for things like :sample_rate_32k

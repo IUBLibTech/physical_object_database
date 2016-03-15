@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Unit do
 
   let(:unit) { FactoryGirl.create :unit }

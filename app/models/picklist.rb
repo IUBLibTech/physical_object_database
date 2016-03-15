@@ -17,7 +17,7 @@ class Picklist < ActiveRecord::Base
 	end
 
 	def all_packed?
-		return PhysicalObject.where("picklist_id = #{id} and (bin_id is null and box_id is null)").size == 0
+		physical_objects.where(bin_id: [0, nil]).where(box_id: [0, nil]).empty?
 	end
 
 	def packable_unpacked_objects?

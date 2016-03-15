@@ -4,9 +4,10 @@ class SpreadsheetsController < ApplicationController
   before_action :set_associated_objects, only: [:show]
   before_action :set_modified_objects, only: [:show, :destroy]
 
+  #no new action permitted, but listed here for policy checking for upload_show action
   def new
-    flash[:warning] = "You must create a new spreadsheet via upload action."
-    redirect_to action: :index
+    flash[:warning] = "New action not permitted for spreadsheets"
+    redirect_to :index
   end
 
   def index
