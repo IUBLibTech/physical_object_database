@@ -30,6 +30,10 @@ class SearchController < ApplicationController
     @controller = 'search'
     @action = "advanced_search"
     @physical_object.attributes.keys.each { |att| @physical_object[att] = nil }
+    @note = Note.new
+    @note.attributes.keys.each { |att| @note[att] = nil }
+    @condition_status = ConditionStatus.new
+    @condition_status.attributes.keys.each { |att| @condition_status[att] = nil }
   end  
 
   def advanced_search

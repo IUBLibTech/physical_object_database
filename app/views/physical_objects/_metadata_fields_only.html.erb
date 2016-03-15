@@ -218,8 +218,19 @@
         </td>
       </tr>
     </table>
-    <% unless @search_mode %>
-    <%# FIXME: kludge workaround for 1st link_to_add being broken, bug POD-648 %><%# no policy check for just mentioning link_to_add here %>
+    <% if @search_mode %>
+    <div id="condition_statuses_div">
+      <%= fields_for @condition_status do |cs| %>
+        <%= render(partial: 'condition_status_templates/condition_status_fields', locals: { f: cs, target_object: @physical_object }) %>
+      <% end %>
+    </div>
+    <div id="notes_div">
+      <%= fields_for @note do |n| %>
+        <%= render(partial: 'notes/note_fields', locals: { f: n }) %>
+      <% end %>
+    </div>
+    <% else %>
+    <%# FIXME: kludge workaround for 1st link_to_add being broken, bug POD-648 %>
     <% f.fields_for :workflow_statuses do |ws| %>
     <% end %>
     <% f.link_to_add "WS", :workflow_statuses if policy(@physical_object).edit? %>
@@ -243,9 +254,9 @@
     <% end %>
 
     <% if @search_mode %>
-    <div>
+    <div id="hidden_fields_div">
     <% else %>
-    <div class="accordion">
+    <div id="hidden_fields_div" class="accordion">
     <% end %>
       <h2>Hidden Fields</h2>
       <div>
