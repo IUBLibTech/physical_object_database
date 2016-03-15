@@ -256,7 +256,7 @@ describe DigitalFileProvenance do
     end
   end
   describe "#display_date_digitized=(value)" do
-    let!(:time) { Time.now.change(min: 0, sec: 0, usec: 0, nsec: 0) }
+    let!(:time) { Time.now.change(min: 0, sec: 0, nsec: 0) }
     let!(:new_time) { time - 1.days }
     before(:each) { valid_dfp.date_digitized = time }
     context "when value is nil" do

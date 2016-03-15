@@ -6,7 +6,6 @@ class DigitalStatus < ActiveRecord::Base
 	validates :physical_object, presence: true
 	validates :physical_object_mdpi_barcode, presence: true
 	before_validation :set_mdpi_barcode_from_object
-        before_save :nullify_empty_options_hash
 
 	DIGITAL_STATUS_START = "transferred"
 	serialized_empty_hash = "--- {}\n"
@@ -171,12 +170,6 @@ class DigitalStatus < ActiveRecord::Base
     self
   end
 
-	# need to nil out the options hash if there are no options.
-	def nullify_empty_options_hash
-		if self.options && self.options.empty?
-			self.options = nil
-		end
-	end
 	def set_mdpi_barcode_from_object
 		self.physical_object_mdpi_barcode = self.physical_object.mdpi_barcode if self.physical_object && self.physical_object_mdpi_barcode.blank?
 	end

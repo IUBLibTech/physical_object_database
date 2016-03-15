@@ -141,7 +141,7 @@ describe DigitalStatus do
     describe "from_json(json)" do
       before(:each) { valid_ds.attributes.keys.each { |att| valid_ds[att] = nil }; valid_ds.physical_object = nil }
       JSON_TEXT = ""
-      let(:json) { "{\"barcode\":#{mdpi_barcode},\"state\":\"test json state\",\"message\":\"test json message\",\"message\":\"test json message\",\"attention\":\"test json attention\",\"options\":{}}" }
+      let(:json) { "{\"barcode\":#{mdpi_barcode},\"state\":\"test json state\",\"message\":\"test json message\",\"message\":\"test json message\",\"attention\":\"true\",\"options\":{ \"option\": \"result\" }}" }
       shared_examples "from_json examples" do
         it "assigns mdpi_barcode" do
           expect(valid_ds.physical_object_mdpi_barcode).to be_nil
@@ -154,11 +154,18 @@ describe DigitalStatus do
           expect(valid_ds.physical_object).to eq target_object
         end
         describe "assigns attributes from json:" do
-          [:state, :message, :accepted, :attention, :options].each do |att|
+          [:state, :message, :accepted, :attention].each do |att|
             specify att do
               expect(valid_ds[att].to_s).to be_blank
               valid_ds.from_json(json)
               expect(valid_ds[att].to_s).not_to be_blank
+            end
+          end
+          [:options].each do |att|
+            specify att do
+              expect(valid_ds[att]).to be_empty
+              valid_ds.from_json(json)
+              expect(valid_ds[att]).not_to be_empty
             end
           end
         end
@@ -186,7 +193,7 @@ describe DigitalStatus do
 				<data>
 					<state>test state</state>
 					<message>test message</message>
-					<attention>test attention</attention>
+					<attention>true</attention>
 					<options>
 						<option>
 							<state>test option state</state>
@@ -208,11 +215,18 @@ describe DigitalStatus do
           expect(valid_ds.physical_object).to eq target_object
         end
         describe "assigns attributes from xml:" do
-          [:state, :message, :accepted, :attention, :options].each do |att|
+          [:state, :message, :accepted, :attention].each do |att|
             specify att do
               expect(valid_ds[att].to_s).to be_blank
               valid_ds.from_xml(mdpi_barcode, xml)
               expect(valid_ds[att].to_s).not_to be_blank
+            end
+          end
+          [:options].each do |att|
+            specify att do
+              expect(valid_ds[att]).to be_empty
+              valid_ds.from_xml(mdpi_barcode, xml)
+              expect(valid_ds[att]).not_to be_empty
             end
           end
         end
@@ -273,26 +287,6 @@ describe DigitalStatus do
       end
 
     end
-  end
-
-  describe "#nullify_empty_options_hash" do
-    context "with an empty options hash" do
-      before(:each) { valid_ds.options = {} }
-      it "sets options to nil" do
-        expect(valid_ds.options).not_to be_nil
-        valid_ds.nullify_empty_options_hash
-        expect(valid_ds.options).to be_nil
-      end
-    end
-    context "with a non-empty options hash" do
-      before(:each) { valid_ds.options = {foo: :bar} }
-      it "does not nullify options" do
-        expect(valid_ds.options).not_to be_nil
-        valid_ds.nullify_empty_options_hash
-        expect(valid_ds.options).not_to be_nil
-      end
-    end
-
   end
 
 end

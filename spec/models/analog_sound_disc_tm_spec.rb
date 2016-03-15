@@ -65,10 +65,11 @@ describe AnalogSoundDiscTm do
   end
 
   describe "has virtual fields" do
+    let(:year) { '1985' }
     specify "#year" do
-      physical_object = FactoryGirl.create(:physical_object, :lp, year: 1985)
+      physical_object = FactoryGirl.create(:physical_object, :lp, year: year)
       analog_sound_disc_tm.physical_object = physical_object
-      expect(analog_sound_disc_tm.year).to eq 1985
+      expect(analog_sound_disc_tm.year).to eq year
     end
   end
 

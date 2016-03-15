@@ -881,7 +881,7 @@ describe "has required attributes:" do
       end
     end
     context "with a transferred status" do
-      let!(:created_at) { Time.now.change(usec: 0, nsec: 0) }
+      let!(:created_at) { Time.now.change(nsec: 0) }
       before(:each) { barcoded_po.digital_statuses.create!(state: 'transferred', created_at: created_at) }
       { audio: { format: "CD-R", day_count: DigitalStatus::AUTO_ACCEPT_DELAY_DAYS[:audio] },
         video: { format: "Betacam", day_count: DigitalStatus::AUTO_ACCEPT_DELAY_DAYS[:video]}
