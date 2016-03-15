@@ -458,7 +458,7 @@ private
   # query calls (with activerecord-like gem) prevent SQL injection on attribute values
   def self.physical_object_search(search_terms, results_limit = 0)
     format = (search_terms[:physical_object] ? search_terms[:physical_object][:format] : nil)
-    query_results = PhysicalObject.all
+    query_results = PhysicalObject.all.order(:format, :id)
     search_terms.each do |object, terms|
       if terms && terms.any?
         object_table = object.to_s.pluralize.to_sym
