@@ -12,21 +12,11 @@ describe DigitalProvenance, type: :model do
     end
   end
 
-  describe "has required attributes:" do
-    skip "duration" do
-      it "must be present" do
-        valid_dp.duration = nil
-	expect(valid_dp).not_to be_valid
-      end
-    end
-    skip "digitizing entity" do
-      it "must be present" do
-        valid_dp.digitizing_entity = nil
-	expect(valid_dp).not_to be_valid
-      end
-      it "must be in valid inclusion list" do
-        valid_dp.digitizing_entity = "Invalid value"
-	expect(valid_dp).not_to be_valid
+  describe "has optional attributes:" do
+    [:digitizing_entity, :date, :comments, :cleaning_date, :baking, :cleaning_comment, :xml, :duration, :batch_processing_flag].each do |att|
+      specify att do
+        valid_dp.send("#{att}=",nil)
+        expect(valid_dp).to be_valid
       end
     end
   end
@@ -44,8 +34,23 @@ describe DigitalProvenance, type: :model do
   end
 
   describe "#complete?" do
-    it "returns a Boolean" do
-      expect(valid_dp.complete?).to be_in [true, false]
+    context "when all required fields are present" do
+      it "returns true" do
+        expect(valid_dp.complete?).to eq true
+      end
+    end
+    context "when any required fields are missing" do
+      before(:each) { valid_dp.duration = nil }
+      it "returns false" do
+        expect(valid_dp.complete?).to eq false
+      end
+    end
+    
+  end
+
+  describe "#digitizing_entity_values" do
+    it "returns the class constant" do
+      expect(valid_dp.digitizing_entity_values).to eq DigitalProvenance::DIGITIZING_ENTITY_VALUES
     end
   end
 

@@ -1,9 +1,8 @@
 class PhysicalObject < ActiveRecord::Base
   XML_INCLUDE = [:group_total, :carrier_stream_index, :current_workflow_status]
-  XML_EXCLUDE = [:container_id, :box_id, :bin_id, :picklist_id, :spreadsheet_id, :unit_id, :workflow_index, :group_key_id, :workflow_status, :format_duration]
+  XML_EXCLUDE = [:box_id, :bin_id, :picklist_id, :spreadsheet_id, :unit_id, :workflow_index, :group_key_id, :workflow_status, :format_duration]
   include XMLExportModule
   include WorkflowStatusModule
-  extend WorkflowStatusQueryModule
   include ConditionStatusModule
   include ActiveModel::Validations
   include TechnicalMetadatumModule
@@ -23,7 +22,6 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :bin
   belongs_to :group_key
   belongs_to :picklist
-  belongs_to :container
   belongs_to :spreadsheet
   belongs_to :unit
   
@@ -46,12 +44,6 @@ class PhysicalObject < ActiveRecord::Base
   STAGING_UNDO = 0
   # list of workflow statuses where ephemera (if persent) should be returned
   EPHEMERA_RETURNED_STATUSES = ["Unpacked", "Returned to Unit"]
-
-  scope :packing_sort, lambda { order(:call_number, :group_key_id, :group_position, :id) }
-  scope :unpacked, lambda { where(bin_id: nil, box_id: nil) }
-  scope :unpacked_or_id, lambda { |object_id| where("(bin_id is null and box_id is null) or id = ?", object_id) }
-  scope :packed, lambda { where("physical_objects.bin_id > 0 OR physical_objects.box_id > 0") }
-  scope :blocked, lambda { joins(:condition_statuses).where(condition_statuses: {active: true, condition_status_template_id: ConditionStatusTemplate.blocking_ids}).includes(:condition_statuses) }
 
   # this hash holds the human reable attribute name for this class
   HUMANIZED_COLUMNS = {
@@ -91,79 +83,40 @@ class PhysicalObject < ActiveRecord::Base
   validate :validate_ephemera_values, if: :ephemera_returned
 
   accepts_nested_attributes_for :technical_metadatum
-  scope :search_by_catalog, lambda {|query| where(["call_number = ?", query, query])}
-  scope :search_by_barcode, lambda {|barcode| where(["mdpi_barcode = ? OR iucat_barcode = ?", barcode, barcode])}
-  scope :search_id, lambda {|i| 
-    where(['mdpi_barcode = ? OR iucat_barcode = ? OR call_number like ?', i, i, i, i])
-  }
+
+  scope :packing_sort, lambda { order(:call_number, :group_key_id, :group_position, :id) }
+  scope :unpacked, lambda { where(bin_id: nil, box_id: nil) }
+  scope :unpacked_or_id, lambda { |object_id| where("(bin_id is null and box_id is null) or id = ?", object_id) }
+  scope :packed, lambda { where("physical_objects.bin_id > 0 OR physical_objects.box_id > 0") }
+  scope :blocked, lambda { joins(:condition_statuses).where(condition_statuses: {active: true, condition_status_template_id: ConditionStatusTemplate.blocking_ids}).includes(:condition_statuses) }
   scope :search_by_barcode_title_call_number, lambda { |query|
     query = "%#{query}%"
     where("mdpi_barcode like ? or call_number like ? or title like ?", query, query, query)
   }
-  scope :advanced_search, lambda {|po| 
-    po.physical_object_query(false)
-  }
-
   scope :unstaged_formats_by_date_entity, lambda { |date, entity|
-    PhysicalObject.joins(:digital_provenance).where("digitizing_entity = '#{entity}'").
-        where(digital_start: date..(date + 1.day), staging_requested: false).pluck(:format).uniq
+    PhysicalObject.joins(:digital_provenance).where(digital_provenances: {digitizing_entity: entity}).where(digital_start: date..(date + 1.day), staging_requested: false).pluck(:format).uniq
   }
-
   scope :unstaged_by_date_format_entity, lambda { |date, format, entity|
-     PhysicalObject.joins(:digital_provenance).where("digitizing_entity = '#{entity}'").
-         where("digital_start is not null").
-         where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
+     PhysicalObject.joins(:digital_provenance).where(digital_provenances: {digitizing_entity: entity}).where.not(digital_start: nil).where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
    }
-
-  # This scope grabs all formats, for all unstaged physical objects whose digitization_start timestamp is within 24 hrs of the specified date
-  # scope :unstaged_by_date_formats, lambda { |date|
-  #   PhysicalObject.where(staging_requested: false).where(datesql(date)).pluck(:format)
-  # }
-  # this scope grabs all physical objects of the specified format whose digital_start timestamp is within 24 hrs of the specified date
-  # scope :unstaged_by_date_by_format, lambda { |date, format|
-  #   PhysicalObject.where(staging_requested: false, format: format).where(datesql(date)).order("RAND()")
-  # }
-  # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by Memnon
-  # scope :memnon_unstaged_by_date_formats, lambda{ |date|
-  #   PhysicalObject.joins(:digital_provenance).where('staging_requested = false').where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format).uniq
-  # }
-  # this scope grabs all unstaged physical objects of the specified format whose digital_start timestamp is with 24 hrs of the specified date
-  # AND whose digitizing entity is Memnon
-  # scope :memnon_unstaged_by_date_and_format, lambda { |date, format|
-  #   PhysicalObject.joins(:digital_provenance).
-  #     where("digital_provenances.digitizing_entity = '#{DigitalProvenance::MEMNON_DIGITIZING_ENTITY}'").
-  #     where(digital_start:date..(date + 1.day), staging_requested: false, format: "Open Reel Audio Tape").order("RAND()")
-  # }
-  # This scope selects all formats for unstaged physical objects on the specified date that have been digitized by IU
-  # scope :iu_unstaged_by_date_formats, lambda{ |date|
-  #   PhysicalObject.includes(:digital_statuses).joins(:digital_provenance).where(staging_requested: false).where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").where(datesql(date)).pluck(:format).uniq
-  # }
-  # This scope selects all unstaged physical objects of the specified format, whose digital_start timestamp is within 24hrs of the specified date
-  # AND whose digitizing entity is IU
-  # scope :iu_unstaged_by_date_and_format, lambda { |date, format|
-  #    PhysicalObject.joins(:digital_provenance).
-  #     where("digital_provenances.digitizing_entity = '#{DigitalProvenance::IU_DIGITIZING_ENTITY}'").
-  #     where(digital_start:date..(date + 1.day), staging_requested: false, format: "Open Reel Audio Tape").order("RAND()")
-  # }
-
 
   attr_accessor :generation_values
   def generation_values
     GENERATION_VALUES
   end
 
+  #used in testing
   def init_start_digital_status
     if ApplicationHelper.real_barcode?(self.mdpi_barcode)
-      start = DigitalStatus.new(
-        physical_object_id: self.id, 
+      start = self.digital_statuses.new(
         physical_object_mdpi_barcode: self.mdpi_barcode, 
         state: DigitalStatus::DIGITAL_STATUS_START, 
         message: "I'm starting!",
         options: nil,
         attention: false)
       self.digital_start = DateTime.now
-      self.save
-      start.save
+      self.save!
+      start.save!
     else
       raise "Cannot create a start digital status for PhysicalObject without a barcode"
     end
@@ -179,6 +132,10 @@ class PhysicalObject < ActiveRecord::Base
     self.group_key.group_total
   end
 
+  def auto_accept_days
+    TechnicalMetadatumModule.format_auto_accept_days(format)
+  end
+
   def auto_accept
     digital_start ? (digital_start + auto_accept_days.days) : nil
   end
@@ -188,20 +145,6 @@ class PhysicalObject < ActiveRecord::Base
       group_identifier + "_1_1"
     else
       self.group_key.group_identifier + "_" + self.group_position.to_s + "_" + self.group_key.group_total.to_s
-    end
-  end
-
-  def active_blockers
-    condition_statuses.select { |cs| cs.active and cs.condition_status_template.blocks_packing = true }
-  end
-
-  def container_id
-    if !box.nil?
-      box.id
-    elsif !bin.nil?
-      bin.id
-    else
-      nil
     end
   end
 
@@ -238,10 +181,6 @@ class PhysicalObject < ActiveRecord::Base
     unit.home + ". " + unit.name + "."
   end
 
-  def format_class
-    return TechnicalMetadatumModule.tm_format_classes[self.format]
-  end
-
   def self.to_csv(physical_objects, picklist = nil)
     CSV.generate do |csv|
       unless picklist.nil?
@@ -265,10 +204,11 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def expires
-    start = self.digital_statuses.where("state='transferred'").order(created_at: :desc).first
+    start = self.digital_statuses.where(state: 'transferred').order(created_at: :desc).first
     unless start.nil?
       start = start.created_at
-      start += 40.days
+      delay = DigitalStatus::AUTO_ACCEPT_DELAY_DAYS[TechnicalMetadatumModule.tm_genres[self.format]]
+      start += delay.to_i.days
     end
     start
   end
@@ -333,16 +273,27 @@ class PhysicalObject < ActiveRecord::Base
  
   # omit_picklisted Boolean adds search term to that effect
   def physical_object_query(omit_picklisted, additional_terms = {}, results_limit = 0)
-    symbolize = lambda { |h| h.inject({}){ |hash, (k,v)| hash.merge(k.to_sym => v) } }
     filter_blanks = lambda { |h| h.select{ |k,v| !v.to_s.blank? } }
     filter_forbidden = lambda { |h| h.delete_if { |k,v| k.in? [:id, :created_at, :updated_at, :physical_object_id] } }
-    get_terms = lambda { |atts| filter_forbidden.call(symbolize.call(filter_blanks.call(atts))) }
+    get_terms = lambda { |atts| filter_forbidden.call(filter_blanks.call(atts.symbolize_keys)) }
 
     po_terms = get_terms.call(self.attributes)
     po_terms = po_terms.merge({ picklist_id: [0, nil]}) if omit_picklisted
     po_terms = po_terms.merge(get_terms.call(additional_terms.delete(:association))) if additional_terms[:association]
     tm_terms = (self.ensure_tm ? get_terms.call(self.ensure_tm.attributes) : {})
     search_terms = additional_terms.merge({ physical_object: po_terms, technical_metadatum: tm_terms })
+    PhysicalObject.physical_object_search(search_terms, results_limit)
+  end
+
+  #class version does not pass through po, tm object
+  def PhysicalObject.physical_object_query(search_terms = {}, results_limit = 0)
+    filter_blanks = lambda { |h| h.select{ |k,v| !v.to_s.blank? } }
+    filter_forbidden = lambda { |h| h.delete_if { |k,v| k.in? [:id, :created_at, :updated_at, :physical_object_id] } }
+    get_terms = lambda { |atts| filter_forbidden.call(filter_blanks.call(atts.symbolize_keys)) }
+
+    search_terms.each do |object, terms|
+      search_terms[object] = get_terms.call(terms)
+    end 
     PhysicalObject.physical_object_search(search_terms, results_limit)
   end
 
@@ -366,7 +317,7 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def ensure_digiprov
-    self.digital_provenance ||= DigitalProvenance.new(physical_object_id: self.id) 
+    self.digital_provenance ||= DigitalProvenance.new(physical_object: self) 
     self.digital_provenance
   end
 
@@ -421,10 +372,6 @@ class PhysicalObject < ActiveRecord::Base
     elsif bin && bin.format.blank?
       bin.format = format; bin.save
     end
-  end
-
-  def display_date_billed
-    date_billed.in_time_zone.strftime("%m/%d/%Y")
   end
 
   def destroy_empty_group
@@ -497,11 +444,6 @@ assigned to a box."
     self.box ? self.box.bin : self.bin
   end
 
-
-  # def self.datesql(date)
-  #   date.blank? ? "" : "DATEDIFF(physical_objects.digital_start, '#{date}') = 0"
-  # end
-
   # See DigitalFileProvenance::FILE_USE_VALUES for list of valid use codes
   def generate_filename(sequence: 1, use: 'pres', extension: nil)
     sequence ||= self.digital_provenance.digital_file_provenances.size + 1 if self.digital_provenance
@@ -511,13 +453,12 @@ assigned to a box."
     "MDPI_#{self.mdpi_barcode}_#{sequence.to_s.rjust(2, "0")}_#{use}.#{extension}"
   end
 
-  private
-  # omit_picklisted Boolean adds search term to that effect
+private
   # strong parameters in controller prevent SQL injection on attribute names, and ActiveRecord
   # query calls (with activerecord-like gem) prevent SQL injection on attribute values
   def self.physical_object_search(search_terms, results_limit = 0)
     format = (search_terms[:physical_object] ? search_terms[:physical_object][:format] : nil)
-    query_results = PhysicalObject.all
+    query_results = PhysicalObject.all.order(:format, :id)
     search_terms.each do |object, terms|
       if terms && terms.any?
         object_table = object.to_s.pluralize.to_sym
@@ -552,7 +493,6 @@ assigned to a box."
     query_results
   end
 
-  private
   def self.tm_table_name(format)
     table_name = TechnicalMetadatumModule.tm_table_names[format]
     unless table_name.nil?
@@ -566,12 +506,11 @@ assigned to a box."
     PhysicalObject.tm_table_name(format)
   end
 
-  private 
   def default_values
     self.generation ||= ""
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
-    self.digital_provenance ||= DigitalProvenance.new(physical_object_id: self.id)
+    self.ensure_digiprov
   end
 
 end

@@ -24,7 +24,7 @@
       <%= f.fields_for :signal_chain_formats do |signal_chain_format| %>
          <%= render 'signal_chain_format', f: signal_chain_format %>
       <% end %>
-      <%= f.link_to_add "Add a format", :signal_chain_formats %>
+      <%= f.link_to_add "Add a format", :signal_chain_formats if policy(@signal_chain).edit? %>
     </div>
     <div class="actions">
       <%= f.submit(@submit_text) %>

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe BetacamTm do
   let(:betacam) { FactoryGirl.create :betacam_tm, :valid }
   let(:valid_betacam) { FactoryGirl.build :betacam_tm, :valid }
@@ -36,9 +34,8 @@ describe BetacamTm do
     end
   end
 
-  it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:betacam_tm, :valid)
-  it_behaves_like "includes year module behaviors", FactoryGirl.build(:betacam_tm, :valid)
-
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:betacam_tm, :valid)
+  it_behaves_like "includes YearModule", FactoryGirl.build(:betacam_tm, :valid)
 
   describe "#master_copies" do
     it "returns 1" do

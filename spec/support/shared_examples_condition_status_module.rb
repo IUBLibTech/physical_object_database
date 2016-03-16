@@ -1,7 +1,7 @@
 # requires let statements:
 #  condition_status, target_object, class_title
 
-shared_examples "includes ConditionStatusModule:" do
+shared_examples "includes ConditionStatusModule" do
     it "#class_title returns object's class title" do
       expect(target_object.class_title).to eq class_title
     end

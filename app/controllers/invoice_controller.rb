@@ -7,10 +7,10 @@ class InvoiceController < ApplicationController
 	def submit
 		upload = params[:xls_file]
 		if params[:xls_file].blank?
-			flash.now[:notice] = "Please select an invoice to validate."
+			flash.now[:warning] = "Please select an invoice to validate."
 			render('invoice/index')
 		else
-			invoice = MemnonInvoiceSubmission.where("filename = ? AND successful_validation = true", upload.original_filename).first
+			invoice = MemnonInvoiceSubmission.where(filename: upload.original_filename, successful_validation: true).first
 			if invoice
 				flash[:warning] = "#{upload.original_filename} was previously submitted successfully on #{invoice.submission_date.strftime("%m/%d/%Y %l:%M%P")}! Validation aborted..."
 			else
@@ -30,7 +30,7 @@ class InvoiceController < ApplicationController
 	private
 	def set_submissions
 		@file = ""
-		@submissions = MemnonInvoiceSubmission.all().order("submission_date DESC")
+		@submissions = MemnonInvoiceSubmission.all.order(submission_date: :desc)
 		authorize :invoice
 	end
 

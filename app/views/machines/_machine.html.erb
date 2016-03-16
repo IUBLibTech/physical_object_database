@@ -29,7 +29,7 @@
       <%= f.fields_for :machine_formats do |machine_format| %>
          <%= render 'machine_format', f: machine_format %>
       <% end %>
-      <%= f.link_to_add "Add a format", :machine_formats %>
+      <%= f.link_to_add "Add a format", :machine_formats if policy(@machine).edit? %>
     </div>
     <%= f.submit(@submit_text) %>
   <% end %>

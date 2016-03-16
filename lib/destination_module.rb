@@ -1,5 +1,6 @@
 # Adds destination as required attribute, and lookups for select values
 #
+# RSpec testing is via shared shared examples call in including models
 module DestinationModule
 
   DESTINATION_VALUES = { "IU" => "IU", "Memnon" => "Memnon" }

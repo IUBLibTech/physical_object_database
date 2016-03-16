@@ -50,7 +50,7 @@ class BatchesController < ApplicationController
       flash[:notice] = "<i>#{@batch.identifier}</i> successfully destroyed".html_safe
       redirect_to(:action => 'index')
     else
-      flash[:notice] = '<b class="warning">Unable to delete this Batch</b>'.html_safe
+      flash[:warning] = 'Unable to delete this Batch'.html_safe
       render('show', id: @batch.id)
     end
   end

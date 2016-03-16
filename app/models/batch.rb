@@ -3,7 +3,6 @@ class Batch < ActiveRecord::Base
 	has_many :workflow_statuses, :dependent => :destroy
 
 	include WorkflowStatusModule
-	extend WorkflowStatusQueryModule
         include DestinationModule
 
 	#FIXME: resolve issue with FactoryGirl and after_initialize callbacks

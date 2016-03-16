@@ -66,7 +66,7 @@ class BinsController < ApplicationController
 			flash[:notice] = "<i>#{@bin.identifier}</i> was successfully destroyed.".html_safe
 			redirect_to bins_path
 		else
-			flash[:notice] = "<b>Failed to delete this Bin</b>".html_safe
+			flash[:warning] = "Failed to delete this Bin".html_safe
 			render('show')
 		end
 	end
@@ -80,7 +80,7 @@ class BinsController < ApplicationController
 		if @bin.save
 		  flash[:notice] = "Successfully removed Bin <i>#{@bin.identifier}</i> from Batch <i>#{@batch.identifier}</i>.".html_safe
 		else
-		  flash[:notice] = "<b class='warning'>Failed to remove this Bin from Batch.</b>".html_safe
+		  flash[:warning] = "Failed to remove this Bin from Batch.".html_safe
 		end
                 redirect_to :back
 	end
@@ -105,12 +105,12 @@ class BinsController < ApplicationController
 	    if @bin.save and @bin.current_workflow_status == "Created"
 	      flash[:notice] = "Bin workflow status has been successfully reset to Created."
 	    else
-	      flash[:notice] = "<b class='warning'>There was a problem unsealing the Bin.</b>".html_safe
+	      flash[:warning] = "There was a problem unsealing the Bin.".html_safe
 	    end
 	  when "Batched"
-	    flash[:notice] = "<b class='warning'>The Bin must be unbatched before it can be unsealed.</b>".html_safe
+	    flash[:warning] = "The Bin must be unbatched before it can be unsealed.".html_safe
 	  else # Returned, Complete
-	    flash[:notice] = "<b class='warning'>Unsealing the bin is not applicable to this workflow status.</b>".html_safe
+	    flash[:warning] = "Unsealing the bin is not applicable to this workflow status.".html_safe
 	  end
 	  redirect_to bin_path
 	end
@@ -175,16 +175,6 @@ class BinsController < ApplicationController
 
 	def set_unassigned_boxes
 		@boxes = Box.eager_load(:physical_objects).where(bin_id: [0, nil]).order(full: :desc)
-	end
-
-	def bin_index(bins, bin_id)
-		bins.each_with_index { |bin, i|
-			puts(bin)
-			if bin[1] == bin_id
-				return i
-			end
-		}
-		0
 	end
 
 	def bin_params

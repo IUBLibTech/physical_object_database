@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Spreadsheet do
   let(:spreadsheet) { FactoryGirl.create :spreadsheet }
   let(:valid_spreadsheet) { FactoryGirl.build :spreadsheet }
@@ -53,6 +51,14 @@ describe Spreadsheet do
       physical_object_id = physical_object.id
       spreadsheet.destroy
       expect(PhysicalObject.where(id: physical_object_id)).to be_empty
+    end
+  end
+
+  describe "virtual methods" do
+    describe "#spreadsheet_descriptor" do
+      it "returns filename" do
+        expect(valid_spreadsheet.filename).to eq valid_spreadsheet.spreadsheet_descriptor
+      end
     end
   end
 

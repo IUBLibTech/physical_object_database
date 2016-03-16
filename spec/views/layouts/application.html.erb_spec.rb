@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe "layouts/application" do
 
   it "displays an environment notice" do

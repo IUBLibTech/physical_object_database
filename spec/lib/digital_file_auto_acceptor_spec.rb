@@ -124,4 +124,5 @@ describe DigitalFileAutoAcceptor do
       expect(DigitalFileAutoAcceptor.instance.thread_active?).to eq false
     end
   end
+
 end

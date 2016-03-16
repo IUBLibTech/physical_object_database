@@ -34,7 +34,7 @@ describe EightMillimeterVideoTm do
     end
   end
 
-  it_behaves_like "includes technical metadatum behaviors", FactoryGirl.build(:eight_mm_tm, :valid)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:eight_mm_tm, :valid)
 
   describe "#master_copies" do
     it "returns 1" do

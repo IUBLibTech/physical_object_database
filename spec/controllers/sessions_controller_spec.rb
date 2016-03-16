@@ -1,6 +1,18 @@
 describe SessionsController do
   before(:each) { request.env['HTTP_REFERER'] = 'source_page' }
 
+  describe "#cas_reg" do
+    it "returns a cas-reg URL" do
+      expect(SessionsController.new.cas_reg).to match /https.*cas-reg/
+    end
+  end
+
+  describe "#cas" do
+    it "returns a cas URL" do
+      expect(SessionsController.new.cas_reg).to match /https.*cas/
+    end
+  end
+
   describe "#new" do
     before(:each) { get :new }
     let(:cas) { "https://cas.iu.edu" }

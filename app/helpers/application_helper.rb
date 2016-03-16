@@ -52,14 +52,6 @@ module ApplicationHelper
 		false
 	end
 
-	def ApplicationHelper.assigned_real_barcode?(object)
-		unless object.respond_to? :mdpi_barcode
-			raise "Attempting to check assigned MDPI Barcode on object that does not have an MDPI Barcode field."
-		end
-		a = ApplicationHelper.barcode_assigned?(object.mdpi_barcode)
-		return ApplicationHelper.real_barcode?(object.mdpi_barcode) && (a == false || a == object)
-	end
-
 	def error_messages_for(object)
 		render(partial: 'application/error_messages', locals: {object: object})		
 	end
@@ -82,6 +74,28 @@ module ApplicationHelper
 
   def hashify(array)
     Hash[array.map{ |v| [v.to_s,v.to_s] }]
+  end
+
+  # there is a disconnect between jquery datepicker and how rails parses datetime objects.
+  # probably a better way than intercepting the params hash and normalizing it...
+  def normalize_dates
+    unless params[:digital_provenance].nil?
+      if params[:digital_provenance][:cleaning_date]
+        unless params[:digital_provenance][:cleaning_date].blank?
+          params[:digital_provenance][:cleaning_date] = DateTime.strptime(params[:digital_provenance][:cleaning_date], "%m/%d/%Y")
+        end
+        unless params[:digital_provenance][:baking].blank?
+          params[:digital_provenance][:baking] = DateTime.strptime(params[:digital_provenance][:baking], "%m/%d/%Y")
+        end
+        unless params[:digital_provenance][:digital_file_provenances_attributes].blank?
+          params[:digital_provenance][:digital_file_provenances_attributes].each do |key, val|
+            unless val[:date_digitized].blank?
+              params[:digital_provenance][:digital_file_provenances_attributes][key][:date_digitized] = DateTime.strptime(val[:date_digitized], "%m/%d/%Y")
+            end
+          end
+        end
+      end
+    end
   end
 
 end

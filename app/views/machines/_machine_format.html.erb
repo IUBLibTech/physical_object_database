@@ -3,10 +3,10 @@
   <% if f.object.errors.any? %>
   <tr><th>ERRORS</th><td><%= render 'shared/error_messages', object: f.object %></td></tr>
   <% end %>
-  <% if @edit_mode && policy(@machine).destroy? %>
+  <% if @edit_mode %>
     <tr>
       <th></th>
-      <td><%= f.link_to_remove("Delete machine format", data: {confirm: 'Are you sure you want to mark this machine format for deletion?  The machine format will be deleted when you submit the form.'}) %></td>
+      <td><%= f.link_to_remove("Delete machine format", data: {confirm: 'Are you sure you want to mark this machine format for deletion?  The machine format will be deleted when you submit the form.'}) if policy(@machine).edit? %></td>
     </tr>
   <% end %>
   <tr>

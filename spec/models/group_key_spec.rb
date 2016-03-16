@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe GroupKey do
   let(:group_key) { FactoryGirl.create(:group_key) }
   let(:valid_group_key) { FactoryGirl.build(:group_key) }

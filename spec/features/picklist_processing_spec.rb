@@ -1,5 +1,3 @@
-require "rails_helper"
-
 feature "Picklist Processing", js: true do
 
   pending "Rewrite tests using new pick list processing functionality" do 

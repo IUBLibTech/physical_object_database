@@ -1,5 +1,3 @@
-require "rails_helper"
-
 feature "Session authentication" do 
 
   context "unauthenticated user" do

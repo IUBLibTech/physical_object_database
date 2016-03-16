@@ -6,7 +6,7 @@
   <% if @edit_mode && policy(@signal_chain).destroy? %>
     <tr>
       <th></th>
-      <td><%= f.link_to_remove("Delete signal chain format", data: {confirm: 'Are you sure you want to mark this signal chain format for deletion?  The signal chain format will be deleted when you submit the form.'}) %></td>
+      <td><%= f.link_to_remove("Delete signal chain format", data: {confirm: 'Are you sure you want to mark this signal chain format for deletion?  The signal chain format will be deleted when you submit the form.'}) if policy(@signal_chain).edit? %></td>
     </tr>
   <% end %>
   <tr>

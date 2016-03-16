@@ -24,9 +24,9 @@
 				<%= link_to("Edit", {:controller => 'physical_objects', :action => 'edit', :id => p.id}, {target: '_blank'}) if policy(p).edit? %><br/>
 				<% if p.group_key.physical_objects_count <= 1 %>
 				  <%# NOTE: No destination for link because set by javascript %>
-				  <%= link_to("Remove", "", {method: :post, id: "remove_#{p.id}", target: "_blank", remote: true})%><br/>
+				  <%= link_to("Remove", "", {method: :post, id: "remove_#{p.id}", target: "_blank", remote: true}) if policy(p).edit? %><br/>
 				<% else %>
-				  <strike><%= link_to "Remove", "#", onclick: 'alert("This physical object is part of a Group Key.  You must remove this object from the Group Key to remove it from the picklist individually, or go to Group Key page and remove the entire set of items from the picklist."); return true;' %></strike>
+				  <strike><%= link_to("Remove", "#", onclick: 'alert("This physical object is part of a Group Key.  You must remove this object from the Group Key to remove it from the picklist individually, or go to Group Key page and remove the entire set of items from the picklist."); return true;') if policy(p).edit? %></strike>
 				<% end %>
 				<%= f.submit(((packed) ? "Unpack" : "Pack"), class: "pl_button") %>
 			</td>

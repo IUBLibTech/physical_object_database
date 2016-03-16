@@ -118,6 +118,26 @@ describe SearchController do
         expect(assigns(:physical_objects)).to match_array returned
       end
     end
+    context "with XLS results" do
+      before(:each) { post :advanced_search, omit_picklisted: omit_picklisted, physical_object: po_terms, format: "xls" }
+      context "without specifying a format" do
+        it "assigns @block_metadata = true" do
+          expect(assigns(:block_metadata)).to eq true
+        end
+        it "render XLS results" do
+          expect(response).to render_template 'search/show'
+        end
+      end
+      context "specifying a format" do
+        let(:po_terms) { {format: "CD-R"} }
+        it "does not @block_metadata" do
+          expect(assigns(:block_metadata)).not_to eq true
+        end
+        it "render XLS results" do
+          expect(response).to render_template 'search/show'
+        end
+      end
+    end
     context "searching physical object, only" do
       before(:each) { post :advanced_search, omit_picklisted: omit_picklisted, physical_object: po_terms }
       context "with no po terms" do

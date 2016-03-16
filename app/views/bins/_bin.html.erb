@@ -52,7 +52,7 @@
 			<th>Imported from spreadsheet</th>
 			<td>
 			<% if !@bin.spreadsheet.nil? %>
-				<%= link_to("#{@bin.spreadsheet.filename}", @bin.spreadsheet) %>
+				<%= link_to("#{@bin.spreadsheet.filename}", @bin.spreadsheet) if policy(@bin.spreadsheet).show? %>
 			<% end %>
 			</td>
 		</tr>
@@ -62,7 +62,7 @@
 				<% if @edit_mode %>
 					<%= select('batch', 'id', @batches, {:include_blank => 'Not Assigned'}) %>
 				<% elsif ! @bin.batch.nil? %>
-					<%= link_to @bin.batch.identifier, batch_path(@bin.batch.id) %> 
+					<%= link_to @bin.batch.identifier, batch_path(@bin.batch.id) if policy(@bin.batch).show? %> 
 				<% end %>
 			</td>
 		</tr>
@@ -81,9 +81,18 @@
           <%= render 'condition_status_templates/condition_status_fields', f: condition, target_object: @bin %>
         <% end %>
         <% if @edit_mode %>
-            <%= f.link_to_add "Add a condition status", :condition_statuses %>
+            <%= f.link_to_add "Add a condition status", :condition_statuses if policy(@bin).edit? %>
         <% end %>
 	<%if @edit_mode %>
 	  <div class="clear" ><%= submit_tag(@submit_text) %></div>
 	<% end %>
+<% end %>
+<% if action_name == 'new' %>
+	<script type="text/javascript" >
+		$(document).ready(function() {
+			el = $("#bin_mdpi_barcode")
+			el.focus();
+			el.select();
+		});
+	</script>
 <% end %>

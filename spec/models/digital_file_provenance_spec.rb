@@ -239,4 +239,43 @@ describe DigitalFileProvenance do
       end
     end
   end
+
+  describe "#display_date_digitized" do
+    let(:time) { Time.now }
+    context "when blank" do
+      before(:each) { valid_dfp.date_digitized = nil }
+      it "returns empty string" do
+        expect(valid_dfp.display_date_digitized).to eq ''
+      end
+    end
+    context "when set to a value" do
+      before(:each) { valid_dfp.date_digitized = time }
+      it "returns empty string" do
+        expect(valid_dfp.display_date_digitized).to eq time.in_time_zone("UTC").strftime("%m/%d/%Y")
+      end
+    end
+  end
+  describe "#display_date_digitized=(value)" do
+    let!(:time) { Time.now.change(min: 0, sec: 0, nsec: 0) }
+    let!(:new_time) { time - 1.days }
+    before(:each) { valid_dfp.date_digitized = time }
+    context "when value is nil" do
+      it "returns nil" do
+        expect(valid_dfp.display_date_digitized = nil).to eq nil
+        expect(valid_dfp.date_digitized).to eq time
+      end
+    end
+    context "when value is ''" do
+      it "returns nil" do
+        expect(valid_dfp.display_date_digitized = '').to eq ''
+        expect(valid_dfp.date_digitized).to eq time
+      end
+    end
+    context "when value is a date" do
+      it "sets time" do
+        valid_dfp.display_date_digitized = new_time.in_time_zone("UTC").strftime("%m/%d/%Y")
+        expect(valid_dfp.date_digitized).not_to eq time
+      end
+    end
+  end
 end

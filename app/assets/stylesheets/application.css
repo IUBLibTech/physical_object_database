@@ -220,7 +220,7 @@ tr.even {
 }
 
 #bin_div, #box_div, #spreadsheet_div {
-  width: 25%;
+  width: 45%;
 }
 
 #associated_div {
@@ -450,4 +450,10 @@ tr.packed {
 
 table.presInt >tbody > tr > th {
     background-color: #F5D7D5;
+}
+
+#uncheck_selected_button {
+    position: relative;
+    left: 880px;
+    top: 20px;
 }

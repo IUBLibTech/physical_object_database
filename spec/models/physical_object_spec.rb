@@ -2,6 +2,7 @@ describe PhysicalObject do
   include TechnicalMetadatumModule
 
   let(:po) { FactoryGirl.create :physical_object, :cdr }
+  let(:barcoded_po) { FactoryGirl.create :physical_object, :cdr, :barcoded }
   let(:grouped_po) { FactoryGirl.build :physical_object, :cdr, group_key: po.group_key }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:video_po) { FactoryGirl.build :physical_object, :umatic }
@@ -240,12 +241,6 @@ describe "has required attributes:" do
         expect(valid_po.picklist).to be_nil
       end
     end
-    describe "container" do
-      specify "can belong to a container" do
-        expect(valid_po).to respond_to :container_id
-        expect(valid_po.container).to be_nil
-      end
-    end
     describe "spreadsheet" do
       specify "can belong to a spreadsheet" do
         expect(valid_po).to respond_to :spreadsheet_id
@@ -418,6 +413,12 @@ describe "has required attributes:" do
     end
   end
 
+  describe "#auto_accept_days" do
+    it "returns TechnicalMetadatumModule.format_auto_accept_days(format)" do
+      expect(valid_po.auto_accept_days).to eq TechnicalMetadatumModule.format_auto_accept_days(valid_po.format)
+    end
+  end
+
   describe "provides virtual attributes:" do
     describe "#auto_accept" do
       context "when .digital_start is nil" do
@@ -471,20 +472,6 @@ describe "has required attributes:" do
 	it "returns nil" do
 	  expect(valid_po.container_bin).to be_nil
 	end
-      end
-    end
-    describe "#container_id" do
-      it "returns nil if uncontained" do
-        expect(valid_po.container_id).to be_nil
-      end
-      it "returns box id if boxed" do
-        valid_po.box = box
-        valid_po.bin = bin
-        expect(valid_po.container_id).to eq box.id
-      end
-      it "returns bin id if binned" do
-        valid_po.bin = bin
-        expect(valid_po.container_id).to eq bin.id
       end
     end
     it "#file_prefix" do
@@ -763,7 +750,7 @@ describe "has required attributes:" do
           end
         end
 
-        it_behaves_like "includes ConditionStatusModule:" do
+        it_behaves_like "includes ConditionStatusModule" do
           let(:condition_status) { FactoryGirl.create(:condition_status, :physical_object, physical_object: po) }
           let(:target_object) { po }
           let(:class_title) { "Physical Object" }
@@ -771,7 +758,7 @@ describe "has required attributes:" do
 
         status_list = ["Unassigned", "On Pick List", "Boxed", "Binned", "Unpacked", "Returned to Unit"] 
   # pass status_list arg here to test previous/next methods
-  it_behaves_like "includes Workflow Status Module" do
+  it_behaves_like "includes WorkflowStatusModule" do
     let(:object) { valid_po }
     let(:default_status) { "Unassigned" }
     let(:new_status) { "On Pick List" }
@@ -779,4 +766,362 @@ describe "has required attributes:" do
     let(:class_title) { "Physical Object" }
   end
 
+  include_examples "includes XMLExportModule", :title, :has_ephemera do
+    let(:target_object) { valid_po }
+  end
+
+  describe "self.formats" do
+    it "returns TechnicalMetadumModule.tm_formats_hash" do
+      expect(PhysicalObject.formats).to eq TechnicalMetadatumModule.tm_formats_hash
+    end
+  end
+
+#FIXME: add non-trivial scope tests?
+  describe "scopes" do
+    describe "packing_sort" do
+      it "returns an PhysicalObject collection" do
+        expect(PhysicalObject.packing_sort).to be_a ActiveRecord::Relation
+      end
+    end
+    describe "unpacked" do
+      it "returns an PhysicalObject collection" do
+        expect(PhysicalObject.unpacked).to be_a ActiveRecord::Relation
+      end
+    end
+    describe "unpacked_or_id(object_id)" do
+      it "returns an PhysicalObject collection" do
+        expect(PhysicalObject.unpacked_or_id(0)).to be_a ActiveRecord::Relation
+      end
+    end
+    describe "packed" do
+      it "returns an PhysicalObject collection" do
+        expect(PhysicalObject.packed).to be_a ActiveRecord::Relation
+      end
+    end
+    describe "blocked" do
+      it "returns an PhysicalObject collection" do
+        expect(PhysicalObject.blocked).to be_a ActiveRecord::Relation
+      end
+    end
+    describe "search_by_barcode_title_call_number" do
+      it "returns an PhysicalObject collection" do
+        expect(PhysicalObject.search_by_barcode_title_call_number(0)).to be_a ActiveRecord::Relation
+      end
+    end
+    describe "unstaged_formats_by_date_entity(date, entity)" do
+      it "returns an array of formats" do
+        expect(PhysicalObject.unstaged_formats_by_date_entity(Time.now, DigitalProvenance::IU_DIGITIZING_ENTITY)).to be_a Array
+      end
+    end
+    describe "unstaged_by_date_format_entity(date, format, entity)" do
+      it "returns an PhysicalObject collection" do
+        expect(PhysicalObject.unstaged_by_date_format_entity(Time.now, 'CD-R', DigitalProvenance::IU_DIGITIZING_ENTITY)).to be_a ActiveRecord::Relation
+      end
+    end
+  end
+  
+  describe "#init_start_digital_status" do
+    context "with a real barcode" do
+      before(:each) { valid_po.mdpi_barcode = valid_mdpi_barcode }
+      it "sets a digital_start time" do
+        expect(valid_po.digital_start).to be_nil
+        valid_po.init_start_digital_status
+        expect(valid_po.digital_start).not_to be_nil
+      end
+      it "saves a digital_status" do
+        expect(valid_po.digital_statuses).to be_empty
+        valid_po.init_start_digital_status
+        valid_po.reload
+        expect(valid_po.digital_statuses).not_to be_empty
+      end
+    end
+    context "with an invalid barcode" do
+      before(:each) { valid_po.mdpi_barcode = invalid_mdpi_barcode }
+      it "raises an error" do
+        expect{valid_po.init_start_digital_status}.to raise_error RuntimeError
+      end
+    end
+  end
+
+  describe "#carrier_stream_index" do
+    context "with no group key" do
+      before(:each) { valid_po.group_key = nil }
+      it "returns MISSING_1_1" do
+        expect(valid_po.carrier_stream_index).to eq "MISSING_1_1"
+      end
+    end
+    context "with a group key" do
+      before(:each) { valid_po.ensure_group_key }
+      it "returns (group_identifier)_(group_position)_(group_total)" do
+        expect(valid_po.carrier_stream_index).to eq valid_po.group_key.group_identifier + "_" + valid_po.group_position.to_s + "_" + valid_po.group_key.group_total.to_s
+      end
+    end
+  end
+
+  describe "#digital_start_readable" do
+    context "when digital_start is nil" do
+      before(:each) { valid_po.digital_start = nil }
+      it 'returns "Digitization Has Not Begun"' do
+        expect(valid_po.digital_start_readable).to eq "Digitization Has Not Begun"
+      end
+    end
+    context "when digital_start is not nil" do
+      before(:each) { valid_po.digital_start = Time.now }
+      it "returns formatted time string" do
+        expect(valid_po.digital_start_readable).to match /\d:\d/
+      end
+    end
+  end
+
+  describe "#expires" do
+    context "with no 'transferred' status" do
+      it "returns nil" do
+        expect(valid_po.digital_statuses).to be_empty
+        expect(valid_po.expires).to be_nil
+      end
+    end
+    context "with a transferred status" do
+      let!(:created_at) { Time.now.change(nsec: 0) }
+      before(:each) { barcoded_po.digital_statuses.create!(state: 'transferred', created_at: created_at) }
+      { audio: { format: "CD-R", day_count: DigitalStatus::AUTO_ACCEPT_DELAY_DAYS[:audio] },
+        video: { format: "Betacam", day_count: DigitalStatus::AUTO_ACCEPT_DELAY_DAYS[:video]}
+      }.each do |genre, values|
+        context "for #{genre} format" do
+          before(:each) { barcoded_po.format = values[:format] }
+          it "returns start date plus #{values[:day_count]} days" do
+            expect(barcoded_po.expires).to eq (created_at + values[:day_count].days)
+          end
+        end
+      end
+    end
+  end
+
+  describe "#physical_object_query" do
+    skip "indirectly ested by picklist_specifications#query controller spec"
+  end
+
+  describe "::physical_object_query" do
+    skip "indirectly tested by search#advanced_search controller spec"
+  end
+
+  describe "#workflow_blocked?" do
+    context "with no condition statuses"
+    context "with condition statuses" do
+      { {active: true, blocks_packing: true } => true,
+        {active: true, blocks_packing: false } => false,
+        {active: false, blocks_packing: true } => false,
+        {active: false, blocks_packing: false } => false }.each do |values, result|
+        describe "with #{values.inspect}" do
+          it "returns #{result}" do
+            temp_cs = FactoryGirl.build :condition_status, :physical_object, **values
+            cs = po.condition_statuses.new
+            cs.assign_attributes(active: temp_cs.active, condition_status_template_id: temp_cs.condition_status_template_id)
+            cs.save!
+            expect(po.workflow_blocked?).to eq result
+          end
+        end
+      end
+    end
+  end
+
+  describe "#current_digital_status" do
+    context "with no digital statuses" do
+      before(:each) { expect(valid_po.digital_statuses).to be_empty }
+      it "returns nil" do
+        expect(valid_po.current_digital_status).to be_nil
+      end
+    end
+    context "with multiple digital statuses" do
+      before(:each) do
+        valid_po.digital_statuses.new(state: 'initial')
+        valid_po.digital_statuses.new(state: 'final')
+        expect(valid_po.digital_statuses.size).to be > 1
+      end
+      it "returns last status" do
+        expect(valid_po.current_digital_status).not_to be_nil
+        expect(valid_po.current_digital_status.state).to eq 'final'
+      end
+    end
+  end
+
+  describe "#ensure_digiprov" do
+    context "with no digital_provenance" do
+      before(:each) { valid_po.digital_provenance = nil }
+      it "builds and assigns a new digital_provenance" do
+        expect(valid_po.digital_provenance).to be_nil
+        expect(valid_po.ensure_digiprov).to be_a DigitalProvenance
+        expect(valid_po.digital_provenance).not_to be_nil
+      end
+    end
+    context "with a digital_provenance" do
+      let(:original_dp) { FactoryGirl.build :digital_provenance, physical_object: valid_po, comments: "original dp" }
+      before(:each) { valid_po.digital_provenance = original_dp }
+      it "returns the existing provenance" do
+        expect(valid_po.digital_provenance).to eq original_dp
+        expect(valid_po.ensure_digiprov).to eq original_dp
+        expect(valid_po.digital_provenance).to eq original_dp
+      end
+    end
+  end
+
+  describe "#validate_bin_container" do
+    context "with no bin" do
+      before(:each) { valid_po.bin = nil }
+      it "returns nil" do
+        expect(valid_po.validate_bin_container).to be_nil
+      end
+      it "does not assign any errors" do
+        expect(valid_po.errors[:base]).to be_empty
+        valid_po.validate_bin_container
+        expect(valid_po.errors[:base]).to be_empty
+      end
+    end
+    context "with a bin" do
+      before(:each) do
+        valid_po.mdpi_barcode = valid_mdpi_barcode
+        valid_po.format = TechnicalMetadatumModule.bin_formats.first
+        valid_po.bin = bin
+      end
+      context "without a barcode" do
+        before(:each) { valid_po.mdpi_barcode = nil }
+        it "adds an error" do
+          valid_po.validate_bin_container
+          expect(valid_po.errors[:base].first).to match /object must be assigned a barcode/
+        end
+      end
+      context "with an unbinnable format" do
+        before(:each) { valid_po.format = TechnicalMetadatumModule.box_formats.first }
+        it "adds an error" do
+          valid_po.validate_bin_container
+          expect(valid_po.errors[:base].first).to match /format.*cannot be assigned/
+        end
+      end
+      context "already containing boxes" do
+        before(:each) { box.bin = bin; box.save! }
+        it "adds an error" do
+          valid_po.validate_bin_container
+          expect(valid_po.errors[:base].first).to match /contains boxes/
+        end
+      end
+      context "already containing a different format" do
+        before(:each) { bin.format = TechnicalMetadatumModule.bin_formats.last; bin.save! }
+        it "adds an error" do
+          valid_po.validate_bin_container
+          expect(valid_po.errors[:base].first).to match /different format/
+        end
+      end
+      context "(empty)" do
+        it "does not add an error" do
+          expect(bin.boxes).to be_empty
+          expect(bin.physical_objects).to be_empty
+          valid_po.validate_bin_container
+          expect(valid_po.errors[:base]).to be_empty
+        end
+      end
+      context "(matching format)" do
+        before(:each) { bin.format = valid_po.format; bin.save! }
+        it "does not add an error" do
+          valid_po.validate_bin_container
+          expect(valid_po.errors[:base]).to be_empty
+        end
+      end
+    end
+  end
+
+  describe "#validate_box_container" do
+    context "with no box" do
+      before(:each) { valid_po.box = nil }
+      it "returns nil" do
+        expect(valid_po.validate_box_container).to be_nil
+      end
+      it "does not assign any errors" do
+        expect(valid_po.errors[:base]).to be_empty
+        valid_po.validate_box_container
+        expect(valid_po.errors[:base]).to be_empty
+      end
+    end
+    context "with a box" do
+      before(:each) do
+        valid_po.mdpi_barcode = valid_mdpi_barcode
+        valid_po.format = TechnicalMetadatumModule.box_formats.first
+        valid_po.box = box
+      end
+      context "without a barcode" do
+        before(:each) { valid_po.mdpi_barcode = nil }
+        it "adds an error" do
+          valid_po.validate_box_container
+          expect(valid_po.errors[:base].first).to match /object must be assigned a barcode/
+        end
+      end
+      context "with an unboxable format" do
+        before(:each) { valid_po.format = TechnicalMetadatumModule.bin_formats.first }
+        it "adds an error" do
+          valid_po.validate_box_container
+          expect(valid_po.errors[:base].first).to match /format.*cannot be assigned/
+        end
+      end
+      context "already containing a different format" do
+        before(:each) { box.format = TechnicalMetadatumModule.box_formats.last; box.save! }
+        it "adds an error" do
+          valid_po.validate_box_container
+          expect(valid_po.errors[:base].first).to match /different format/
+        end
+      end
+      context "(empty)" do
+        it "does not add an error" do
+          expect(box.physical_objects).to be_empty
+          valid_po.validate_box_container
+          expect(valid_po.errors[:base]).to be_empty
+        end
+      end
+      context "(matching format)" do
+        before(:each) { box.format = valid_po.format; box.save! }
+        it "does not add an error" do
+          valid_po.validate_box_container
+          expect(valid_po.errors[:base]).to be_empty
+        end
+      end
+    end
+  end
+
+  describe "private methods" do
+# .physical_object_search
+# .add_search_terms
+    shared_examples "tm_table_name examples" do
+      describe "#tm_table_name(format)" do
+        context "with a valid format" do
+          let(:format) { TechnicalMetadatumModule.tm_formats_array.first }
+          it "returns a table name" do
+            expect(subject.send(:tm_table_name,format)).to eq TechnicalMetadatumModule.tm_table_names[format]
+            expect(subject.send(:tm_table_name,format)).to be_a String
+            expect(subject.send(:tm_table_name,format)).not_to be_blank
+          end
+        end
+        context "with an invalid format" do
+           let(:format) { "Invalid format" }
+           it "raises an error" do
+             expect{ subject.send(:tm_table_name,format) }.to raise_error RuntimeError
+           end
+        end
+      end
+    end
+    describe "for class:" do
+      let(:subject) { PhysicalObject }
+      include_examples "tm_table_name examples"
+    end
+    describe "for object:" do
+      let(:subject) { valid_po }
+      include_examples "tm_table_name examples"
+    end
+    describe "#default_values" do
+      [:generation, :group_position, :mdpi_barcode, :digital_provenance].each do |att|
+        specify "sets #{att}" do
+          valid_po.send(att.to_s + "=", nil)
+          expect(valid_po.send(att)).to be_nil
+          valid_po.send(:default_values)
+          expect(valid_po.send(att)).not_to be_nil
+        end
+      end
+    end
+  end
 end

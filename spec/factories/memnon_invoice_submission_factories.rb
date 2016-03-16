@@ -7,7 +7,7 @@ FactoryGirl.define do
     validation_completion_percent 0
     bad_headers false
     other_error ""
-    problems_by_row ""
+    problems_by_row nil
   end
 
 end

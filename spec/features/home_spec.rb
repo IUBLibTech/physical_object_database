@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 feature 'Home' do
   before(:each) { sign_in }
 

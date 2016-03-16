@@ -9,7 +9,7 @@ describe PicklistsController do
   let(:box) { FactoryGirl.create(:box) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:blocked) { FactoryGirl.create(:physical_object, :boxable, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
-  let(:condition) { FactoryGirl.create(:condition_status, condition_status_template_id: 1, active: true)}
+  let(:condition) { FactoryGirl.create(:condition_status, :physical_object, blocks_packing: true, active: true)}
 
   #no index
 
@@ -325,6 +325,12 @@ describe PicklistsController do
   end
 
   describe "PATCH pack_list on member", "" do
+#add cases:
+#@box and @box.full
+#:pack_bin_button
+#:pack_box_button
+#:previous_unpacked_button
+#:next_unpacked_button
     let(:pack_picklist) { FactoryGirl.create(:picklist, name: "Foo") }
     let(:pack_bin) { FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier: "binbar") }
     let(:pack_box) { FactoryGirl.create(:box, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
@@ -775,5 +781,5 @@ describe PicklistsController do
     #   end
     # end
   end
-
+#privates
 end
