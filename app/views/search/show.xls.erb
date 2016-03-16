@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <% @media_format = @physical_objects.first.format if @physical_objects and @physical_objects.any? %>
+      <% @media_format ||= "" %>
+      <% @metadata_headers = @physical_objects.first.technical_metadatum.specific.export_headers if @physical_objects && @physical_objects.any? && @physical_objects.first.technical_metadatum && @physical_objects.first.technical_metadatum.specific %>
+      <% @metadata_headers ||= [] %>
+      <% @metadata_headers = [] if @block_metadata %>
+      <% @basic_column_names = ["Bin barcode", "Bin identifier", "Box barcode", "MDPI barcode", "Format", "Unit", "Title", "Author", "Title control number", "Call number", "Catalog key", "Home location", "IUCAT barcode", "OCLC number", "Other copies", "Group key", "Group position", "Group total", "Collection identifier", "Collection name", "Year", "Generation", "Workflow status", "Has ephemera", "Internal Notes", "External Notes", "Conditions"] %>
+      <% @column_names = @basic_column_names + @metadata_headers %>
+      <Row>
+      <% @column_names.each do |column_name| %>
+        <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
+      <% end %>
+      </Row>
+      <% if @physical_objects.any? %>
+        <% @physical_objects.each do |po| %>
+<%= render '/spreadsheets/modified_physical_object', bin: (po.box ? po.box.bin : po.bin), box: po.box, po: po %>
+        <% end %>
+      <% end %>
+    </Table>
+  </Worksheet>
+  <%# loop additional sheets for format changes %>
+  <% if @block_metadata && @physical_objects.any? %>
+      <% @media_format = nil %>
+      <% @physical_objects.each_with_index do |po, index| %>
+         <% if po.format != @media_format %>
+            <% if index > 0 %>
+    </Table>
+  </Worksheet>
+            <% end %>
+         <% @media_format = po.format %>
+  <Worksheet ss:Name="<%= @media_format %>">
+    <Table>
+        <% @metadata_headers = [] %>
+        <% @metadata_headers = po.technical_metadatum.specific.export_headers if po && po.technical_metadatum && po.technical_metadatum.specific %>
+        <% @column_names = @basic_column_names + @metadata_headers %>
+      <Row>
+        <% @column_names.each do |column_name| %>
+        <Cell><Data ss:Type="String"><%= column_name %></Data></Cell>
+        <% end %>
+      </Row>
+         <% end %>
+<%= render '/spreadsheets/modified_physical_object', bin: (po.box ? po.box.bin : po.bin), box: po.box, po: po %>
+      <% end %>
+    </Table>
+  </Worksheet>
+  <% end %>
+</Workbook>

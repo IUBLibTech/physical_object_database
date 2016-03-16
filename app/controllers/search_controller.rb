@@ -48,7 +48,7 @@ class SearchController < ApplicationController
       format.xls do
         @block_metadata = format_param.blank?
         @physical_objects = @full_results
-        render '/spreadsheets/show' 
+        render 'show' 
       end
     end
   end
