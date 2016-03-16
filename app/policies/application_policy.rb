@@ -2,7 +2,7 @@ class ApplicationPolicy
   attr_reader :user, :record
 
   def initialize(user, record)
-    @user = User.find_by(username: user)
+    @user = user
     @record = record
     raise Pundit::NotAuthorizedError, "must be logged in" unless @user
   end
@@ -15,7 +15,7 @@ class ApplicationPolicy
     attr_reader :user, :scope
 
     def initialize(user, scope)
-      @user = User.find_by(username: user)
+      @user = user
       @scope = scope
       raise Pundit::NotAuthorizedError, "must be logged in" unless @user
     end

@@ -14,6 +14,10 @@ class ApplicationController < ActionController::Base
 
   helper_method :tm_partial_path
 
+  def pundit_user
+    @pundit_user ||= User.find_by(username: current_username)
+  end
+
   def tm_form
     f = params[:format]
     @edit_mode = params[:edit_mode] == 'true'
