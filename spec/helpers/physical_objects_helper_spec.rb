@@ -1,4 +1,4 @@
 describe PhysicalObjectsHelper do
-  #invalid_csv_headers
-  #parse_csv
+  pending "#invalid_csv_headers"
+  pending "#parse_csv"
 end

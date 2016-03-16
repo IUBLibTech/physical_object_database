@@ -125,7 +125,7 @@ describe SearchController do
           expect(assigns(:block_metadata)).to eq true
         end
         it "render XLS results" do
-          expect(response).to render_template 'spreadsheets/show'
+          expect(response).to render_template 'search/show'
         end
       end
       context "specifying a format" do
@@ -134,7 +134,7 @@ describe SearchController do
           expect(assigns(:block_metadata)).not_to eq true
         end
         it "render XLS results" do
-          expect(response).to render_template 'spreadsheets/show'
+          expect(response).to render_template 'search/show'
         end
       end
     end
