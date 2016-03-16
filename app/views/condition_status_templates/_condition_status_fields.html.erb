@@ -4,13 +4,26 @@
   <tr><th>ERRORS</th><td><%= render 'shared/error_messages', object: f.object %></td></tr>
   <% end %>
   <tr>
-    <th><%= f.select :condition_status_template_id, target_object.condition_status_options, {include_blank: 'Select a condition...'}, disabled: !@edit_mode %></th>
+    <% if @search_mode %>
+    <th>Status</th>
+    <td>
+      <%= f.select :condition_status_template_id, target_object.condition_status_options, { }, multiple: true, size: target_object.condition_status_options.size %>
+    </td>
+    <% else %>
+    <th>
+      <%= f.select :condition_status_template_id, target_object.condition_status_options, {include_blank: 'Select a condition...'}, disabled: !@edit_mode %>
+    </th>
     <% @parent_object = (@physical_object || @bin) %>
-    <td><% if @edit_mode && policy(@parent_object).edit? %><%= f.link_to_remove("Delete condition", data: { confirm: 'Are you sure you want to mark this condition for deletion?  The condition will be deleted when you submit the form.'} ) if policy(@parent_object).edit? %><% end %></td>
+    <td><% if @edit_mode && policy(@parent_object).edit? %><%= f.link_to_remove("Delete condition", data: { confirm: 'Are you sure you want to mark this condition for deletion?  The condition will be deleted when you submit the form.'} ) if policy(@parent_object).edit? && f.respond_to?(:link_to_remove) %><% end %></td>
+    <% end %>
   </tr>
   <tr>
     <th>Active</th>
+    <% if @search_mode %>
+    <td><%= f.select(:active, { "true" => 1, "false" => 0 }, { include_blank: ""}) %></td>
+    <% else %>
     <td><%= f.check_box :active, disabled: !@edit_mode %></td>
+    <% end %>
   </tr>
   <tr>
     <th>Additional Notes</th>
@@ -18,8 +31,9 @@
   </tr>
   <tr>
     <th>Creator</th>
-    <td><%= f.text_field(:user, readonly: true) %></td>
+    <td><%= f.text_field(:user, readonly: !@search_mode) %></td>
   </tr>
+  <% unless @search_mode %>
   <tr>
     <th>Created At</th>
     <td><%= f.text_field(:created_at, readonly: true) %></td>
@@ -28,6 +42,6 @@
     <th>Updated At</th>
     <td><%= f.text_field(:updated_at, readonly: true) %></td>
   </tr>
-
+  <% end %>
 </table>
 

@@ -3,15 +3,19 @@
   <% if f.object.errors.any? %>
   <tr><th>ERRORS</th><td><%= render 'shared/error_messages', object: f.object %></td></tr>
   <% end %>
-  <% if @edit_mode && policy(@physical_object).destroy? %>
+  <% if @edit_mode && !@search_mode && policy(@physical_object).destroy? %>
     <tr>
       <th></th>
-      <td><%= f.link_to_remove("Delete note", data: {confirm: 'Are you sure you want to mark this note for deletion?  The note will be deleted when you submit the form.'}) if policy(@physical_object).destroy? %></td>
+      <td><%= f.link_to_remove("Delete note", data: {confirm: 'Are you sure you want to mark this note for deletion?  The note will be deleted when you submit the form.'}) if policy(@physical_object).destroy? && f.respond_to?(:link_to_remove) %></td>
     </tr>
   <% end %>
   <tr>
     <th>Include in Shipping Manifest</th>
+    <% if @search_mode %>
+    <td><%= f.select(:export, { "true" => 1, "false" => 0 }, { include_blank: ""}) %>
+    <% else %>
     <td><%= f.check_box :export, disabled: !@edit_mode %></td>
+    <% end %>
   </tr>
   <tr>
     <th>Notes</th>
@@ -19,8 +23,9 @@
   </tr>
   <tr>
     <th>Creator</th>
-    <td><%= f.text_field(:user, readonly: true) %></td>
+    <td><%= f.text_field(:user, readonly: !@search_mode) %></td>
   </tr>
+  <% unless @search_mode %>
   <tr>
     <th>Created At</th>
     <td><%= f.text_field(:created_at, readonly: true) %></td>
@@ -29,5 +34,6 @@
     <th>Updated At</th>
     <td><%= f.text_field(:updated_at, readonly: true) %></td>
   </tr>
+  <% end %>
 </table>
 
