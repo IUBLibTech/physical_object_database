@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'index', :id => @physical_object.id}, :class => 'action split')%>
+    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'index', :id => @physical_object.id}, :class => 'action split') if policy(@physical_object).show? %>
   </div>
 <% end %>
 <%# special case where the action does not have a physical object so must be :physical_object not @physical_object %>
@@ -10,7 +10,7 @@
     Upload a CSV file with the first row containing header names and subsequent rows containing
     Physical Object metadata. The file must be saved in UTF-8 encoding (see below for your version of Excel).
     See 
-    <%= link_to("this Excel spreadsheet", download_spreadsheet_example_physical_objects_path)%> 
+    <%= link_to("this Excel spreadsheet", download_spreadsheet_example_physical_objects_path)%> <%# no policy check for public file download %>
     for more details on file format.
   </p>
 </div>

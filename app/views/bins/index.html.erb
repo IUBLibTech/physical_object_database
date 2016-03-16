@@ -1,9 +1,9 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-	  <%= link_to("Create Bin", {:action => 'new'}) %>
+	  <%= link_to("Create Bin", {:action => 'new'}) if policy(Bin).new? %>
 	</div>
 	<div class="contextMenuItem">
-	  <%= link_to("Create Box", new_box_path) %>
+	  <%= link_to("Create Box", new_box_path) if policy(Box).new? %>
 	</div>
 <% end %>
 <%= form_tag(bins_path, method: :get) do %>

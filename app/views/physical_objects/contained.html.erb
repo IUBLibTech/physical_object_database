@@ -1,6 +1,6 @@
 <% content_for :context_menu do %>
   <div class="contextMenuItem">
-    <%= link_to("Cancel", controller: 'reports', action: 'index') %>
+    <%= link_to("Cancel", controller: 'reports', action: 'index') if policy(:report).index? %>
   </div>
 <% end %>
 <div>
