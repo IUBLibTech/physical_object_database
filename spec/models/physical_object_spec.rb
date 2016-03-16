@@ -896,7 +896,13 @@ describe "has required attributes:" do
     end
   end
 
-# physical_object_query
+  describe "#physical_object_query" do
+    skip "indirectly ested by picklist_specifications#query controller spec"
+  end
+
+  describe "::physical_object_query" do
+    skip "indirectly tested by search#advanced_search controller spec"
+  end
 
   describe "#workflow_blocked?" do
     context "with no condition statuses"
