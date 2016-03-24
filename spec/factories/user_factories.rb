@@ -10,6 +10,12 @@ FactoryGirl.define do
       username nil
     end
 
+    trait :collection_owner do
+      web_admin false
+      collection_owner true
+      unit Unit.first
+    end
+
   end
 
 end

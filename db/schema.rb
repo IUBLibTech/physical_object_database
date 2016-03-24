@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160324145318) do
+ActiveRecord::Schema.define(version: 20160324151535) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -539,6 +539,7 @@ ActiveRecord::Schema.define(version: 20160324145318) do
     t.boolean  "web_admin"
     t.boolean  "engineer"
     t.integer  "unit_id",          limit: 4
+    t.boolean  "collection_owner"
   end
 
   add_index "users", ["unit_id"], name: "index_users_on_unit_id", using: :btree
