@@ -58,6 +58,11 @@ describe Unit do
       expect(valid_unit).to be_valid
     end
 
+    it "can have users" do
+      expect(valid_unit).to respond_to :users
+      expect(valid_unit.users).to respond_to :size
+    end
+
     it "can have physical_objects" do
       expect(unit.physical_objects).to be_empty
       physical_object

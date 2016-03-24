@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
   validates :username, presence: true, uniqueness: true
 
+  belongs_to :unit
+
   default_scope { order(:name) }
 
   def self.authenticate(username)

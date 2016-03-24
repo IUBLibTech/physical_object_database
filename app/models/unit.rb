@@ -4,6 +4,7 @@ class Unit < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
 
   has_many :physical_objects, dependent: :restrict_with_error
+  has_many :users
 
   after_initialize :default_values, if: :new_record?
 
