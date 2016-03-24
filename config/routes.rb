@@ -25,6 +25,10 @@ Pod::Application.routes.draw do
     post :unbin, on: :member
   end
 
+  get 'collection_owner/', to: 'collection_owner#index', as: 'collection_owner_index'
+  get 'collection_owner/search', to: 'collection_owner#search', as: 'collection_owner_search'
+  get 'collection_owner/:id', to: 'collection_owner#show', as: 'collection_owner_show'
+
   resources :condition_status_templates
 
   resources :group_keys do
