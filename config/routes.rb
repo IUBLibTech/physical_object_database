@@ -1,6 +1,7 @@
 Pod::Application.routes.draw do
 
-  root 'physical_objects#index'
+  get 'welcome/', to: 'welcome#index', as: 'welcome_index'
+  root 'welcome#index'
 
   resources :batches do
     patch :add_bin, on: :member
