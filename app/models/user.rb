@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
   validates :username, presence: true, uniqueness: true
 
+  belongs_to :unit
+
   default_scope { order(:name) }
 
   def self.authenticate(username)
@@ -44,7 +46,7 @@ class User < ActiveRecord::Base
     result
   end
 
-  ROLES = [:smart_team_user, :smart_team_admin, :qc_user, :qc_admin, :web_admin, :engineer]
+  ROLES = [:smart_team_user, :smart_team_admin, :qc_user, :qc_admin, :web_admin, :engineer, :collection_owner]
 
   NO_ACTIONS = {}
   ALL_ACTIONS = Hash.new(true)
@@ -166,6 +168,9 @@ class User < ActiveRecord::Base
     WorkflowStatusTemplatesController => READ_ONLY,
     XmlTesterController => NO_ACTIONS,
   })
+  COLLECTION_OWNER = NIL_ACCESS.merge({
+    CollectionOwnerController => ALL_ACTIONS,
+  })
 
   ROLE_PERMISSIONS = {
     nil_access: NIL_ACCESS,
@@ -176,5 +181,6 @@ class User < ActiveRecord::Base
     qc_admin: QC_ADMIN,
     web_admin: WEB_ADMIN,
     engineer: ENGINEER,
+    collection_owner: COLLECTION_OWNER,
   }
 end

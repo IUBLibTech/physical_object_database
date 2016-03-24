@@ -2,11 +2,13 @@
   <tr class="header">
     <th>Name</th>
     <th>Username</th>
+    <th>Unit</th>
     <th>ST</th>
     <th>STA</th>
     <th>QC</th>
     <th>QCA</th>
     <th>ENG</th>
+    <th>CO</th>
     <th>DEV</th>
     <th>Actions</th>
   </tr>
@@ -15,11 +17,13 @@
     <tr class=<%= count.odd? ? 'odd' : 'even'%>>
       <td><%= user.name %></td>
       <td><%= user.username %></td>
+      <td><%= user.unit.abbreviation if user.unit %></td>
       <td><%= user.smart_team_user? ? '✓' : '' %></td>
       <td><%= user.smart_team_admin? ? '✓' : '' %></td>
       <td><%= user.qc_user? ? '✓' : '' %></td>
       <td><%= user.qc_admin? ? '✓' : '' %></td>
       <td><%= user.engineer? ? '✓' : '' %></td>
+      <td><%= user.collection_owner? ? '✓' : '' %></td>
       <td><%= user.web_admin? ? '✓' : '' %></td>
       <td>
         <%= link_to "Show", user_path(user) if policy(user).show? %>

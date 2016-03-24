@@ -1,0 +1,8 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Index", controller: 'collection_owner', action: 'index') if policy(:collection_owner).index? %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Search", controller: 'collection_owner', action: 'search') if policy(:collection_owner).search? %>
+  </div>
+<% end %>
