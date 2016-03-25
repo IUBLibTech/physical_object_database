@@ -5,7 +5,11 @@ class QualityControlController < ApplicationController
 
   def index
     if params[:status]
-      @physical_objects = DigitalStatus.current_actionable_status(params[:status])
+      if DigitalStatus.actionable_status?(params[:status])
+        @physical_objects = DigitalStatus.current_actionable_status(params[:status])
+      else
+        @physical_objects = DigitalStatus.current_statuses(params[:status])
+      end
       ActiveRecord::Associations::Preloader.new.preload(@physical_objects, [:unit, :digital_statuses])
     end
   end

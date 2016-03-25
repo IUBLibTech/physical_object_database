@@ -289,4 +289,23 @@ describe DigitalStatus do
     end
   end
 
+  describe "statuses" do
+    context "that are actionable" do
+      ['dist_failed', 'failed', 'qc_failed', 'qc_wait', 'rejected'].each do |s|
+        it "DigitalStatus.actionalbe_status? returns true on #{s}" do
+            expect(DigitalStatus.actionable_status?(s)).to eq true
+        end
+      end
+    end
+    context "that are not actionable" do
+      [ "archived", 'basic_qc', 'ch2dlib', 'deleted', 'long_processing', 'migrate_wait', 'processing', 'purged', 'purging', 'staging', 'to_distribute'].each do |s|
+        context "#{s}" do
+          it "DigitalStatus.actionable_status? returns false on #{s}" do
+            expect(DigitalStatus.actionable_status?(s)).to eq false
+          end
+        end
+      end
+    end
+  end
+
 end

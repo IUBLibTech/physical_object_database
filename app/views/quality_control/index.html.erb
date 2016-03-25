@@ -13,17 +13,23 @@
 	</div>
 	<div>
 		<ul>
-			<li>All Digital Statuses</li>
+			<li>All Other Digital Statuses</li>
 		<% DigitalStatus.unique_statuses.each do |r| %>
-			<li>
-				<%= "#{r[0].titleize} (#{r[1]})" %>	
-			</li>
+			<% unless DigitalStatus.actionable_status?(r[0])  %>
+				<li>
+					<% if r[0] == 'archived' %>
+						<b><%= "#{r[0]} (#{r[1]})" %></b>
+					<% else %>
+				    <%= link_to("#{r[0]} (#{r[1]})", quality_control_status_path(r[0])) if policy(:quality_control).index? %>
+				  <% end %>
+				</li>
+			<% end %>
 		<% end %>
 		</ul>
 	</div>
 </div>
 <% if @physical_objects %>
 	<div class="left">
-		<%= render 'physical_objects_list', physical_objects: @physical_objects, choice_header: "Choice" %>	
+		<%= render 'physical_objects_list', physical_objects: @physical_objects, choice_header: DigitalStatus.actionable_status?(params[:status]) ? "Choice" : nil %>
 	</div>
 <% end %>
