@@ -818,6 +818,11 @@ describe "has required attributes:" do
         expect(PhysicalObject.unstaged_by_date_format_entity(Time.now, 'CD-R', DigitalProvenance::IU_DIGITIZING_ENTITY)).to be_a ActiveRecord::Relation
       end
     end
+    describe "collection_owner_filter(unit_id)" do
+      it "returns a PhysicalObject collection" do
+        expect(PhysicalObject.collection_owner_filter(1)).to be_a ActiveRecord::Relation
+      end
+    end
   end
   
   describe "#init_start_digital_status" do

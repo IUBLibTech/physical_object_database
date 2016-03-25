@@ -99,6 +99,8 @@ class PhysicalObject < ActiveRecord::Base
   scope :unstaged_by_date_format_entity, lambda { |date, format, entity|
      PhysicalObject.joins(:digital_provenance).where(digital_provenances: {digitizing_entity: entity}).where.not(digital_start: nil).where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
    }
+  COLLECTION_OWNER_STATUSES = ['Boxed', 'Binned', 'Unpacked', 'Returned to Unit']
+  scope :collection_owner_filter, lambda { |unit_id| where(unit_id: unit_id, workflow_status: COLLECTION_OWNER_STATUSES) }
 
   attr_accessor :generation_values
   def generation_values
