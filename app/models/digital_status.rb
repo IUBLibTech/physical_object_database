@@ -51,6 +51,24 @@ class DigitalStatus < ActiveRecord::Base
     )
   }
 
+	# This scope takes any status and returns all physical objects that are currently in that state - it does not
+	# differentiate based on actionable statuses or whether a state has a decision. See current_actionanble_status for that.
+	scope :current_statuses, lambda {|i|
+		PhysicalObject.eager_load(:units).find_by_sql(
+				"SELECT physical_objects.*
+			FROM (
+				SELECT ds.physical_object_id as id
+				FROM (
+					SELECT MAX(id) as id
+					FROM digital_statuses
+					GROUP BY physical_object_id
+				) as x INNER JOIN digital_statuses as ds
+				WHERE ds.id = x.id and state='#{i}'
+			) as po_ids INNER JOIN physical_objects
+			WHERE physical_objects.id = po_ids.id"
+		)
+	}
+
  	# returns a result set containing pairings of state name and the count of physical objects currently in that state
   scope :action_statuses, -> {
   	# this MUST be double quoted - otherwise the \n will be presevered as those characters and not treated as a
@@ -74,7 +92,7 @@ class DigitalStatus < ActiveRecord::Base
   # all physical objects whose current state is a decision node (one where user must make a choice) AND the choice
   # has been made.
   scope :decided_action_barcodes, -> {
-  	# this MUST be double quoted - otherwise the \n will be presevered as those characters and not treated as a
+  	# this MUST be double quoted - otherwise the \n will be preserved as those characters and not treated as a
   	# carriage return... why does ruby do this?!?!?
   	DigitalStatus.connection.execute(
   		"SELECT mdpi_barcode, decided
@@ -126,6 +144,10 @@ class DigitalStatus < ActiveRecord::Base
 			order by digital_start"
 		)
 	}
+
+	def self.actionable_status?(state)
+		return state == 'dist_failed' || state == 'failed' || state == 'qc_failed' || state == 'qc_wait' || state == 'rejected'
+	end
 
 	def from_json(json)
 		obj = JSON.parse(json, symbolize_names: true)
