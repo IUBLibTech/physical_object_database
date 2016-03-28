@@ -1,8 +1,11 @@
 class CollectionOwnerController < ApplicationController
   before_action :check_authorization
-  before_action :check_unit_affiliation, except: [:index]
 
   def index
+    @physical_objects = PhysicalObject.collection_owner_filter(@pundit_user.unit_id)
+    if request.format.html?
+      @physical_objects = @physical_objects.paginate(page: params[:page])
+    end
   end
 
   def show
@@ -19,11 +22,9 @@ class CollectionOwnerController < ApplicationController
   private
     def check_authorization
       authorize :collection_owner
-    end
-    def check_unit_affiliation
       if @pundit_user.nil? || @pundit_user.unit.nil?
         flash[:warning] = 'You must have an associated Unit to use collection owner services.'
-        redirect_to collection_owner_index_path
+        redirect_to welcome_index_path
       end
     end
 end
