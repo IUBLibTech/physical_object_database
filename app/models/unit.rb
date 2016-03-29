@@ -4,11 +4,12 @@ class Unit < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
 
   has_many :physical_objects, dependent: :restrict_with_error
+  has_many :users
 
   after_initialize :default_values, if: :new_record?
 
   def home
-    institution.to_s + (institution.to_s.blank? ? "" : "-") + campus.to_s
+    institution.to_s + (institution.to_s.blank? ? "" : " ") + campus.to_s
   end
 
   def spreadsheet_descriptor

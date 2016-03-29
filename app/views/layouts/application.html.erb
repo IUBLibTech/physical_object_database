@@ -24,6 +24,11 @@
     </div>
     <%= environment_notice %>
     <div id="menu">
+      <% if policy(:collection_owner).index? %>
+        <div class="menuItem">
+          <%= link_to("Collection Owner", :controller => 'collection_owner', :action => 'index') if policy(:collection_owner).index? %>
+        </div>
+      <% end %>
       <div class="menuItem">
         <%= link_to("Physical Objects", :controller => 'physical_objects', :action => 'index') if policy(PhysicalObject).index? %>
       </div>

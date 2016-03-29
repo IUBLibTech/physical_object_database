@@ -16,6 +16,17 @@ describe User do
     end
   end
 
+  describe "has relationships" do
+    describe "belongs_to unit" do
+      it "is optional" do
+        valid_user.unit = Unit.first
+        expect(valid_user.unit).to eq Unit.first
+        valid_user.unit = nil
+        expect(valid_user).to be_valid
+      end
+    end
+  end
+
   describe "should be seeded with data" do
     specify "18 values" do
       expect(User.all.size).to be >= 18

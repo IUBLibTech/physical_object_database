@@ -1,0 +1,18 @@
+<%= render partial: 'collection_owner_context_menu' %>
+<h2>Collection Index for: <%= @unit.name %></h2>
+Download full collection index as: <%= link_to "Excel file", collection_owner_index_path(format: "xls") if policy(:collection_owner).index? %>
+<%# the amount of text for the title to display in trucated mode %>
+<% title_limit=42 %>
+<%# add pagination links only if @physical_objects has been paginated %>
+<% if @physical_objects.respond_to?(:total_pages) %>
+<div class="pagination">
+  <div class="page_info">
+    <%= page_entries_info @physical_objects, model: "records" %> 
+  </div>
+  <%= will_paginate @physical_objects, container: false %>
+</div>
+<% end %>
+
+<%= render partial: 'physical_objects_table' %>
+
+<%= will_paginate @physical_objects if @physical_objects.respond_to?(:total_pages) %>

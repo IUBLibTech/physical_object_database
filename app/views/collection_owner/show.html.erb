@@ -1,0 +1,4 @@
+<%= render partial: 'collection_owner_context_menu' %>
+<%= form_for(@physical_object) do |f| %>
+  <%= render partial: 'physical_object', locals: { f: f } %>
+<% end %>

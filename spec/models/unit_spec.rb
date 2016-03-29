@@ -58,6 +58,11 @@ describe Unit do
       expect(valid_unit).to be_valid
     end
 
+    it "can have users" do
+      expect(valid_unit).to respond_to :users
+      expect(valid_unit.users).to respond_to :size
+    end
+
     it "can have physical_objects" do
       expect(unit.physical_objects).to be_empty
       physical_object
@@ -88,8 +93,8 @@ describe Unit do
       end
       context "with an institution set" do
         before(:each) { valid_unit.institution = "Indiana University" }
-        it "returns institution-campus" do
-          expect(valid_unit.home).to eq "#{valid_unit.institution}-#{valid_unit.campus.to_s}"
+        it "returns institution campus" do
+          expect(valid_unit.home).to eq "#{valid_unit.institution} #{valid_unit.campus.to_s}"
         end
       end
     end

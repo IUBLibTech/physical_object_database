@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160315151142) do
+ActiveRecord::Schema.define(version: 20160324151535) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -538,7 +538,11 @@ ActiveRecord::Schema.define(version: 20160315151142) do
     t.boolean  "qc_admin"
     t.boolean  "web_admin"
     t.boolean  "engineer"
+    t.integer  "unit_id",          limit: 4
+    t.boolean  "collection_owner"
   end
+
+  add_index "users", ["unit_id"], name: "index_users_on_unit_id", using: :btree
 
   create_table "workflow_status_templates", force: :cascade do |t|
     t.string   "name",           limit: 255
@@ -570,4 +574,7 @@ ActiveRecord::Schema.define(version: 20160315151142) do
   add_index "workflow_statuses", ["bin_id", "workflow_status_template_id"], name: "index_ws_on_bin_and_wst", using: :btree
   add_index "workflow_statuses", ["physical_object_id", "workflow_status_template_id"], name: "index_ws_on_po_and_wst", using: :btree
 
+  add_foreign_key "doFiles", "doParts", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doFiles_ibfk_1"
+  add_foreign_key "doFiles", "doParts", column: "partNumber", primary_key: "partNumber", name: "doFiles_ibfk_1"
+  add_foreign_key "doParts", "doObjects", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doParts_ibfk_1"
 end

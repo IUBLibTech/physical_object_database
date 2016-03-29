@@ -21,6 +21,16 @@
 	<% end %>
       </td>
     </tr>
+    <tr>
+      <th>Unit</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :abbreviation, {include_blank: "Specify a unit (if applicable)..."} %>
+        <% else %>
+          <%= @user.unit.abbreviation if @user.unit %>
+        <% end %>
+      </td>
+    </tr>
   </table>
   <h2>User Role</h2>
   <table>
@@ -53,6 +63,12 @@
       <th>A/V Engineer</th>
       <td>
         <%= f.check_box :engineer %>
+      </td>
+    </tr>
+    <tr>
+      <th>Collection Owner</th>
+      <td>
+        <%= f.check_box :collection_owner %>
       </td>
     </tr>
     <tr>

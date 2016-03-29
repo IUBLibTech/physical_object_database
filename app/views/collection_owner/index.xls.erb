@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">MDPI Barcode</Data></Cell>
+        <Cell><Data ss:Type="String">Format</Data></Cell>
+        <Cell><Data ss:Type="String">Has ephemera</Data></Cell>
+        <Cell><Data ss:Type="String">Ephemera returned</Data></Cell>
+        <Cell><Data ss:Type="String">Unit</Data></Cell>
+        <Cell><Data ss:Type="String">Title</Data></Cell>
+        <Cell><Data ss:Type="String">Call Number</Data></Cell>
+        <Cell><Data ss:Type="String">IUCAT Barcode</Data></Cell>
+        <Cell><Data ss:Type="String">Year</Data></Cell>
+        <Cell><Data ss:Type="String">Workflow Status</Data></Cell>
+        <Cell><Data ss:Type="String">Author</Data></Cell>
+        <Cell><Data ss:Type="String">Title Control Number</Data></Cell>
+        <Cell><Data ss:Type="String">Catalog Key</Data></Cell>
+        <Cell><Data ss:Type="String">Home Location</Data></Cell>
+        <Cell><Data ss:Type="String">OCLC</Data></Cell>
+        <Cell><Data ss:Type="String">Collection Identifier</Data></Cell>
+        <Cell><Data ss:Type="String">Collection Name</Data></Cell>
+      </Row>
+      <% @physical_objects.each do |po| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= po.mdpi_barcode %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.format %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.has_ephemera?.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.ephemera_returned?.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.unit.abbreviation %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.title %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.call_number %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.iucat_barcode %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.year %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.workflow_status %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.author %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.title_control_number %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.catalog_key %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.home_location %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.oclc_number %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.collection_identifier %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.collection_name %></Data></Cell>
+      </Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>
