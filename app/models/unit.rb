@@ -9,7 +9,7 @@ class Unit < ActiveRecord::Base
   after_initialize :default_values, if: :new_record?
 
   def home
-    institution.to_s + (institution.to_s.blank? ? "" : "-") + campus.to_s
+    institution.to_s + (institution.to_s.blank? ? "" : " ") + campus.to_s
   end
 
   def spreadsheet_descriptor
