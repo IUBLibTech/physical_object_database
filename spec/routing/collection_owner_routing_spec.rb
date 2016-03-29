@@ -8,5 +8,8 @@ describe CollectionOwnerController, type: :routing do
   it "routes to #search" do
     expect(get("/collection_owner/search")).to route_to("collection_owner#search")
   end
+  it "routes to #search_results" do
+    expect(post("/collection_owner/search_results")).to route_to("collection_owner#search_results")
+  end
 end
 

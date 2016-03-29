@@ -1,0 +1,5 @@
+<%= render partial: 'collection_owner_context_menu' %>
+<h2>Collection Search Results: <%= @physical_objects.size %></h2>
+Download full search results as: <%= link_to("Excel file", collection_owner_search_results_path(params.symbolize_keys.merge(format: :xls)), method: :post) if policy(:collection_owner).search? %>
+
+<%= render partial: 'physical_objects_table' %>
