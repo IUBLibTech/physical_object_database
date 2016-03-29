@@ -89,7 +89,58 @@ describe CollectionOwnerController do
   end
 
   describe "#search" do
-    pending "write search tests"
+    context "without a unit association" do
+      before(:each) { get :search }
+      include_examples "no unit affiliation"
+    end
+    context "with a unit association" do
+      before(:all) { User.find_by_username('web_admin').update_attributes(unit_id: Unit.first.id) }
+      after(:all) { User.find_by_username('web_admin').update_attributes(unit_id: nil) }
+      before(:each) { get :search }
+      [:edit_mode, :search_mode].each do |mode|
+        it "assigns @#{mode} to true" do
+          expect(assigns(mode)).to eq true
+        end
+      end
+      it "assigns @physical_object to a new blank object, for the unit" do
+        po = assigns(:physical_object)
+        expect(po).to be_a_new PhysicalObject
+        expect(po.unit).not_to be_nil
+        expect(po.mdpi_barcode).to be_nil
+      end
+      it "renders :search" do
+        expect(response).to render_template :search
+      end
+    end
+  end
+
+  describe "#search_results" do
+    context "without a unit association" do
+      before(:each) { post :search_results }
+      include_examples "no unit affiliation"
+    end
+    context "with a unit association" do
+      before(:all) { User.find_by_username('web_admin').update_attributes(unit_id: Unit.first.id) }
+      after(:all) { User.find_by_username('web_admin').update_attributes(unit_id: nil) }
+      context "in HTML format" do
+        before(:each) { post :search_results, format: 'html' }
+        it "assigns matching objects (with implicit unit, workflow status filter)" do
+          expect(assigns(:physical_objects)).to match_array(PhysicalObject.collection_owner_filter(unit_good.id))
+        end
+        it "renders :search_results" do
+          expect(response).to render_template :search_results
+        end
+      end
+      context "in XLS format" do
+        before(:each) { post :search_results, format: 'xls' }
+        it "assigns matching objects (with implicit unit, workflow status filter)" do
+          expect(assigns(:physical_objects)).to match_array(PhysicalObject.collection_owner_filter(unit_good.id))
+        end
+        it "renders :index XLS template" do
+          expect(response).to render_template :index
+        end
+      end
+    end
   end
 
 end

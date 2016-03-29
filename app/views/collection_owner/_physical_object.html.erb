@@ -1,0 +1,120 @@
+<table>
+  <tr>
+    <th>MDPI barcode</th>
+    <td>
+      <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, class: "mdpi") %>
+    </td>
+  </tr>
+  <tr>
+    <th>Format</th>
+    <td>
+      <% if @search_mode %>
+        <%= f.select(:format, PhysicalObject.formats, { include_blank: "" }) %>
+      <% else %>
+        <%= @physical_object.format %>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th>Has Ephemera</th>
+    <td>
+      <% if @search_mode %>
+        <%= f.select(:has_ephemera, { "true" => 1, "false" => 0 }, { include_blank: ""}) %>
+      <% else %>
+        <%= f.check_box(:has_ephemera, disabled: !(@pack_mode || @ephemera_mode)) %>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th>Ephemera returned</th>
+    <td>
+      <% if @search_mode %>
+        <%= f.select(:ephemera_returned, { "true" => 1, "false" => 0 }, { include_blank: ""}) %>
+      <% else %>
+        <%= f.check_box(:ephemera_returned, disabled: !@ephemera_mode) %>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th>Unit</th>
+    <td>
+            <%= @physical_object.unit.name %>
+    </td>
+  </tr>
+  <tr>
+    <th>Title</th>
+    <td>
+      <%= f.text_field(:title, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>Call Number</th>
+    <td>
+      <%= f.text_field(:call_number, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>IUCAT Barcode</th>
+    <td>
+      <%= f.text_field(:iucat_barcode, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>Year</th>
+    <td>
+      <%= f.text_field(:year, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>Workflow Status</th>
+    <td>
+      <% if @search_mode %>
+        <%= f.select :workflow_status, WorkflowStatusTemplate.where(object_type: 'Physical Object', name: PhysicalObject::COLLECTION_OWNER_STATUSES).order(:sequence_index).collect { |wst| [wst.name, wst.name] }, { }, multiple: true, size: WorkflowStatusTemplate.where(object_type: 'Physical Object', name: PhysicalObject::COLLECTION_OWNER_STATUSES).size %>
+      <% else %>
+        <%= @physical_object.display_workflow_status %>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th>Author</th>
+    <td>
+      <%= f.text_field(:author, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>Title Control Number</th>
+    <td>
+      <%= f.text_field(:title_control_number, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>Catalog Key</th>
+    <td>
+      <%= f.text_field(:catalog_key, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>Home Location</th>
+    <td>
+      <%= f.text_field(:home_location, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>OCLC</th>
+    <td>
+      <%= f.text_field(:oclc_number, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>Collection Identifier</th>
+    <td>
+      <%= f.text_field(:collection_identifier, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+  <tr>
+    <th>Collection Name</th>
+    <td>
+      <%= f.text_field(:collection_name, readonly: !@edit_mode) %>
+    </td>
+  </tr>
+</table>

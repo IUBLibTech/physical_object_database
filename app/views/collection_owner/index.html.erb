@@ -1,5 +1,5 @@
 <%= render partial: 'collection_owner_context_menu' %>
-<h2>Collection Index for: <%= @pundit_user.unit.name %></h2>
+<h2>Collection Index for: <%= @unit.name %></h2>
 Download full collection index as: <%= link_to "Excel file", collection_owner_index_path(format: "xls") if policy(:collection_owner).index? %>
 <%# the amount of text for the title to display in trucated mode %>
 <% title_limit=42 %>
@@ -12,31 +12,7 @@ Download full collection index as: <%= link_to "Excel file", collection_owner_in
   <%= will_paginate @physical_objects, container: false %>
 </div>
 <% end %>
-<table id="po_list">
-  <tr class="header">
-    <th>Current Status</th>
-    <th>MDPI barcode</th>
-    <th>Call number</th>
-    <th>Title</th>
-    <th>Format</th>
-    <th>Actions</th>
-  </tr>
-  <% count = 1 %>
-  <% unless @physical_objects.nil? %>
-  <% @physical_objects.each do |po| %>
-    <% css_class = "#{count.odd? ? 'odd' : 'even'}" %>
-    <tr class='<%= css_class %>'>
-     <td><%= po.display_workflow_status %></td>
-     <td><%= po.mdpi_barcode %></td>
-     <td><%= po.call_number %></td>
-     <td title="<%= po.title.to_s.length <= title_limit ? "" : po.title %>"><%= po.title.to_s.length <= title_limit ? po.title : po.title[0,title_limit - 3] + '...'%></td>
-     <td><%= po.format %></td>
-     <td class="po_links">
-      <%= link_to("Show", collection_owner_show_path(po.id), class: 'action show') if policy(:collection_owner).show? %>
-    </td>
-  </tr>
-  <% count += 1 %>
-  <% end %>
-<% end %>
-</table>
+
+<%= render partial: 'physical_objects_table' %>
+
 <%= will_paginate @physical_objects if @physical_objects.respond_to?(:total_pages) %>
