@@ -9,7 +9,10 @@ class Unit < ActiveRecord::Base
   after_initialize :default_values, if: :new_record?
 
   def home
-    institution.to_s + (institution.to_s.blank? ? "" : " ") + campus.to_s
+    home_text = ""
+    home_text = institution.to_s + (institution.to_s.blank? ? "" : " ") + campus.to_s
+    home_text = 'Indiana University-Bloomington' if home_text == 'Indiana University Bloomington'
+    home_text
   end
 
   def spreadsheet_descriptor
