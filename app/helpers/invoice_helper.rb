@@ -64,7 +64,7 @@ module InvoiceHelper
 						problem << "missing preservation master filename, " if pres_filename.blank?
 						problem << "duplicate preservation master filename, " if @preservation_files.add?(pres_filename).nil?
 						unless po.nil?
-							problem << "already billed, " if po.billed
+							problem << "already billed [#{po.spread_sheet_filename}], " if po.billed
 						end
 						unless po.nil?
 							problem << "not on SDA" if po.digital_start.nil?
