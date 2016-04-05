@@ -6,7 +6,9 @@
 		<th>Title</th>
 		<th>Format</th>
 		<th>Digital Status</th>
+		<% unless choice_header.nil? %>
 		<th><%= choice_header %></th>
+		<% end %>
 	</tr>
 	<% physical_objects.each_with_index do |p, i| %>
 		<% # i begins at 0 so flip the odd/even css class %>
@@ -24,6 +26,7 @@
 			<% #The test against missing digital status was necessary because my local DB was bunged up %>
 			<td><%= p.current_digital_status.nil? ? "Missing digital statuses..." : p.current_digital_status.state %></td>
 
+			<% unless choice_header.nil? %>
 			<td>
 				<% if choice_header =='Choice' %>
 					<%= render "decision_form", p: p %>
@@ -31,6 +34,7 @@
 					<%= render "staging_form", p: p, checked: !(i >= (physical_objects.size * percent).round) %>
 				<% end %>
 			</td>
+			<% end %>
 		</tr>
 	<% end %>
 </table>

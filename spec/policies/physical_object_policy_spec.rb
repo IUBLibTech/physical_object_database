@@ -4,7 +4,7 @@ describe PhysicalObjectPolicy do
   WEB_ADMIN = User.find_by(username: "web_admin")
 
   context "web_admin user" do
-    let(:user) { WEB_ADMIN.username }
+    let(:user) { WEB_ADMIN }
 
     specify { expect(subject).to authorize(:index) }
 

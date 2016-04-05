@@ -4,11 +4,10 @@ describe PhysicalObject do
   let(:po) { FactoryGirl.create :physical_object, :cdr }
   let(:barcoded_po) { FactoryGirl.create :physical_object, :cdr, :barcoded }
   let(:grouped_po) { FactoryGirl.build :physical_object, :cdr, group_key: po.group_key }
-  let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:video_po) { FactoryGirl.build :physical_object, :umatic }
   let(:boxable_po) { FactoryGirl.build :physical_object, :boxable }
   let(:binnable_po) { FactoryGirl.build :physical_object, :binnable }
-  let(:valid_po) { FactoryGirl.build :physical_object, :cdr }
+  let(:valid_po) { FactoryGirl.build :physical_object, :cdr, unit: Unit.where(campus: "Bloomington").first }
   let(:invalid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:picklist) { FactoryGirl.create :picklist }
   let(:box) { FactoryGirl.create :box }
@@ -816,6 +815,11 @@ describe "has required attributes:" do
     describe "unstaged_by_date_format_entity(date, format, entity)" do
       it "returns an PhysicalObject collection" do
         expect(PhysicalObject.unstaged_by_date_format_entity(Time.now, 'CD-R', DigitalProvenance::IU_DIGITIZING_ENTITY)).to be_a ActiveRecord::Relation
+      end
+    end
+    describe "collection_owner_filter(unit_id)" do
+      it "returns a PhysicalObject collection" do
+        expect(PhysicalObject.collection_owner_filter(1)).to be_a ActiveRecord::Relation
       end
     end
   end

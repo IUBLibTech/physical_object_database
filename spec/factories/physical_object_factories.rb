@@ -1,5 +1,7 @@
 FactoryGirl.define do
 
+  states = []
+
   #specify a format type as a trait when creating a physical object
   factory :physical_object, class: PhysicalObject do
     # required fields
@@ -47,6 +49,21 @@ FactoryGirl.define do
     end
     trait :binable do
       binnable
+    end
+
+    transient do
+      final_status nil
+    end
+
+    trait :di_status do
+      after(:create) do |po|
+        unless final_status.nil?
+          states.each do |s|
+            FactoryGirl.create( :digital_status, physical_object_id: po.id, state: s)
+            break if final_status == s
+          end
+        end
+      end
     end
 
     generation ""

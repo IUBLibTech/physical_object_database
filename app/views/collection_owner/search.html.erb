@@ -1,0 +1,14 @@
+<%= render partial: 'collection_owner_context_menu' %>
+<h2>Collection Search</h2>
+Notes on collection search:
+<ul>
+  <li>Dropdowns: Search will filter on the chosen value, or ignore if left blank</li>
+  <li>Multi-select boxes: Control-click to select/unselect values.  Search will filter on set of chosen values, or ignore if none are selected.</li>
+  <li>Text fields: Search will filter on the chosen value, or ignore if left blank.  Searches are for exact matches by default, but asterisks (*) may be used for wildcard matching.</li>
+</ul>
+<%= form_for(@physical_object, url: { action: :search_results }) do |f| %>
+  <%= render partial: 'physical_object', locals: { f: f } %>
+  <div class="clear">
+    <%= submit_tag("Search") %>
+  </div>
+<% end %>

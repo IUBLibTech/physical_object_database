@@ -1,6 +1,7 @@
 Pod::Application.routes.draw do
 
-  root 'physical_objects#index'
+  get 'welcome/', to: 'welcome#index', as: 'welcome_index'
+  root 'welcome#index'
 
   resources :batches do
     patch :add_bin, on: :member
@@ -24,6 +25,11 @@ Pod::Application.routes.draw do
     post :add_barcode_item, on: :member
     post :unbin, on: :member
   end
+
+  get 'collection_owner/', to: 'collection_owner#index', as: 'collection_owner_index'
+  get 'collection_owner/search', to: 'collection_owner#search', as: 'collection_owner_search'
+  post 'collection_owner/search_results', to: 'collection_owner#search_results', as: 'collection_owner_search_results'
+  get 'collection_owner/:id', to: 'collection_owner#show', as: 'collection_owner_show'
 
   resources :condition_status_templates
 

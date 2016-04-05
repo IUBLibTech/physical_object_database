@@ -1,4 +1,4 @@
-class MemnonInvoiceSubmission < ActiveRecord::Migration
+class CreateMemnonInvoiceSubmission < ActiveRecord::Migration
   def change
   	create_table :memnon_invoice_submissions do |t|
   		t.string :filename

@@ -1,7 +1,7 @@
 Name,Description,Index
 Created,"The batch has been created, and assigned a name and specs.",1
-Assigned,The batch has had all the appropriate bins assigned and is ready to go.,2
-Shipped,The batch has been shipped to the digitization facility.,3
-Interim Storage,The batch has been returned from the digitization facility, but not yet entered receiving area.,4
-Returned,The batch has been returned from the digitization facility, and entered receiving area.,5
+Assigned,"The batch has had all the appropriate bins assigned and is ready to go.",2
+Shipped,"The batch has been shipped to the digitization facility.",3
+Interim Storage,"The batch has been returned from the digitization facility, but not yet entered receiving area.",4
+Returned,"The batch has been returned from the digitization facility, and entered receiving area.",5
 Complete,"All bins have been all checked in, and physical objects returned.",6
