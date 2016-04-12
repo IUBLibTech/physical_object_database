@@ -103,24 +103,24 @@ describe QualityControlController do
       end
     end
     shared_examples "staging examples" do |staging_index, entity|
-                        it "assigns @action to #{staging_index}" do
-                                expect(assigns(:action)).to eq staging_index.to_s
-                        end
-                        it "assigns @date to date" do
-                                expect(assigns(:date)).to eq DateTime.strptime(date_text, '%m/%d/%Y')
-                        end
-                        it "assigns @d_entity to #{entity}" do
-                                expect(assigns(:d_entity)).to eq entity
-                        end
-                        it "assigns @formats to unstaged formats for that date" do
-                                expect(assigns(:formats)).to eq formats
-                        end
-                        it "assigns @format_to_physical_objects to matching objects" do
-                                expect(assigns(:format_to_physical_objects)).to eq results_hash
-                        end
-                        it "renders 'staging'" do
-                                expect(response).to render_template :staging
-                        end
+      it "assigns @action to #{staging_index}" do
+        expect(assigns(:action)).to eq staging_index.to_s
+      end
+      it "assigns @date to date" do
+        expect(assigns(:date)).to eq DateTime.strptime(date_text, '%m/%d/%Y')
+      end
+      it "assigns @d_entity to #{entity}" do
+        expect(assigns(:d_entity)).to eq entity
+      end
+      it "assigns @formats to unstaged formats for that date" do
+        expect(assigns(:formats)).to eq formats
+      end
+      it "assigns @format_to_physical_objects to matching objects" do
+        expect(assigns(:format_to_physical_objects)).to eq results_hash
+      end
+      it "renders 'staging'" do
+        expect(response).to render_template :staging
+      end
     end
     shared_examples "staging contexts" do |staging_action, entity|
       context "with no params" do
@@ -214,4 +214,5 @@ describe QualityControlController do
     end
   end
 
+  
 end

@@ -93,12 +93,25 @@ class PhysicalObject < ActiveRecord::Base
     query = "%#{query}%"
     where("mdpi_barcode like ? or call_number like ? or title like ?", query, query, query)
   }
+
   scope :unstaged_formats_by_date_entity, lambda { |date, entity|
     PhysicalObject.joins(:digital_provenance).where(digital_provenances: {digitizing_entity: entity}).where(digital_start: date..(date + 1.day), staging_requested: false).pluck(:format).uniq
   }
+  scope :unstaged_formats_by_date_entity_unit, lambda { |date, entity, unit_id|
+    PhysicalObject.where(unit_id: unit_id).joins(:digital_provenance).
+      where(digital_provenances: {digitizing_entity: entity}).
+      where(digital_start: date..(date + 1.day), staging_requested: false).pluck(:format).uniq
+  }
+
   scope :unstaged_by_date_format_entity, lambda { |date, format, entity|
-     PhysicalObject.joins(:digital_provenance).where(digital_provenances: {digitizing_entity: entity}).where.not(digital_start: nil).where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
+    PhysicalObject.joins(:digital_provenance).where(digital_provenances: {digitizing_entity: entity}).where.not(digital_start: nil).where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
+  }
+  scope :unstaged_by_date_format_entity_unit, lambda { |date, format, entity, unit_id|
+     PhysicalObject.where(unit_id: unit_id).joins(:digital_provenance).
+      where(digital_provenances: {digitizing_entity: entity}).
+      where.not(digital_start: nil).where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
    }
+
   COLLECTION_OWNER_STATUSES = ['Boxed', 'Binned', 'Unpacked', 'Returned to Unit']
   scope :collection_owner_filter, lambda { |unit_id| where(unit_id: unit_id, workflow_status: COLLECTION_OWNER_STATUSES) }
 
