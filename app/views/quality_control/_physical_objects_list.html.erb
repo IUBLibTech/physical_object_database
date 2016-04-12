@@ -3,6 +3,7 @@
 		<th>Digitization Start</th>
 		<th>Digitizing Entity</th>
 		<th>MDPI Barcode</th>
+		<th>Unit</th>
 		<th>Title</th>
 		<th>Format</th>
 		<th>Digital Status</th>
@@ -20,6 +21,7 @@
 			<td><%= p.digital_start_readable %></td>
 			<td><%= p.digital_provenance ? (p.digital_provenance.digitizing_entity.blank? ? "Not set..." : (p.digital_provenance.digitizing_entity == "IU Media Digitization Studios" ? "I" : "M") ) : "No Digital Provenance Data" %></td>
 			<td><%= link_to("#{p.mdpi_barcode}", physical_object_path(p.id), target: "_blank") if policy(p).show? %></td>
+			<td><%= p.unit.abbreviation %></td>
 			<td><%=	p.title %></td>
 			<td><%= p.format %></td>
 

@@ -5,7 +5,9 @@
 	<%= f.text_field(:date, id: "date") %>
 	Format
 	<%= f.select(:format, options_for_select((PhysicalObject.valid_formats.collect {|f| [ f, f ] }).sort.unshift("All"), "All")) %>
-	<%= f.submit("Filter Unstaged On Date") %>
+  Unit
+  <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :abbreviation, {prompt: "All"} %>
+	<%= f.submit("Filter Unstaged") %>
 <% end %>
 <script type='text/javascript'>
 	$(function (){
