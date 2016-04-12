@@ -150,6 +150,23 @@ describe QualityControlController do
         before(:each) { get staging_action, staging: { format: format } }
         include_examples "staging examples", staging_action, entity
       end
+      context "setting a unit" do
+        let(:results) { [objects.first] }
+        before(:each) do
+          # set objects to current_date to test unit filtering
+          objects.each do |object|
+            object.unit = Unit.last
+            object.digital_start = current_date
+            object.save!
+          end
+          results.each do |object|
+            object.unit = Unit.first
+            object.save!
+          end
+        end
+        before(:each) { get staging_action, staging: { unit_id: Unit.first.id } }
+        include_examples "staging examples", staging_action, entity
+      end
     end
     context "IU staging" do
       let(:objects) { iu_objects }

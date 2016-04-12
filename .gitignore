@@ -42,3 +42,6 @@ script/copy-prod-db
 
 # Ignore simplecov folder
 coverage
+
+# Ignore byebug history
+.byebug_history
