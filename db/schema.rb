@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160324151535) do
+ActiveRecord::Schema.define(version: 20160412131028) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -192,6 +192,7 @@ ActiveRecord::Schema.define(version: 20160324151535) do
     t.string   "stylus_size",           limit: 255
     t.string   "turnover",              limit: 255
     t.string   "rolloff",               limit: 255
+    t.string   "noise_reduction",       limit: 255
   end
 
   add_index "digital_file_provenances", ["filename"], name: "index_digital_file_provenances_on_filename", unique: true, using: :btree
@@ -242,7 +243,7 @@ ActiveRecord::Schema.define(version: 20160324151535) do
     t.float   "duration",    limit: 24
   end
 
-  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: :cascade do |t|
     t.string   "digitizingEntity", limit: 255

@@ -28,7 +28,7 @@ class QualityControlController < ApplicationController
         PhysicalObject.where(id: params[:selected].map(&:to_i)).update_all(staging_requested: true, staging_request_timestamp: DateTime.now)
       end
     end
-    # this can't be done before the action it's reassigning staged/unstaged objects 
+    # this can't be done before the action it's reassigning staged/unstaged objects
     ##set_staging
     # render 'staging'
     redirect_to :back
@@ -96,9 +96,16 @@ class QualityControlController < ApplicationController
     @action = 'staging_index'
     @d_entity = 'Memnon'
     @entity = DigitalProvenance::MEMNON_DIGITIZING_ENTITY
-    @formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity) if @formats.empty?
+    if unit?
+      @formats = PhysicalObject.unstaged_formats_by_date_entity_unit(@date, @entity, unit) if @formats.empty?
+    else
+      @formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity) if @formats.empty?
+    end
     @formats.each do |format|
-      @format_to_physical_objects[format] = PhysicalObject.unstaged_by_date_format_entity(@date, format, @entity)
+      @format_to_physical_objects[format] =
+        unit? ?
+            PhysicalObject.unstaged_by_date_format_entity_unit(@date, format, @entity, unit) :
+            PhysicalObject.unstaged_by_date_format_entity(@date, format, @entity)
     end
   end
 
@@ -107,10 +114,27 @@ class QualityControlController < ApplicationController
     @action = 'iu_staging_index'
     @d_entity = 'IU'
     @entity = DigitalProvenance::IU_DIGITIZING_ENTITY
-    @formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity) if @formats.empty?
-    @formats.each do |format|
-      @format_to_physical_objects[format] = PhysicalObject.unstaged_by_date_format_entity(@date, format, @entity)
+    debugger
+    if unit?
+      debugger
+      @formats = PhysicalObject.unstaged_formats_by_date_entity_unit(@date, @entity, unit) if @formats.empty?
+    else
+      debugger
+      @formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity) if @formats.empty?
     end
+    @formats.each do |format|
+      @format_to_physical_objects[format] =
+        unit? ?
+            PhysicalObject.unstaged_by_date_format_entity_unit(@date, format, @entity, unit) :
+            PhysicalObject.unstaged_by_date_format_entity(@date, format, @entity)
+    end
+  end
+
+  def unit
+    params[:staging] and params[:staging][:unit_id] ? params[:staging][:unit_id] : nil
+  end
+  def unit?
+    unit and ! unit.blank?
   end
 
 end
