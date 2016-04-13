@@ -75,6 +75,10 @@
 			<th>Rolloff<%= dp_requirement(:rolloff) %></th>
 			<td><%= f.text_field :rolloff, readonly: !@edit_mode, disabled: dp_na(:rolloff), value: dp_na(:rolloff) ? nil : f.object.rolloff %></td>
 		</tr>
+	  <tr>
+	    <th>Noise Reduction</th>
+	    <td><%= f.text_field :noise_reduction, readonly: !@edit_mode, disabled: dp_na(:noise_reduction), value: dp_na(:noise_reduction) ? nil : f.object.noise_reduction %></td>
+	  </tr>
 		<tr>
 			<th>Signal Chain<%= dp_requirement(:signal_chain_id) %></th>
 			<td>
