@@ -114,12 +114,9 @@ class QualityControlController < ApplicationController
     @action = 'iu_staging_index'
     @d_entity = 'IU'
     @entity = DigitalProvenance::IU_DIGITIZING_ENTITY
-    debugger
     if unit?
-      debugger
       @formats = PhysicalObject.unstaged_formats_by_date_entity_unit(@date, @entity, unit) if @formats.empty?
     else
-      debugger
       @formats = PhysicalObject.unstaged_formats_by_date_entity(@date, @entity) if @formats.empty?
     end
     @formats.each do |format|
