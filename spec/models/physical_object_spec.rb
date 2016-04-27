@@ -7,7 +7,7 @@ describe PhysicalObject do
   let(:video_po) { FactoryGirl.build :physical_object, :umatic }
   let(:boxable_po) { FactoryGirl.build :physical_object, :boxable }
   let(:binnable_po) { FactoryGirl.build :physical_object, :binnable }
-  let(:valid_po) { FactoryGirl.build :physical_object, :cdr, unit: Unit.where(campus: "Bloomington").first }
+  let(:valid_po) { FactoryGirl.build :physical_object, :cdr, unit: Unit.where(campus: 'Bloomington').first }
   let(:invalid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:picklist) { FactoryGirl.create :picklist }
   let(:box) { FactoryGirl.create :box }
@@ -15,17 +15,18 @@ describe PhysicalObject do
 
   tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :eight_mm, :umatic]
   tm_factories = {
-    "CD-R" => :cdr_tm,
-    "DAT" => :dat_tm,
-    "LP" => :analog_sound_disc_tm,
-    "Lacquer Disc" => :analog_sound_disc_tm,
-    "45" => :analog_sound_disc_tm,
-    "78" => :analog_sound_disc_tm,
-    "Other Analog Sound Disc" => :analog_sound_disc_tm,
-    "Open Reel Audio Tape" => :open_reel_tm,
-    "Betacam" => :betacam_tm,
-    "8mm Video" => :eight_mm_tm,
-    "U-matic" => :umatic_tm,
+    'CD-R' => :cdr_tm,
+    'DAT' => :dat_tm,
+    'LP' => :analog_sound_disc_tm,
+    'Lacquer Disc' => :analog_sound_disc_tm,
+    '45' => :analog_sound_disc_tm,
+    '78' => :analog_sound_disc_tm,
+    'Other Analog Sound Disc' => :analog_sound_disc_tm,
+    'Open Reel Audio Tape' => :open_reel_tm,
+    'Betacam' => :betacam_tm,
+    '8mm Video' => :eight_mm_tm,
+    'U-matic' => :umatic_tm,
+    'Audiocassette' => :audiocassette_tm
   }
 
   describe "FactoryGirl" do

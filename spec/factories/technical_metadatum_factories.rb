@@ -9,6 +9,10 @@ FactoryGirl.define do
      actable_type "AnalogSoundDiscTm"
      association :actable, factory: :analog_sound_disc_tm
    end
+   trait :audiocassette do
+     actable_type "AudiocassetteTm"
+     association :actable, factory: :audiocassette_tm
+   end
    trait :cdr do
      actable_type "CdrTm"
      association :actable, factory: :cdr_tm
@@ -60,6 +64,26 @@ FactoryGirl.define do
     worn 0
     broken 0
     fungus 0
+  end
+
+  factory :audiocassette_tm, class: AudiocassetteTm  do
+    cassette_type "Compact"
+    tape_type "III"
+    sound_field "Unknown"
+    tape_stock_brand "Brand X"
+    noise_reduction "None"
+    format_duration "A long time"
+    pack_deformation "None"
+    damaged_tape 0
+    damaged_shell 0
+    zero_point46875_ips 0
+    zero_point9375_ips 0
+    one_point875_ips 0
+    three_point75_ips 0
+    unknown_playback_speed 1
+    fungus 0
+    soft_binder_syndrome 0
+    other_contaminants 0
   end
 
   factory :cdr_tm, class: CdrTm  do

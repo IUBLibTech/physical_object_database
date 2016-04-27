@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160412131028) do
+ActiveRecord::Schema.define(version: 20160427153839) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -39,6 +39,28 @@ ActiveRecord::Schema.define(version: 20160412131028) do
     t.string   "subtype",            limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "audiocassette_tms", force: :cascade do |t|
+    t.string   "cassette_type",          limit: 255
+    t.string   "tape_type",              limit: 255
+    t.string   "sound_field",            limit: 255
+    t.string   "tape_stock_brand",       limit: 255
+    t.string   "noise_reduction",        limit: 255
+    t.string   "format_duration",        limit: 255
+    t.string   "pack_deformation",       limit: 255
+    t.boolean  "damaged_tape"
+    t.boolean  "damaged_shell"
+    t.boolean  "zero_point46875_ips"
+    t.boolean  "zero_point9375_ips"
+    t.boolean  "one_point875_ips"
+    t.boolean  "three_point75_ips"
+    t.boolean  "unknown_playback_speed"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
   end
 
   create_table "batches", force: :cascade do |t|
@@ -243,7 +265,7 @@ ActiveRecord::Schema.define(version: 20160412131028) do
     t.float   "duration",    limit: 24
   end
 
-  add_index "dofiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: :cascade do |t|
     t.string   "digitizingEntity", limit: 255
