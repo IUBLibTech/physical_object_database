@@ -120,6 +120,9 @@ class ApplicationController < ActionController::Base
         :playback_speed, :binder_system,
         #fields for umatic video
         :size,
+        #fields for audiocassette
+        :cassette_type, :tape_type, :noise_reduction, :damaged_tape, :damaged_shell,
+        :zero_point46875_ips,
 
         # SEARCH: re-list select attributes with array values, allowing for multi-select
         :pack_deformation => [], :reel_size => [], :track_configuration => [],
@@ -143,7 +146,9 @@ class ApplicationController < ActionController::Base
         #fields for eight mm video
         :playback_speed => [], :binder_system => [],
         #fields for umatic video
-        :size => []
+        :size => [],
+        #fields for audiocassette
+        cassette_type: [], tape_type: [], noise_reduction: []
         )
     end
 
