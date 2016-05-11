@@ -109,5 +109,4 @@ class SearchController < ApplicationController
       search_parameters
     end
 
-
 end
