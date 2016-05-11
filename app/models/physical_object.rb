@@ -112,13 +112,8 @@ class PhysicalObject < ActiveRecord::Base
       where.not(digital_start: nil).where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
    }
 
-  #removed returned to unit
   COLLECTION_OWNER_STATUSES = ['Boxed', 'Binned', 'Unpacked']
   scope :collection_owner_filter, lambda { |unit_id| where(unit_id: unit_id, workflow_status: COLLECTION_OWNER_STATUSES) }
-
-  scope :workflow_statuses_within_date_range, lambda { |start_date, end_date, template_ids|
-    PhysicalObject.joins(:workflow_statuses).where("workflow_statuses.workflow_status_template_id IN (?)", template_ids).where("workflow_statuses.created_at BETWEEN ? and ?", start_date, end_date)
-  }
 
   attr_accessor :generation_values
   def generation_values
@@ -292,7 +287,7 @@ class PhysicalObject < ActiveRecord::Base
   end
  
   # omit_picklisted Boolean adds search term to that effect
-  def physical_object_query(omit_picklisted, additional_terms = {}, results_limit = 0, date_range)
+  def physical_object_query(omit_picklisted, additional_terms = {}, results_limit = 0)
     filter_blanks = lambda { |h| h.select{ |k,v| !v.to_s.blank? } }
     filter_forbidden = lambda { |h| h.delete_if { |k,v| k.in? [:id, :created_at, :updated_at, :physical_object_id] } }
     get_terms = lambda { |atts| filter_forbidden.call(filter_blanks.call(atts.symbolize_keys)) }
@@ -306,7 +301,7 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   #class version does not pass through po, tm object
-  def PhysicalObject.physical_object_query(search_terms = {}, results_limit = 0, range)
+  def PhysicalObject.physical_object_query(search_terms = {}, results_limit = 0)
     filter_blanks = lambda { |h| h.select{ |k,v| !v.to_s.blank? } }
     filter_forbidden = lambda { |h| h.delete_if { |k,v| k.in? [:id, :created_at, :updated_at, :physical_object_id] } }
     get_terms = lambda { |atts| filter_forbidden.call(filter_blanks.call(atts.symbolize_keys)) }
@@ -314,7 +309,7 @@ class PhysicalObject < ActiveRecord::Base
     search_terms.each do |object, terms|
       search_terms[object] = get_terms.call(terms)
     end 
-    PhysicalObject.physical_object_search(search_terms, results_limit, range)
+    PhysicalObject.physical_object_search(search_terms, results_limit)
   end
 
   def ensure_tm
@@ -476,7 +471,7 @@ assigned to a box."
 private
   # strong parameters in controller prevent SQL injection on attribute names, and ActiveRecord
   # query calls (with activerecord-like gem) prevent SQL injection on attribute values
-  def self.physical_object_search(search_terms, results_limit = 0, range)
+  def self.physical_object_search(search_terms, results_limit = 0)
     format = (search_terms[:physical_object] ? search_terms[:physical_object][:format] : nil)
     query_results = PhysicalObject.all.order(:format, :id)
     search_terms.each do |object, terms|
@@ -494,7 +489,6 @@ private
         query_results = add_search_terms(query_results, object_table.to_sym, terms)
       end
     end
-
     query_results = query_results.limit(results_limit) if results_limit > 0
     query_results
   end
