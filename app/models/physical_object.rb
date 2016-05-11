@@ -112,7 +112,7 @@ class PhysicalObject < ActiveRecord::Base
       where.not(digital_start: nil).where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
    }
 
-  COLLECTION_OWNER_STATUSES = ['Boxed', 'Binned', 'Unpacked', 'Returned to Unit']
+  COLLECTION_OWNER_STATUSES = ['Boxed', 'Binned', 'Unpacked']
   scope :collection_owner_filter, lambda { |unit_id| where(unit_id: unit_id, workflow_status: COLLECTION_OWNER_STATUSES) }
 
   attr_accessor :generation_values
