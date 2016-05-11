@@ -98,4 +98,8 @@ module ApplicationHelper
     end
   end
 
+  def parse_date_string(date_string)
+	  DateTime.strptime(date_string, "%m/%d/%Y")
+  end
+
 end
