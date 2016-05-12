@@ -11,7 +11,7 @@
       <% @metadata_headers = @physical_objects.first.technical_metadatum.specific.export_headers if @physical_objects && @physical_objects.any? && @physical_objects.first.technical_metadatum && @physical_objects.first.technical_metadatum.specific %>
       <% @metadata_headers ||= [] %>
       <% @metadata_headers = [] if @block_metadata %>
-      <% @basic_column_names = ["Bin barcode", "Bin identifier", "Box barcode", "MDPI barcode", "Format", "Unit", "Title", "Author", "Title control number", "Call number", "Catalog key", "Home location", "IUCAT barcode", "OCLC number", "Other copies", "Group key", "Group position", "Group total", "Collection identifier", "Collection name", "Year", "Generation", "Workflow status", "Has ephemera", "Internal Notes", "External Notes", "Conditions"] %>
+      <% @basic_column_names = ["Batch identifier", "Batch status", "Batch last updated", "Bin barcode", "Bin identifier", "Bin status", "Bin last updated", "Box barcode", "MDPI barcode", "Format", "Unit", "Title", "Author", "Title control number", "Call number", "Catalog key", "Home location", "IUCAT barcode", "OCLC number", "Other copies", "Group key", "Group position", "Group total", "Collection identifier", "Collection name", "Year", "Generation", "Workflow status", "Last updated", "Has ephemera", "Internal Notes", "External Notes", "Conditions"] %>
       <% @column_names = @basic_column_names + @metadata_headers %>
       <Row>
       <% @column_names.each do |column_name| %>
@@ -20,7 +20,7 @@
       </Row>
       <% if @physical_objects.any? %>
         <% @physical_objects.each do |po| %>
-<%= render '/spreadsheets/modified_physical_object', bin: (po.box ? po.box.bin : po.bin), box: po.box, po: po %>
+<%= render 'search_physical_object', po: po %>
         <% end %>
       <% end %>
     </Table>
@@ -46,7 +46,7 @@
         <% end %>
       </Row>
          <% end %>
-<%= render '/spreadsheets/modified_physical_object', bin: (po.box ? po.box.bin : po.bin), box: po.box, po: po %>
+<%= render 'search_physical_object', bin: (po.box ? po.box.bin : po.bin), box: po.box, po: po %>
       <% end %>
     </Table>
   </Worksheet>
