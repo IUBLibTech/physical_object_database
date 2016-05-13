@@ -81,7 +81,7 @@ class PhysicalObjectsController < ApplicationController
       @end_date = params[:physical_object][:end_date]
     end
     if @start_date && @end_date
-      @physical_objects = PhysicalObject.all.eager_load(:unit, :picklist, :box, :bin, :box_bin, :bin_batch, :box_batch).joins(:workflow_statuses).where("workflow_statuses.workflow_status_template_id IN (?) AND workflow_statuses.created_at >= ? AND workflow_statuses.created_at <= ?", contained_status_ids, @start_date, @end_date)
+      @physical_objects = PhysicalObject.workflow_status_search(contained_status_ids, @start_date, @end_date).eager_load(:unit, :picklist, :box, :bin, :box_bin, :bin_batch, :box_batch)
     else
       @physical_objects = PhysicalObject.none
     end

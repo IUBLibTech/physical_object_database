@@ -219,6 +219,11 @@
       </tr>
     </table>
     <% if @search_mode %>
+    <div id="workflow_statuses_div">
+      <%= fields_for @workflow_status do |ws| %>
+        <%= render(partial: 'workflow_status_templates/workflow_status_search', locals: { f: ws, target_object: @physical_object }) %>
+      <% end %>
+    </div>
     <div id="condition_statuses_div">
       <%= fields_for @condition_status do |cs| %>
         <%= render(partial: 'condition_status_templates/condition_status_fields', locals: { f: cs, target_object: @physical_object }) %>

@@ -114,6 +114,9 @@ class PhysicalObject < ActiveRecord::Base
       where(digital_provenances: {digitizing_entity: entity}).
       where.not(digital_start: nil).where(digital_start: date..(date + 1.day), staging_requested: false, format: format).order("RAND()")
    }
+  scope :workflow_status_search, lambda { |wst_ids, start_date, end_date|
+    joins(:workflow_statuses).where("workflow_statuses.workflow_status_template_id IN (?) AND workflow_statuses.created_at >= ? AND workflow_statuses.created_at <= ?", wst_ids, start_date, end_date)
+  }
 
   COLLECTION_OWNER_STATUSES = ['Boxed', 'Binned', 'Unpacked', 'Returned to Unit']
   scope :collection_owner_filter, lambda { |unit_id| where(unit_id: unit_id, workflow_status: COLLECTION_OWNER_STATUSES) }
