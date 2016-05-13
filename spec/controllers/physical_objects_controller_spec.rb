@@ -1009,6 +1009,7 @@ describe PhysicalObjectsController do
     let(:excluded_binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable }
     let(:box) { FactoryGirl.create :box }
     let(:bin) { FactoryGirl.create :bin }
+    let(:wst_ids) { WorkflowStatusTemplate.where(name: ['Binned', 'Boxed']).map(&:id) }
     before(:each) do
       uncontained_object
       included_boxed_object.box = box
@@ -1032,19 +1033,19 @@ describe PhysicalObjectsController do
       end
     end
     context "when missing start_date" do
-      before(:each) { get :contained, format: "xls", physical_object: { end_date: end_date } }
+      before(:each) { get :contained, format: "xls", physical_object: { workflow_status_template_id: wst_ids, end_date: end_date } }
       it "sets @physical_objects to empty" do
         expect(assigns(:physical_objects)).to be_empty
       end
     end
     context "when missing end_date" do
-      before(:each) { get :contained, format: "xls", physical_object: { start_date: start_date } }
+      before(:each) { get :contained, format: "xls", physical_object: { workflow_status_template_id: wst_ids, start_date: start_date } }
       it "sets @physical_objects to empty" do
         expect(assigns(:physical_objects)).to be_empty
       end
     end
     context "when providing valid start_date and end_date" do
-      before(:each) { get :contained, format: "xls", physical_object: { start_date: start_date, end_date: end_date } }
+      before(:each) { get :contained, format: "xls", physical_object: { workflow_status_template_id: wst_ids, start_date: start_date, end_date: end_date } }
       it "returns only physical_objects set to binned/boxed in provided date range" do
         expect(assigns(:physical_objects)).to include included_boxed_object
         expect(assigns(:physical_objects)).to include included_binned_object

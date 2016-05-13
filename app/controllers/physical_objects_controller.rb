@@ -75,13 +75,14 @@ class PhysicalObjectsController < ApplicationController
   end
 
   def contained
-    contained_status_ids = WorkflowStatusTemplate.where(name: ["Binned", "Boxed"]).map { |wst| wst.id }
     if params[:physical_object]
-      @start_date = params[:physical_object][:start_date]
-      @end_date = params[:physical_object][:end_date]
+      contained_params = clean_arrays(params.require(:physical_object).permit(:start_date, :end_date, workflow_status_template_id: []))
+      @wst_ids = contained_params[:workflow_status_template_id]
+      @start_date = contained_params[:start_date]
+      @end_date = contained_params[:end_date]
     end
-    if @start_date && @end_date
-      @physical_objects = PhysicalObject.workflow_status_search(contained_status_ids, @start_date, @end_date).eager_load(:unit, :picklist, :box, :bin, :box_bin, :bin_batch, :box_batch)
+    if @start_date && @end_date && @wst_ids && @wst_ids.any?
+      @physical_objects = PhysicalObject.workflow_status_search(@wst_ids, @start_date, @end_date).eager_load(:unit, :picklist, :box, :bin, :box_bin, :bin_batch, :box_batch)
     else
       @physical_objects = PhysicalObject.none
     end
@@ -449,6 +450,14 @@ class PhysicalObjectsController < ApplicationController
     
     def authorize_collection
       authorize PhysicalObject
+    end
+
+    def clean_arrays(h)
+      h.each do |k,v|
+        if v.class == Array && v.first == ""
+          h[k] = ((v.size > 1) ? v[1,v.size - 1] : nil)
+        end
+      end
     end
 
 end
