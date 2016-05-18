@@ -38,7 +38,9 @@ class SearchController < ApplicationController
 
   def advanced_search
     @search_mode = true
-    @full_results = PhysicalObject.physical_object_query(search_params)
+    @full_results = PhysicalObject.physical_object_query(search_params).eager_load(:box, :bin, :box_bin, :box_batch, :bin_batch, :unit, :notes, :condition_statuses, :group_key, :technical_metadatum)
+#FIXME: add 2 note scopes, condition status scope
+#FIXME: figure out why tm is not included
     @physical_objects = @full_results.limit(SEARCH_RESULTS_LIMIT)
     @results_count = @physical_objects.size
     flash.now[:notice] = "Your search returns these results"

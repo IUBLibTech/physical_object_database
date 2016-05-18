@@ -31,6 +31,9 @@ class PhysicalObject < ActiveRecord::Base
   has_many :condition_statuses, :dependent => :destroy
   has_many :notes, :dependent => :destroy
   has_many :digital_statuses, :dependent => :destroy
+  has_one :box_bin, through: :box, source: :bin
+  has_one :bin_batch, through: :bin, source: :batch
+  has_one :box_batch, through: :box_bin, source: :batch
 
   accepts_nested_attributes_for :condition_statuses, allow_destroy: true
   accepts_nested_attributes_for :notes, allow_destroy: true
@@ -338,16 +341,19 @@ class PhysicalObject < ActiveRecord::Base
 
   def display_workflow_status
     if self.current_workflow_status.in? ["Binned", "Boxed"]
-      if self.bin
-        bin_status = self.bin.display_workflow_status
-      elsif self.box and self.box.bin
-        bin_status = self.box.bin.display_workflow_status
+      if self.container_bin
+        bin_status = self.container_bin.current_workflow_status
       elsif !self.box and !self.bin
         bin_status = "(No bin or box assigned!)"
       end
     end
     bin_status = "" if bin_status.in? [nil, "Created"]
     addendum = ( bin_status.blank? ? "" : " >> #{bin_status}" )
+    if bin_status == 'Batched'
+      batch_status = (self.container_batch&.current_workflow_status || '(No batch assigned!)')
+      batch_status = '' if batch_status.in? [nil, 'Created']
+      addendum += " >> #{batch_status}" unless batch_status.blank?
+    end
     self.current_workflow_status.to_s + addendum
   end
 
@@ -456,7 +462,11 @@ assigned to a box."
   end
 
   def container_bin
-    self.box ? self.box.bin : self.bin
+    self.bin || self.box_bin
+  end
+
+  def container_batch
+    self.bin_batch || self.box_batch
   end
 
   # See DigitalFileProvenance::FILE_USE_VALUES for list of valid use codes
