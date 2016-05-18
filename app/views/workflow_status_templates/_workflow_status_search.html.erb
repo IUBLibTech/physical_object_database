@@ -1,0 +1,22 @@
+<table>
+  <tr><th colspan="2">Workflow Status History</th></tr>
+  <tr>
+    <th>Status</th>
+    <td>
+      <%= f.select :workflow_status_template_id, target_object.workflow_status_id_options, { }, multiple: true, size: target_object.workflow_status_id_options.size %>
+    </td>
+  </tr>
+  <tr>
+    <td colspan='2'>If your browser is NOT presenting a date picker or automatically formatting date input, use the following format for your date entry:<br/> <em>YYYY-MM-DD (ex. 2015-01-23)</em>
+    </td>
+  </tr>
+  <tr>
+    <th>Start date (inclusive)</th>
+    <td><%= f.date_field :created_at %></td>
+  </tr>
+  <tr>
+    <th>End date (exclusive)</th>
+    <td><%= f.date_field :updated_at %></td>
+  </tr>
+</table>
+
