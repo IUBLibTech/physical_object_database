@@ -647,7 +647,9 @@ describe "has required attributes:" do
       end
       specify "when Boxed (into a bin), also displays bin status (if not Created)" do
         bin.current_workflow_status = "Sealed"
+        bin.save!
         box.bin = bin
+        box.save!
         valid_po.box = box
         valid_po.assign_inferred_workflow_status
         expect(valid_po.current_workflow_status).to eq "Boxed"
