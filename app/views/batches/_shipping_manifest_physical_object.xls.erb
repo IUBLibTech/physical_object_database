@@ -24,7 +24,9 @@
     <Cell><Data ss:Type="String"><%= po.file_prefix %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.file_bext %></Data></Cell>
     <Cell><Data ss:Type="String"><%= po.file_icmt %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= po.file_iarl %></Data></Cell>
+    <% unless po.technical_metadatum.specific.tm_genres[po.format] == :video %>
+      <Cell><Data ss:Type="String"><%= po.file_iarl %></Data></Cell>
+    <% end %>
   <%# box information %>
   <% if @column_names.include?("Box barcode") %>
     <Cell><Data ss:Type="String"><%= box.nil? ? "" : box.mdpi_barcode %></Data></Cell>
