@@ -1,0 +1,45 @@
+      <Row>
+      <%# batch info %>
+      <Cell><Data ss:Type="String"><%= po.container_batch&.identifier %></Data></Cell>
+      <Cell><Data ss:Type="String"><%= po.container_batch&.workflow_status %></Data></Cell>
+      <Cell><Data ss:Type="String"><%= po.container_batch&.updated_at %></Data></Cell>
+      <%# bin info %>
+      <Cell><Data ss:Type="String"><%= po.container_bin&.mdpi_barcode %></Data></Cell>
+      <Cell><Data ss:Type="String"><%= po.container_bin&.identifier %></Data></Cell>
+      <Cell><Data ss:Type="String"><%= po.container_bin&.workflow_status %></Data></Cell>
+      <Cell><Data ss:Type="String"><%= po.container_bin&.updated_at %></Data></Cell>
+      <%# box information %>
+        <Cell><Data ss:Type="String"><%= po.box&.mdpi_barcode.to_s %></Data></Cell>
+      <%# object info %>
+        <Cell><Data ss:Type="String"><%= po.mdpi_barcode %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.format %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.unit.spreadsheet_descriptor %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.title %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.author %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.title_control_number %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.call_number %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.catalog_key %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.home_location %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.iucat_barcode %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.oclc_number %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.other_copies? %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.group_identifier %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.group_position %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.group_total %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.collection_identifier %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.collection_name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.year %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.generation %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.workflow_status %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.updated_at %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.has_ephemera? %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.other_notes(false) %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.other_notes(true) %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.condition_notes %></Data></Cell>
+      <%# technical metadata info %>
+      <% if @metadata_headers.any? %>
+        <% po.ensure_tm.export_values.each do |value| %>
+        <Cell><Data ss:Type="String"><%= value %></Data></Cell>
+        <% end %>
+      <% end %>
+      </Row>

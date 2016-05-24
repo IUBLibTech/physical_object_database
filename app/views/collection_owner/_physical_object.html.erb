@@ -118,3 +118,10 @@
     </td>
   </tr>
 </table>
+<% if @search_mode %>
+  <div id="workflow_statuses_div">
+    <%= fields_for @workflow_status do |ws| %>
+      <%= render(partial: 'workflow_status_search', locals: { f: ws, target_object: @physical_object }) %>
+    <% end %>
+  </div>
+<% end %>

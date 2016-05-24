@@ -22,8 +22,15 @@
         <Cell><Data ss:Type="String">Call Number</Data></Cell>
         <Cell><Data ss:Type="String">Title</Data></Cell>
         <Cell><Data ss:Type="String">Workflow Status</Data></Cell>
+        <Cell><Data ss:Type="String">Last Updated</Data></Cell>
         <Cell><Data ss:Type="String">Box Barcode</Data></Cell>
         <Cell><Data ss:Type="String">Bin Barcode</Data></Cell>
+        <Cell><Data ss:Type="String">Bin Identifier</Data></Cell>
+        <Cell><Data ss:Type="String">Bin Status</Data></Cell>
+        <Cell><Data ss:Type="String">Bin Last Updated</Data></Cell>
+        <Cell><Data ss:Type="String">Batch Identifier</Data></Cell>
+        <Cell><Data ss:Type="String">Batch Status</Data></Cell>
+        <Cell><Data ss:Type="String">Batch Last Updated</Data></Cell>
       </Row>
       <% @physical_objects.each do |po| %>
       <Row>
@@ -34,8 +41,15 @@
         <Cell><Data ss:Type="String"><%= po.call_number %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.title %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.workflow_status %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= po.box ? po.box.mdpi_barcode : '' %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= po.bin ? po.bin.mdpi_barcode : '' %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.updated_at %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.box&.mdpi_barcode.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.container_bin&.mdpi_barcode.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.container_bin&.identifier.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.container_bin&.workflow_status.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.container_bin&.updated_at.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.container_batch&.identifier.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.container_batch&.workflow_status.to_s %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.container_batch&.updated_at.to_s %></Data></Cell>
       </Row>
       <% end %>
     </Table>

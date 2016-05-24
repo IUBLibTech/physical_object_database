@@ -21,6 +21,14 @@ class WorkflowStatusTemplate < ActiveRecord::Base
 	  return options
 	end
 
+        def self.select_id_options(object_type)
+          options = {}
+	  self.where(object_type: object_type).order('sequence_index ASC').each do |template|
+                options[template.name] = template.id
+          end
+          return options
+        end
+
 	def self.template_by_status_name(object_type, name)
 		WorkflowStatusTemplate.where(object_type: object_type, name: name).first
 	end

@@ -23,10 +23,18 @@ class CollectionOwnerController < ApplicationController
     @physical_object = PhysicalObject.new
     @physical_object.attributes.keys.each { |att| @physical_object[att] = nil }
     @physical_object.unit = @unit
+    @workflow_status = WorkflowStatus.new
+    @workflow_status.attributes.keys.each { |att| @workflow_status[att] = nil }
   end
 
   def search_results
     @full_results = PhysicalObject.physical_object_query(search_params).collection_owner_filter(@unit.id)
+    if params[:workflow_status]
+      ws_params = workflow_status_params
+      if ws_params[:workflow_status_template_id] && ws_params[:workflow_status_template_id].any? && !ws_params[:created_at].blank? && !ws_params[:updated_at].blank?
+        @full_results = @full_results.workflow_status_search(ws_params[:workflow_status_template_id], ws_params[:created_at], ws_params[:updated_at])
+      end
+    end
     @physical_objects = @full_results.limit(SEARCH_RESULTS_LIMIT)
     @results_count = @physical_objects.size
     flash.now[:notice] = "Your search returns these results"
@@ -62,6 +70,10 @@ class CollectionOwnerController < ApplicationController
 
     def po_search_params
       clean_arrays(physical_object_params)
+    end
+
+    def workflow_status_params
+      clean_arrays(params.require(:workflow_status).permit(:created_at, :updated_at, workflow_status_template_id: []))
     end
 
     def search_params

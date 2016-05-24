@@ -5,13 +5,14 @@ describe PhysicalObject do
   let(:barcoded_po) { FactoryGirl.create :physical_object, :cdr, :barcoded }
   let(:grouped_po) { FactoryGirl.build :physical_object, :cdr, group_key: po.group_key }
   let(:video_po) { FactoryGirl.build :physical_object, :umatic }
-  let(:boxable_po) { FactoryGirl.build :physical_object, :boxable }
-  let(:binnable_po) { FactoryGirl.build :physical_object, :binnable }
+  let(:boxable_po) { FactoryGirl.build :physical_object, :boxable, :barcoded }
+  let(:binnable_po) { FactoryGirl.build :physical_object, :binnable, :barcoded }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr, unit: Unit.where(campus: 'Bloomington').first }
   let(:invalid_po) { FactoryGirl.build :physical_object, :cdr }
   let(:picklist) { FactoryGirl.create :picklist }
   let(:box) { FactoryGirl.create :box }
   let(:bin) { FactoryGirl.create :bin }
+  let(:batch) { FactoryGirl.create :batch }
 
   tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :eight_mm, :umatic]
   tm_factories = {
@@ -232,6 +233,30 @@ describe "has required attributes:" do
             valid_po.bin = bin
             expect(valid_po).not_to be_valid
           end
+        end
+      end
+    end
+    describe "through relationships" do
+      describe "box_bin" do
+        specify "returns po.box.bin" do
+          boxable_po.box = box; boxable_po.save!
+          box.bin = bin; box.save!
+          expect(boxable_po.box_bin).to eq bin
+        end
+      end
+      describe "bin_batch" do
+        specify "returns po.bin.batch" do
+          binnable_po.bin = bin; binnable_po.save!
+          bin.batch = batch; bin.save!
+          expect(binnable_po.bin_batch).to eq batch
+        end
+      end
+      describe "box_batch" do
+        specify "returns po.box.bin.batch" do
+          boxable_po.box = box; boxable_po.save!
+          box.bin = bin; box.save!
+          bin.batch = batch; bin.save!
+          expect(boxable_po.box_batch).to eq batch
         end
       end
     end
@@ -474,6 +499,41 @@ describe "has required attributes:" do
 	end
       end
     end
+    describe "#container_batch" do
+      context "when boxed" do
+        before(:each) do
+          bin.batch = batch
+          bin.save!
+          box.bin = bin
+          box.save!
+          boxable_po.box = box
+          boxable_po.save!
+        end
+        it "returns the box's bin's batch" do
+          expect(boxable_po.container_batch).to eq batch
+        end
+      end
+      context "when binned" do
+        before(:each) do
+          bin.batch = batch
+          bin.save!
+          binnable_po.bin = bin
+        end
+        it "returns the bin" do
+          expect(binnable_po.container_batch).to eq batch
+        end
+      end
+      context "when uncontained" do
+        before(:each) do
+          valid_po.box = nil
+          valid_po.bin = nil
+        end
+        it "returns nil" do
+          expect(valid_po.container_batch).to be_nil
+        end
+      end
+    end
+
     it "#file_prefix" do
       expect(valid_po.file_prefix).to eq "MDPI_" + valid_po.mdpi_barcode.to_s
     end
@@ -587,7 +647,9 @@ describe "has required attributes:" do
       end
       specify "when Boxed (into a bin), also displays bin status (if not Created)" do
         bin.current_workflow_status = "Sealed"
+        bin.save!
         box.bin = bin
+        box.save!
         valid_po.box = box
         valid_po.assign_inferred_workflow_status
         expect(valid_po.current_workflow_status).to eq "Boxed"

@@ -59,6 +59,10 @@ module WorkflowStatusModule
     return WorkflowStatusTemplate.select_options(self.class_title)
   end
 
+  def workflow_status_id_options
+    return WorkflowStatusTemplate.select_id_options(self.class_title)
+  end
+
   def class_title
     self.class.name.underscore.humanize.titleize
   end

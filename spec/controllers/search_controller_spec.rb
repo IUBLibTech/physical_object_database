@@ -267,6 +267,25 @@ describe SearchController do
         include_examples "returns item set", "matching items"
       end
     end
+    context "searching workflow history" do
+      before(:each) do
+        items_2.each do |item|
+          item.workflow_statuses.each do |ws|
+            ws.update_attributes!(created_at: Time.new(4001, 2, 3), updated_at: Time.new(4001, 2, 3))
+          end
+        end
+      end
+      before(:each) { post :advanced_search, omit_picklisted: omit_picklisted, physical_object: po_terms, tm: tm_terms, workflow_status: ws_terms }
+      describe "applies workflow status search terms" do
+        let(:po_terms) { { title: ""} }
+        let(:tm_terms) { {} }
+        let(:start_date) { Time.new(2001, 2, 3) }
+        let(:end_date) { Time.new(3001, 2, 3) }
+        let(:ws_terms) { {workflow_status_template_id: WorkflowStatusTemplate.all.map { |t| t.id }, created_at: start_date, updated_at: end_date} }
+        let(:returned) { items_1 }
+        include_examples "returns item set", "matching items"
+      end
+    end
   end
 
 end

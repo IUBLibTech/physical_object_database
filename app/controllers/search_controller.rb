@@ -34,11 +34,21 @@ class SearchController < ApplicationController
     @note.attributes.keys.each { |att| @note[att] = nil }
     @condition_status = ConditionStatus.new
     @condition_status.attributes.keys.each { |att| @condition_status[att] = nil }
+    @workflow_status = WorkflowStatus.new
+    @workflow_status.attributes.keys.each { |att| @workflow_status[att] = nil }
   end  
 
   def advanced_search
     @search_mode = true
-    @full_results = PhysicalObject.physical_object_query(search_params)
+    @full_results = PhysicalObject.physical_object_query(search_params).eager_load(:box, :bin, :box_bin, :box_batch, :bin_batch, :unit, :notes, :condition_statuses, :group_key, :technical_metadatum)
+    if params[:workflow_status]
+      ws_params = workflow_status_params
+      if ws_params[:workflow_status_template_id] && ws_params[:workflow_status_template_id].any? && !ws_params[:created_at].blank? && !ws_params[:updated_at].blank?
+        @full_results = @full_results.workflow_status_search(ws_params[:workflow_status_template_id], ws_params[:created_at], ws_params[:updated_at])
+      end
+    end
+#FIXME: add 2 note scopes, condition status scope
+#FIXME: figure out why tm is not included
     @physical_objects = @full_results.limit(SEARCH_RESULTS_LIMIT)
     @results_count = @physical_objects.size
     flash.now[:notice] = "Your search returns these results"
@@ -82,6 +92,10 @@ class SearchController < ApplicationController
 
     def condition_status_params
       clean_arrays(params.require(:condition_status).permit(:notes, :active, :user, condition_status_template_id: []))
+    end
+
+    def workflow_status_params
+      clean_arrays(params.require(:workflow_status).permit(:created_at, :updated_at, workflow_status_template_id: []))
     end
 
     def note_params
