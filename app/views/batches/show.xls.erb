@@ -7,9 +7,26 @@
   <Worksheet ss:Name="Sheet1">
     <Table>
       <% @first_object = @batch.first_object %>
+
       <% if @first_object %>
         <% @column_names = ["Object Barcode", "Batch number", "Batch description", "Format", "Unit", "IU Object ID - Call number", "IU Object ID - Catalog barcode", "IU Collection ID", "Title", "Carrier Stream Index", "Container barcode", "Container name", "Container description", "Physical Condition - Damage", "Physical Condition - Preservation Problems", "Number of preservation masters expected", "Output file-name prefix"]%>
         <% @column_names += ["Embedded file info - Bext Chunk - Description", "Embedded file info - Info List - ICMT", "Embedded file info - Info List - IARL"] %>
+
+        <%# Memnon wanted to rename 2 columns and delete 1 for video formats only %>
+        <% if @first_object.technical_metadatum.specific.tm_genres[@first_object.format] == :video %>
+          <% @column_names = @column_names.map { |o|
+		            if o == "Embedded file info - Bext Chunk - Description"
+		              "Preservation master - Description field"
+		            elsif o == "Embedded file info - Info List - ICMT"
+		              "Mezzanine - Movie_More field"
+		            else
+		             o
+		            end
+		          } %>
+		      <% @column_names = @column_names - ["Embedded file info - Info List - IARL"] %>
+        <% end %>
+
+
         <%# box column %>
         <% if TechnicalMetadatumModule.box_formats.include?(@batch.format) %>
           <% @column_names << "Box barcode" %>
