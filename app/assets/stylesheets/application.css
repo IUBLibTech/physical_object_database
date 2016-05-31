@@ -137,9 +137,10 @@ tr.faded {
 
 .menuItem {
   float: left;
-  padding: 10px 0 0 15px;
+  padding: 10px 0 0 12px;
   font-family: 'Tahoma';
   font-size: 14px;
+  word-spacing: -0.3em;
   font-weight: bold;
 }
 
@@ -456,4 +457,18 @@ table.presInt >tbody > tr > th {
     position: relative;
     left: 880px;
     top: 20px;
+}
+
+ul.nav {
+    display: none;
+    padding: 0 5px 0 5px;
+    margin: 0;
+    background-color: #cd894e;
+    color: #7d110c;
+    position: absolute;
+    word-spacing: normal;
+    border-radius: 3px;
+}
+ul.nav > li {
+    list-style-type: none;
 }
