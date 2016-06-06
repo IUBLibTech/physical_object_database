@@ -1,11 +1,3 @@
-<% content_for :context_menu do %>
-  <div class="contextMenuItem">
-	  <%= link_to("Create Bin", {:action => 'new'}) if policy(Bin).new? %>
-	</div>
-	<div class="contextMenuItem">
-	  <%= link_to("Create Box", new_box_path) if policy(Box).new? %>
-	</div>
-<% end %>
 <%= form_tag(bins_path, method: :get) do %>
   Filtering by workflow status: <%= select_tag :workflow_status, options_for_select(WorkflowStatusTemplate.where(object_type: "Bin").collect { |wst| wst.name }, params[:workflow_status]), { prompt: "(No filter applied)" } %><br/>
   Filtering by format: <%= select_tag :format, options_for_select(TechnicalMetadatumModule.tm_formats_hash, params[:format]), { prompt: "(No filter applied)" } %><br/>

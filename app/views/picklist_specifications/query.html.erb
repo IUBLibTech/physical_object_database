@@ -1,11 +1,3 @@
-<% content_for :context_menu do %>
-  <div class="contextMenuItem">
-    <%= link_to("Create Picklist", :action => 'new') if policy(Picklist).new? %>
-  </div>
-  <div class="contextMenuItem">
-    <%= link_to("View Picklists", :action => 'index') if policy(PicklistSpecification).index? %>
-  </div>
-<% end %>
 <%= error_messages_for(@ps) %>
 <%= form_for(@ps, :url => {:action => @action, :id => @ps.id}) do |f| %>
   <h2>Physical Objects Matching Spec <%= @ps.name %>: <%= @physical_objects.nil? ? 0 : @physical_objects.size %></h2> 

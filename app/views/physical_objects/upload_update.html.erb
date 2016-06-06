@@ -1,8 +1,3 @@
-<% content_for :context_menu do %>
-  <div class="contextMenuItem">
-    <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) if policy(PhysicalObject).upload_show? %>
-  </div>
-<% end %>
 <div class="left">
 	<% unless @spreadsheet.nil? || @spreadsheet.id.nil? %>
 	  <p>
