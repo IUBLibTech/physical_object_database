@@ -46,6 +46,9 @@
             <%= link_to "View Group Keys", group_keys_path if policy(GroupKey).index?  %>
           </li>
           <li>
+            <%= link_to "Create New Group Key", new_group_key_path if policy(GroupKey).new? %>
+          </li>
+          <li>
             <%= link_to("ViewImported Spreadsheets", spreadsheets_path) if policy(Spreadsheet).index? %>
           </li>
           <li>
@@ -112,6 +115,9 @@
           </li>
           <li>
 	          <%= link_to("responses/transfers xml", transfers_index_response_path) %><%# responses controller does not use policy authorization %>
+          </li>
+          <li>
+	          <%= link_to("Messages", messages_path) if policy(:staging_percentage).index? %>
           </li>
         </ul>
       </div>

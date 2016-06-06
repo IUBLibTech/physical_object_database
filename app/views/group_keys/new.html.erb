@@ -1,3 +1,8 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to 'Cancel', :back if policy(@group_key).show? %>
+  </div>
+<% end %>
 <div>
   <h2>Create Group Key</h2>
   <p>Note that it is normally unnecessary to create a group key in this manner. Group keys are automatically created on physical object creation, or when saving a physical object with "New Group Key" as the group key.</p>
