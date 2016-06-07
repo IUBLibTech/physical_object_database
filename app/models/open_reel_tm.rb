@@ -39,7 +39,7 @@ class OpenReelTm < ActiveRecord::Base
     "full_track", "half_track", "quarter_track", "unknown_track"
   ]
   TAPE_THICKNESS_FIELDS = [ "zero_point5_mils", "one_mils", "one_point5_mils" ]
-  SOUND_FIELD_FIELDS = ["mono","stereo","unknown_sound_field"]
+  SOUND_FIELD_FIELDS = ["mono","dual_mono","stereo","unknown_sound_field"]
   TAPE_BASE_FIELDS = ["acetate_base","polyester_base","pvc_base","paper_base"]
   MULTIVALUED_FIELDSETS = {
     "Preservation problems" => :PRESERVATION_PROBLEM_FIELDS,

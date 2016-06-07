@@ -129,6 +129,9 @@
 								Mono <%= f.check_box(:mono) %>
 							</td>
 							<td>
+								Dual Mono <%= f.check_box(:dual_mono) %>
+							</td>
+							<td>
 								Stereo <%= f.check_box(:stereo) %>
 							</td>
 							<td>
@@ -137,7 +140,7 @@
 						</tr>
 					</table>
 				<% else %>
-					<%=  @tm.humanize_boolean_fields("mono", "stereo", "unknown_sound_field") %>
+					<%=  @tm.humanize_boolean_fields("mono", "dual_mono", "stereo", "unknown_sound_field") %>
 				<% end %>
 			</td>
 		</tr>
