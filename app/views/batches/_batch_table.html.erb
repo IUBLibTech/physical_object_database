@@ -6,6 +6,7 @@
 		<th>Destination</th>
 		<th>Objects Count</th>
 		<th>Current Status</th>
+		<th>Auto Accept</th>
 		<th>Actions</th>
 	</tr>
 	<% count = 1 %>
@@ -27,6 +28,13 @@
             <em>(Digitization not started)</em>
           <% end %>
         <% end %>
+      </td>
+      <% if @digitization_start && (@auto_accept < Time.now) %>
+		    <td class="green">
+		  <% else %>
+		    <td class="red">
+		  <% end %>
+		  <%= @digitization_start ? @digitization_start.strftime("%B %-d, %Y") : "Digitization Not Started" %>
       </td>
 			<td>
 				<%= link_to("Show", {controller: 'batches',:action => 'show', :id => b.id}, :class => 'action show') if policy(b).show? %>
