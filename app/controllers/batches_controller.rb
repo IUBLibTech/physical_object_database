@@ -3,7 +3,7 @@ class BatchesController < ApplicationController
   before_action :authorize_collection, only: [:index, :new, :create]
 
   def index
-    @batches = Batch.all
+    @batches = Batch.all.order(created_at: :desc)
   end
 
   def new

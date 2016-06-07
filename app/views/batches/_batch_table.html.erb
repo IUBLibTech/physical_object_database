@@ -29,13 +29,22 @@
           <% end %>
         <% end %>
       </td>
+<<<<<<< Updated upstream
       <% if @digitization_start && (@auto_accept < Time.now) %>
+=======
+		  <% if @digitization_start && (@auto_accept < Time.now) %>
+>>>>>>> Stashed changes
 		    <td class="green">
 		  <% else %>
 		    <td class="red">
 		  <% end %>
+<<<<<<< Updated upstream
 		  <%= @digitization_start ? @digitization_start.strftime("%B %-d, %Y") : "Digitization Not Started" %>
       </td>
+=======
+		  	<%= @digitization_start ? @digitization_start.strftime("%B %-d, %Y") : "Digitization Not Started" %>
+		  </td>
+>>>>>>> Stashed changes
 			<td>
 				<%= link_to("Show", {controller: 'batches',:action => 'show', :id => b.id}, :class => 'action show') if policy(b).show? %>
 		    <%= link_to("Edit", {controller: 'batches', :action => 'edit', :id => b.id}, :class => 'action edit') if policy(b).edit? %>
