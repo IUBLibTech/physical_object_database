@@ -29,7 +29,7 @@
           <% end %>
         <% end %>
       </td>
-      <% if @digitization_start && (@auto_accept < Time.now) %>
+		  <% if @digitization_start && (@auto_accept < Time.now) %>
 		    <td class="green">
 		  <% else %>
 		    <td class="red">
