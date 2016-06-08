@@ -1,2 +1,7 @@
 <h2>Batches</h2>
+<% if @sort == 'auto_accept' %>
+  <%= link_to('Sort by creation date (newest first)', batches_path(params.symbolize_keys.merge({'sort' => 'default'}))) %> | Sorted by auto_accept date (oldest first)
+<% else %>
+  Sorted by creation date (newest first) | <%= link_to('Sort by auto_accept date (oldest first)', batches_path(params.symbolize_keys.merge({'sort' => 'auto_accept'}))) %>
+<% end %>
 <%= render 'batch_table' %>

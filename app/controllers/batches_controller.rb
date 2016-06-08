@@ -3,7 +3,13 @@ class BatchesController < ApplicationController
   before_action :authorize_collection, only: [:index, :new, :create]
 
   def index
+    @sort = params['sort']
+    @now = Time.now
+    @future = Time.new(@now.year + 100, 1, 1)
     @batches = Batch.all.order(created_at: :desc)
+    if @sort == 'auto_accept'
+      @batches = @batches.sort { |a,b| ((a.auto_accept(true) || @future).to_date.to_time.to_i) <=> ((b.auto_accept(true) || @future).to_date.to_time.to_i) }
+    end
   end
 
   def new
@@ -93,7 +99,7 @@ class BatchesController < ApplicationController
       # remove batch_ prefix, if present, for csv and xls requests
       @batch = Batch.eager_load(:bins).find(params[:id].to_s.sub(/^batch_/, ''))
       @digitization_start = (@batch ? @batch.digitization_start : nil)
-      @auto_accept = (@batch ? @batch.auto_accept : nil)
+      @auto_accept = (@batch ? @batch.auto_accept(true) : nil)
       authorize @batch
     end
 

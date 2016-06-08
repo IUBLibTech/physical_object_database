@@ -17,6 +17,12 @@ describe BatchesController do
     it "populates an array of objects" do
       expect(assigns(:batches)).to eq [batch]
     end
+    it "assigns @now" do
+      expect(assigns(:now)).to be_a Time
+    end
+    it "assigns @future" do
+      expect(assigns(:future)).to be_a Time
+    end
     it "renders the :index view" do
       expect(response).to render_template(:index)
     end
