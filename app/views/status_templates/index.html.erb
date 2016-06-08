@@ -1,12 +1,3 @@
-<% content_for :context_menu do %>
-  <div class="contextMenuItem">
-    <%= link_to("Create New Workflow Status", new_workflow_status_template_path) if policy(WorkflowStatusTemplate).new? %>
-  </div>
-  <div class="contextMenuItem">
-    <%= link_to("Create New Condition Status", new_condition_status_template_path) if policy(ConditionStatusTemplate).new? %>
-  </div>
-<% end %>
-
 <div class="left">
 <h2>Workflow Statuses</h2>
 <% WorkflowStatusTemplate.new.object_types.keys.each do |object_type| %>

@@ -27,19 +27,70 @@
       <% if policy(:collection_owner).index? %>
         <div class="menuItem">
           <%= link_to("Collection Owner", :controller => 'collection_owner', :action => 'index') if policy(:collection_owner).index? %>
+          <ul class="nav">
+            <li><%= link_to("Index", controller: 'collection_owner', action: 'index') if policy(:collection_owner).index? %></li>
+            <li><%= link_to("Search", controller: 'collection_owner', action: 'search') if policy(:collection_owner).search? %></li>
+          </ul>
         </div>
       <% end %>
       <div class="menuItem">
         <%= link_to("Physical Objects", :controller => 'physical_objects', :action => 'index') if policy(PhysicalObject).index? %>
+        <ul class="nav">
+          <li>
+            <%= link_to("Create New Physical Object", controller: 'physical_objects', action: 'new') if policy(PhysicalObject).new? %>
+          </li>
+          <li>
+            <%= link_to("Create Multiple Physical Objects", create_multiple_physical_objects_path) if policy(PhysicalObject).create_multiple? %>
+          </li>
+          <li>
+            <%= link_to "View Group Keys", group_keys_path if policy(GroupKey).index?  %>
+          </li>
+          <li>
+            <%= link_to "Create New Group Key", new_group_key_path if policy(GroupKey).new? %>
+          </li>
+          <li>
+            <%= link_to("ViewImported Spreadsheets", spreadsheets_path) if policy(Spreadsheet).index? %>
+          </li>
+          <li>
+            <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) if policy(Spreadsheet).new? %>
+          </li>
+          <li>
+            <%= link_to("Memnon Invoice", invoice_controller_path) if policy(:invoice).index? %></li>
+          </li>
+        </ul>
       </div>
       <div class="menuItem">
         <%= link_to("Batches", controller: :batches, action: :index) if policy(Batch).index? %>
+        <ul class="nav">
+	        <li>
+	          <%= link_to("Create Batch", new_batch_path) if policy(Batch).new? %>
+	        </li>
+        </ul>
       </div>
       <div class="menuItem">
         <%= link_to 'Bins', bins_path if policy(Bin).index? %>
+        <ul class="nav">
+          <li>
+            <%= link_to("Create Bin", new_bin_path) if policy(Bin).new? %>
+          </li>
+          <li>
+            <%= link_to("Create Box", new_box_path) if policy(Box).new? %></li>
+          </li>
+          <li>
+	          <%= link_to("View Boxes", boxes_path) if policy(Box).new? %>
+          </li>
+        </ul>
       </div>
       <div class="menuItem">
         <%= link_to("Pick Lists", controller: 'picklist_specifications', action: 'index') if policy(PicklistSpecification).index? %>
+        <ul class="nav">
+          <li>
+            <%= link_to("Create Picklist Specification", new_picklist_specification_path) if policy(PicklistSpecification).new? %>
+          </li>
+          <li>
+            <%= link_to("Create Picklist", new_picklist_path) if policy(Picklist).new? %>
+          </li>
+        </ul>
       </div>
       <div class="menuItem">
         <%= link_to("Statuses", :controller => 'status_templates', :action => 'index') if policy(:status_template).index? %>
@@ -49,9 +100,37 @@
       </div>
       <div class="menuItem">
         <%= link_to("Quality Control", quality_control_index_path) if policy(:quality_control).index? %>
+        <ul class="nav">
+          <li>
+	          <%= link_to("Statuses", quality_control_index_path) if policy(:quality_control).index? %>
+          </li>
+          <li>
+	          <%= link_to("Memnon Staging", quality_control_memnon_staging_index_path) if policy(:quality_control).staging_index? %>
+          </li>
+          <li>
+	          <%= link_to("IU Staging", quality_control_iu_staging_index_path_path) if policy(:quality_control).staging_index? %>
+          </li>
+          <li>
+	          <%= link_to("Staging Percentages", staging_percentages_path) if policy(:staging_percentage).index? %>
+          </li>
+          <li>
+	          <%= link_to("responses/transfers xml", transfers_index_response_path) %><%# responses controller does not use policy authorization %>
+          </li>
+          <li>
+	          <%= link_to("Messages", messages_path) if policy(:staging_percentage).index? %>
+          </li>
+        </ul>
       </div>
       <div class="menuItem">
         <%= link_to("Reports", controller: :reports, action: :index) if policy(:report).index? %>
+        <ul class="nav">
+          <li>
+		        <%= link_to("Advanced Search", search_index_path) if policy(:search).advanced_search? %>
+          </li>
+          <li>
+		        <%= link_to("Workflow History Report", contained_physical_objects_path) if policy(PhysicalObject).contained? %>
+          </li>
+        </ul>
       </div>
       <div class="left">
         <%= render 'search/basic_search_form' if policy(:search).search_results? %>
@@ -76,13 +155,30 @@
   <%= yield %>
   </div>
 </body>
-<%# hook in all the mdpi barcode fields with their validators %>
+<%# hook in all the mdpi barcode fields with their validators and setup menu system%>
 <script type="text/javascript">
   $(document).ready(function() {
-    $(".accordion").accordion({collapsible: true, active: false, heightStyle: "content"});
-    $(".mdpi").bind("change keyup", function() {
-      validateMdpiBarcode($(this));
-    });
+	  //barcode stuff
+	  $(".accordion").accordion({collapsible: true, active: false, heightStyle: "content"});
+	  $(".mdpi").bind("change keyup", function () {
+		  validateMdpiBarcode($(this));
+	  });
+
+	  //menu stuff
+	  $('.menuItem').each(function() {
+		  $(this).children('ul').css({
+			  'min-width': $(this).css('width')
+		  });
+	  });
+	  $('.menuItem').hover(
+				function() {
+					$(this).children('ul').slideDown(200);
+				},
+				function() {
+					$(this).children('ul').slideUp(200);
+				}
+			);
   });
+
 </script>
 </html>

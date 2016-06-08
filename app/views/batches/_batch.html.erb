@@ -61,9 +61,9 @@
     <tr>
       <th>Digitization Start (Auto passed if red)</th>
         <% if @digitization_start && (@auto_accept < Time.now) %>
-          <td class="red">
-        <% else %>
           <td class="green">
+        <% else %>
+          <td class="red">
         <% end %>
         <%= @digitization_start ? @digitization_start.strftime("%B %-d, %Y") : "Digitization Not Started" %>
       </td>

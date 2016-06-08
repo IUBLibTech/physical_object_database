@@ -1,8 +1,2 @@
-<% content_for :context_menu do %>
-  <div class="contextMenuItem">
-    <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) if policy(Spreadsheet).new? %>
-  </div>
-<% end %>
-
 <h2>Spreadsheets</h2>
 <%= render 'spreadsheets_table' %>
