@@ -4,4 +4,5 @@
 <% else %>
   Sorted by creation date (newest first) | <%= link_to('Sort by auto_accept date (oldest first)', batches_path(params.symbolize_keys.merge({'sort' => 'auto_accept'}))) %>
 <% end %>
+<br/>Export current list to: <%= link_to 'Excel', batches_path(params.symbolize_keys.merge({format: :xls})) %>
 <%= render 'batch_table' %>

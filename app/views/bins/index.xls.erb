@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">MDPI Barcode</Data></Cell>
+        <Cell><Data ss:Type="String">Identifier</Data></Cell>
+        <Cell><Data ss:Type="String">Location</Data></Cell>
+        <Cell><Data ss:Type="String">Description</Data></Cell>
+        <% if @batch.nil? %><Cell><Data ss:Type="String">Description</Data></Cell><% end %>
+        <Cell><Data ss:Type="String">Object Count</Data></Cell>
+        <Cell><Data ss:Type="String">Workflow Status</Data></Cell>
+      </Row>
+      <% @bins.each do |bin| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= bin.mdpi_barcode %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= bin.identifier %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= bin.physical_location %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= bin.description %></Data></Cell>
+        <% if @batch.nil? %><Cell><Data ss:Type="String"><%= bin.batch&.identifier %></Data></Cell><% end %>
+        <Cell><Data ss:Type="String"><%= bin.physical_objects_count %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= bin.display_workflow_status %></Data></Cell>
+      </Row>
+      <% end %>
+      <% if @bins.empty? %>
+        <Row><Cell><Data ss:Type="String">No bins listed</Data></Cell></Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>
