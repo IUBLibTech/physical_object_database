@@ -6,10 +6,15 @@ class BinsController < ApplicationController
   before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
 	def index
-    @bins = @bins.where(workflow_status: params[:workflow_status]) unless params[:workflow_status].blank?
-    @bins = @bins.where(format: params[:tm_format]) unless params[:tm_format].blank?
-    @bins = @bins.where("identifier LIKE ?", '%' + params[:identifier] + '%') unless params[:identifier].blank?
-    @boxes = @boxes.where(format: params[:tm_format]) unless params[:tm_format].blank?
+    if [:workflow_status, :tm_format, :identifier].map { |att| params[att].nil? }.all?
+      @bins = Bin.none
+      @boxes = @boxes.none
+    else
+      @bins = @bins.where(workflow_status: params[:workflow_status]) unless params[:workflow_status].blank?
+      @bins = @bins.where(format: params[:tm_format]) unless params[:tm_format].blank?
+      @bins = @bins.where("identifier LIKE ?", '%' + params[:identifier] + '%') unless params[:identifier].blank?
+      @boxes = @boxes.where(format: params[:tm_format]) unless params[:tm_format].blank?
+    end
 	end
 
 	def new

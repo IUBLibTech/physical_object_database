@@ -24,6 +24,25 @@ describe BinsController do
   let(:invalid_bin) { FactoryGirl.build(:invalid_bin) }
 
   describe "GET index" do
+    context "with no filters" do
+      before(:each) do
+        bin
+        box
+        unassigned_box
+        unassigned_mismatched_box
+        unassigned_unformatted_box
+        get :index
+      end
+      it "sets @bins empty" do
+       expect(assigns(:bins)).to be_empty
+      end
+      it "sets @boxes empty" do
+        expect(assigns(:boxes)).to be_empty
+      end
+      it "renders the :index view" do
+        expect(response).to render_template(:index)
+      end
+    end
     context "basic functions" do
       before(:each) do
         bin.format = box_format
@@ -32,7 +51,7 @@ describe BinsController do
         unassigned_box
         unassigned_mismatched_box
         unassigned_unformatted_box
-        get :index, format: format
+        get :index, format: format, workflow_status: ''
       end
       shared_examples "index behaviors" do
         it "populates an array of objects" do
@@ -59,8 +78,8 @@ describe BinsController do
         bin; sealed
         get :index, identifier: identifier
       end
-      context "with no value set" do
-        let(:identifier) { nil }
+      context "with blank value set" do
+        let(:identifier) { '' }
         it "returns all bins" do
           expect(assigns(:bins).sort).to eq [bin, sealed].sort
         end
@@ -83,8 +102,8 @@ describe BinsController do
         bin; sealed
         get :index, workflow_status: workflow_status
       end
-      context "with no value set" do
-        let(:workflow_status) { nil }
+      context "with blank value set" do
+        let(:workflow_status) { '' }
         it "returns all bins" do
           expect(assigns(:bins).sort).to eq [bin, sealed].sort
         end
@@ -115,8 +134,8 @@ describe BinsController do
         unassigned_unformatted_box
         get :index, tm_format: format
       end
-      context "with no value set" do
-        let(:format) { nil }
+      context "with blank value set" do
+        let(:format) { '' }
         it "returns all bins" do
           expect(assigns(:bins).sort).to eq Bin.all.sort
         end
