@@ -50,9 +50,9 @@ class BinsController < ApplicationController
 
 	def show
 		if @boxes.any?
-		  @physical_objects = PhysicalObject.includes(:group_key).where(box_id: @boxes.map { |box| box.id }).references(:group_key).packing_sort
+		  @physical_objects = PhysicalObject.includes(:group_key, :unit, :box, :box_bin, :box_batch).where(box_id: @boxes.map { |box| box.id }).references(:group_key).packing_sort
 		else
-		  @physical_objects = PhysicalObject.includes(:group_key).where(bin_id: @bin.id).references(:group_key).packing_sort
+		  @physical_objects = PhysicalObject.includes(:group_key, :unit, :bin, :bin_batch).where(bin_id: @bin.id).references(:group_key).packing_sort
 		end
 		@picklists = Picklist.where("complete = false").order('name').collect{|p| [p.name, p.id]}
 		@edit_mode = false
