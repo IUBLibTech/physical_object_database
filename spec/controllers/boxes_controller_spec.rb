@@ -21,29 +21,49 @@ describe BoxesController do
         bin.save
         binned_box.save
         box.save
-        get :index, bin_id: bin.id
+        get :index, bin_id: bin.id, format: format
       end
-      it "assigns @bin" do
-        expect(assigns(:bin)).to eq bin
+      shared_examples "index behaviors" do
+        it "assigns @bin" do
+          expect(assigns(:bin)).to eq bin
+        end
+        it "populates boxes in that bin" do
+          expect(assigns(:boxes)).to eq [binned_box]
+        end
+        it "renders the :index view" do
+          expect(response).to render_template(:index)
+        end
       end
-      it "populates boxes in that bin" do
-        expect(assigns(:boxes)).to eq [binned_box]
+      context "html format" do
+        let(:format) { :html }
+        include_examples "index behaviors"
       end
-      it "renders the :index view" do
-        expect(response).to render_template(:index)
+      context "xls format" do
+        let(:format) { :xls }
+        include_examples "index behaviors"
       end
     end
     context "without specifying a bin" do
       before(:each) do
         binned_box.save
         box.save
-        get :index
+        get :index, format: format
       end
-      it "populates unbinned boxes" do
-        expect(assigns(:boxes)).to eq [box]
+      shared_examples 'index behaviors' do
+        it "populates unbinned boxes" do
+          expect(assigns(:boxes)).to eq [box]
+        end
+        it "renders the :index view" do
+          expect(response).to render_template(:index)
+        end
       end
-      it "renders the :index view" do
-        expect(response).to render_template(:index)
+      context "html format" do
+        let(:format) { :html }
+        include_examples "index behaviors"
+      end
+      context "xls format" do
+        let(:format) { :xls }
+        include_examples "index behaviors"
       end
     end
   end

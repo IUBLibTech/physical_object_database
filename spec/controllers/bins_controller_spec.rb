@@ -23,16 +23,6 @@ describe BinsController do
   let(:valid_bin) { FactoryGirl.build(:bin) }
   let(:invalid_bin) { FactoryGirl.build(:invalid_bin) }
 
-  describe "FactoryGirl creation" do
-    specify "makes a valid bin" do
-      expect(valid_bin).to be_valid
-      expect(bin).to be_valid
-    end
-    specify "makes an invalid bin" do
-      expect(invalid_bin).to be_invalid
-    end
-  end
-
   describe "GET index" do
     context "basic functions" do
       before(:each) do
@@ -42,16 +32,26 @@ describe BinsController do
         unassigned_box
         unassigned_mismatched_box
         unassigned_unformatted_box
-        get :index
+        get :index, format: format
       end
-      it "populates an array of objects" do
-        expect(assigns(:bins)).to eq [bin]
+      shared_examples "index behaviors" do
+        it "populates an array of objects" do
+          expect(assigns(:bins)).to eq [bin]
+        end
+        it "populates unassigned boxes to @boxes (no format filter)" do
+          expect(assigns(:boxes).sort).to eq [unassigned_box, unassigned_mismatched_box, unassigned_unformatted_box].sort
+        end
+        it "renders the :index view" do
+          expect(response).to render_template(:index)
+        end
       end
-      it "populates unassigned boxes to @boxes (no format filter)" do
-        expect(assigns(:boxes).sort).to eq [unassigned_box, unassigned_mismatched_box, unassigned_unformatted_box].sort
+      context "html format" do
+        let(:format) { :html }
+        include_examples "index behaviors"
       end
-      it "renders the :index view" do
-        expect(response).to render_template(:index)
+      context "xls format" do
+        let(:format) { :xls }
+        include_examples "index behaviors"
       end
     end
     describe "identifier filter" do
@@ -113,7 +113,7 @@ describe BinsController do
         unassigned_box
         unassigned_mismatched_box
         unassigned_unformatted_box
-        get :index, format: format
+        get :index, tm_format: format
       end
       context "with no value set" do
         let(:format) { nil }

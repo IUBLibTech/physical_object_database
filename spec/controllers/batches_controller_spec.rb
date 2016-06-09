@@ -12,20 +12,30 @@ describe BatchesController do
   describe "GET index" do
     before(:each) do
       batch.save
-      get :index
+      get :index, format: format
     end
-    it "populates an array of objects" do
-      expect(assigns(:batches)).to eq [batch]
+    shared_examples "index behaviors" do
+      it "populates an array of objects" do
+        expect(assigns(:batches)).to eq [batch]
+      end
+      it "assigns @now" do
+        expect(assigns(:now)).to be_a Time
+      end
+      it "assigns @future" do
+        expect(assigns(:future)).to be_a Time
+      end
+      it "renders the :index view" do
+        expect(response).to render_template(:index)
+      end
     end
-    it "assigns @now" do
-      expect(assigns(:now)).to be_a Time
-    end
-    it "assigns @future" do
-      expect(assigns(:future)).to be_a Time
-    end
-    it "renders the :index view" do
-      expect(response).to render_template(:index)
-    end
+      context "html format" do
+        let(:format) { :html }
+        include_examples "index behaviors"
+      end
+      context "xls format" do
+        let(:format) { :xls }
+        include_examples "index behaviors"
+      end
   end
 
   describe "GET show" do

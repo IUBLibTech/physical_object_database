@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Batch Identifier</Data></Cell>
+        <Cell><Data ss:Type="String">Format</Data></Cell>
+        <Cell><Data ss:Type="String">Description</Data></Cell>
+        <Cell><Data ss:Type="String">Destination</Data></Cell>
+        <Cell><Data ss:Type="String">Objects Count</Data></Cell>
+        <Cell><Data ss:Type="String">Current Status</Data></Cell>
+        <Cell><Data ss:Type="String">Auto Accept</Data></Cell>
+      </Row>
+      <% @batches.each do |batch| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= batch.identifier %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= batch.format %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= batch.description %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= batch.destination %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= batch.physical_objects_count %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= batch.current_workflow_status %></Data></Cell>
+<% auto_accept = batch.auto_accept(true) %>
+        <Cell><Data ss:Type="String"><%= auto_accept ? auto_accept.strftime("%B %-d, %Y") : "Digitization Not Started" %></Data></Cell>
+      </Row>
+      <% end %>
+      <% if @batches.empty? %>
+        <Row><Cell><Data ss:Type="String">No batches listed</Data></Cell></Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

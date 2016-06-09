@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Sheet1">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">MDPI Barcode</Data></Cell>
+        <Cell><Data ss:Type="String">Description</Data></Cell>
+        <Cell><Data ss:Type="String">Full</Data></Cell>
+        <Cell><Data ss:Type="String">Format</Data></Cell>
+        <Cell><Data ss:Type="String">Objects Count</Data></Cell>
+      </Row>
+      <% @boxes.each do |box| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= box.mdpi_barcode %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= box.description %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= 'Yes' if box.full? %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= box.format %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= box.physical_objects_count %></Data></Cell>
+      </Row>
+      <% end %>
+      <% if @boxes.empty? %>
+        <Row><Cell><Data ss:Type="String">No boxes listed</Data></Cell></Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

@@ -9,8 +9,14 @@ describe Bin do
   let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
 
-  it "gets a valid object from FactoryGirl" do
-    expect(valid_bin).to be_valid
+  describe "FactoryGirl creation" do
+    specify "makes a valid bin" do
+      expect(valid_bin).to be_valid
+      expect(bin).to be_valid
+    end
+    specify "makes an invalid bin" do
+      expect(invalid_bin).to be_invalid
+    end
   end
 
   include_examples "includes DestinationModule", FactoryGirl.build(:bin)

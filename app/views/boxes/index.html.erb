@@ -1,2 +1,3 @@
 <h2>Unbinned Boxes</h2>
+Export current list to: <%= link_to 'Excel', boxes_path(params.symbolize_keys.merge({format: :xls})) %>
 <%= render 'boxes_table' %>
