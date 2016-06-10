@@ -5,6 +5,7 @@ describe Bin do
   let(:bin) { FactoryGirl.create :bin, batch: batch }
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_bin) { FactoryGirl.build :bin }
+  let(:invalid_bin) { FactoryGirl.build :bin, :invalid }
   let(:valid_batch) { FactoryGirl.build :batch }
   let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
