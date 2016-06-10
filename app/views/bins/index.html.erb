@@ -7,7 +7,7 @@
   <%= submit_tag "Apply filters" %>
 <% end %>
 <div class="left">
-	<h2><%= params[:workflow_status] %> <%= params[:identifier] %> <%= params[:tm_format] %> Bins[<%= @bins.size %>]</h2>
+	<h2><%= params[:workflow_status] %> <%= params[:identifier] %> <%= params[:tm_format] %> Bins [<%= @bins.size %>]</h2>
 Export current list to: <%= link_to 'Excel', bins_path(params.symbolize_keys.merge({format: :xls})) %>
 	<%= render 'bins_table' %>
 </div>

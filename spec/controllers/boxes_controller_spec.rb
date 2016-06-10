@@ -44,26 +44,99 @@ describe BoxesController do
       end
     end
     context "without specifying a bin" do
+      let(:format1) { TechnicalMetadatumModule.box_formats.first }
+      let(:format2) { TechnicalMetadatumModule.box_formats.last }
+      let!(:box1) { FactoryGirl.create(:box, format: format1, description: 'box1', bin: bin) }
+      let!(:box2) { FactoryGirl.create(:box, format: format2, description: 'box2') }
       before(:each) do
-        binned_box.save
-        box.save
-        get :index, format: format
+        get :index, format: format, assignment: assignment, tm_format: tm_format, description: description
       end
-      shared_examples 'index behaviors' do
-        it "populates unbinned boxes" do
-          expect(assigns(:boxes)).to eq [box]
-        end
-        it "renders the :index view" do
-          expect(response).to render_template(:index)
-        end
-      end
-      context "html format" do
+      context "with no filters" do
         let(:format) { :html }
-        include_examples "index behaviors"
+        let(:assignment) { nil }
+        let(:tm_format) { nil }
+        let(:description) { nil }
+        it "assigns @boxes empty" do
+          expect(assigns(:boxes)).to be_empty
+        end
+        it 'renders :index' do
+          expect(response).to render_template :index
+        end
       end
-      context "xls format" do
-        let(:format) { :xls }
-        include_examples "index behaviors"
+      context "with empty filters" do
+        let(:assignment) { '' }
+        let(:tm_format) { '' }
+        let(:description) { '' }
+        shared_examples "all results" do
+          it "assigns @boxes to all" do
+            expect(assigns(:boxes).sort).to match Box.all
+          end
+          it 'renders :index' do
+            expect(response).to render_template :index
+          end
+        end
+        [:html, :xls].each do |get_format|
+          context "#{get_format} format" do
+            let(:format) { get_format }
+            include_examples "all results"
+          end
+        end
+      end
+      context "with format filter" do
+        let(:format) { :html }
+        let(:assignment) { '' }
+        let(:tm_format) { format1 }
+        let(:description) { '' }
+        it "assigns @boxes to matching formats" do
+          expect(assigns(:boxes).sort).to match [box1]
+        end
+        it 'renders :index' do
+          expect(response).to render_template :index
+        end
+      end
+      context "with description filter" do
+        let(:format) { :html }
+        let(:assignment) { '' }
+        let(:tm_format) { '' }
+        let(:description) { '1' }
+        it "assigns @boxes to matching descriptions" do
+          expect(assigns(:boxes).sort).to match [box1]
+        end
+        it 'renders :index' do
+          expect(response).to render_template :index
+        end
+      end
+      context 'with assignment filter' do
+        let(:format) { :html }
+        let(:tm_format) { '' }
+        let(:description) { '' }
+        context 'set to "all"' do
+          let(:assignment) { 'all' }
+          it "assigns @boxes to all boxes" do
+            expect(assigns(:boxes).sort).to match [box1, box2].sort
+          end
+          it 'renders :index' do
+            expect(response).to render_template :index
+          end
+        end
+        context 'set to "assigned"' do
+          let(:assignment) { 'assigned' }
+          it "assigns @boxes to binned boxes" do
+            expect(assigns(:boxes)).to match [box1]
+          end
+          it 'renders :index' do
+            expect(response).to render_template :index
+          end
+        end
+        context 'set to "assigned"' do
+          let(:assignment) { 'unassigned' }
+          it "assigns @boxes to unbinned boxes" do
+            expect(assigns(:boxes)).to match [box2]
+          end
+          it 'renders :index' do
+            expect(response).to render_template :index
+          end
+        end
       end
     end
   end
