@@ -1,15 +1,20 @@
 class BinsController < ApplicationController
   before_action :set_bin, only: [:show, :edit, :update, :destroy, :unbatch, :seal, :unseal, :show_boxes, :assign_boxes, :workflow_history]
   before_action :authorize_collection, only: [:index, :new, :create]
+  before_action :set_bins, only: [:index]
   before_action :set_assigned_boxes, only: [:show, :assign_boxes]
   before_action :set_unassigned_boxes, only: [:index, :show_boxes]
 
 	def index
-		@bins = Bin.eager_load([:physical_objects, :boxes]).all
-    @bins = @bins.where(workflow_status: params[:workflow_status]) unless params[:workflow_status].blank?
-    @bins = @bins.where(format: params[:format]) unless params[:format].blank?
-    @bins = @bins.where("identifier LIKE ?", '%' + params[:identifier] + '%') unless params[:identifier].blank?
-    @boxes = @boxes.where(format: params[:format]) unless params[:format].blank?
+    if [:workflow_status, :tm_format, :identifier].map { |att| params[att].nil? }.all?
+      @bins = Bin.none
+      @boxes = @boxes.none
+    else
+      @bins = @bins.where(workflow_status: params[:workflow_status]) unless params[:workflow_status].blank?
+      @bins = @bins.where(format: params[:tm_format]) unless params[:tm_format].blank?
+      @bins = @bins.where("identifier LIKE ?", '%' + params[:identifier] + '%') unless params[:identifier].blank?
+      @boxes = @boxes.where(format: params[:tm_format]) unless params[:tm_format].blank?
+    end
 	end
 
 	def new
@@ -50,9 +55,9 @@ class BinsController < ApplicationController
 
 	def show
 		if @boxes.any?
-		  @physical_objects = PhysicalObject.includes(:group_key).where(box_id: @boxes.map { |box| box.id }).references(:group_key).packing_sort
+		  @physical_objects = PhysicalObject.includes(:group_key, :unit, :box, :box_bin, :box_batch).where(box_id: @boxes.map { |box| box.id }).references(:group_key).packing_sort
 		else
-		  @physical_objects = PhysicalObject.includes(:group_key).where(bin_id: @bin.id).references(:group_key).packing_sort
+		  @physical_objects = PhysicalObject.includes(:group_key, :unit, :bin, :bin_batch).where(bin_id: @bin.id).references(:group_key).packing_sort
 		end
 		@picklists = Picklist.where("complete = false").order('name').collect{|p| [p.name, p.id]}
 		@edit_mode = false
@@ -168,6 +173,10 @@ class BinsController < ApplicationController
 	def authorize_collection
 		authorize Bin
 	end
+
+  def set_bins
+    @bins = Bin.eager_load([:physical_objects, :boxes]).all
+  end
 
 	def set_assigned_boxes
 		@boxes = @bin.boxes

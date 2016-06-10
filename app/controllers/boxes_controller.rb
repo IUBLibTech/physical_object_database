@@ -4,10 +4,16 @@ class BoxesController < ApplicationController
   before_action :authorize_collection, only: [:index, :new, :create]
 
   def index
-    if @bin.nil?
-      @boxes = Box.where(bin_id: [0, nil])
+    if @bin
+      @boxes = Box.where(bin_id: @bin.id).order(full: :desc)
+    elsif [:tm_format, :description].map { |att| params[att].nil? }.all?
+      @boxes = Box.none
     else
-      @boxes = Box.where(bin_id: @bin.id)
+      @boxes = Box.all.order(full: :desc)
+      @boxes = @boxes.where(bin_id: [0, nil]) if params[:assignment] == 'unassigned'
+      @boxes = @boxes.where.not(bin_id: [0, nil]) if params[:assignment] == 'assigned'
+      @boxes = @boxes.where(format: params[:tm_format]) unless params[:tm_format].blank?
+      @boxes = @boxes.where.like(description: '%' + params[:description] + '%') unless params[:description].blank?
     end
   end
 
@@ -102,8 +108,7 @@ class BoxesController < ApplicationController
       @box = Box.find(params[:id])
       authorize @box
       @bins = Bin.all
-      #@physical_objects = @box.physical_objects
-      @physical_objects = PhysicalObject.includes(:group_key).where(box_id: @box.id).references(:group_key).packing_sort
+      @physical_objects = PhysicalObject.includes(:group_key, :unit, :box).where(box_id: @box.id).references(:group_key).packing_sort
     end
     def box_params
       params.require(:box).permit(:mdpi_barcode, :spreadsheet, :spreadsheet_id, :bin, :bin_id, :full, :description, :format)

@@ -1,2 +1,12 @@
-<h2>Batches</h2>
+<h2>Index filters and sort</h2>
+<em>Unfiltered results are empty, by default.  To view all batches, explicitly apply a set of empty filters.</em>
+<%= form_tag(batches_path, method: :get) do %>
+  Filtering by workflow status: <%= select_tag :workflow_status, options_for_select(WorkflowStatusTemplate.where(object_type: "Batch").collect { |wst| wst.name }, params[:workflow_status]), { prompt: "(No filter applied)" } %><br/>
+  Filtering by format: <%= select_tag :tm_format, options_for_select(TechnicalMetadatumModule.tm_formats_hash, params[:tm_format]), { prompt: "(No filter applied)" } %><br/>
+  Filtering by identifier: <%= text_field_tag :identifier, params[:identifier] %><br/>
+  Sorted by: <%= select_tag :sort, options_for_select({'Sort by creation date (newest first)' => 'default', 'Sort by auto_accept date (oldest first)' => 'auto_accept'}, params[:sort]) %><br />
+  <%= submit_tag "Apply filters" %>
+<% end %>
+<h2><%= params[:workflow_status] %> <%= params[:identifier] %> <%= params[:tm_format] %> Batches [<%= @batches.size %>]</h2>
+Export current list to: <%= link_to 'Excel', batches_path(params.symbolize_keys.merge({format: :xls})) %>
 <%= render 'batch_table' %>

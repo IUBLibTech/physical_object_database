@@ -2,6 +2,7 @@ describe BatchesController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   let(:batch) { FactoryGirl.create(:batch) }
+  let(:returned) { FactoryGirl.create(:batch, identifier: 'returned', current_workflow_status: 'Returned', format: TechnicalMetadatumModule.box_formats.first) }
   let(:bin) { FactoryGirl.create(:bin, identifier: "bin") }
   let(:batched_bin) { FactoryGirl.create(:bin, identifier: "batched_bin", batch: batch) }
   let(:binned_box) { FactoryGirl.create(:box, bin: batched_bin) }
@@ -10,18 +11,120 @@ describe BatchesController do
   let(:invalid_batch) { FactoryGirl.build(:invalid_batch) }
 
   describe "GET index" do
-    before(:each) do
-      batch.save
-      get :index
+    context "with no filters" do
+      before(:each) do
+        batch
+        get :index
+      end
+      it "assigns @batches empty" do
+        expect(assigns(:batches)).to be_empty
+      end
+      it 'renders :index' do
+        expect(response).to render_template :index
+      end
     end
-    it "populates an array of objects" do
-      expect(assigns(:batches)).to eq [batch]
+    context "with empty filters" do
+      before(:each) do
+        batch
+        get :index, format: format, workflow_status: ''
+      end
+      shared_examples "index behaviors" do
+        it "populates an array of objects" do
+          expect(assigns(:batches)).to eq [batch]
+        end
+        it "assigns @now" do
+          expect(assigns(:now)).to be_a Time
+        end
+        it "assigns @future" do
+          expect(assigns(:future)).to be_a Time
+        end
+        it "renders the :index view" do
+          expect(response).to render_template(:index)
+        end
+      end
+      context "html format" do
+        let(:format) { :html }
+        include_examples "index behaviors"
+      end
+      context "xls format" do
+        let(:format) { :xls }
+        include_examples "index behaviors"
+      end
     end
-    it "renders the :index view" do
-      expect(response).to render_template(:index)
+    describe "identifier filter" do
+      before(:each) do
+        batch; returned
+        get :index, identifier: identifier
+      end
+      context "with blank value set" do
+        let(:identifier) { '' }
+        it "returns all batches" do
+          expect(assigns(:batches).sort).to eq [batch, returned].sort
+        end
+      end
+      context "with a matching value set" do
+        let(:identifier) { returned.identifier[0, (returned.identifier.size - 1)] }
+        it "returns matching batches" do
+          expect(assigns(:batches)).to eq [returned]
+        end
+      end
+      context "with a non-matching value set" do
+        let(:identifier) { "non-matching value" }
+        it "returns no batches" do
+          expect(assigns(:batches)).to be_empty
+        end
+      end
+    end
+    describe "workflow status filter" do
+      before(:each) do
+        batch; returned
+        get :index, workflow_status: workflow_status
+      end
+      context "with blank value set" do
+        let(:workflow_status) { '' }
+        it "returns all batches" do
+          expect(assigns(:batches).sort).to eq [batch, returned].sort
+        end
+      end
+      context "with a matching value set" do
+        let(:workflow_status) { returned.workflow_status }
+        it "returns matching batches" do
+          expect(assigns(:batches)).to eq [returned]
+        end
+      end
+      context "with a non-matching value set" do
+        let(:workflow_status) { "non-matching value" }
+        it "returns no batches" do
+          expect(assigns(:batches)).to be_empty
+        end
+      end
+    end
+    describe "format filter" do
+      before(:each) do
+        batch; returned
+        get :index, tm_format: format
+      end
+      context "with blank value set" do
+        let(:format) { '' }
+        it "returns all batches" do
+          expect(assigns(:batches).sort).to eq [batch, returned ].sort
+        end
+      end
+      context "with a matching value set" do
+        let(:format) { returned.format }
+        it "returns matching batches" do
+          expect(assigns(:batches)).to eq [returned]
+        end
+      end
+      context "with a non-matching value set" do
+        let(:format) { "non-matching value" }
+        it "returns no batches" do
+          expect(assigns(:batches)).to be_empty
+        end
+      end
     end
   end
-
+ 
   describe "GET show" do
     before(:each) { bin; po_dat }
     context "in HTML format" do

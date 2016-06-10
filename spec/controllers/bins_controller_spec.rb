@@ -23,17 +23,26 @@ describe BinsController do
   let(:valid_bin) { FactoryGirl.build(:bin) }
   let(:invalid_bin) { FactoryGirl.build(:invalid_bin) }
 
-  describe "FactoryGirl creation" do
-    specify "makes a valid bin" do
-      expect(valid_bin).to be_valid
-      expect(bin).to be_valid
-    end
-    specify "makes an invalid bin" do
-      expect(invalid_bin).to be_invalid
-    end
-  end
-
   describe "GET index" do
+    context "with no filters" do
+      before(:each) do
+        bin
+        box
+        unassigned_box
+        unassigned_mismatched_box
+        unassigned_unformatted_box
+        get :index
+      end
+      it "sets @bins empty" do
+       expect(assigns(:bins)).to be_empty
+      end
+      it "sets @boxes empty" do
+        expect(assigns(:boxes)).to be_empty
+      end
+      it "renders the :index view" do
+        expect(response).to render_template(:index)
+      end
+    end
     context "basic functions" do
       before(:each) do
         bin.format = box_format
@@ -42,16 +51,26 @@ describe BinsController do
         unassigned_box
         unassigned_mismatched_box
         unassigned_unformatted_box
-        get :index
+        get :index, format: format, workflow_status: ''
       end
-      it "populates an array of objects" do
-        expect(assigns(:bins)).to eq [bin]
+      shared_examples "index behaviors" do
+        it "populates an array of objects" do
+          expect(assigns(:bins)).to eq [bin]
+        end
+        it "populates unassigned boxes to @boxes (no format filter)" do
+          expect(assigns(:boxes).sort).to eq [unassigned_box, unassigned_mismatched_box, unassigned_unformatted_box].sort
+        end
+        it "renders the :index view" do
+          expect(response).to render_template(:index)
+        end
       end
-      it "populates unassigned boxes to @boxes (no format filter)" do
-        expect(assigns(:boxes).sort).to eq [unassigned_box, unassigned_mismatched_box, unassigned_unformatted_box].sort
+      context "html format" do
+        let(:format) { :html }
+        include_examples "index behaviors"
       end
-      it "renders the :index view" do
-        expect(response).to render_template(:index)
+      context "xls format" do
+        let(:format) { :xls }
+        include_examples "index behaviors"
       end
     end
     describe "identifier filter" do
@@ -59,8 +78,8 @@ describe BinsController do
         bin; sealed
         get :index, identifier: identifier
       end
-      context "with no value set" do
-        let(:identifier) { nil }
+      context "with blank value set" do
+        let(:identifier) { '' }
         it "returns all bins" do
           expect(assigns(:bins).sort).to eq [bin, sealed].sort
         end
@@ -83,8 +102,8 @@ describe BinsController do
         bin; sealed
         get :index, workflow_status: workflow_status
       end
-      context "with no value set" do
-        let(:workflow_status) { nil }
+      context "with blank value set" do
+        let(:workflow_status) { '' }
         it "returns all bins" do
           expect(assigns(:bins).sort).to eq [bin, sealed].sort
         end
@@ -113,10 +132,10 @@ describe BinsController do
         unassigned_box
         unassigned_mismatched_box
         unassigned_unformatted_box
-        get :index, format: format
+        get :index, tm_format: format
       end
-      context "with no value set" do
-        let(:format) { nil }
+      context "with blank value set" do
+        let(:format) { '' }
         it "returns all bins" do
           expect(assigns(:bins).sort).to eq Bin.all.sort
         end

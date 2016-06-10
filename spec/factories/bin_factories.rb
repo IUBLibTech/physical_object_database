@@ -7,6 +7,10 @@ FactoryGirl.define do
     physical_location ""
   end
 
+  trait :invalid do
+    identifier nil
+  end
+
   factory :invalid_bin, parent: :bin do
     identifier nil
   end
