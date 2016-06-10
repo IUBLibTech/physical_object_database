@@ -6,7 +6,14 @@ class BatchesController < ApplicationController
     @sort = params['sort']
     @now = Time.now
     @future = Time.new(@now.year + 100, 1, 1)
-    @batches = Batch.all.order(created_at: :desc)
+    if [:workflow_status, :tm_format, :identifier].map { |att| params[att].nil? }.all?
+      @batches = Batch.none
+    else
+      @batches = Batch.all.order(created_at: :desc)
+      @batches = @batches.where(workflow_status: params[:workflow_status]) unless params[:workflow_status].blank?
+      @batches = @batches.where(format: params[:tm_format]) unless params[:tm_format].blank?
+      @batches = @batches.where.like(identifier: '%' + params[:identifier] + '%') unless params[:identifier].blank?
+    end
     if @sort == 'auto_accept'
       @batches = @batches.sort { |a,b| ((a.auto_accept(true) || @future).to_date.to_time.to_i) <=> ((b.auto_accept(true) || @future).to_date.to_time.to_i) }
     end
