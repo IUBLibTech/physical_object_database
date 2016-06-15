@@ -5,11 +5,11 @@ class BoxesController < ApplicationController
 
   def index
     if @bin
-      @boxes = Box.where(bin_id: @bin.id).order(full: :desc)
+      @boxes = Box.where(bin_id: @bin.id).order(full: :desc).eager_load(:bin, :physical_objects)
     elsif [:tm_format, :description].map { |att| params[att].nil? }.all?
       @boxes = Box.none
     else
-      @boxes = Box.all.order(full: :desc)
+      @boxes = Box.all.order(full: :desc).eager_load(:bin, :physical_objects)
       @boxes = @boxes.where(bin_id: [0, nil]) if params[:assignment] == 'unassigned'
       @boxes = @boxes.where.not(bin_id: [0, nil]) if params[:assignment] == 'assigned'
       @boxes = @boxes.where(format: params[:tm_format]) unless params[:tm_format].blank?
