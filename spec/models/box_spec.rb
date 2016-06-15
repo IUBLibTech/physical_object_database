@@ -64,6 +64,25 @@ describe Box do
         expect(valid_box.format).to eq valid_bin.format
       end
     end
+    describe "physical location" do
+      it "can be blank" do
+        valid_box.physical_location = ''
+        expect(valid_box).to be_valid
+      end
+      it "cannot be nil" do
+        valid_box.physical_location = nil
+        expect(valid_box).not_to be_valid
+      end
+      it "must be a valid value from list" do
+        valid_box.physical_location = "invalid value"
+        expect(valid_box).not_to be_valid
+      end
+      it "is set as a default value" do
+        valid_box.physical_location = nil
+        valid_box.default_values
+        expect(valid_box.physical_location).not_to be_nil
+      end
+    end
   end
 
   describe "has relationships:" do
