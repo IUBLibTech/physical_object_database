@@ -1,6 +1,7 @@
 <table>
   <tr class="header">
     <th>MDPI Barcode</th>
+    <th>Location</th>
     <th>Description</th>
     <th>Full?</th>
     <th>Format</th>
@@ -11,6 +12,7 @@
   <% @boxes.each do |box| %>
     <tr class=<%= count.odd? ? 'odd' : 'even'%>>
       <td><%= box.mdpi_barcode %></td>
+      <td><%= box.physical_location %></td>
       <td title="<%= box.description %>">
         <%= box.description[0,20] %>
         <%= '...' if box.description.length > 20 %>

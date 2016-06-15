@@ -22,6 +22,12 @@
       </td>
     </tr>
     <tr>
+      <th>Physical Location</th>
+      <td>
+        <%= f.select(:physical_location, Bin::PHYSICAL_LOCATION_VALUES, {}, disabled: !@edit_mode) %>
+      </td>
+    </tr>
+    <tr>
       <th>Full?</th>
       <td>
         <% if @edit_mode %>
