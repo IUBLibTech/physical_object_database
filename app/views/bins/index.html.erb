@@ -7,11 +7,17 @@
   <%= submit_tag "Apply filters" %>
 <% end %>
 <div class="left">
-	<h2><%= params[:workflow_status] %> <%= params[:identifier] %> <%= params[:tm_format] %> Bins [<%= @bins.size %>]</h2>
-Export current list to: <%= link_to 'Excel', bins_path(params.symbolize_keys.merge({format: :xls})) %>
+	<h2><%= params[:workflow_status] %> <%= params[:identifier] %> <%= params[:tm_format] %> Bins</h2>
+  <h4>
+    Bin/Physical Object Count: <%= @bins.size %>/<%= @bins.inject(0) { |sum, bin| sum + bin.physical_objects_count} %>
+  </h4>
+  Export current list to: <%= link_to 'Excel', bins_path(params.symbolize_keys.merge({format: :xls})) %>
 	<%= render 'bins_table' %>
 </div>
 <div class="left">
-	<h2>Unassigned Boxes [<%= @boxes.size %>]</h2>
+	<h2>Unassigned Boxes</h2>
+	<h4>
+	  Unassigned Box/Physical Object Count: <%= @boxes.size %>/<%= @boxes.inject(0) { |sum, bin| sum + bin.physical_objects_count } %>
+	</h4>
 	<%= render 'boxes/boxes_table' %>
 </div>
