@@ -204,7 +204,7 @@ tr.even {
   margin-right: 10px;
 }
  .left > table {
-  width: 485px;
+  max-width: 455px;
   margin-bottom: 15px;
  }
 
