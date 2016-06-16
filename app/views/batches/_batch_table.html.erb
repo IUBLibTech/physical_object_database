@@ -4,6 +4,7 @@
 		<th>Format</th>
 		<th>Description</th>
 		<th>Destination</th>
+		<th>Bins Count</th>
 		<th>Objects Count</th>
 		<th>Current Status</th>
 		<th>Auto Accept</th>
@@ -16,6 +17,7 @@
 			<td><%= b.format %></td>
 			<td><%= b.description %></td>
 			<td><%= b.destination %></td>
+			<td><%= b.bins.size %></td>
 			<td><%= b.physical_objects_count %></td>
 			<td><%= b.current_workflow_status %></td>
 		  <% auto_accept = b.auto_accept(true) %>
