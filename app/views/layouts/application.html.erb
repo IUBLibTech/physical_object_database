@@ -49,7 +49,7 @@
             <%= link_to "Create New Group Key", new_group_key_path if policy(GroupKey).new? %>
           </li>
           <li>
-            <%= link_to("ViewImported Spreadsheets", spreadsheets_path) if policy(Spreadsheet).index? %>
+            <%= link_to("View Imported Spreadsheets", spreadsheets_path) if policy(Spreadsheet).index? %>
           </li>
           <li>
             <%= link_to("Upload Spreadsheet", upload_show_physical_objects_path) if policy(Spreadsheet).new? %>
