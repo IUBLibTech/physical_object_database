@@ -4,6 +4,7 @@ FactoryGirl.define do
     mdpi_barcode { BarcodeHelper.valid_mdpi_barcode }
     full false
     description "FactoryGirl box"
+    physical_location ''
 
     trait :invalid do
       mdpi_barcode nil

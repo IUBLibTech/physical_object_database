@@ -6,9 +6,10 @@ class Box < ActiveRecord::Base
 	has_many :physical_objects
 
 	validates :mdpi_barcode, mdpi_barcode: true, numericality: { greater_than: 0 }
+  validates :physical_location, inclusion: { in: Bin::PHYSICAL_LOCATION_VALUES }
   before_validation :set_format_from_container
   validate :validate_bin_container
-	before_save :default_values
+	after_initialize :default_values
 	after_save :set_container_format
 	before_destroy :remove_physical_objects, prepend: true
 
@@ -30,7 +31,8 @@ class Box < ActiveRecord::Base
 
 	def default_values
 	  self.full ||= false
-	  self.description ||= ""
+	  self.description ||= ''
+	  self.physical_location ||= ''
 	end
 
   def set_container_format

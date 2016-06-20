@@ -111,7 +111,7 @@ class BoxesController < ApplicationController
       @physical_objects = PhysicalObject.includes(:group_key, :unit, :box).where(box_id: @box.id).references(:group_key).packing_sort
     end
     def box_params
-      params.require(:box).permit(:mdpi_barcode, :spreadsheet, :spreadsheet_id, :bin, :bin_id, :full, :description, :format)
+      params.require(:box).permit(:mdpi_barcode, :spreadsheet, :spreadsheet_id, :bin, :bin_id, :full, :description, :format, :physical_location)
     end
     def authorize_collection
       authorize Box
