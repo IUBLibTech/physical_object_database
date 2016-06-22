@@ -1,16 +1,19 @@
 <table>
   <tr class="header">
     <th>MDPI Barcode</th>
+    <th>Location</th>
     <th>Description</th>
     <th>Full?</th>
     <th>Format</th>
     <th>Objects Count</th>
+    <th>Assigned Bin</th>
     <th>Actions</th>
   </tr>
   <% count = 1 %>
   <% @boxes.each do |box| %>
     <tr class=<%= count.odd? ? 'odd' : 'even'%>>
       <td><%= box.mdpi_barcode %></td>
+      <td><%= box.physical_location %></td>
       <td title="<%= box.description %>">
         <%= box.description[0,20] %>
         <%= '...' if box.description.length > 20 %>
@@ -18,6 +21,7 @@
       <td><%= 'Yes' if box.full?%></td>
       <td><%= box.format %></td>
       <td><%= box.physical_objects_count %></td>
+      <td><%= link_to(box.bin.identifier, bin_path(box.bin)) if box.bin && policy(box.bin).show? %></td>
       <td>
         <%= link_to("Show", box_path(box)) if policy(box).show? %>
         <%= link_to("Edit", edit_box_path(box)) if policy(box).edit? %>

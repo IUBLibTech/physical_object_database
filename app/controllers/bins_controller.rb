@@ -175,7 +175,7 @@ class BinsController < ApplicationController
 	end
 
   def set_bins
-    @bins = Bin.eager_load([:physical_objects, :boxes]).all
+    @bins = Bin.eager_load([:physical_objects, :boxes, :boxed_physical_objects]).all
   end
 
 	def set_assigned_boxes

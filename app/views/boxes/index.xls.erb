@@ -8,18 +8,22 @@
     <Table>
       <Row>
         <Cell><Data ss:Type="String">MDPI Barcode</Data></Cell>
+        <Cell><Data ss:Type="String">Location</Data></Cell>
         <Cell><Data ss:Type="String">Description</Data></Cell>
         <Cell><Data ss:Type="String">Full</Data></Cell>
         <Cell><Data ss:Type="String">Format</Data></Cell>
         <Cell><Data ss:Type="String">Objects Count</Data></Cell>
+        <Cell><Data ss:Type="String">Assigned Bin</Data></Cell>
       </Row>
       <% @boxes.each do |box| %>
       <Row>
         <Cell><Data ss:Type="String"><%= box.mdpi_barcode %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= box.physical_location %></Data></Cell>
         <Cell><Data ss:Type="String"><%= box.description %></Data></Cell>
         <Cell><Data ss:Type="String"><%= 'Yes' if box.full? %></Data></Cell>
         <Cell><Data ss:Type="String"><%= box.format %></Data></Cell>
         <Cell><Data ss:Type="String"><%= box.physical_objects_count %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= box.bin&.identifier %></Data></Cell>
       </Row>
       <% end %>
       <% if @boxes.empty? %>

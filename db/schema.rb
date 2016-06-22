@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160607174720) do
+ActiveRecord::Schema.define(version: 20160615185455) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -123,14 +123,15 @@ ActiveRecord::Schema.define(version: 20160607174720) do
   add_index "bins", ["workflow_status"], name: "index_bins_on_workflow_status", using: :btree
 
   create_table "boxes", force: :cascade do |t|
-    t.integer  "bin_id",         limit: 8
-    t.integer  "mdpi_barcode",   limit: 8
+    t.integer  "bin_id",            limit: 8
+    t.integer  "mdpi_barcode",      limit: 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "spreadsheet_id", limit: 4
-    t.boolean  "full",                         default: false
-    t.text     "description",    limit: 65535
-    t.string   "format",         limit: 255
+    t.integer  "spreadsheet_id",    limit: 4
+    t.boolean  "full",                            default: false
+    t.text     "description",       limit: 65535
+    t.string   "format",            limit: 255
+    t.string   "physical_location", limit: 255
   end
 
   add_index "boxes", ["bin_id"], name: "index_boxes_on_bin_id", using: :btree

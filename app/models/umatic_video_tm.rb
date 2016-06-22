@@ -20,7 +20,7 @@ class UmaticVideoTm < ActiveRecord::Base
   ]
   PACK_DEFORMATION_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
   RECORDING_STANDARD_VALUES = hashify ["NTSC", "PAL", "SECAM", "Unknown"]
-  FORMAT_DURATION_VALUES = hashify ["5", "10", "20", "30", "60", "75", "Unknown"]
+  FORMAT_DURATION_VALUES = hashify %w(5 10 15 18 20 30 40 50 60 75 Unknown)
   SIZE_VALUES = hashify ["Large", "Small"]
   IMAGE_FORMAT_VALUES = hashify ["4:3", "16:9", "Unknown"]
   FORMAT_VERSION_VALUES = hashify ["Low Band", "High Band", "SP", "PCM Audio", "Unknown"]

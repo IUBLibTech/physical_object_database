@@ -204,7 +204,7 @@ tr.even {
   margin-right: 10px;
 }
  .left > table {
-  width: 485px;
+  max-width: 455px;
   margin-bottom: 15px;
  }
 
@@ -471,4 +471,9 @@ ul.nav {
 }
 ul.nav > li {
     list-style-type: none;
+}
+
+h4 {
+    padding: 0;
+    margin: 0 0 10px 0;
 }
