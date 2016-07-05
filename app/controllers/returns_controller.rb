@@ -32,7 +32,6 @@ class ReturnsController < ApplicationController
 		elsif po.current_workflow_status.in? ['Unpacked', 'Returned to Unit']
 			flash[:notice] = "This physical object had already been returned.  No action taken."
 		else
-                        # FIXME: discern nil/false value for ephemera_returned?
 			po.update_attributes(current_workflow_status: "Unpacked", ephemera_returned: params[:ephemera_returned][:ephemera_returned])
 			if po.errors.any?
 			  flash[:warning] = "Errors updating physical object workflow status: #{po.errors.full_messages}"

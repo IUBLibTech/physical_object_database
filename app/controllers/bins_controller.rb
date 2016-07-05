@@ -39,6 +39,7 @@ class BinsController < ApplicationController
 	end
 
 	def update
+	debugger
 		Bin.transaction do
 			@batches = Batch.all.order('identifier').collect{|b| [b.identifier, b.id]}
 			assign_batch(params, @bin)

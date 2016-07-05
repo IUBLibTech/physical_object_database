@@ -23,6 +23,13 @@
 						<%= f.submit("Unpack Physical Object") %>
 					</td>
 				</tr>
+				<tr class="ephemera_form">
+					<td colspan="2">This record has ephemera. Was it returned?</td>
+				</tr>
+				<tr class="ephemera_form">
+				  <td>Yes</td>
+				  <td>No</td>
+				</tr>
 			</table>
 		<% end %>
 	</div>
@@ -36,22 +43,6 @@
 			<%= render "returned_physical_objects_table" %>
 		</div>
 	</div>
-</div>
-<div id="dialog" title="Ephemera" style="display: none">
-	<h2><i id="po_b"></i> has Ephemera</h2>
-	<%= form_for(@bin, url: {controller: 'returns', action: 'physical_object_returned', id: @bin}, html: {id: 'barcode_form'}) do |f| %>
-		<%= hidden_field_tag "mdpi_barcode", false %>
-		<table class="center_inline">
-			<tr>
-				<td>
-					Ephemera Returned?
-				</td>
-				<td style="min-width: 21px;">
-					<%= check_box "ephemera_returned", :ephemera_returned, {},  checked_value = "1", unchecked_value = "0"%>
-				</td>
-			</tr>
-		</table>
-	<% end %>
 </div>
 
 <script type="text/javascript">
@@ -68,7 +59,25 @@
 			validateMdpiBarcode(_this);
 			setTimeout( function() {
           if (isValidBarcode(_this.val())) {
-						$("#barcode_check").submit();
+            //if the item does not have ephemera process the form as normal
+	          $.ajax({
+		          url: "../../physical_objects/has_ephemera",
+		          data: {
+			          "mdpi_barcode": _this.val(),
+		          },
+		          cache: false,
+		          type: "GET",
+		          success: function(response) {
+								if (response == "true") {
+									$("ephemera_form").removeClass("ephemera_form")
+								} else {
+									$("#barcode_check").submit();
+								}
+		          },
+		          error: function(xhr) {
+								alert("Something went wrong... Please try to return the object again.")
+		          }
+	          });
           }
       }, 100);
 		})
