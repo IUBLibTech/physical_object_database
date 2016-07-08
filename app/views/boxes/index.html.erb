@@ -4,9 +4,20 @@
 <h2>Index filters and sort</h2>
 <em>Unfiltered results are empty, by default.  To view all boxes, explicitly apply a set of empty filters.</em>
 <%= form_tag(boxes_path, method: :get) do %>
-  Filtering by bin assignment: <%= select_tag :assignment, options_for_select({'(No filter applied)' => 'all', 'Assigned' => 'assigned', 'Unassigned' => 'unassigned'}, params[:assignment]) %><br/>
-  Filtering by format: <%= select_tag :tm_format, options_for_select(TechnicalMetadatumModule.box_formats, params[:tm_format]), { prompt: "(No filter applied)" } %><br/>
-  Filtering by description: <%= text_field_tag :description, params[:description] %><br/>
+  <table>
+    <tr>
+      <th>Bin assignment</th>
+      <td><%= select_tag :assignment, options_for_select({'(No filter applied)' => 'all', 'Assigned' => 'assigned', 'Unassigned' => 'unassigned'}, params[:assignment]) %></td>
+    </tr>
+    <tr>
+      <th>Format</th>
+      <td><%= select_tag :tm_format, options_for_select(TechnicalMetadatumModule.box_formats, params[:tm_format]), { prompt: "(No filter applied)" } %></td>
+    </tr>
+    <tr>
+      <th>Description</th>
+      <td><%= text_field_tag :description, params[:description] %></td>
+    </tr>
+  </table>
   <%= submit_tag "Apply filters" %>
 <% end %>
 <h2><%= params[:assignment].to_s.capitalize %> <%= params[:description] %> <%= params[:tm_format] %> Boxes </h2>
