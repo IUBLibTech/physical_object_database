@@ -16,7 +16,8 @@
       <table>
         <tr>
           <th>Has ephemera</th>
-          <td>
+          <%# kludge fix for tiny checkboxes %>
+          <td style="min-width: 20px;">
             <%= f.check_box(:has_ephemera) %>
           </td>
         </tr>
