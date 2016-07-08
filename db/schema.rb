@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160615185455) do
+ActiveRecord::Schema.define(version: 20160708184346) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -113,6 +113,7 @@ ActiveRecord::Schema.define(version: 20160615185455) do
     t.string   "destination",               limit: 255
     t.string   "format",                    limit: 255
     t.string   "physical_location",         limit: 255
+    t.integer  "average_duration",          limit: 4
   end
 
   add_index "bins", ["batch_id"], name: "index_bins_on_batch_id", using: :btree
