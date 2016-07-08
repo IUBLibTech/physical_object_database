@@ -1,9 +1,20 @@
 <h2>Index filters</h2>
 <em>Unfiltered results are empty, by default.  To view all bins, explicitly apply a set of empty filters.</em>
 <%= form_tag(bins_path, method: :get) do %>
-  Filtering by workflow status: <%= select_tag :workflow_status, options_for_select(WorkflowStatusTemplate.where(object_type: "Bin").order(:sequence_index).collect { |wst| wst.name }, params[:workflow_status]), { multiple: true, size: WorkflowStatusTemplate.where(object_type: 'Bin').size } %><br/>
-  Filtering by format: <%= select_tag :tm_format, options_for_select(TechnicalMetadatumModule.tm_formats_hash, params[:tm_format]), { prompt: "(No filter applied)" } %><br/>
-  Filtering by identifier: <%= text_field_tag :identifier, params[:identifier] %><br/>
+  <table>
+    <tr>
+      <th>Workflow status</th>
+      <td><%= select_tag :workflow_status, options_for_select(WorkflowStatusTemplate.where(object_type: "Bin").order(:sequence_index).collect { |wst| wst.name }, params[:workflow_status]), { multiple: true, size: WorkflowStatusTemplate.where(object_type: 'Bin').size } %></td>
+    </tr>
+    <tr>
+      <th>Format</th>
+      <td><%= select_tag :tm_format, options_for_select(TechnicalMetadatumModule.tm_formats_hash, params[:tm_format]), { prompt: "(No filter applied)" } %></td>
+    </tr>
+    <tr>
+      <th>Identifier</th>
+      <td><%= text_field_tag :identifier, params[:identifier] %></td>
+    </tr>
+  </table>
   <%= submit_tag "Apply filters" %>
 <% end %>
 <div class="left">
