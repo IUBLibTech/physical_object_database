@@ -128,6 +128,7 @@ FactoryGirl.define do
     one_mils 0
     one_point5_mils 0
     mono 0
+    dual_mono 0
     stereo 0
     unknown_sound_field 0
     acetate_base 0
