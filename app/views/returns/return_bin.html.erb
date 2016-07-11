@@ -44,7 +44,6 @@
 		</div>
 	</div>
 </div>
-
 <script type="text/javascript">
 
 	$(document).ready(function () {
@@ -55,32 +54,26 @@
 		// when a barcode is pasted (or scanned), change event fires so handle both the barcode validation
 		// as well as automating the form submission
 		$("#mdpi_barcode_check").bind("paste", function() {
-			var _this = $(this)
-			validateMdpiBarcode(_this);
+			var _this = $(this);
 			setTimeout( function() {
-          if (isValidBarcode(_this.val())) {
-            //if the item does not have ephemera process the form as normal
-	          $.ajax({
-		          url: "../../physical_objects/has_ephemera",
-		          data: {
-			          "mdpi_barcode": _this.val(),
-		          },
-		          cache: false,
-		          type: "GET",
-		          success: function(response) {
-								if (response == "true") {
-									$("ephemera_form").removeClass("ephemera_form")
-								} else {
-									$("#barcode_check").submit();
-								}
-		          },
-		          error: function(xhr) {
-								alert("Something went wrong... Please try to return the object again.")
-		          }
-	          });
-          }
-      }, 100);
-		})
-		$("#mdpi_barcode_check").focus();
+				validateMdpiBarcode(_this);
+				var success = true;
+				var has_ephemera = false;
+				var url = "../../physical_objects/has_ephemera?mdpi_barcode="+_this.val();
+				$.get(url, function(data, status){
+					if (status == 'success') {
+						if (data == "false" && isValidBarcode(_this.val())) {
+							$("#barcode_check").submit();
+						} else {
+
+						}
+					} else {
+						success = false;
+					}
+				});
+			}, 100);
+		});
+		//$("#mdpi_barcode_check").focus();
 	});
 </script>
+
