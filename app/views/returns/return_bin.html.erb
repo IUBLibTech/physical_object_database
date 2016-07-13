@@ -10,28 +10,28 @@
 		</table>
 	<% end %>
 	<div>
-		<%= form_for(@bin, remote: true, html: {id: "barcode_check"}) do |f| %>
-			<table class="center_inline">
-				<tr>
-					<td colspan="2"><div style="font-weight: bold; font-size: 120%">Scan a barcode to return the object</div></td>
-				</tr>
-				<tr>
-					<td>
-						<%= text_field_tag(:mdpi_barcode_check, nil) %>
-					</td>
-					<td>
-						<%= f.submit("Unpack Physical Object") %>
-					</td>
-				</tr>
-				<tr class="ephemera_form">
-					<td colspan="2">This record has ephemera. Was it returned?</td>
-				</tr>
-				<tr class="ephemera_form">
-				  <td>Yes</td>
-				  <td>No</td>
-				</tr>
-			</table>
-		<% end %>
+	<%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_form"}) do |f| %>
+		<table class="center_inline">
+			<tr>
+				<td colspan="2"><div style="font-weight: bold; font-size: 120%">Scan a barcode to return the object</div></td>
+			</tr>
+			<tr>
+				<td>
+					<%= text_field_tag(:mdpi_barcode, nil) %>
+				</td>
+				<td>
+					<%= f.submit("Unpack Physical Object") %>
+				</td>
+			</tr>
+			<tr class="ephemera_form">
+				<td colspan="2">This record has ephemera. Was it returned?</td>
+			</tr>
+			<tr class="ephemera_form">
+			  <td>Yes</td>
+			  <td>No</td>
+			</tr>
+		</table>
+	<% end %>
 	</div>
 	<div>
 		<div class="left" style="width: 48%">
@@ -48,32 +48,43 @@
 
 	$(document).ready(function () {
 		// keypresses when the user types in a barcode
-		$("#mdpi_barcode_check").bind("keyup", function() {
+		$("#mdpi_barcode").bind("keyup", function() {
 			validateMdpiBarcode($(this));
-		})
-		// when a barcode is pasted (or scanned), change event fires so handle both the barcode validation
-		// as well as automating the form submission
-		$("#mdpi_barcode_check").bind("paste", function() {
-			var _this = $(this);
-			setTimeout( function() {
-				validateMdpiBarcode(_this);
-				var success = true;
-				var has_ephemera = false;
-				var url = "../../physical_objects/has_ephemera?mdpi_barcode="+_this.val();
-				$.get(url, function(data, status){
-					if (status == 'success') {
-						if (data == "false" && isValidBarcode(_this.val())) {
-							$("#barcode_check").submit();
-						} else {
-
-						}
-					} else {
-						success = false;
-					}
-				});
-			}, 100);
 		});
-		//$("#mdpi_barcode_check").focus();
+
+		$("#return_form").submit(function(event) {
+			event.preventDefault();
+			event.returnValue = false;
+
+			var barcode = $('#mdpi_barcode').val();
+			var $form = $(this);
+			var url = "../../physical_objects/has_ephemera?mdpi_barcode="+barcode;
+
+			$.ajax({
+				type: 'get',
+				url: url,
+				context: $form, // context will be "this" in your handlers
+				success: function(data) { // your success handler
+					if (data == "false") {
+						//turn of the event intercetion and submit the form
+						this.off('submit');
+						this.submit();
+					} else if(data == "true") {
+						//physical object has ephemera - cancel form submission, and reveal return with/without ephemera form
+						alert("I should be revealing more form options");
+					} else {
+						alert("Unknown MDPI barcode...");
+					}
+				},
+				error: function() { // your error handler
+
+				},
+				complete: function() {
+
+				}
+			});
+		});
+
 	});
 </script>
 
