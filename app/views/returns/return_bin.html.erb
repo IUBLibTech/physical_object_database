@@ -20,18 +20,34 @@
 					<%= text_field_tag(:mdpi_barcode, nil) %>
 				</td>
 				<td>
-					<%= f.submit("Unpack Physical Object") %>
+					<%= f.submit("Unpack Physical Object", id: 'normal_submit') %>
 				</td>
-			</tr>
-			<tr class="ephemera_form">
-				<td colspan="2">This record has ephemera. Was it returned?</td>
-			</tr>
-			<tr class="ephemera_form">
-			  <td>Yes</td>
-			  <td>No</td>
 			</tr>
 		</table>
 	<% end %>
+	<table id="has_ephemera_table", class="center_inline">
+		<tr>
+			<td colspan="2">
+				Was this physical object's ephemera returned?
+			</td>
+		</tr>
+		<tr>
+			<td>
+			  <%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_with_ephemera"}) do |f| %>
+					<%= hidden_field_tag "mdpi_barcode", "", {class: 'hidden_barcode'} %>
+					<%= hidden_field_tag "ephemera_returned", true %>
+					<%= f.submit("Yes") %>
+			  <% end %>
+			</td>
+			<td>
+			  <%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_without_ephemera"}) do |f| %>
+			    <%= hidden_field_tag "mdpi_barcode", "", {class: 'hidden_barcode'} %>
+			    <%= hidden_field_tag "ephemera_returned", false %>
+			    <%= f.submit("No") %>
+			  <% end %>
+			</td>
+		</tr>
+	</table>
 	</div>
 	<div>
 		<div class="left" style="width: 48%">
@@ -66,12 +82,22 @@
 				context: $form, // context will be "this" in your handlers
 				success: function(data) { // your success handler
 					if (data == "false") {
-						//turn of the event intercetion and submit the form
+						//turn of the event interception and submit the form
 						this.off('submit');
 						this.submit();
+						this.on('submit');
 					} else if(data == "true") {
-						//physical object has ephemera - cancel form submission, and reveal return with/without ephemera form
-						alert("I should be revealing more form options");
+						//physical object has ephemera
+
+						// 1) copy the mdpi barcode into the yes/no hidden attribute field forms
+						bc = $("#mdpi_barcode").val();
+						$(".hidden_barcode").attr("value", bc);
+						// 2) disable normal form submission
+						$("#return_form").css('display', 'none');
+						// 3) reveal yes/no ephemera return forms
+						$( "#has_ephemera_table" ).slideDown(200, function() {
+
+						});
 					} else {
 						alert("Unknown MDPI barcode...");
 					}

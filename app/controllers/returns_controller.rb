@@ -27,7 +27,7 @@ class ReturnsController < ApplicationController
 		if @po.nil?
 			flash[:warning] = "No Physical Object with barcode #{params[:mdpi_barcode]} was found."
 		elsif @container_bin.nil? || @container_bin != @bin
-			flash[:warning] = "Physical Object with barcode <a href='#{physical_object_path(po.id)}' target='_blank'>#{@po.mdpi_barcode}</a> was not originally shipped with this bin!".html_safe
+			flash[:warning] = "Physical Object with barcode <a href='#{physical_object_path(@po.id)}' target='_blank'>#{@po.mdpi_barcode}</a> was not originally shipped with this bin!".html_safe
 		elsif @po.current_workflow_status.in? ['Unpacked', 'Returned to Unit']
 			flash[:notice] = 'This physical object had already been returned.  No action taken.'
 
@@ -35,15 +35,14 @@ class ReturnsController < ApplicationController
 		else
 			if @po.has_ephemera
 				# refuse to return a physical object unless the ephemera returned flag has explicitly been set
-				if params[:ephemera].blank? or params[:ephemera][:returned].blank?
+				if params[:ephemera_returned].blank? or (params[:ephemera_returned] != 'true' or params[:ephemera_returned] != false)
 					flash[:warning] = 'Ephemera returned was not specified - Physical Object <b>Not</b> unpacked'.html_safe
 				else
-					#@po.update_attributes(current_workflow_status: "Unpacked", ephemera_returned: params[:ephemera][:returned])
+					@po.update_attributes(current_workflow_status: "Unpacked", ephemera_returned: params[:ephemera_returned])
 				end
 			else
-				# don't care about the ephemera flag
-				#@po.update_attributes(current_workflow_status: 'Unpacked')
-				puts "I just 'returned' a physical object that had no ephemera..."
+				# ephemera flag is irrelevant
+				@po.update_attributes(current_workflow_status: 'Unpacked')
 			end
 
 			# handle the messages display after attempting to return the PO

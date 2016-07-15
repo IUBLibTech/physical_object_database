@@ -345,6 +345,10 @@ tr.packed {
     display: none;
 }
 
+#has_ephemera_table {
+    display: none;
+}
+
 .ephemera img {
   margin-left: auto;
   margin-right: auto;

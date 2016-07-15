@@ -240,9 +240,9 @@ describe ReturnsController do
       context "physical object found and associated to bin" do
         context "already returned" do
           before(:each) do
-	    target_object.current_workflow_status = "Unpacked"
-	    target_object.save
-	    patch_action
+            target_object.current_workflow_status = "Unpacked"
+            target_object.save
+            patch_action
           end
           it "flashes an inaction notice" do
             expect(flash[:notice]).to match /already.*returned/
@@ -251,7 +251,7 @@ describe ReturnsController do
             expect(response).to redirect_to return_bin_return_path(bin.id)
           end
         end
-	context "not already returned" do
+	      context "not already returned" do
           context "without ephemera" do
             context "when failed" do
               before(:each) do
@@ -297,7 +297,7 @@ describe ReturnsController do
 	    end
             context "returned" do
 	      before(:each) do
-                patch :physical_object_returned, id: bin.id, mdpi_barcode: target_object.mdpi_barcode, ephemera_returned: { ephemera_returned: 1 }
+                patch :physical_object_returned, id: bin.id, mdpi_barcode: target_object.mdpi_barcode, ephemera_returned: "true"
 	      end
               it "assigns @bin" do
                 expect(assigns(:bin)).to eq bin
