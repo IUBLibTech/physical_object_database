@@ -33,10 +33,8 @@ class ReturnsController < ApplicationController
 
 		# GOOD! - we have a physical object that can actually be returned
 		else
-			debugger
 			if @po.has_ephemera
 				# refuse to return a physical object unless the ephemera returned flag has explicitly been set
-				debugger
 				if params[:ephemera_returned].blank? or (params[:ephemera_returned] != 'true' and params[:ephemera_returned] != 'false')
 					flash[:warning] = 'Ephemera returned was not specified - Physical Object <b>Not</b> unpacked'.html_safe
 				else
