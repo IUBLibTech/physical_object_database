@@ -97,7 +97,7 @@ class ApplicationController < ActionController::Base
   
     def tm_params
       params.require(:tm).permit(
-        #fields that are specific to open reel audio tapes
+        # fields that are specific to open reel audio tapes
         :pack_deformation, :reel_size, :track_configuration,
         :tape_thickness, :sound_field, :tape_stock_brand, :tape_base, :directions_recorded,
         :vinegar_syndrome, :fungus, :soft_binder_syndrome, :other_contaminants, :zero_point9375_ips,
@@ -105,22 +105,26 @@ class ApplicationController < ActionController::Base
         :half_track, :quarter_track, :unknown_track, :one_mils, :one_point5_mils, :zero_point5_mils,
         :mono, :stereo, :unknown_sound_field, :acetate_base, :polyester_base, :pvc_base, :paper_base,
         :unknown_playback_speed, :dual_mono,
-        #fields for cd-r's not covered by open reel audio tape fields
+        # fields for cd-r's not covered by open reel audio tape fields
         :damage, :breakdown_of_materials, :format_duration,
-        #fields for dat not covered so far
+        # fields for dat not covered so far
         :sample_rate_32k, :sample_rate_44_1_k, :sample_rate_48k, :sample_rate_96k,
-        #fields for analog sound discs
+        # fields for analog sound discs
         :diameter, :speed, :groove_size, :groove_orientation, :recording_method, :material, :substrate,
         :coating, :equalization, :country_of_origin, :delamination, :exudation, :oxidation, :cracked,
         :warped, :dirty, :scratched, :worn, :broken, :label,
         :subtype,
-        #fields for betacam
+        # fields for betacam
         :format_version, :cassette_size, :recording_standard, :image_format,
-        #fields for eight mm video
+        # fields for betamax
+        :oxide,
+        # fields for eight mm video
         :playback_speed, :binder_system,
-        #fields for umatic video
+        # fields of half inch open reel video
+        :damaged_reel,
+        # fields for umatic video
         :size,
-        #fields for audiocassette
+        # fields for audiocassette
         :cassette_type, :tape_type, :noise_reduction, :damaged_tape, :damaged_shell,
         :zero_point46875_ips,
 
@@ -132,22 +136,25 @@ class ApplicationController < ActionController::Base
         :half_track => [], :quarter_track => [], :unknown_track => [], :one_mils => [], :one_point5_mils => [], :zero_point5_mils => [],
         :mono => [], :stereo => [], :unknown_sound_field => [], :acetate_base => [], :polyester_base => [], :pvc_base => [], :paper_base => [],
         :unknown_playback_speed => [],
-        #fields for cd-r's not covered by open reel audio tape fields
+        # fields for cd-r's not covered by open reel audio tape fields
         :damage => [], :breakdown_of_materials => [], :format_duration => [],
-        #fields for dat not covered so far
+        # fields for dat not covered so far
         :sample_rate_32k => [], :sample_rate_44_1_k => [], :sample_rate_48k => [], :sample_rate_96k => [],   
-        #fields for analog sound discs
+        # fields for analog sound discs
         :diameter => [], :speed => [], :groove_size => [], :groove_orientation => [], :recording_method => [], :material => [], :substrate => [],
         :coating => [], :equalization => [], :country_of_origin => [], :delamination => [], :exudation => [], :oxidation => [], :cracked => [],
         :warped => [], :dirty => [], :scratched => [], :worn => [], :broken => [], :label => [],
         :subtype => [],
-        #fields for betacam
+        # fields for betacam
         :format_version => [], :cassette_size => [], :recording_standard => [], :image_format => [],
-        #fields for eight mm video
+        # fields for betamax
+        :oxide => [],
+        # fields for eight mm video
         :playback_speed => [], :binder_system => [],
-        #fields for umatic video
+        # fields for half inch open reel video
+        # fields for umatic video
         :size => [],
-        #fields for audiocassette
+        # fields for audiocassette
         cassette_type: [], tape_type: [], noise_reduction: []
         )
     end
