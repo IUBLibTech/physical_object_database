@@ -667,4 +667,7 @@ ActiveRecord::Schema.define(version: 20160722172059) do
   add_index "workflow_statuses", ["bin_id", "workflow_status_template_id"], name: "index_ws_on_bin_and_wst", using: :btree
   add_index "workflow_statuses", ["physical_object_id", "workflow_status_template_id"], name: "index_ws_on_po_and_wst", using: :btree
 
+  add_foreign_key "doFiles", "doParts", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doFiles_ibfk_1"
+  add_foreign_key "doFiles", "doParts", column: "partNumber", primary_key: "partNumber", name: "doFiles_ibfk_1"
+  add_foreign_key "doParts", "doObjects", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doParts_ibfk_1"
 end
