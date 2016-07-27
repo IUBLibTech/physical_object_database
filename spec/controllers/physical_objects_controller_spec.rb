@@ -99,7 +99,7 @@ describe PhysicalObjectsController do
       end
     end
     context "with valid attributes" do
-      shared_examples "common succcessful POST create behaviors" do
+      shared_examples "common successful POST create behaviors" do
         it "saves the new physical object in the database" do
           physical_object
           expect{ creation }.to change(PhysicalObject, :count).by(1)
@@ -111,7 +111,7 @@ describe PhysicalObjectsController do
       end
       context "without repeat" do
         let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm)}
-        include_examples "common succcessful POST create behaviors"
+        include_examples "common successful POST create behaviors"
         it "redirects to the objects index" do
           creation
           expect(response).to redirect_to(controller: :physical_objects, action: :index) 
@@ -119,16 +119,34 @@ describe PhysicalObjectsController do
       end
       context "with repeat: true" do
         let(:title) { "repeated title" }
-        let(:creation) { post :create, repeat: 'true', physical_object: valid_physical_object.attributes.symbolize_keys.merge(title: title), tm: FactoryGirl.attributes_for(:cdr_tm)}
-        include_examples "common succcessful POST create behaviors"
-        it "assigns a new @physical_object with attribute carry-over" do
-          creation
-          expect(assigns(:physical_object)).to be_a_new PhysicalObject
-          expect(assigns(:physical_object).title).to eq title
+        let(:creation) { post :create, repeat: 'true', grouped: grouped, physical_object: valid_physical_object.attributes.symbolize_keys.merge(title: title), tm: FactoryGirl.attributes_for(:cdr_tm)}
+        shared_examples "common successful repeat creation behaviors" do
+          include_examples "common successful POST create behaviors"
+          it "assigns a new @physical_object with attribute carry-over" do
+            creation
+            expect(assigns(:physical_object)).to be_a_new PhysicalObject
+            expect(assigns(:physical_object).title).to eq title
+          end
+          it "renders the :new template" do
+            creation
+            expect(response).to render_template :new
+          end
         end
-        it "renders the :new template" do
-          creation
-          expect(response).to render_template :new
+        context "with grouped: false" do
+          let(:grouped) { 'false' }
+          include_examples "common successful repeat creation behaviors"
+        end
+        context "with grouped: true" do
+          let(:grouped) { 'true' }
+          include_examples "common successful repeat creation behaviors"
+          it "assigns a group key" do
+            creation
+            expect(assigns(:physical_object).group_key).not_to be_nil
+          end
+          it "increments the group_position" do
+            creation
+            expect(assigns(:physical_object).group_position).to be > 1
+          end
         end
       end
     end

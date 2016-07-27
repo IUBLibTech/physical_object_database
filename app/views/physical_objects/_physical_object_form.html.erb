@@ -5,6 +5,10 @@
 <%= nested_form_for(@physical_object) do |f| %>
   <%= hidden_field_tag "repeat", @repeat %>
   <%if @edit_mode or @action == 'destroy' %>
+    <% if @repeat %>
+      <div>Retaining same group key across objects: <%= select_tag :grouped, options_for_select(['false', 'true'], @grouped.to_s), disabled: !params[:grouped].to_s.blank? %></div>
+      <%= hidden_field_tag :grouped, @grouped if @grouped %>
+    <% end %>
     <div class="clear" ><%= submit_tag(@submit_text) %></div>
   <% end %>
   <%= render(partial: 'physical_objects/physical_object_metadata_fields', locals: {f: f}) %>
