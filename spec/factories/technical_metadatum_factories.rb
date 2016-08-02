@@ -29,13 +29,29 @@ FactoryGirl.define do
      actable_type "BetacamTm"
      association :actable, factory: :betacam_tm
    end
+   trait :betamax do
+     actable_type "BetamaxTm"
+     association :actable, factory: :betamax_tm
+   end
    trait :eight_mm do
      actable_type "EightMillimeterVideoTm"
      association :actable, factory: :eight_mm_tm
    end
+   trait :half_inch_open_reel_video do
+     actable_type "HalfInchOpenReelVideoTm"
+     association :actable, factory: :half_inch_open_reel_video_tm
+   end
+   trait :one_inch_open_reel_video do
+     actable_type "OneInchOpenReelVideoTm"
+     association :actable, factory: :one_inch_open_reel_video_tm
+   end
    trait :umatic do
      actable_type "UmaticVideoTm"
      association :actable, factory: :umatic_tm
+   end
+   trait :vhs do
+     actable_type "VhsTm"
+     association :actable, factory: :vhs_tm
    end
   end
 
@@ -157,6 +173,27 @@ FactoryGirl.define do
     end
   end
 
+  factory :betamax_tm, class: BetamaxTm do
+    format_version 'Unknown'
+    recording_standard 'NTSC'
+    tape_stock_brand ''
+    oxide 'Unknown'
+    format_duration 0
+    image_format '4:3'
+    pack_deformation 'None'
+    damaged_tape false
+    damaged_shell false
+    fungus false
+    soft_binder_syndrome false
+    other_contaminants false
+
+    trait :invalid do
+      pack_deformation "invalid value"
+    end
+    trait :valid do
+    end
+  end
+
   factory :eight_mm_tm, class: EightMillimeterVideoTm do
     pack_deformation "None"
     fungus false
@@ -177,6 +214,46 @@ FactoryGirl.define do
     end
   end
 
+  factory :half_inch_open_reel_video_tm, class: HalfInchOpenReelVideoTm do
+    format_version 'Unknown'
+    recording_standard 'NTSC'
+    tape_stock_brand ''
+    format_duration 0
+    image_format '4:3'
+    pack_deformation 'None'
+    damaged_tape false
+    damaged_reel false
+    fungus false
+    soft_binder_syndrome false
+    other_contaminants false
+
+    trait :invalid do
+      pack_deformation "invalid value"
+    end
+    trait :valid do
+    end
+  end
+
+  factory :one_inch_open_reel_video_tm, class: OneInchOpenReelVideoTm do
+    format_version 'Unknown'
+    recording_standard 'NTSC'
+    tape_stock_brand ''
+    format_duration 0
+    image_format '4:3'
+    pack_deformation 'None'
+    damaged_tape false
+    damaged_reel false
+    fungus false
+    soft_binder_syndrome false
+    other_contaminants false
+
+    trait :invalid do
+      pack_deformation "invalid value"
+    end
+    trait :valid do
+    end
+  end
+
   factory :umatic_tm, class: UmaticVideoTm do
     pack_deformation "None"
     fungus false
@@ -188,6 +265,28 @@ FactoryGirl.define do
     tape_stock_brand ""
     image_format "Unknown"
     format_version "Unknown"
+
+    trait :invalid do
+      pack_deformation "invalid value"
+    end
+    trait :valid do
+    end
+  end
+
+  factory :vhs_tm, class: VhsTm do
+    format_version 'Unknown'
+    recording_standard 'NTSC'
+    tape_stock_brand ''
+    format_duration 0
+    playback_speed 'Unknown'
+    size 'Standard'
+    image_format '4:3'
+    pack_deformation 'None'
+    damaged_tape false
+    damaged_shell false
+    fungus false
+    soft_binder_syndrome false
+    other_contaminants false
 
     trait :invalid do
       pack_deformation "invalid value"
