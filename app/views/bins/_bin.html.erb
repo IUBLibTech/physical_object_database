@@ -48,6 +48,12 @@
         <%= f.select(:format, TechnicalMetadatumModule.tm_formats_hash, {include_blank: "(undefined)"}, disabled: (!@edit_mode || f.object.contained_physical_objects.any?) ) %>
       </td>
     </tr>
+    <tr>
+      <th>Average duration (in minutes)</th>
+      <td>
+        <%= f.number_field(:average_duration, min: 0) %>
+      </td>
+    </tr>
 		<tr>
 			<th>Imported from spreadsheet</th>
 			<td>

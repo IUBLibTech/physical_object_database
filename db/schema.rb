@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160615185455) do
+ActiveRecord::Schema.define(version: 20160725133000) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -92,6 +92,23 @@ ActiveRecord::Schema.define(version: 20160615185455) do
     t.datetime "updated_at"
   end
 
+  create_table "betamax_tms", force: :cascade do |t|
+    t.string   "format_version",       limit: 255
+    t.string   "recording_standard",   limit: 255
+    t.string   "tape_stock_brand",     limit: 255
+    t.string   "oxide",                limit: 255
+    t.string   "format_duration",      limit: 255
+    t.string   "image_format",         limit: 255
+    t.string   "pack_deformation",     limit: 255
+    t.boolean  "damaged_tape"
+    t.boolean  "damaged_shell"
+    t.boolean  "fungus"
+    t.boolean  "other_contaminants"
+    t.boolean  "soft_binder_syndrome"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
   create_table "billable_physical_objects", force: :cascade do |t|
     t.integer  "mdpi_barcode",  limit: 8
     t.datetime "delivery_date"
@@ -113,6 +130,7 @@ ActiveRecord::Schema.define(version: 20160615185455) do
     t.string   "destination",               limit: 255
     t.string   "format",                    limit: 255
     t.string   "physical_location",         limit: 255
+    t.integer  "average_duration",          limit: 4
   end
 
   add_index "bins", ["batch_id"], name: "index_bins_on_batch_id", using: :btree
@@ -305,6 +323,22 @@ ActiveRecord::Schema.define(version: 20160615185455) do
     t.string   "avalon_url",  limit: 255
   end
 
+  create_table "half_inch_open_reel_video_tms", force: :cascade do |t|
+    t.string   "format_version",       limit: 255
+    t.string   "recording_standard",   limit: 255
+    t.string   "tape_stock_brand",     limit: 255
+    t.string   "format_duration",      limit: 255
+    t.string   "image_format",         limit: 255
+    t.string   "pack_deformation",     limit: 255
+    t.boolean  "damaged_tape"
+    t.boolean  "damaged_reel"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
   create_table "machine_formats", force: :cascade do |t|
     t.integer  "machine_id", limit: 4
     t.string   "format",     limit: 255
@@ -349,6 +383,22 @@ ActiveRecord::Schema.define(version: 20160615185455) do
   end
 
   add_index "notes", ["physical_object_id"], name: "index_notes_on_physical_object_id", using: :btree
+
+  create_table "one_inch_open_reel_video_tms", force: :cascade do |t|
+    t.string   "format_version",       limit: 255
+    t.string   "recording_standard",   limit: 255
+    t.string   "tape_stock_brand",     limit: 255
+    t.string   "format_duration",      limit: 255
+    t.string   "image_format",         limit: 255
+    t.string   "pack_deformation",     limit: 255
+    t.boolean  "damaged_tape"
+    t.boolean  "damaged_reel"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
 
   create_table "open_reel_tms", force: :cascade do |t|
     t.string   "pack_deformation",               limit: 255
@@ -568,6 +618,24 @@ ActiveRecord::Schema.define(version: 20160615185455) do
   end
 
   add_index "users", ["unit_id"], name: "index_users_on_unit_id", using: :btree
+
+  create_table "vhs_tms", force: :cascade do |t|
+    t.string   "format_version",       limit: 255
+    t.string   "recording_standard",   limit: 255
+    t.string   "tape_stock_brand",     limit: 255
+    t.string   "format_duration",      limit: 255
+    t.string   "playback_speed",       limit: 255
+    t.string   "size",                 limit: 255
+    t.string   "image_format",         limit: 255
+    t.string   "pack_deformation",     limit: 255
+    t.boolean  "damaged_tape"
+    t.boolean  "damaged_shell"
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
 
   create_table "workflow_status_templates", force: :cascade do |t|
     t.string   "name",           limit: 255

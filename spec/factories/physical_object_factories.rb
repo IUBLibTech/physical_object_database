@@ -33,6 +33,18 @@ FactoryGirl.define do
       format "Betacam"
       association :technical_metadatum, factory: [:technical_metadatum, :betacam]
     end
+    trait :betamax do
+      format "Betamax"
+      association :technical_metadatum, factory: [:technical_metadatum, :betamax]
+    end
+    trait :half_inch_open_reel_video do
+      format "1/2-Inch Open Reel Video Tape"
+      association :technical_metadatum, factory: [:technical_metadatum, :half_inch_open_reel_video]
+    end
+    trait :one_inch_open_reel_video do
+      format "1-Inch Open Reel Video Tape"
+      association :technical_metadatum, factory: [:technical_metadatum, :one_inch_open_reel_video]
+    end
     trait :eight_mm do
       format "8mm Video"
       association :technical_metadatum, factory: [:technical_metadatum, :eight_mm]
@@ -40,6 +52,10 @@ FactoryGirl.define do
     trait :umatic do
       format "U-matic"
       association :technical_metadatum, factory: [:technical_metadatum, :umatic]
+    end
+    trait :vhs do
+      format "VHS"
+      association :technical_metadatum, factory: [:technical_metadatum, :vhs]
     end
     trait :boxable do
       cdr

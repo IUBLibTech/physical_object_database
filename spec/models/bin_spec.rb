@@ -40,6 +40,10 @@ describe Bin do
   end
   
   describe "has optional fields" do
+    specify "average_duration" do
+      valid_bin.average_duration = nil
+      expect(valid_bin).to be_valid
+    end
     it "description" do
       valid_bin.description = nil
       expect(valid_bin).to be_valid

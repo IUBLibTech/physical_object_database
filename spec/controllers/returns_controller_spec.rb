@@ -182,7 +182,7 @@ describe ReturnsController do
   end
 
   describe "PATCH physical_object_returned (on member)" do
-    let(:patch_action) { patch :physical_object_returned, id: bin.id, mdpi_barcode: target_object.mdpi_barcode, ephemera_returned: { ephemera_returned: 0 } }
+    let(:patch_action) { patch :physical_object_returned, id: bin.id, mdpi_barcode: target_object.mdpi_barcode, ephemera_returned: 'false' }
     shared_examples "physical_object_returned behaviors" do
       context "failure cases:" do
         context "physical object not found" do
@@ -240,9 +240,9 @@ describe ReturnsController do
       context "physical object found and associated to bin" do
         context "already returned" do
           before(:each) do
-	    target_object.current_workflow_status = "Unpacked"
-	    target_object.save
-	    patch_action
+            target_object.current_workflow_status = "Unpacked"
+            target_object.save
+            patch_action
           end
           it "flashes an inaction notice" do
             expect(flash[:notice]).to match /already.*returned/
@@ -251,7 +251,7 @@ describe ReturnsController do
             expect(response).to redirect_to return_bin_return_path(bin.id)
           end
         end
-	context "not already returned" do
+	      context "not already returned" do
           context "without ephemera" do
             context "when failed" do
               before(:each) do
@@ -278,9 +278,9 @@ describe ReturnsController do
                 target_object.reload
                 expect(target_object.current_workflow_status).to eq "Unpacked"
               end
-              it "sets ephemera_returned field to false" do
+              it "sets ephemera_returned field to be nil" do
                 target_object.reload
-                expect(target_object.ephemera_returned).to be false
+                expect(target_object.ephemera_returned).to be_nil
               end
               it "flashes a success message" do
                 expect(flash[:notice]).to match /Physical Object.*was successfully returned/
@@ -297,7 +297,7 @@ describe ReturnsController do
 	    end
             context "returned" do
 	      before(:each) do
-                patch :physical_object_returned, id: bin.id, mdpi_barcode: target_object.mdpi_barcode, ephemera_returned: { ephemera_returned: 1 }
+                patch :physical_object_returned, id: bin.id, mdpi_barcode: target_object.mdpi_barcode, ephemera_returned: "true"
 	      end
               it "assigns @bin" do
                 expect(assigns(:bin)).to eq bin
