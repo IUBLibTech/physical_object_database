@@ -39,15 +39,22 @@ class PhysicalObjectsController < ApplicationController
     # catch whether this was from a "create multiple physical objects" link
     if params[:repeat] == "true"
       @repeat = true
+      @grouped = true if params[:grouped] == 'true'
     end
     @tm = @physical_object.ensure_tm
     @dp = @physical_object.ensure_digiprov
     @tm.assign_attributes(tm_params)
     if @physical_object.errors.none? && @physical_object.valid? && @tm.valid? && @dp.valid?
       saved = @physical_object.save 
+      group_key = @physical_object.group_key
+      group_position = @physical_object.group_position
     end
     if saved
-      flash[:notice] = "Physical Object was successfully created.".html_safe
+      if @repeat
+        flash.now[:notice] = "Physical Object was successfully created.".html_safe
+      else
+        flash[:notice] = "Physical Object was successfully created.".html_safe
+      end
     else
       flash.now[:warning] = "Physical Object was NOT saved.".html_safe
     end
@@ -61,6 +68,10 @@ class PhysicalObjectsController < ApplicationController
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
         @tm.assign_attributes(tm_params)
+        if @grouped
+          @physical_object.group_key = group_key
+          @physical_object.group_position = group_position + 1
+        end
       end
       @display_assigned = true
       render('new')
