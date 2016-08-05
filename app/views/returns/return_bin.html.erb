@@ -110,7 +110,8 @@
 				}
 			});
 		});
-
+		//set barcode focus, only if no warning div content was set
+		if (!$.trim($("div.warning").html())) { $("#mdpi_barcode").focus() };
 	});
 </script>
 
