@@ -211,9 +211,9 @@ describe BatchesController do
       it "saves the new object in the database" do
         expect{ creation }.to change(Batch, :count).by(1)
       end
-      it "redirects to the objects index" do
+      it "redirects to the created object" do
         creation
-        expect(response).to redirect_to(controller: :batches, action: :index) 
+        expect(response).to redirect_to assigns(:batch)
       end
     end
 
