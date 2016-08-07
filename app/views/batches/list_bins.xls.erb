@@ -14,11 +14,13 @@
         <Row>
           <Cell><Data ss:Type="String">Bin barcode</Data></Cell>
           <Cell><Data ss:Type="String">Bin identifier</Data></Cell>
+          <Cell><Data ss:Type="String">Physical location</Data></Cell>
         </Row>
 	<% @batch.bins.each do |bin| %>
         <Row>
           <Cell><Data ss:Type="String"><%= bin.mdpi_barcode %></Data></Cell>
           <Cell><Data ss:Type="String"><%= bin.identifier %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= bin.physical_location %></Data></Cell>
         </Row>
 	<% end %>
       <% else %>
