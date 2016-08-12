@@ -142,6 +142,7 @@ describe PhysicalObjectsController do
           it "assigns a group key" do
             creation
             expect(assigns(:physical_object).group_key).not_to be_nil
+            expect(assigns(:group_key)).not_to be_nil
           end
           it "increments the group_position" do
             creation
