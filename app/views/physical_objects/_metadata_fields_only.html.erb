@@ -182,6 +182,7 @@
         <td>
           <% unless @group_key.nil? %>
             <%= link_to(@group_key.group_identifier, group_key_path(@group_key.id), target: "_blank") if policy(@group_key).show? %>
+            <%= f.hidden_field(:group_key_id) %>
           <% else %>
             Not assigned
           <% end %>
