@@ -122,10 +122,26 @@ describe PhysicalObjectsController do
         let(:creation) { post :create, repeat: 'true', grouped: grouped, physical_object: valid_physical_object.attributes.symbolize_keys.merge(title: title), tm: FactoryGirl.attributes_for(:cdr_tm)}
         shared_examples "common successful repeat creation behaviors" do
           include_examples "common successful POST create behaviors"
-          it "assigns a new @physical_object with attribute carry-over" do
+          it "assigns a new @physical_object" do
             creation
             expect(assigns(:physical_object)).to be_a_new PhysicalObject
-            expect(assigns(:physical_object).title).to eq title
+          end
+          CARRYOVER_ATTRIBUTES = [:format, :unit_id, :picklist_id]
+          specify "assigns carry-over attributes to new physical object" do
+            creation
+            CARRYOVER_ATTRIBUTES.each do |att|
+              expect(assigns(:physical_object).send(att)).to eq valid_physical_object.send(att)
+            end
+          end
+          it "loses non-carryover attributes (with grouping contingent on parameter)" do
+            creation
+            expect(assigns(:physical_object).title).to be_blank
+            assigns(:physical_object).attributes.keys.each do |att|
+              unless att.to_sym.in?(CARRYOVER_ATTRIBUTES + [:group_key_id, :group_position])
+                puts att unless assigns(:physical_object).send(att).blank?
+                expect(assigns(:physical_object).send(att)).to be_blank unless att.to_sym.in?(CARRYOVER_ATTRIBUTES + [:group_key_id])
+              end
+            end
           end
           it "renders the :new template" do
             creation
@@ -135,6 +151,10 @@ describe PhysicalObjectsController do
         context "with grouped: false" do
           let(:grouped) { 'false' }
           include_examples "common successful repeat creation behaviors"
+          it "does not assign a group key" do
+            creation
+            expect(assigns(:physical_object).group_key).to be_nil
+          end
         end
         context "with grouped: true" do
           let(:grouped) { 'true' }
