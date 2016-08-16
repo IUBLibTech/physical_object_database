@@ -27,7 +27,7 @@ class BatchesController < ApplicationController
     @batch = Batch.new(batch_params)
     if @batch.save
       flash[:notice] = "<i>#{@batch.identifier}</i> was successfully created".html_safe
-      redirect_to(:action => 'index')
+      redirect_to @batch
     else 
       render('new')
     end

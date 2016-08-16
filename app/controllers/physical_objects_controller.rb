@@ -46,7 +46,7 @@ class PhysicalObjectsController < ApplicationController
     @tm.assign_attributes(tm_params)
     if @physical_object.errors.none? && @physical_object.valid? && @tm.valid? && @dp.valid?
       saved = @physical_object.save 
-      group_key = @physical_object.group_key
+      @group_key = @physical_object.group_key
       group_position = @physical_object.group_position
     end
     if saved
@@ -69,7 +69,7 @@ class PhysicalObjectsController < ApplicationController
         @dp = @physical_object.ensure_digiprov
         @tm.assign_attributes(tm_params)
         if @grouped
-          @physical_object.group_key = group_key
+          @physical_object.group_key = @group_key
           @physical_object.group_position = group_position + 1
         end
       end
