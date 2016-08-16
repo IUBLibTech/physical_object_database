@@ -8,11 +8,15 @@ describe PhysicalObjectsController do
   let(:second_object) { FactoryGirl.create(:physical_object, :cdr, unit: physical_object.unit, group_key: physical_object.group_key, group_position: 2) }
   let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
   let(:invalid_physical_object) { FactoryGirl.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
+  let(:boxed_physical_object) { FactoryGirl.build(:physical_object, :cdr, :barcoded, unit: physical_object.unit, box: box, picklist: picklist) }
+  let(:binned_physical_object) { FactoryGirl.build(:physical_object, :betacam, :barcoded, unit: physical_object.unit, bin: bin, picklist: picklist) }
   let(:group_key) { FactoryGirl.create(:group_key) }
   let(:picklist) { FactoryGirl.create(:picklist) }
   let(:full_box) { FactoryGirl.create(:box, full: true) }
+  let(:box) { FactoryGirl.create(:box) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:sealed_bin) { bin.current_workflow_status = "Sealed"; bin.save!; bin }
+  CARRYOVER_ATTRIBUTES = [:format, :unit_id, :picklist_id, :box_id, :bin_id]
 
   describe "GET index" do
     before(:each) do
@@ -110,7 +114,7 @@ describe PhysicalObjectsController do
         end
       end
       context "without repeat" do
-        let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm)}
+        let(:creation) { post :create, physical_object: boxed_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm)}
         include_examples "common successful POST create behaviors"
         it "redirects to the objects index" do
           creation
@@ -119,18 +123,17 @@ describe PhysicalObjectsController do
       end
       context "with repeat: true" do
         let(:title) { "repeated title" }
-        let(:creation) { post :create, repeat: 'true', grouped: grouped, physical_object: valid_physical_object.attributes.symbolize_keys.merge(title: title), tm: FactoryGirl.attributes_for(:cdr_tm)}
+        let(:creation) { post :create, repeat: 'true', grouped: grouped, physical_object: chosen_po.attributes.symbolize_keys.merge(title: title), tm: FactoryGirl.attributes_for(chosen_factory)}
         shared_examples "common successful repeat creation behaviors" do
           include_examples "common successful POST create behaviors"
           it "assigns a new @physical_object" do
             creation
             expect(assigns(:physical_object)).to be_a_new PhysicalObject
           end
-          CARRYOVER_ATTRIBUTES = [:format, :unit_id, :picklist_id]
           specify "assigns carry-over attributes to new physical object" do
             creation
             CARRYOVER_ATTRIBUTES.each do |att|
-              expect(assigns(:physical_object).send(att)).to eq valid_physical_object.send(att)
+              expect(assigns(:physical_object).send(att)).to eq chosen_po.send(att)
             end
           end
           it "loses non-carryover attributes (with grouping contingent on parameter)" do
@@ -138,8 +141,7 @@ describe PhysicalObjectsController do
             expect(assigns(:physical_object).title).to be_blank
             assigns(:physical_object).attributes.keys.each do |att|
               unless att.to_sym.in?(CARRYOVER_ATTRIBUTES + [:group_key_id, :group_position])
-                puts att unless assigns(:physical_object).send(att).blank?
-                expect(assigns(:physical_object).send(att)).to be_blank unless att.to_sym.in?(CARRYOVER_ATTRIBUTES + [:group_key_id])
+                expect(assigns(:physical_object).send(att)).to be_blank
               end
             end
           end
@@ -150,24 +152,56 @@ describe PhysicalObjectsController do
         end
         context "with grouped: false" do
           let(:grouped) { 'false' }
-          include_examples "common successful repeat creation behaviors"
-          it "does not assign a group key" do
-            creation
-            expect(assigns(:physical_object).group_key).to be_nil
+          context "on a boxed object" do
+            let(:chosen_po) {  boxed_physical_object }
+            let(:chosen_factory) { :cdr_tm }
+            include_examples "common successful repeat creation behaviors"
+            it "does not assign a group key" do
+              creation
+              expect(assigns(:physical_object).group_key).to be_nil
+            end
+          end
+          context "on a binned object" do
+            let(:chosen_po) {  binned_physical_object }
+            let(:chosen_factory) { :betacam_tm }
+            include_examples "common successful repeat creation behaviors"
+            it "does not assign a group key" do
+              creation
+              expect(assigns(:physical_object).group_key).to be_nil
+            end
           end
         end
         context "with grouped: true" do
           let(:grouped) { 'true' }
-          include_examples "common successful repeat creation behaviors"
-          it "assigns a group key" do
-            creation
-            expect(assigns(:physical_object).group_key).not_to be_nil
-            expect(assigns(:group_key)).not_to be_nil
+          context "on a boxed object" do
+            let(:chosen_po) {  boxed_physical_object }
+            let(:chosen_factory) { :cdr_tm }
+            include_examples "common successful repeat creation behaviors"
+            it "assigns a group key" do
+              creation
+              expect(assigns(:physical_object).group_key).not_to be_nil
+              expect(assigns(:group_key)).not_to be_nil
+            end
+            it "increments the group_position" do
+              creation
+              expect(assigns(:physical_object).group_position).to be > 1
+            end
           end
-          it "increments the group_position" do
-            creation
-            expect(assigns(:physical_object).group_position).to be > 1
+          context "on a binned object" do
+            let(:chosen_po) {  binned_physical_object }
+            let(:chosen_factory) { :betacam_tm }
+            include_examples "common successful repeat creation behaviors"
+            it "assigns a group key" do
+              creation
+              expect(assigns(:physical_object).group_key).not_to be_nil
+              expect(assigns(:group_key)).not_to be_nil
+            end
+            it "increments the group_position" do
+              creation
+              expect(assigns(:physical_object).group_position).to be > 1
+            end
           end
+
         end
       end
     end

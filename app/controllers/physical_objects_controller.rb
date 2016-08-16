@@ -71,6 +71,9 @@ class PhysicalObjectsController < ApplicationController
         @physical_object.attributes.keys.each do |att|
           @physical_object[att] = nil unless att.in? %w(picklist_id format unit_id)
         end
+        #retain bin, box association
+        @physical_object.bin = @bin
+        @physical_object.box = @box
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
         @tm.assign_attributes(tm_params)
