@@ -34,9 +34,11 @@
 				<tr class="header">
 			    <th>MDPI barcode</th>
 			    <th>Identifier</th>
-			    <th>Item Count</th>
 			    <th>Physical Location</th>
 			    <th>Description</th>
+			    <th>Item Count</th>
+			    <th>Avg. Duration</th>
+			    <th>Est. Bin Duration</th>
 			    <th>Add</th>
 			  </tr>
 			 </thead>
@@ -44,17 +46,10 @@
 			 	<% @available_bins.each do |b| %>
 					<tr>
 						<td>
-							<%= b.mdpi_barcode %>
+							<%= link_to b.mdpi_barcode, b %>
 						</td>
 						<td>
 							<%= b.identifier %>
-						</td>
-						<td>
-							<% if b.physical_objects.any? %>
-							  <%= b.physical_objects.size %>
-							<% elsif b.boxes.any? %>
-							  <%= b.boxed_physical_objects.size %>
-							<% end %>
 						</td>
 						<td>
 							<%= b.physical_location %>
@@ -62,6 +57,15 @@
 						<td>
 							<%= b.description %>
 						</td>
+                                                <td>
+                                                        <%= b.physical_objects_count %>
+                                                </td>
+                                                <td>
+                                                        <%= b.average_duration.to_i %>
+                                                </td>
+                                                <td>
+                                                        <%= b.physical_objects_count * b.average_duration.to_i %>
+                                                </td>
 						<td>
 							<%= check_box_tag 'bin_ids[]', b.id, false, disabled: @batch.packed_status? %>
 						</td>
