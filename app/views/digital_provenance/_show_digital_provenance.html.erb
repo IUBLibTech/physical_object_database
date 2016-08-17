@@ -64,7 +64,7 @@
 				<% end %>
 			<% end %>
 		</div>
-    <div>
+    <div class="clear">
       <% if @edit_mode && policy(@dp).edit? %>
         <%= dp.link_to_add "Add Digital Master File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
         &nbsp-&nbsp

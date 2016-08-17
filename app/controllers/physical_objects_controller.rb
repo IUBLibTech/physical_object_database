@@ -64,7 +64,16 @@ class PhysicalObjectsController < ApplicationController
     else
       @edit_mode = true
       if @repeat and saved
+        @bin = @physical_object.bin
+        @box = @physical_object.box
         @physical_object = PhysicalObject.new(physical_object_params)
+        #clear out all fields except whitelisted ones
+        @physical_object.attributes.keys.each do |att|
+          @physical_object[att] = nil unless att.in? %w(picklist_id format unit_id)
+        end
+        #retain bin, box association
+        @physical_object.bin = @bin
+        @physical_object.box = @box
         @tm = @physical_object.ensure_tm
         @dp = @physical_object.ensure_digiprov
         @tm.assign_attributes(tm_params)
