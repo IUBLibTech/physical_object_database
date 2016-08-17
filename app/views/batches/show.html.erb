@@ -31,6 +31,10 @@
 	<%= form_for(@batch, url: {action: 'add_bin'}) do |f| %>
 		<table>
 			<thead>
+				<tr>
+					<th colspan=6>Total Selected Estimated Duration</th>
+					<td colspan=2 id='total_selected_1'>0</td>
+				</tr>
 				<tr class="header">
 			    <th>MDPI barcode</th>
 			    <th>Identifier</th>
@@ -43,6 +47,7 @@
 			  </tr>
 			 </thead>
 			 <tbody>
+
 			 	<% @available_bins.each do |b| %>
 					<tr>
 						<td>
@@ -58,22 +63,39 @@
 							<%= b.description %>
 						</td>
                                                 <td>
-                                                        <%= b.physical_objects_count %>
+                                                        <%= po_count = b.physical_objects_count %>
                                                 </td>
                                                 <td>
-                                                        <%= b.average_duration.to_i %>
+                                                        <%= avg_duration = b.average_duration.to_i %>
                                                 </td>
-                                                <td>
-                                                        <%= b.physical_objects_count * b.average_duration.to_i %>
+                                                <td class="duration">
+                                                        <%= po_count * avg_duration %>
                                                 </td>
 						<td>
 							<%= check_box_tag 'bin_ids[]', b.id, false, disabled: @batch.packed_status? %>
 						</td>
 					</tr>
 			 	<% end %>
+                                <tr>
+					<th colspan=6>Total Selected Estimated Duration</th>
+					<td colspan=2 id='total_selected_2'>0</td>
+                                </tr>
 			 </tbody>
 		</table>
 		<%= f.submit("Add selected bins to #{@batch.identifier}", { disabled: @batch.packed_status? }) %>
 	<% end %>
 	<% end %>
 </div>
+<script type="text/javascript">
+var $bin_ids = $('input[name="bin_ids[]"]');
+function calcTotal() {
+    var total = 0;
+    $bin_ids.each(function() {
+        if (this.checked)
+            total = parseInt(total) + parseInt($(this).closest('tr').children('td.duration').text());
+    });
+    $("#total_selected_1").text(total + ' minutes');
+    $("#total_selected_2").text(total + ' minutes');
+}
+$bin_ids.click(calcTotal);
+</script>
