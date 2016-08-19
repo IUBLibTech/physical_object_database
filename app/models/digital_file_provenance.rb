@@ -45,7 +45,8 @@ class DigitalFileProvenance < ActiveRecord::Base
 
 	def display_date_digitized=(date)
 		unless date.blank?
-			self.date_digitized = DateTime.strptime(date, "%m/%d/%Y")
+			# advance to noon to cover DST shifts
+			self.date_digitized = (Time.strptime(date, "%m/%d/%Y") + 12.hours)
 		end
 	end
 
