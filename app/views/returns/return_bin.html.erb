@@ -28,7 +28,7 @@
 	<table id="has_ephemera_table", class="center_inline">
 		<tr>
 			<td colspan="2">
-				Was this physical object's ephemera returned?
+				MDPI barcode <span id="ephemera_barcode"></span>: was this physical object's ephemera returned?
 			</td>
 		</tr>
 		<tr>
@@ -95,6 +95,7 @@
 						// 2) disable normal form submission
 						$("#return_form").css('display', 'none');
 						// 3) reveal yes/no ephemera return forms
+						$("#ephemera_barcode").text(barcode);
 						$( "#has_ephemera_table" ).slideDown(200, function() {
 
 						});
