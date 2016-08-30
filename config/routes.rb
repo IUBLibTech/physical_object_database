@@ -132,6 +132,8 @@ Pod::Application.routes.draw do
   post 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage'
   get 'quality_control/stage/:id', to: 'quality_control#stage', as: 'quality_control_ajax_stage_get'
   get 'quality_control/auto_accept', to: 'quality_control#auto_accept', as: 'quality_control_auto_accept'
+  get 'quality_control/direct_qc', to: 'quality_control#direct_qc', as: 'quality_control_direct_qc'
+  post 'quality_control/direct_qc', to: 'quality_control#direct_qc', as: 'quality_control_direct_qc_post'
 
   get 'invoice/index', to: 'invoice#index', as: 'invoice_controller'
   post 'invoice/index', to: 'invoice#submit', as: 'invoice_controller_submit'

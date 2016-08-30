@@ -8,5 +8,8 @@ describe QualityControlController, type: :routing do
   it "routes to #auto_accept" do
     expect(get("/quality_control/auto_accept")).to route_to("quality_control#auto_accept")
   end
+  it "routes to #direct_qc" do
+    expect(get("/quality_control/direct_qc")).to route_to("quality_control#direct_qc")
+  end
 end
 

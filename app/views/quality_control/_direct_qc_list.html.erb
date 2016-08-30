@@ -1,0 +1,48 @@
+<table class="status full_width">
+<% @batches.each do |batch| %>
+<% batch.bins.order(:identifier).each do |bin| %>
+	<tr>
+		<th>Batch</th>
+		<th>Bin</th>
+		<th>Auto Accept</th>
+		<th>MDPI Barcode</th>
+		<th>Unit</th>
+		<th>Title</th>
+		<th>Stage</th>
+	</tr>
+	<% i = 0 %>
+	<% bin.physical_objects.joins(:digital_statuses).joins(:unit).order(:digital_start).uniq.each do |p| %>
+        <% if p.current_digital_status.state == 'qc_wait' %>
+		<% # i begins at 0 so flip the odd/even css class %>
+		<% if i.odd? %>
+			<tr class="even">
+		<% else %>
+			<tr class="odd">
+		<% end %>
+                <% i += 1 %>
+			<td><%= batch.identifier %></td>
+			<td><%= bin.identifier %></td>
+			<td><%= p.expires.strftime("%l:%M%P %B %-d, %Y") %></td>
+			<td><%= link_to("#{p.mdpi_barcode}", physical_object_path(p.id), target: "_blank") if policy(p).show? %></td>
+			<td><%= p.unit.abbreviation %></td>
+			<td><%=	p.title %></td>
+			<td>
+				<% if p.staging_requested %>
+					<%= '✓' %>
+				<% else %>
+					<%= render "staging_form", p: p, checked: false %>
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+        <% end %>
+	<% if i == 0 %>
+		<tr>
+			<td><%= batch.identifier %></td>
+			<td><%= bin.identifier %></td>
+			<td colspan='5'>(No matching objects found)</td>
+		</tr>
+	<% end %>
+<% end %>
+<% end %>
+</table>
