@@ -15,7 +15,7 @@ class VhsTm < ActiveRecord::Base
   BIN_FORMAT = true
   # TM simple fields
   SIMPLE_FIELDS = %w(format_version recording_standard tape_stock_brand format_duration playback_speed size image_format pack_deformation)
-  FORMAT_VERSION_VALUES = hashify(['Type A', 'Type B', 'Type C', 'IVC', 'Unknown'])
+  FORMAT_VERSION_VALUES = hashify(['VHS', 'SVHS', 'Unknown'])
   RECORDING_STANDARD_VALUES = hashify(%w(NTSC PAL SECAM Unknown))
   PLAYBACK_SPEED_VALUES = hashify(['Standard Play', 'Long Play', 'Extended Play', 'Unknown'])
   SIZE_VALUES = hashify(%w(Standard Small))
