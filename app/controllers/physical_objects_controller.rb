@@ -445,6 +445,13 @@ class PhysicalObjectsController < ApplicationController
       @bin = params[:bin_mdpi_barcode] ? Bin.where(mdpi_barcode: params[:bin_mdpi_barcode]).first : nil
       @box = params[:box_mdpi_barcode] ? Box.where(mdpi_barcode: params[:box_mdpi_barcode]).first : nil
 
+
+      if !params[:bin_mdpi_barcode].to_i.zero? && @bin.nil?
+        @physical_object.errors[:bin] = "No Bin found with barcode #{params[:bin_mdpi_barcode]}.".html_safe
+      end
+      if !params[:box_mdpi_barcode].to_i.zero? && @box.nil?
+        @physical_object.errors[:box] = "No Box found with barcode #{params[:box_mdpi_barcode]}.".html_safe
+      end
       #if the box (and then bin) are different then validate and save
       unless @box.nil? || (@box == @physical_object.box)
         if @box.full?

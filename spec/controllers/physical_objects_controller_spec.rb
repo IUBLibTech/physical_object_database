@@ -209,6 +209,15 @@ describe PhysicalObjectsController do
       let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
       include_examples "common failed POST create behaviors"
     end
+    context "assigning to a non-existant box" do
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: 42 }
+      include_examples "common failed POST create behaviors"
+      it "assigns errors[:box]" do
+        creation
+        expect(assigns(:physical_object).errors[:box]).not_to be_empty
+        expect(assigns(:physical_object).errors[:box].first).to match /No Box found/
+      end
+    end
     context "assigning to a full box" do
       let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: full_box.mdpi_barcode }
       include_examples "common failed POST create behaviors"
@@ -216,6 +225,15 @@ describe PhysicalObjectsController do
         creation
         expect(assigns(:physical_object).errors[:box]).not_to be_empty
         expect(assigns(:physical_object).errors[:box].first).to match /is full/
+      end
+    end
+    context "assigning to a non-existent bin" do
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), bin_mdpi_barcode: 42 }
+      include_examples "common failed POST create behaviors"
+      it "assigns errors[:bin]" do
+        creation
+        expect(assigns(:physical_object).errors[:bin]).not_to be_empty
+        expect(assigns(:physical_object).errors[:bin].first).to match /No Bin found/i
       end
     end
     context "assigning to a sealed bin" do
@@ -335,6 +353,15 @@ describe PhysicalObjectsController do
         expect(response).to render_template(:edit)
       end
     end
+    context "assigning to a non-existent box" do
+      before(:each) do
+        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: 42
+      end
+      it "assigns errors[:box]" do
+        expect(assigns(:physical_object).errors[:box]).not_to be_empty
+        expect(assigns(:physical_object).errors[:box].first).to match /No Box found/i
+      end
+    end
     context "assigning to a full box" do
       before(:each) do
         put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: full_box.mdpi_barcode
@@ -342,6 +369,15 @@ describe PhysicalObjectsController do
       it "assigns errors[:box]" do
         expect(assigns(:physical_object).errors[:box]).not_to be_empty
         expect(assigns(:physical_object).errors[:box].first).to match /is full/
+      end
+    end
+    context "assigning to a non-existent bin" do
+      before(:each) do
+        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), bin_mdpi_barcode: 42
+      end
+      it "assigns errors[:bin]" do
+        expect(assigns(:physical_object).errors[:bin]).not_to be_empty
+        expect(assigns(:physical_object).errors[:bin].first).to match /No Bin found/i
       end
     end
     context "assigning to a sealed bin" do
