@@ -3,10 +3,10 @@
   <% if f.object.errors.any? %>
   <tr><th>ERRORS</th><td><%= render 'shared/error_messages', object: f.object %></td></tr>
   <% end %>
-  <% if @edit_mode && !@search_mode && policy(@physical_object).destroy? %>
+  <% if @edit_mode && !@search_mode && policy(@physical_object).edit? %>
     <tr>
       <th></th>
-      <td><%= f.link_to_remove("Delete note", data: {confirm: 'Are you sure you want to mark this note for deletion?  The note will be deleted when you submit the form.'}) if policy(@physical_object).destroy? && f.respond_to?(:link_to_remove) %></td>
+      <td><%= f.link_to_remove("Delete note", data: {confirm: 'Are you sure you want to mark this note for deletion?  The note will be deleted when you submit the form.'}) if policy(@physical_object).edit? && f.respond_to?(:link_to_remove) %></td>
     </tr>
   <% end %>
   <tr>

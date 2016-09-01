@@ -10,7 +10,7 @@ class ResponsesController < ActionController::Base
 
   before_action :authenticate
 
-  before_action :set_physical_object, only: [:metadata, :full_metadata, :digiprov_metadata, :grouping, :pull_state, :push_status, :push_memnon_qc, :digitizing_entity]
+  before_action :set_physical_object, only: [:metadata, :full_metadata, :digiprov_metadata, :grouping, :pull_state, :push_memnon_qc, :digitizing_entity]
   before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
@@ -76,14 +76,19 @@ class ResponsesController < ActionController::Base
   # POST /responses/objects/<mdpi_barcode>/state
   # QC process action for notifying POD of digital status changes.
   def push_status
-    if @physical_object
-      ds = DigitalStatus.new.from_xml(@physical_object.mdpi_barcode, @request_xml)
-      if ds.valid? && ds.save
+    mdpi_barcode = response_params[:mdpi_barcode].to_i
+    if mdpi_barcode.zero?
+      barcode_not_found
+    else
+      ds = DigitalStatus.new.from_xml(mdpi_barcode, @request_xml)
+      if ds.physical_object.nil?
+        barcode_not_found
+      elsif ds.save
         # the digital files for a physical object come in from memnon and Brian's QC will send this message
         # each time they come in from Memnon (they may come in more than once if we reject their files because they
         # faile our QC). Set this timestamp each time this message is sent in
         if ds.state == DigitalStatus::DIGITAL_STATUS_START
-          @physical_object.update_attributes(digital_start: ds.updated_at)
+          ds.physical_object.update_attributes(digital_start: ds.updated_at)
         end
         @status = 200
         @success = true
