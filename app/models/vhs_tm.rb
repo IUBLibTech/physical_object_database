@@ -34,7 +34,13 @@ class VhsTm < ActiveRecord::Base
     'Structural Damage' => 2
   }
   HUMANIZED_COLUMNS = {}
-  MANIFEST_EXPORT = {}
+  MANIFEST_EXPORT = {
+    'Format version' => :format_version,
+    'Recording standard' => :recording_standard,
+    'Format duration' => :format_duration,
+    'Playback speed' => :playback_speed,
+    'Size' => :size
+  }
   include TechnicalMetadatumModule
 
   def default_values
