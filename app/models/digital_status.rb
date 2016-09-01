@@ -175,7 +175,7 @@ class DigitalStatus < ActiveRecord::Base
   
   def from_xml(mdpi_barcode, xml)
     self.physical_object_mdpi_barcode = mdpi_barcode
-    po = PhysicalObject.where(mdpi_barcode: self.physical_object_mdpi_barcode).first
+    po = PhysicalObject.where(mdpi_barcode: mdpi_barcode).first
     unless po.nil?
       self.physical_object_id = po.id
     end
