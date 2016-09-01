@@ -39,7 +39,7 @@ describe VhsTm do
 
   describe "manifest export" do
     specify "has desired headers" do
-      expect(valid_vhs.manifest_headers).to eq []
+      expect(valid_vhs.manifest_headers).to eq ["Format version", "Recording standard", "Format duration", "Playback speed", "Size"]
     end
   end
 
