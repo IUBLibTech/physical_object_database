@@ -12,7 +12,7 @@
 	</tr>
 	<% i = 0 %>
 	<% bin.physical_objects.joins(:digital_statuses).joins(:unit).order(:digital_start).uniq.each do |p| %>
-        <% if p.current_digital_status.state == 'qc_wait' %>
+        <% if p.current_digital_status.state == 'qc_wait' && p.current_digital_status.decided.nil? %>
 		<% # i begins at 0 so flip the odd/even css class %>
 		<% if i.odd? %>
 			<tr class="even">
