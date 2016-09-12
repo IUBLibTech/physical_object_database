@@ -5,6 +5,7 @@ xml.pod do
      xml.success true
      xml.data do
        xml.format @physical_object.format
+       xml.format_version @physical_object.ensure_tm.format_version if @physical_object.ensure_tm.respond_to? :format_version
        xml.files @physical_object.ensure_tm.master_copies
      end
    else
