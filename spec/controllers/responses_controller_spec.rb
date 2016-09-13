@@ -7,6 +7,7 @@ describe ResponsesController do
   end
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
   let(:barcoded_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
+  let(:format_version_object) { FactoryGirl.create :physical_object, :vhs, :barcoded }
   let(:test_object) do
     test_object = FactoryGirl.create :physical_object, :cdr
     test_object.mdpi_barcode = 49000000000000
@@ -60,21 +61,35 @@ describe ResponsesController do
   end
 
   describe "#metadata" do
-    context "with a valid barcode" do
-      before(:each) { get :metadata, mdpi_barcode: barcoded_object.mdpi_barcode }
+    shared_examples "with a valid barcode" do
+      before(:each) { get :metadata, mdpi_barcode: target_object.mdpi_barcode }
       it "assigns @physical_object" do
-        expect(assigns(:physical_object)).to eq barcoded_object
+        expect(assigns(:physical_object)).to eq target_object
       end
       it "returns success=true XML" do
         expect(response.body).to match /<success.*true<\/success>/
       end
       it "returns data XML" do
         expect(response.body).to match /<data>/
-        expect(response.body).to match /<format>#{physical_object.format}<\/format>/
-        expect(response.body).to match /<files>#{physical_object.technical_metadatum.specific.master_copies}<\/files>/
+        expect(response.body).to match /<format>#{target_object.format}<\/format>/
+        expect(response.body).to match /<files>#{target_object.technical_metadatum.specific.master_copies}<\/files>/
       end
       it "returns a 200 status" do
         expect(response).to have_http_status(200)
+      end
+    end
+    context "with a format that does not have format_version" do
+      let(:target_object) { barcoded_object }
+      include_examples "with a valid barcode"
+      it "does NOT return format_version in data XML" do
+        expect(response.body).not_to match /<format_version/
+      end
+    end
+    context "with a format that has format_version" do
+      let(:target_object) { format_version_object }
+      include_examples "with a valid barcode"
+      it "returns format_version in data XML" do
+        expect(response.body).to match /<format_version>#{format_version_object.ensure_tm.format_version}<\/format_version>/
       end
     end
     context "with a 0 barcode" do
