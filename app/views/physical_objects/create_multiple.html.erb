@@ -5,6 +5,20 @@
 <% end %>
 <div>
   <h2>Physical Object Creation Template</h2>
+  <div>
+    <h2>Notes on this service</h2>
+    <div>
+      This creation template will carry over the following attributes after each submission:
+      <ul>
+        <li>The format, and all format-specific technical metadata</li>
+        <li>Any associations: Picklist, Bin, Box, and Unit</li>
+        <li>Collection identifier and collection name.  (These have both been moved up out of the "Hidden Fields" section for improved visibility in this context.)</li>
+        <li>Optionally (as per dropdown selection): the group key.  Selecting to carry over the group key will also automatically increment the group position with each submission.  This selection is locked in after the first submission; to change it, re-visit the Create Multiple Physical Objects page from the main menu. </li>
+      </ul>
+      Other attributes (MDPI barcode, title, etc.) are all cleared between submissions.
+    </div>
+    <br/>
+  </div>
     <% @submit_text = "Create Physical Object" %>
     <%= render partial: "physical_object_form" %>
 </div>
