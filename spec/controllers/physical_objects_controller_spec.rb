@@ -16,7 +16,7 @@ describe PhysicalObjectsController do
   let(:box) { FactoryGirl.create(:box) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:sealed_bin) { bin.current_workflow_status = "Sealed"; bin.save!; bin }
-  CARRYOVER_ATTRIBUTES = [:format, :unit_id, :picklist_id, :box_id, :bin_id]
+  CARRYOVER_ATTRIBUTES = [:format, :unit_id, :picklist_id, :box_id, :bin_id, :collection_identifier, :collection_name]
 
   describe "GET index" do
     before(:each) do
