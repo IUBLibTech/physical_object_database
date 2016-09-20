@@ -38,8 +38,7 @@ class VhsTm < ActiveRecord::Base
     'Format version' => :format_version,
     'Recording standard' => :recording_standard,
     'Format duration' => :format_duration,
-    'Playback speed' => :playback_speed,
-    'Size' => :size
+    'Playback speed' => :playback_speed
   }
   include TechnicalMetadatumModule
 
