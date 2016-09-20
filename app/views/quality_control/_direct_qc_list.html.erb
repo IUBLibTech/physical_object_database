@@ -4,6 +4,7 @@
 	<tr>
 		<th>Batch</th>
 		<th>Bin</th>
+		<th>Digitization Start</th>
 		<th>Auto Accept</th>
 		<th>MDPI Barcode</th>
 		<th>Unit</th>
@@ -20,10 +21,11 @@
 			<tr class="odd">
 		<% end %>
                 <% i += 1 %>
-			<td><%= batch.identifier %></td>
-			<td><%= bin.identifier %></td>
+			<td><%= link_to(batch.identifier, batch, target: '_blank') if policy(batch).show? %></td>
+			<td><%= link_to(bin.identifier, bin, target: '_blank') if policy(bin).show? %></td>
+			<td><%= p.digital_start.strftime("%l:%M%P %B %-d, %Y") %></td>
 			<td><%= p.expires.strftime("%l:%M%P %B %-d, %Y") %></td>
-			<td><%= link_to("#{p.mdpi_barcode}", physical_object_path(p.id), target: "_blank") if policy(p).show? %></td>
+			<td><%= link_to(p.mdpi_barcode, physical_object_path(p.id), target: "_blank") if policy(p).show? %></td>
 			<td><%= p.unit.abbreviation %></td>
 			<td><%=	p.title %></td>
 			<td>
@@ -38,8 +40,8 @@
         <% end %>
 	<% if i == 0 %>
 		<tr>
-			<td><%= batch.identifier %></td>
-			<td><%= bin.identifier %></td>
+                        <td><%= link_to(batch.identifier, batch, target: '_blank') if policy(batch).show? %></td>
+                        <td><%= link_to(bin.identifier, bin, target: '_blank') if policy(bin).show? %></td>
 			<td colspan='5'>(No matching objects found)</td>
 		</tr>
 	<% end %>
