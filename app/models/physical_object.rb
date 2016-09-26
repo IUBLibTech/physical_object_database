@@ -225,13 +225,12 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def expires
-    start = self.digital_statuses.where(state: 'transferred').order(created_at: :desc).first
-    unless start.nil?
-      start = start.created_at
+    expiration = digital_start
+    unless expiration.nil?
       delay = DigitalStatus::AUTO_ACCEPT_DELAY_DAYS[TechnicalMetadatumModule.tm_genres[self.format]]
-      start += delay.to_i.days
+      expiration += delay.to_i.days
     end
-    start
+    expiration
   end
 
   def master_copies

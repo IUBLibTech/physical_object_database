@@ -57,6 +57,18 @@ class QualityControlController < ApplicationController
     render 'index'
   end
 
+  def direct_qc
+    @d_entity = 'Memnon'
+    @date = Time.now
+    @format_to_physical_objects = {}
+    @format = params[:staging] ? params[:staging][:format] : nil
+    if @format && @format != 'All'
+      @batches = Batch.where(workflow_status: 'Interim Storage', format: @format, destination: @d_entity).order(:identifier)
+    else
+      @batches = Batch.none
+    end
+  end
+
   # displays auto_accept logs
   def auto_accept
   end

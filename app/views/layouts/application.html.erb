@@ -111,6 +111,9 @@
 	          <%= link_to("IU Staging", quality_control_iu_staging_index_path_path) if policy(:quality_control).staging_index? %>
           </li>
           <li>
+	          <%= link_to("Direct QC", quality_control_direct_qc_path) if policy(:quality_control).staging_index? %>
+          </li>
+          <li>
 	          <%= link_to("Staging Percentages", staging_percentages_path) if policy(:staging_percentage).index? %>
           </li>
           <li>
