@@ -218,6 +218,20 @@
           <% end %>
         </td>
       </tr>
+      <% if @repeat %>
+        <tr>
+          <th>Collection identifier</th>
+          <td>
+            <%= f.text_field(:collection_identifier, readonly: !@edit_mode) %>
+          </td>
+        </tr>
+        <tr>
+          <th>Collection name</th>
+          <td>
+            <%= f.text_field(:collection_name, readonly: !@edit_mode) %>
+          </td>
+        </tr>
+      <% end %>
     </table>
     <% if @search_mode %>
     <div id="workflow_statuses_div">
@@ -309,18 +323,20 @@
               <% end %>
             </td>
           </tr>
-          <tr>
-            <th>Collection identifier</th>
-            <td>
-              <%= f.text_field(:collection_identifier, readonly: !@edit_mode) %>
-            </td>
-          </tr>
-          <tr>
-            <th>Collection name</th>
-            <td>
-              <%= f.text_field(:collection_name, readonly: !@edit_mode) %>
-            </td>
-          </tr>
+          <% unless @repeat %>
+            <tr>
+              <th>Collection identifier</th>
+              <td>
+                <%= f.text_field(:collection_identifier, readonly: !@edit_mode) %>
+              </td>
+            </tr>
+            <tr>
+              <th>Collection name</th>
+              <td>
+                <%= f.text_field(:collection_name, readonly: !@edit_mode) %>
+              </td>
+            </tr>
+          <% end %>
           <tr>
             <th>Generation</th>
             <td>

@@ -69,7 +69,7 @@ class PhysicalObjectsController < ApplicationController
         @physical_object = PhysicalObject.new(physical_object_params)
         #clear out all fields except whitelisted ones
         @physical_object.attributes.keys.each do |att|
-          @physical_object[att] = nil unless att.in? %w(picklist_id format unit_id)
+          @physical_object[att] = nil unless att.in? %w(picklist_id format unit_id collection_identifier collection_name)
         end
         #retain bin, box association
         @physical_object.bin = @bin

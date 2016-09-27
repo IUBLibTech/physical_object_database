@@ -231,5 +231,12 @@ describe QualityControlController do
     end
   end
 
+  describe "#direct_qc" do
+    before(:each) { get :direct_qc }
+    it "renders a result" do
+      expect(response).to render_template :direct_qc
+    end
+  end
+
   
 end

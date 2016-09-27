@@ -1,0 +1,23 @@
+<%= render 'context_menu' %>
+
+<h2>Memnon Direct QC</h2>
+<p>Select a format to list unstaged objects digitized by Memnon that are in Interim Storage and still in QC_Wait status.<p>
+
+<%= form_for(:staging, url: url_for(:controller => 'quality_control', :action => :direct_qc)) do |f| %>
+	Format
+	<%= f.select(:format, options_for_select((PhysicalObject.valid_formats.collect {|f| [ f, f ] }).sort, @format), prompt: "Choose a format...") %>
+	<%= f.submit("Filter Results") %>
+<% end %>
+<div>
+  <button id="uncheck_selected_button" typ="button" onclick="uncheck()">Uncheck Selected</button>
+  <%= form_tag quality_control_staging_post_path, id: 'stage_form' do %>
+    <%= submit_tag "Stage Selected Objects" %>
+    <%= render 'direct_qc_list' %>
+    <%# FIXME: can we safely assume entity matches batch destination, format matches format, and just query unstaged? %>
+  <% end %>
+</div>
+<script type="text/javascript">
+function uncheck() {
+	$("input:checkbox").prop('checked', false);
+}
+</script>
