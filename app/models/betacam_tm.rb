@@ -48,6 +48,15 @@ class BetacamTm < ActiveRecord::Base
 
   # no default_values
 
+  def default_values_for_upload
+    self.format_version = ''
+    self.pack_deformation = ''
+    self.cassette_size = ''
+    self.recording_standard = 'Unknown'
+    self.format_duration = ''
+    self.image_format = 'Unknown'
+  end
+
   def damage
     pack_deformation
   end

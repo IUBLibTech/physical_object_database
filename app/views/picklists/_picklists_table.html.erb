@@ -1,0 +1,22 @@
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Destination</th>
+    <th>Actions</th>
+  </tr>
+  <% count = 1 %>
+  <% @picklists.each do |pl| %>
+    <tr class='<%= pl.complete ? "faded strike" : "" %>'>
+      <td><%= pl.name %></td>
+      <td><%= pl.description.to_s[0,20] %><%= pl.description.to_s.length > 20 ? "..." : "" %></td>
+      <td><%= pl.destination %></td>
+      <td>
+        <%= link_to("Show", {controller: 'picklists', action: 'show', id: pl.id}) if policy(pl).show? %>
+        <%= link_to("Edit", {controller: 'picklists', action: 'edit', id: pl.id}) if policy(pl).edit? %>
+        <%= link_to("Delete", picklist_path(pl.id), method: :delete, data: {confirm: 'Are you sure you want to delete this Picklist?'}) if policy(pl).destroy? %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+

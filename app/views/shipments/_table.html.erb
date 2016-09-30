@@ -1,0 +1,24 @@
+<table>
+  <tr class="header">
+      <th>Identifier</th>
+      <th>Description</th>
+      <th>Physical location</th>
+      <th>Unit</th>
+    <th>Actions</th>
+  </tr>
+  <% count = 0 %>
+  <% @shipments.each do |shipment| %>
+    <% count += 1 %>
+    <tr class=<%= count.odd? ? 'odd' : 'even'%>>
+          <td><%= shipment.identifier %></td>
+          <td><%= shipment.description %></td>
+          <td><%= shipment.physical_location %></td>
+          <td><%= shipment.unit.abbreviation %></td>
+          <td>
+        <%= link_to "Show", shipment if policy(shipment).show? %>
+        <%= link_to "Edit", edit_shipment_path(shipment) if policy(shipment).edit? %>
+        <%= link_to "Delete", shipment, method: :delete, data: { confirm: 'Are you sure you want to delete this Shipment?' } if policy(shipment).destroy? %>
+      </td>
+    </tr>
+  <% end %>
+</table>

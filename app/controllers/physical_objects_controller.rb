@@ -69,7 +69,7 @@ class PhysicalObjectsController < ApplicationController
         @physical_object = PhysicalObject.new(physical_object_params)
         #clear out all fields except whitelisted ones
         @physical_object.attributes.keys.each do |att|
-          @physical_object[att] = nil unless att.in? %w(picklist_id format unit_id collection_identifier collection_name)
+          @physical_object[att] = nil unless att.in? %w(picklist_id format unit_id collection_identifier collection_name shipment_id)
         end
         #retain bin, box association
         @physical_object.bin = @bin
@@ -248,10 +248,13 @@ class PhysicalObjectsController < ApplicationController
       flash[:notice] = "Please select an existing picklist."
     elsif params[:type] == "new" and params[:picklist][:name].to_s.blank?
       flash[:notice] = "Please provide a picklist name."
+    elsif params[:type] == "shipment" and params[:shipment][:id].to_i.zero?
+      flash[:notice] = "Please select an existing shipment."
     elsif params[:physical_object].nil?
       flash[:notice] = "Please specify a file to upload."
     else
       @picklist = nil
+      @shipment = nil
       if params[:type] == "existing"
         @picklist = Picklist.find_by(id: params[:picklist][:id].to_i)
         flash[:warning] = "SYSTEM ERROR: Selected picklist not found!<br/>Spreadsheet NOT uploaded.".html_safe if @picklist.nil?
@@ -259,13 +262,20 @@ class PhysicalObjectsController < ApplicationController
         @picklist = Picklist.new(name: params[:picklist][:name], description: params[:picklist][:description])
         @picklist.save
         flash[:warning] = "Errors creating picklist:<ul>#{@picklist.errors.full_messages.each.inject('') { |output, error| output += ('<li>' + error + '</li>') }}</ul>Spreadsheet NOT uploaded.".html_safe if @picklist.errors.any?
+      elsif params[:type] == "shipment"
+        @shipment = Shipment.find_by(id: params[:shipment][:id].to_i)
+        flash[:warning] = "SYSTEM ERROR: Selected shipment not found!<br/>Spreadsheet NOT uploaded.".html_safe if @shipment.nil?
+      elsif params[:type] == 'shipment_new'
+        @shipment = Shipment.new(identifier: params[:shipment][:identifier], description: params[:shipment][:description], unit_id: params[:shipment][:unit_id])
+        @shipment.save
+        flash[:warning] = "Errors creating shipment:<ul>#{@shipment.errors.full_messages.each.inject('') { |output, error| output += ('<li>' + error + '</li>') }}</ul>Spreadsheet NOT uploaded.".html_safe if @shipment.errors.any?
       end
     end
     if flash[:notice].to_s.blank? and flash[:warning].to_s.blank?
       path = params[:physical_object][:csv_file].path
       filename = params[:physical_object][:csv_file].original_filename
       header_validation = true unless params[:header_validation] == "false"
-      upload_results = PhysicalObjectsHelper.parse_csv(path, header_validation, @picklist, filename)
+      upload_results = PhysicalObjectsHelper.parse_csv(path, header_validation, @picklist, filename, @shipment)
       @spreadsheet = upload_results[:spreadsheet]
       flash[:notice] = "".html_safe
       flash[:notice] = "Created picklist: #{params[:picklist][:name]}.</br>".html_safe if @picklist and params[:type] == "new"
@@ -276,7 +286,7 @@ class PhysicalObjectsController < ApplicationController
         @failed = upload_results['failed']
       end
     else
-      redirect_to(action: 'upload_show')
+      redirect_to :back
     end
   end
 

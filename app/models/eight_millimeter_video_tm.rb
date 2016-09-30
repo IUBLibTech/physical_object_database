@@ -50,6 +50,15 @@ class EightMillimeterVideoTm < ActiveRecord::Base
 
   # no default_values
 
+  def default_values_for_upload
+    self.pack_deformation = 'None'
+    self.recording_standard = 'Unknown'
+    self.image_format = 'Unknown'
+    self.format_version = 'Unknown'
+    self.playback_speed = 'Unknown'
+    self.binder_system = 'Unknown'
+  end
+
   def damage
     pack_deformation
   end

@@ -5,6 +5,8 @@ FactoryGirl.define do
     description "FactoryGirl picklist description"
     destination "Memnon"
     complete false
+    format nil
+    shipment nil
 
     trait :invalid do
       name ""

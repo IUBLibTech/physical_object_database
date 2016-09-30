@@ -12,11 +12,12 @@ describe PhysicalObjectsController do
   let(:binned_physical_object) { FactoryGirl.build(:physical_object, :betacam, :barcoded, unit: physical_object.unit, bin: bin, picklist: picklist) }
   let(:group_key) { FactoryGirl.create(:group_key) }
   let(:picklist) { FactoryGirl.create(:picklist) }
+  let(:shipment) { FactoryGirl.create(:shipment) }
   let(:full_box) { FactoryGirl.create(:box, full: true) }
   let(:box) { FactoryGirl.create(:box) }
   let(:bin) { FactoryGirl.create(:bin) }
   let(:sealed_bin) { bin.current_workflow_status = "Sealed"; bin.save!; bin }
-  CARRYOVER_ATTRIBUTES = [:format, :unit_id, :picklist_id, :box_id, :bin_id, :collection_identifier, :collection_name]
+  CARRYOVER_ATTRIBUTES = [:format, :unit_id, :picklist_id, :box_id, :bin_id, :collection_identifier, :collection_name, :shipment_id]
 
   describe "GET index" do
     before(:each) do
@@ -682,8 +683,8 @@ describe PhysicalObjectsController do
       it "flashes a notice" do
         expect(flash[:notice]).to match /choose.*picklist association/
       end
-      it "redirects to upload_show" do
-        expect(response).to redirect_to(action: :upload_show)
+      it "redirects to :back" do
+        expect(response).to redirect_to 'source_page'
       end
     end
     describe "associating to a new picklist" do
@@ -692,8 +693,8 @@ describe PhysicalObjectsController do
         it "flashes a notice" do
           expect(flash[:notice]).to match /picklist.*name/
         end
-        it "redirects to upload_show" do
-          expect(response).to redirect_to(action: :upload_show)
+        it "redirects to :back" do
+          expect(response).to redirect_to 'source_page'
         end
       end
     end
@@ -702,8 +703,8 @@ describe PhysicalObjectsController do
       it "flashes a notice" do
         expect(flash[:notice]).to match /please.*specify.*file/i
       end
-      it "redirects to upload_show" do
-        expect(response).to redirect_to(action: :upload_show)
+      it "redirects to :back" do
+        expect(response).to redirect_to 'source_page'
       end
     end
     describe "with invalid columns headers" do
@@ -772,6 +773,32 @@ describe PhysicalObjectsController do
             expect{ upload_update }.not_to change(Picklist, :count)
           end
         end
+        context "and an existing shipment" do
+          before(:each) { post_args[:type] = "shipment" }
+          describe "selected" do
+            before(:each) do
+              shipment
+              post_args[:shipment] = { id: shipment.id }
+            end
+            include_examples "upload results", filename
+            it "uses the selected picklist" do
+              upload_update
+              expect(assigns[:shipment]).to eq shipment
+            end
+          end
+          describe "not selected" do
+            before(:each) do
+              post_args[:shipment] = {}
+              upload_update
+            end
+            it "flashes inaction" do
+              expect(flash[:notice]).to match /select.*shipment/i
+            end
+            it "redirects to :back" do
+              expect(response).to redirect_to 'source_page'
+            end
+          end
+        end
         context "and an existing picklist" do
           before(:each) { post_args[:type] = "existing" }
           describe "selected" do
@@ -793,8 +820,8 @@ describe PhysicalObjectsController do
             it "flashes inaction" do
               expect(flash[:notice]).to match /select.*picklist/i
             end
-            it "redirects to upload_show" do
-              expect(response).to redirect_to(action: :upload_show)
+            it "redirects to :back" do
+              expect(response).to redirect_to 'source_page'
             end
           end
         end
@@ -822,8 +849,8 @@ describe PhysicalObjectsController do
             it "flashes error warning" do
               expect(flash[:warning]).to match /error/i
             end
-            it "redirects to upload_show" do
-              expect(response).to redirect_to(action: :upload_show)
+            it "redirects to :back" do
+              expect(response).to redirect_to 'source_page'
             end
           end
         end

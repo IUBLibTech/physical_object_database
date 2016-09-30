@@ -2,6 +2,7 @@ class Picklist < ActiveRecord::Base
 	include DestinationModule
 
 	has_many :physical_objects
+        belongs_to :shipment
 
 	validates :name, presence: true, uniqueness: true
 	validate :completeness_validation, if: :complete

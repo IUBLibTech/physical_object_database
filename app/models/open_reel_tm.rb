@@ -84,6 +84,10 @@ class OpenReelTm < ActiveRecord::Base
     self.reel_size ||= ""
   end
 
+  def default_values_for_upload
+     default_values
+  end
+
   def damage
     pack_deformation
   end

@@ -1,9 +1,3 @@
-<% content_for :context_menu do %>
-  <div class="contextMenuItem">
-    <%= link_to("Cancel", {:controller => 'physical_objects', :action => 'index', :id => @physical_object.id}, :class => 'action split') if policy(@physical_object).show? %>
-  </div>
-<% end %>
-<%# special case where the action does not have a physical object so must be :physical_object not @physical_object %>
 <div>
 <h2>Upload Spread Sheet (CSV)</h2>
   <p>
@@ -15,13 +9,13 @@
   </p>
 </div>
 <div>
-  <%= form_for(:physical_object, :url => {:action => 'upload_update'}) do |f| %>
+  <%= form_for(:physical_object, url: upload_update_physical_objects_path) do |f| %>
     <div class="left top5" style="width: 300px">
-      <h2>Picklist Association</h2>
+      <h2>Picklist/Shipment Association</h2>
       <div>
         <table>
           <tr>
-            <td>No picklist association</td>
+            <td>No picklist/shipment association</td>
             <td style="min-width: 21px;">
               <%= radio_button_tag(:type, "none", false, {onclick: "add_to_picklist(this)", id: 'none_radio', class: 'exclusive'}) %>
             </td>
@@ -36,6 +30,18 @@
             <td>Associate objects to a new pick list</td>
             <td>
               <%= radio_button_tag(:type, "new", false, {onclick: "add_to_picklist(this)", id: 'new_radio', class: 'exclusive'}) %>
+            </td>
+          </tr>
+          <tr>
+            <td>Associate objects to an existing shipment</td>
+            <td>
+              <%= radio_button_tag(:type, "shipment", false, {onclick: "add_to_picklist(this)", id: 'shipment_radio', class: 'exclusive'}) %>
+            </td>
+          </tr>
+          <tr>
+            <td>Associate objects to a new shipment</td>
+            <td>
+              <%= radio_button_tag(:type, "shipment_new", false, {onclick: "add_to_picklist(this)", id: 'shipment_new_radio', class: 'exclusive'}) %>
             </td>
           </tr>
         </table>

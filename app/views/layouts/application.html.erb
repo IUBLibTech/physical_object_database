@@ -30,6 +30,7 @@
           <ul class="nav">
             <li><%= link_to("Index", controller: 'collection_owner', action: 'index') if policy(:collection_owner).index? %></li>
             <li><%= link_to("Search", controller: 'collection_owner', action: 'search') if policy(:collection_owner).search? %></li>
+            <li><%= link_to("Upload Spreadsheet", collection_owner_upload_spreadsheet_path) if policy(:collection_owner).upload_spreadsheet? %></li>
           </ul>
         </div>
       <% end %>
@@ -89,6 +90,9 @@
           </li>
           <li>
             <%= link_to("Create Picklist", new_picklist_path) if policy(Picklist).new? %>
+          </li>
+          <li>
+            <%= link_to("View Shipments", shipments_path) if policy(Shipment).index? %>
           </li>
         </ul>
       </div>

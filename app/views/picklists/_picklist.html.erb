@@ -2,113 +2,133 @@
 <% url_args = { action: @action } %>
 <% url_args[:id] = @picklist.id unless @picklist.nil? || @picklist.id.nil? %>
 <div class="left">
-	<%= form_for(@picklist, url: url_args) do |f| %>
-		<h2>Picklist</h2>
-		<table>
-			<tr>
-				<th>Name</th>
-				<td>
-					<%= f.text_field(:name, readonly: !@edit_mode) %>
-				</td>
-			</tr>
-			<tr>
-				<th>Description</th>
-				<td>
-					<%= f.text_area(:description, readonly: !@edit_mode) %>
-				</td>
-			</tr>
-			<tr>
-				<th>Destination</th>
-				<td>
-					<%= f.select(:destination, Picklist.DESTINATION_VALUES, {}, disabled: !@edit_mode) %>
-				</td>
-			</tr>
-			<tr>
-				<th>Complete</th>
-				<td>
-					<%= f.check_box :complete, disabled: !@edit_mode || (@packable_count.to_i > 0 && !@picklist.complete) %>
-					<% if @edit_mode %>
-					  <% if @packable_count.to_i > 0 %>
-					    <b class="notice">
-					      You may not mark this<br/>
-					      picklist "Complete" while<br/>
-					      there are outstanding<br/>
-					      packable items (<%= @packable_count %>)</b>
-					  <% elsif @blocked_count.to_i > 0 %>
-					    <b class="warning">
-					      Marking this picklist<br/>
-					      "Complete" will remove<br/>
-					      all blocked objects (<%= @blocked_count %>)
-					    </b>
-					  <% end %>
-					<% end %>
-				</td>
-			</tr>
-		</table>
+  <%= form_for(@picklist, url: url_args) do |f| %>
+    <h2>Picklist</h2>
+    <table>
+      <tr>
+        <th>Name</th>
+        <td>
+          <%= f.text_field(:name, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Description</th>
+        <td>
+          <%= f.text_area(:description, readonly: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Destination</th>
+        <td>
+          <%= f.select(:destination, Picklist.DESTINATION_VALUES, {}, disabled: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Complete</th>
+        <td>
+          <%= f.check_box :complete, disabled: !@edit_mode || (@packable_count.to_i > 0 && !@picklist.complete) %>
+          <% if @edit_mode %>
+            <% if @packable_count.to_i > 0 %>
+              <b class="notice">
+                You may not mark this<br/>
+                picklist "Complete" while<br/>
+                there are outstanding<br/>
+                packable items (<%= @packable_count %>)</b>
+            <% elsif @blocked_count.to_i > 0 %>
+              <b class="warning">
+                Marking this picklist<br/>
+                "Complete" will remove<br/>
+                all blocked objects (<%= @blocked_count %>)
+              </b>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th>Format</th>
+        <td>
+         <%= f.select(:format, PhysicalObject.formats, { prompt: 'Select a Format...' }, disabled: !@edit_mode) %>
+        </td>
+      </tr>
+      <tr>
+       <th>Shipment</th>
+       <td>
+         <% if @edit_mode %>
+           <%= f.select(:shipment_id, Shipment.all.order(:identifier).collect { |s| [s.identifier, s.id] }, { include_blank: 'Select a Shipment...' }, disabled: !@edit_mode) %>
+         <% else %>
+           <% if @picklist.shipment.nil? %>
+             Not assigned
+           <% else %>
+            <%= link_to(@picklist.shipment.identifier, shipment_path(@picklist.shipment), id: @picklist.shipment.id) if policy(@picklist.shipment).show? %><br/>
+           <% end %>
+         <% end %>
+       </td>
+     </tr>
+    </table>
     <div class="clear">
       <% if @edit_mode %>
         <%= f.submit(@submit_text) %>
       <% end %>
     </div>
-	<% end %>
-	<% unless @picklist.id.nil? || @action == 'update' || @picklist.physical_objects.empty? || @picklist.complete %>
-	  <%= form_for(@picklist, url: {action: 'pack_list', picklist: {id: @picklist.id}}) do |f| %>
-		  <%= f.submit("Pack Items") %>
-	  <% end %>
-	<% end %>
+  <% end %>
+  <% unless @picklist.id.nil? || @action == 'update' || @picklist.physical_objects.empty? || @picklist.complete %>
+    <%= form_for(@picklist, url: {action: 'pack_list', picklist: {id: @picklist.id}}) do |f| %>
+      <%= f.submit("Pack Items") %>
+    <% end %>
+  <% end %>
 </div>
 <% if @picklist.persisted? %>
 <div class="left">
-	<h2><%= @packed_count %>/<%= @total_count %> Physical Objects are packed.</h2>
-	<div>
-	  <table style="text-align: center;">
-	    <tr>
-	      <th colspan="2">Packed</th>
-	      <th>Packable</th>
-	      <th>Blocked</th>
-	    </tr>
-	    <tr>
-	      <td colspan="2" rowspan="3"><%= @packed_count %></td>
-	      <td><%= @packable_count %></td>
-	      <td><%= @blocked_count %></td>
-	    </tr>
-	    <tr>
-	      <th colspan="2">Unpacked</th>
-	    </tr>
-	    <tr>
-	      <td colspan="2"><%= @unpacked_count %></td>
-	    </tr>
-	    <tr>
-	      <th colspan="4">TOTAL</th>
-	    </tr>
-	    <tr>
-	      <td colspan="4"><%= @total_count %></td>
-	    </tr>
-	  </table>
-	</div>
-	<% if @blocked_count > 0 %>
-	<h4>Blocked Physical Objects</h4>
-	<table class="blocked">
-		<tr>
-			<td>MDPI Barcode</td>
-			<td>Title</td>
-			<td>Condition Status</td>
-		</tr>
-		<% @blocked.each do |p| %>
-			<tr>
-				<td><%= link_to p.mdpi_barcode, (physical_object_path(p)) if policy(p).show? %></td>
-				<td><%= link_to p.title, (physical_object_path(p)) if policy(p).show? %></td>
-				<td>
-					<ul>
-					<% p.condition_statuses.blocking.each do |cs| %>
-						<li><%= cs.name %></li>
-					<% end %>
-					</ul>
-				</td>
-			</tr>
-		<% end %>
-	</table>
-	<% end %>
+  <h2><%= @packed_count %>/<%= @total_count %> Physical Objects are packed.</h2>
+  <div>
+    <table style="text-align: center;">
+      <tr>
+        <th colspan="2">Packed</th>
+        <th>Packable</th>
+        <th>Blocked</th>
+      </tr>
+      <tr>
+        <td colspan="2" rowspan="3"><%= @packed_count %></td>
+        <td><%= @packable_count %></td>
+        <td><%= @blocked_count %></td>
+      </tr>
+      <tr>
+        <th colspan="2">Unpacked</th>
+      </tr>
+      <tr>
+        <td colspan="2"><%= @unpacked_count %></td>
+      </tr>
+      <tr>
+        <th colspan="4">TOTAL</th>
+      </tr>
+      <tr>
+        <td colspan="4"><%= @total_count %></td>
+      </tr>
+    </table>
+  </div>
+  <% if @blocked_count > 0 %>
+  <h4>Blocked Physical Objects</h4>
+  <table class="blocked">
+    <tr>
+      <td>MDPI Barcode</td>
+      <td>Title</td>
+      <td>Condition Status</td>
+    </tr>
+    <% @blocked.each do |p| %>
+      <tr>
+        <td><%= link_to p.mdpi_barcode, (physical_object_path(p)) if policy(p).show? %></td>
+        <td><%= link_to p.title, (physical_object_path(p)) if policy(p).show? %></td>
+        <td>
+          <ul>
+          <% p.condition_statuses.blocking.each do |cs| %>
+            <li><%= cs.name %></li>
+          <% end %>
+          </ul>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+  <% end %>
 </div>
 <% end %>
 <div class="left">
