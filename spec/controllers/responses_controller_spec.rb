@@ -686,6 +686,20 @@ describe ResponsesController do
     end
   end
 
+  describe "#processing_classes" do
+    before(:each) do
+      get :processing_classes
+    end
+    it "gets a list of all TM formats, A/V/F class" do
+      doc = Nokogiri::XML(response.body).remove_namespaces!
+      expect(doc.xpath('//class').size).to eq TechnicalMetadatumModule.tm_format_classes.size
+      TechnicalMetadatumModule.tm_format_classes.each do |name, klass|
+        code = {audio: 'A', video: 'V', film: 'F'}[klass::TM_GENRE]
+        expect(response.body).to match /<type>#{name}<\/type>\s*<code>#{code}<\/code>/
+      end
+    end
+  end
+
   describe "#flags" do
     let(:no_flag) { FactoryGirl.create :physical_object, :cdr, :barcoded}
     let(:flag) { FactoryGirl.create :physical_object, :cdr, :barcoded}
