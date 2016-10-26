@@ -272,6 +272,12 @@ class ResponsesController < ActionController::Base
     render template: "responses/notify.xml.builder"
   end
 
+  def processing_classes
+    @success = true
+    @message = "returning all units"
+    render template: "responses/processing_classes_response.xml.builder", layout: false, status: 200
+  end
+
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?
