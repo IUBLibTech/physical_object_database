@@ -1156,6 +1156,34 @@ describe "has required attributes:" do
     end
   end
 
+  describe "#apply_resend_status" do
+    let(:original_statuses) { po.workflow_statuses.map { |s| s.workflow_status_template.name } }
+    let(:final_statuses) { po.workflow_statuses.map { |s| s.workflow_status_template.name } }
+    it "adds at least 2 status entries" do
+      original_statuses
+      po.apply_resend_status
+      final_statuses
+      expect(final_statuses.size).to be >= (original_statuses.size + 2)
+    end
+    it "adds an entry for resending status" do
+      expect(original_statuses).not_to include 'Re-send to Memnon'
+      po.apply_resend_status
+      expect(final_statuses).to include 'Re-send to Memnon'
+    end
+    it "adds an entry for Unassigned status" do
+      po.apply_resend_status
+      expect(final_statuses[-2,2]).to include 'Unassigned'
+    end
+    it "adds an entry for the inferred status" do
+      po.picklist = picklist
+      po.save!
+      po.apply_resend_status
+      expect(final_statuses[-1]).to eq 'On Pick List'
+      expect(final_statuses[-2]).to eq 'Unassigned'
+      expect(final_statuses[-3]).to eq 'Re-send to Memnon'
+    end
+  end
+
   describe "private methods" do
 # .physical_object_search
 # .add_search_terms

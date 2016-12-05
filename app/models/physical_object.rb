@@ -360,7 +360,7 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def inferred_workflow_status
-    if self.current_workflow_status.in? ["Unpacked", "Returned to Unit"]
+    if self.current_workflow_status.in? ["Unpacked", "Returned to Unit", "Re-send to Memnon"]
       return self.current_workflow_status
     elsif !self.bin.nil?
       return "Binned"
@@ -371,6 +371,13 @@ class PhysicalObject < ActiveRecord::Base
     else
       return "Unassigned"
     end
+  end
+
+  def apply_resend_status
+    (self.current_workflow_status = 'Re-send to Memnon') &&
+    self.save &&
+    (self.current_workflow_status = 'Unassigned') &&
+    self.save
   end
 
   def resolve_group_position
