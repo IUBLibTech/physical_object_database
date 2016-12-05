@@ -374,16 +374,20 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def apply_resend_status
-    original_date = self.date_billed
-    if (self.current_workflow_status = 'Re-send to Memnon') &&
-    self.save &&
+    if ((self.current_workflow_status = 'Re-send to Memnon') &&
+    save &&
     (self.current_workflow_status = 'Unassigned') &&
-    self.save &&
-    self.update_attributes(billed: false, date_billed: nil)
-      self.notes.create(export: true, body: "Re-sending to Memnon.  Original billing date: #{original_date.to_s}")
+    save)
+      reset_billing_status
     else
       false
     end
+  end
+
+  def reset_billing_status
+    original_date = date_billed
+    update_attributes(billed: false, date_billed: nil)
+    notes.create(export: true, body: "Re-sending to Memnon.  Original billing date: #{original_date.to_s}")
   end
   
   def resolve_group_position
