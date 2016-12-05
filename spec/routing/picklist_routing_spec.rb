@@ -20,4 +20,7 @@ describe "picklists" do
   it "routes to remove_from_container" do
     expect(patch("/picklists/remove_from_container")).to be_routable
   end
+  it "routes to resend" do
+    expect(patch('/picklists/1/resend')).to be_routable
+  end
 end
