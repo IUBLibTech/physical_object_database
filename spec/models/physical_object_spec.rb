@@ -1182,6 +1182,15 @@ describe "has required attributes:" do
       expect(final_statuses[-2]).to eq 'Unassigned'
       expect(final_statuses[-3]).to eq 'Re-send to Memnon'
     end
+    it "clears out the billing flags" do
+      po.update_attributes!(billed: true, date_billed: Time.now)
+      po.apply_resend_status
+      expect(po.billed).to eq false
+      expect(po.date_billed).to be_nil
+    end
+    it "adds note about change" do
+      expect { po.apply_resend_status }.to change(Note, :count).by(1)
+    end
   end
 
   describe "private methods" do
