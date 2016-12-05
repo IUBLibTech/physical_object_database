@@ -38,7 +38,7 @@ describe Unit do
       expect(valid_unit).to be_invalid
     end
   
-    it "requires a unique name value" do
+    it "requires a unique name/institution/campus value" do
       expect(duplicate).to be_valid
       unit
       expect(duplicate).to be_invalid
