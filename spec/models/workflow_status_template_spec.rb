@@ -5,7 +5,7 @@ describe WorkflowStatusTemplate do
   let(:invalid_workflow_status_template) { FactoryGirl.build(:workflow_status_template, :invalid) }
 
   describe "should be seeded with data:" do
-    seeded_values = { "Batch" => 6, "Bin" => 5, "Physical Object" => 6 }
+    seeded_values = { "Batch" => 6, "Bin" => 5, "Physical Object" => 7 }
     seeded_values.each do |object_type, count|
       it "#{count} #{object_type} status_templates" do
         expect(WorkflowStatusTemplate.where(object_type: object_type).size).to eq count

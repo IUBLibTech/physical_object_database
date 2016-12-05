@@ -822,7 +822,7 @@ describe "has required attributes:" do
           let(:class_title) { "Physical Object" }
         end
 
-        status_list = ["Unassigned", "On Pick List", "Boxed", "Binned", "Unpacked", "Returned to Unit"] 
+        status_list = ["Unassigned", "On Pick List", "Boxed", "Binned", "Unpacked", "Returned to Unit", "Re-send to Memnon"]
   # pass status_list arg here to test previous/next methods
   it_behaves_like "includes WorkflowStatusModule" do
     let(:object) { valid_po }
