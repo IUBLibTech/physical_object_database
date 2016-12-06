@@ -1,3 +1,4 @@
+<%# NOTE: The is_archived behavior was originally reversed; it was fixed lazily, without relabeling the divs that are turned on/off %>
 <h2>Unpacking <i><%= @bin.identifier %></i></h2>
 
 <div style="padding-bottom: 20px">
@@ -109,7 +110,7 @@
       var barcode = $('#mdpi_barcode').val();
       var $form = $(this);
       var url = "../../physical_objects/has_ephemera?mdpi_barcode="+barcode;
-      var is_archived = false;
+      var is_archived = 'false';
 
       $.ajax({
         type: 'get',
@@ -117,7 +118,7 @@
         context: $form, // context will be "this" in your handlers
         success: function(data) { // your success handler
           if (data == 'true') {
-            is_archived = true;
+            is_archived = 'true';
           }
         },
         error: function() { // your error handler
@@ -132,7 +133,7 @@
         context: $form, // context will be "this" in your handlers
         success: function(data) { // your success handler
           if (data == "false") {
-            if (is_archived) {
+            if (is_archived == 'false') {
               // 1) copy the mdpi barcode into the yes/no hidden attribute field forms
               bc = $("#mdpi_barcode").val();
               $(".hidden_barcode").attr("value", bc);
@@ -167,7 +168,7 @@
 
             });
 
-            if (is_archived) {
+            if (is_archived == 'false') {
               $( "#also_archived_table" ).slideDown(200, function() {
 
               });
