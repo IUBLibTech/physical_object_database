@@ -1,0 +1,25 @@
+<h2>Returning items to Unit</h2>
+
+<div style="padding-bottom: 20px">
+  <div>
+  <%= form_for(:returns, url: return_object_returns_path, html: {id: "return_form"}) do |f| %>
+    <table class="center_inline">
+      <tr>
+        <td colspan="2"><div style="font-weight: bold; font-size: 120%">Scan a barcode to mark the object "Returned to Unit"</div></td>
+      </tr>
+      <tr>
+        <td>
+          <%= text_field_tag(:mdpi_barcode, nil) %>
+        </td>
+        <td>
+          <%= f.submit("Return to Unit", id: 'normal_submit') %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+  </div>
+</div>
+<script type="text/javascript">
+  //set barcode focus, only if no warning div content was set
+  if (!$.trim($("div.warning").html())) { $("#mdpi_barcode").focus() };
+</script>

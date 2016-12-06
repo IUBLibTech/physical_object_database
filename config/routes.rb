@@ -154,6 +154,8 @@ Pod::Application.routes.draw do
     patch :batch_complete, on: :member
     patch :bin_unpacked, on: :member
     patch :unload_bin, on: :member
+    get :return_objects, on: :collection
+    post :return_object, on: :collection
   end
 
   resources :search, controller: :search, only: [:index] do
