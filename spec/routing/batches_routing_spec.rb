@@ -11,4 +11,7 @@ describe "batches" do
   it "routes to list_bins" do
     expect(get("/batches/:id/list_bins")).to route_to(controller: 'batches', id: ':id', action: 'list_bins')
   end
+  it "routes to archived_to_picklist" do
+    expect(patch("/batches/:id/archived_to_picklist")).to route_to(controller: 'batches', id: ':id', action: 'archived_to_picklist')
+  end
 end

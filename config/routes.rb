@@ -8,6 +8,7 @@ Pod::Application.routes.draw do
     post :remove_bin, on: :member
     get :workflow_history, on: :member
     get :list_bins, on: :member
+    patch :archived_to_picklist, on: :member
   end
 
   resources :bins do

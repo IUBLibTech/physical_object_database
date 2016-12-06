@@ -358,4 +358,38 @@ describe BatchesController do
     end
   end
 
+  describe "PATCH archived_to_picklist" do
+    context "without a picklist specified" do
+      before(:each) { patch :archived_to_picklist, id: batch.id }
+      it "flashes a failure warnign" do
+        expect(flash[:warning]).to match /not/i
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to 'source_page'
+      end
+    end
+    context "with a picklist specified" do
+      let(:picklist) { FactoryGirl.create(:picklist) }
+      let(:archived) { FactoryGirl.create(:physical_object, :binnable, :barcoded, bin: bin) }
+      let(:unarchived) { FactoryGirl.create(:physical_object, :binnable, :barcoded, bin: bin) }
+      before(:each) do
+        unarchived
+        archived.digital_statuses.create!(state: 'archived')
+        bin.batch = batch; bin.save!
+        patch :archived_to_picklist, id: batch.id, picklist: { id: picklist.id }
+      end
+      it "puts Archived objects on the picklist" do
+        picklist.reload
+        expect(picklist.physical_objects).not_to include unarchived
+        expect(picklist.physical_objects).to include archived
+      end
+      it "flashes a success notice" do
+        expect(flash[:notice]).to match /success/i
+      end
+      it "redirects to picklist" do
+        expect(response).to redirect_to picklist
+      end
+    end
+  end
+
 end
