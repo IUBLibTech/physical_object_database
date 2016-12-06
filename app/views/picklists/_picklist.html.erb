@@ -116,6 +116,9 @@
 	<% if !@picklist.id.nil? && @picklist.physical_objects.any? %>
 	  Download list as:
           <%= link_to 'Excel File', picklist_path(id: 'picklist_' + @picklist.id.to_s, format: :xls) if policy(@picklist).show? %><br/>
+          <% if @picklist && @action != 'update' && @picklist.physical_objects.any? && policy(@picklist).resend? %>
+            <%= button_to("Mark all for re-sending to Memnon", resend_picklist_path(@picklist.id), method: :patch, data: {confirm: 'Are you sure you want to re-send all items to Memnon? This action cannot be undone.'}) if policy(@picklist).resend? %>
+          <% end %>
 	  <%= render 'physical_objects/physical_objects_table' %>
 	<% end %>
 </div>

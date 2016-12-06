@@ -360,7 +360,7 @@ class PhysicalObject < ActiveRecord::Base
   end
 
   def inferred_workflow_status
-    if self.current_workflow_status.in? ["Unpacked", "Returned to Unit"]
+    if self.current_workflow_status.in? ["Unpacked", "Returned to Unit", "Re-send to Memnon"]
       return self.current_workflow_status
     elsif !self.bin.nil?
       return "Binned"
@@ -373,6 +373,23 @@ class PhysicalObject < ActiveRecord::Base
     end
   end
 
+  def apply_resend_status
+    if ((self.current_workflow_status = 'Re-send to Memnon') &&
+    save &&
+    (self.current_workflow_status = 'Unassigned') &&
+    save)
+      reset_billing_status
+    else
+      false
+    end
+  end
+
+  def reset_billing_status
+    original_date = date_billed
+    update_attributes(billed: false, date_billed: nil)
+    notes.create(export: true, body: "Re-sending to Memnon.  Original billing date: #{original_date.to_s}")
+  end
+  
   def resolve_group_position
     unless self.group_key.nil?
       collisions = PhysicalObject.where(group_key_id: self.group_key_id, group_position: self.group_position).where.not(id: self.id).order(id: :asc)

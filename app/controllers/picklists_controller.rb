@@ -1,5 +1,5 @@
 class PicklistsController < ApplicationController
-	before_action :set_picklist, only: [:show, :edit, :update, :destroy]
+	before_action :set_picklist, only: [:show, :edit, :update, :destroy, :resend]
 	before_action :authorize_collection, only: [:index, :new, :create, :pack_list]
 	before_action :set_counts, only: [:show, :edit]
   # before_action :set_packing_picklist, only: :pack_list
@@ -153,6 +153,15 @@ def pack_list
 			# handles both pack of last item and upack of a fully packed pick list
 			@picklist.update(complete: @picklist.all_packed?)
 		end
+	end
+
+	def resend
+		if @picklist.physical_objects.all? { |po| po.apply_resend_status }
+			flash[:notice] = 'All objects were successfuly marked for resending to Memnon.'
+                else
+			flash[:warning] = 'One or more objects failed!'
+                end
+		redirect_to :back
 	end
 
 	private

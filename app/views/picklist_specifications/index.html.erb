@@ -40,7 +40,7 @@
 		<% @picklists.each do |pl| %>
 			<tr class='<%= pl.complete ? "faded strike" : "" %>'>
 				<td><%= pl.name %></td>
-				<td><%= pl.description[0,20] %><%= pl.description.length > 20 ? "..." : "" %></td>
+				<td><%= pl.description.to_s[0,20] %><%= pl.description.to_s.length > 20 ? "..." : "" %></td>
 				<td><%= pl.destination %></td>
 				<td>
 					<%= link_to("Show", {controller: 'picklists', action: 'show', id: pl.id}) if policy(pl).show? %>
