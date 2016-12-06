@@ -97,6 +97,9 @@
       </div>
       <div class="menuItem">
         <%= link_to("Returns", returns_path) if policy(:return).index? %>
+        <ul class="nav">
+          <%= link_to("Return to unit", return_objects_returns_path) if policy(:return).return_objects? %>
+        </ul>
       </div>
       <div class="menuItem">
         <%= link_to("Quality Control", quality_control_index_path) if policy(:quality_control).index? %>

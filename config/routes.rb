@@ -52,6 +52,7 @@ Pod::Application.routes.draw do
     get :workflow_history, on: :member
     get :upload_show, on: :collection
     get :has_ephemera, on: :collection
+    get :is_archived, on: :collection
     get :create_multiple, on: :collection
     get :edit_ephemera, on: :member
     get :contained, on: :collection
@@ -154,6 +155,8 @@ Pod::Application.routes.draw do
     patch :batch_complete, on: :member
     patch :bin_unpacked, on: :member
     patch :unload_bin, on: :member
+    get :return_objects, on: :collection
+    post :return_object, on: :collection
   end
 
   resources :search, controller: :search, only: [:index] do

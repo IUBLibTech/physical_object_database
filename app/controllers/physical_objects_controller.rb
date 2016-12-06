@@ -3,7 +3,7 @@ class PhysicalObjectsController < ApplicationController
   before_action :set_physical_object, only: [:show, :edit, :edit_ephemera, :update, :update_ephemera, :destroy, :workflow_history, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup, :generate_filename]  
   before_action :set_new_physical_object, only: [:new, :create_multiple]
   before_action :set_new_physical_object_with_params, only: [:create]
-  before_action :authorize_collection, only: [:index, :new, :create, :create_multiple, :download_spreadsheet_example, :upload_show, :has_ephemera, :create_multiple, :contained, :upload_update]
+  before_action :authorize_collection, only: [:index, :new, :create, :create_multiple, :download_spreadsheet_example, :upload_show, :has_ephemera, :is_archived, :create_multiple, :contained, :upload_update]
   before_action :set_box_and_bin_by_barcodes, only: [:create, :create_multiple, :update]
   before_action :set_picklists, only: [:edit]
   before_action :normalize_dates, only: [:create, :update]
@@ -390,6 +390,20 @@ class PhysicalObjectsController < ApplicationController
     end
     render plain: "#{has_it}", layout: false
   end
+
+  # ajax method to determine if a physical object is archived - returns plain text true/false
+  def is_archived
+    is_archived = false
+    if params[:mdpi_barcode] && !params[:mdpi_barcode].to_i.zero? && (po = PhysicalObject.find_by(mdpi_barcode: params[:mdpi_barcode]))
+      if po.digital_statuses.last&.state == 'archived'
+        is_archived = 'true'
+      end
+    else
+      is_archived = "unknown physical Object"
+    end
+    render plain: "#{is_archived}", layout: false
+  end
+
 
   def edit_ephemera
   end

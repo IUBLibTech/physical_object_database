@@ -20,4 +20,11 @@ describe "returns" do
   it "routes to batch_complete" do
     expect(patch("/returns/:id/batch_complete")).to be_routable
   end
+  it "routes to return_objects" do
+    expect(get("/returns/return_objects")).to route_to(controller: 'returns', action: 'return_objects')
+  end
+  it "routes to return_object" do
+    expect(post("/returns/return_object")).to route_to(controller: 'returns', action: 'return_object')
+  end
+
 end
