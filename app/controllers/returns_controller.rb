@@ -2,7 +2,7 @@ class ReturnsController < ApplicationController
 	before_action :set_batch, only: [:return_bins, :batch_complete]
 	before_action :set_bin, only: [:return_bin, :physical_object_returned, :bin_unpacked, :unload_bin]
 	before_action :authorize_return
-	before_action :set_po, only: [:physical_object_returned]
+	before_action :set_po, only: [:physical_object_returned, :return_object]
 
 	def index
 		@batches = Batch.where(workflow_status: "Returned")
@@ -20,6 +20,29 @@ class ReturnsController < ApplicationController
 		@returned = PhysicalObject.where(bin_id: @bin.id, workflow_status: ["Unpacked", "Returned to Unit"]).packing_sort
 		@shipped = PhysicalObject.where(bin_id: @bin.id, workflow_status: "Binned").packing_sort
 	  end
+	end
+
+	# for return to unit status
+	def return_objects
+	  # renders template
+	end
+
+	def return_object
+          if @po.nil?
+            flash[:warning] = "Physical object not found for barcode: #{params[:mdpi_barcode]}; no changes were made"
+          elsif @po.workflow_status == 'Returned to Unit'
+            flash[:notice] = "Physical object (#{params[:mdpi_barcode]}) already in Returned to Unit status; no changes were made."
+          elsif @po.workflow_status != 'Unpacked'
+            flash[:warning] = "Physical object (#{params[:mdpi_barcode]}) was in #{@po.workflow_status} status instead of Unpacked; no changes were made."
+          else
+            @po.current_workflow_status = 'Returned to Unit'
+            if @po.save
+              flash[:notice] = "Physical object (#{params[:mdpi_barcode]}) successfully set to Returned to Unit status."
+            else
+              flash[:warning] = "There was a problem updating the workflow status for Physical object (#{params[:mdpi_barcode]}); no changes were made.  Errors: #{@po.errors.full_messages.inspect}"
+            end
+          end
+	  redirect_to :back
 	end
 
 	def physical_object_returned
@@ -134,7 +157,7 @@ class ReturnsController < ApplicationController
 		authorize :return
 	end
 	def set_po
-		@po = PhysicalObject.find_by(mdpi_barcode: params[:mdpi_barcode])
+		@po = PhysicalObject.where(mdpi_barcode: params[:mdpi_barcode]).first unless params[:mdpi_barcode].to_i.zero?
 		@container_bin = @po.container_bin unless @po.nil?
 	end
 end

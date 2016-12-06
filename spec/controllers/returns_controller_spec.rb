@@ -526,4 +526,67 @@ describe ReturnsController do
     end
   end
 
+  describe "GET return_objects" do
+    before(:each) do
+      get :return_objects
+    end
+    it "renders template" do
+      expect(response).to render_template :return_objects
+    end
+  end
+
+  describe "POST return_object" do
+    context "with no object found" do
+      before(:each) { post :return_object }
+      it "flashes an error warning" do
+        expect(flash[:warning]).to match /not found/i
+      end
+      it "redirects to :back" do
+        expect(response).to redirect_to 'source_page'
+      end
+    end
+    context "with inappropriate object found" do
+      context "with object in early status" do
+        before(:each) do
+          post :return_object, mdpi_barcode: binned_object.mdpi_barcode
+        end
+        it "flashes an error warning" do
+          expect(flash[:warning]).to match /status/i
+        end
+        it "redirects to :back" do
+          expect(response).to redirect_to 'source_page'
+        end
+      end
+      context "with object already in Returned to Unit status" do
+        before(:each) do
+          binned_object.current_workflow_status = 'Returned to Unit'
+          binned_object.save!
+          post :return_object, mdpi_barcode: binned_object.mdpi_barcode
+        end
+        it "flashes an inaction notice" do
+          expect(flash[:notice]).to match /already/i
+        end
+        it "redirects to :back" do
+          expect(response).to redirect_to 'source_page'
+        end
+      end
+    end
+    context "with appropriate object found" do
+      before(:each) do
+        binned_object.current_workflow_status = 'Unpacked'
+        binned_object.save!
+        post :return_object, mdpi_barcode: binned_object.mdpi_barcode
+      end
+      it "updates workflow status" do
+        binned_object.reload
+        expect(binned_object.workflow_status).to eq 'Returned to Unit'
+      end
+      it "flashes success notice" do
+        expect(flash[:notice]).to match /success/i
+      end
+      it "redirects to back" do
+        expect(response).to redirect_to 'source_page'
+      end
+    end
+  end
 end
