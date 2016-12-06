@@ -9,7 +9,7 @@
 	<%= f.submit("Filter Results") %>
 <% end %>
 <div>
-  <button id="uncheck_selected_button" typ="button" onclick="uncheck()">Uncheck Selected</button>
+  <button id="uncheck_selected_button" type="button" onclick="uncheck()">Uncheck Selected</button>
   <%= form_tag quality_control_staging_post_path, id: 'stage_form' do %>
     <%= submit_tag "Stage Selected Objects" %>
     <%= render 'direct_qc_list' %>

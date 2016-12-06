@@ -1,118 +1,192 @@
 <h2>Unpacking <i><%= @bin.identifier %></i></h2>
 
 <div style="padding-bottom: 20px">
-	<%= form_for(@bin, url: {controller: 'returns', action: 'bin_unpacked', id: @bin}) do |f| %>
-		<table>
-			<tr>
-				<td>Mark Bin as Unpacked</td>
-				<td><%= f.submit("Unpack Bin") %></td>
-			</tr>
-		</table>
-	<% end %>
-	<div>
-	<%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_form"}) do |f| %>
-		<table class="center_inline">
-			<tr>
-				<td colspan="2"><div style="font-weight: bold; font-size: 120%">Scan a barcode to return the object</div></td>
-			</tr>
-			<tr>
-				<td>
-					<%= text_field_tag(:mdpi_barcode, nil) %>
-				</td>
-				<td>
-					<%= f.submit("Unpack Physical Object", id: 'normal_submit') %>
-				</td>
-			</tr>
-		</table>
-	<% end %>
-	<table id="has_ephemera_table", class="center_inline">
-		<tr>
-			<td colspan="2">
-				MDPI barcode <span id="ephemera_barcode"></span>: was this physical object's ephemera returned?
-			</td>
-		</tr>
-		<tr>
-			<td>
-			  <%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_with_ephemera"}) do |f| %>
-					<%= hidden_field_tag "mdpi_barcode", "", {class: 'hidden_barcode'} %>
-					<%= hidden_field_tag "ephemera_returned", true %>
-					<%= f.submit("Yes") %>
-			  <% end %>
-			</td>
-			<td>
-			  <%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_without_ephemera"}) do |f| %>
-			    <%= hidden_field_tag "mdpi_barcode", "", {class: 'hidden_barcode'} %>
-			    <%= hidden_field_tag "ephemera_returned", false %>
-			    <%= f.submit("No") %>
-			  <% end %>
-			</td>
-		</tr>
-	</table>
-	</div>
-	<div>
-		<div class="left" style="width: 48%">
-			<h2>Items Shipped [<%= @shipped.size %>]</h2>
-			<%= render "shipped_physical_objects_table" %> 
-		</div>
-		<div class="left" style="width: 48%">
-			<h2>Items Returned [<%= @returned.size %>]</h2>
-			<%= render "returned_physical_objects_table" %>
-		</div>
-	</div>
+  <%= form_for(@bin, url: {controller: 'returns', action: 'bin_unpacked', id: @bin}) do |f| %>
+    <table>
+      <tr>
+        <td>Mark Bin as Unpacked</td>
+        <td><%= f.submit("Unpack Bin") %></td>
+      </tr>
+    </table>
+  <% end %>
+  <div>
+  <%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_form"}) do |f| %>
+    <table class="center_inline">
+      <tr>
+        <td colspan="2"><div style="font-weight: bold; font-size: 120%">Scan a barcode to return the object</div></td>
+      </tr>
+      <tr>
+        <td>
+          <%= text_field_tag(:mdpi_barcode, nil) %>
+        </td>
+        <td>
+          <%= f.submit("Unpack Physical Object", id: 'normal_submit') %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+  <table id="is_archived_table", class="center_inline">
+    <tr>
+      <td colspan="2">
+        MDPI barcode <span id="is_archived_ephemera_barcode"></span>: this item was rejected by Memnon
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_without_ephemera"}) do |f| %>
+          <%= hidden_field_tag "mdpi_barcode", "", {class: 'hidden_barcode'} %>
+          <%= hidden_field_tag "ephemera_returned", nil %>
+          <%= f.submit("Okay, duly noted") %>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+  <table id="also_archived_table", class="center_inline">
+    <tr>
+      <td colspan="2">
+        MDPI barcode <span id="also_archived_ephemera_barcode"></span>: this item was rejected by Memnon
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button id="also_archived_button" type="button" onclick="dismiss_archived()">Okay, duly noted</button>
+      </td>
+    </tr>
+  </table>
+
+  <table id="has_ephemera_table", class="center_inline">
+    <tr>
+      <td colspan="2">
+        MDPI barcode <span id="ephemera_barcode"></span>: was this physical object's ephemera returned?
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_with_ephemera"}) do |f| %>
+          <%= hidden_field_tag "mdpi_barcode", "", {class: 'hidden_barcode'} %>
+          <%= hidden_field_tag "ephemera_returned", true %>
+          <%= f.submit("Yes", id: 'ephemera_yes', disabled: true) %>
+        <% end %>
+      </td>
+      <td>
+        <%= form_for(@bin, url: physical_object_returned_return_path, html: {id: "return_without_ephemera"}) do |f| %>
+          <%= hidden_field_tag "mdpi_barcode", "", {class: 'hidden_barcode'} %>
+          <%= hidden_field_tag "ephemera_returned", false %>
+          <%= f.submit("No", id: 'ephemera_no', disabled: true) %>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+  </div>
+  <div>
+    <div class="left" style="width: 48%">
+      <h2>Items Shipped [<%= @shipped.size %>]</h2>
+      <%= render "shipped_physical_objects_table" %> 
+    </div>
+    <div class="left" style="width: 48%">
+      <h2>Items Returned [<%= @returned.size %>]</h2>
+      <%= render "returned_physical_objects_table" %>
+    </div>
+  </div>
 </div>
 <script type="text/javascript">
+  function dismiss_archived() {
+    $('#ephemera_yes').removeAttr('disabled');
+    $('#ephemera_no').removeAttr('disabled');
+    $("#also_archived_table").css('display', 'none');
+  }
 
-	$(document).ready(function () {
-		// keypresses when the user types in a barcode
-		$("#mdpi_barcode").bind("keyup", function() {
-			validateMdpiBarcode($(this));
-		});
+  $(document).ready(function () {
+    // keypresses when the user types in a barcode
+    $("#mdpi_barcode").bind("keyup", function() {
+      validateMdpiBarcode($(this));
+    });
 
-		$("#return_form").submit(function(event) {
-			event.preventDefault();
-			event.returnValue = false;
+    $("#return_form").submit(function(event) {
+      event.preventDefault();
+      event.returnValue = false;
 
-			var barcode = $('#mdpi_barcode').val();
-			var $form = $(this);
-			var url = "../../physical_objects/has_ephemera?mdpi_barcode="+barcode;
+      var barcode = $('#mdpi_barcode').val();
+      var $form = $(this);
+      var url = "../../physical_objects/has_ephemera?mdpi_barcode="+barcode;
+      var is_archived = false;
 
-			$.ajax({
-				type: 'get',
-				url: url,
-				context: $form, // context will be "this" in your handlers
-				success: function(data) { // your success handler
-					if (data == "false") {
-						//turn of the event interception and submit the form
-						this.off('submit');
-						this.submit();
-						this.on('submit');
-					} else if(data == "true") {
-						//physical object has ephemera
+      $.ajax({
+        type: 'get',
+        url: "../../physical_objects/is_archived?mdpi_barcode="+barcode,
+        context: $form, // context will be "this" in your handlers
+        success: function(data) { // your success handler
+          if (data == 'true') {
+            is_archived = true;
+          }
+        },
+        error: function() { // your error handler
+        },
+        complete: function() {
+        }
+      });
 
-						// 1) copy the mdpi barcode into the yes/no hidden attribute field forms
-						bc = $("#mdpi_barcode").val();
-						$(".hidden_barcode").attr("value", bc);
-						// 2) disable normal form submission
-						$("#return_form").css('display', 'none');
-						// 3) reveal yes/no ephemera return forms
-						$("#ephemera_barcode").text(barcode);
-						$( "#has_ephemera_table" ).slideDown(200, function() {
+      $.ajax({
+        type: 'get',
+        url: url,
+        context: $form, // context will be "this" in your handlers
+        success: function(data) { // your success handler
+          if (data == "false") {
+            if (is_archived) {
+              // 1) copy the mdpi barcode into the yes/no hidden attribute field forms
+              bc = $("#mdpi_barcode").val();
+              $(".hidden_barcode").attr("value", bc);
+              // 2) disable normal form submission
+              $("#return_form").css('display', 'none');
+              // 3) reveal archived form
+              $("#ephemera_barcode").text(barcode);
+              $("#is_archived_ephemera_barcode").text(barcode);
+              $("#also_archived_ephemera_barcode").text(barcode);
+              $( "#is_archived_table" ).slideDown(200, function() {
 
-						});
-					} else {
-						alert("Unknown MDPI barcode...");
-					}
-				},
-				error: function() { // your error handler
+              });
+            } else {
+              //turn of the event interception and submit the form
+              this.off('submit');
+              this.submit();
+              this.on('submit');
+            }
+          } else if(data == "true") {
+            //physical object has ephemera
 
-				},
-				complete: function() {
+            // 1) copy the mdpi barcode into the yes/no hidden attribute field forms
+            bc = $("#mdpi_barcode").val();
+            $(".hidden_barcode").attr("value", bc);
+            // 2) disable normal form submission
+            $("#return_form").css('display', 'none');
+            // 3) reveal yes/no ephemera return forms
+            $("#ephemera_barcode").text(barcode);
+            $("#is_archived_ephemera_barcode").text(barcode);
+            $("#also_archived_ephemera_barcode").text(barcode);
+            $( "#has_ephemera_table" ).slideDown(200, function() {
 
-				}
-			});
-		});
-		//set barcode focus, only if no warning div content was set
-		if (!$.trim($("div.warning").html())) { $("#mdpi_barcode").focus() };
-	});
+            });
+
+            if (is_archived) {
+              $( "#also_archived_table" ).slideDown(200, function() {
+
+              });
+            } else {
+              dismiss_archived();
+            }
+          } else {
+            alert("Unknown MDPI barcode...");
+          }
+        },
+        error: function() { // your error handler
+
+        },
+        complete: function() {
+
+        }
+      });
+    });
+    //set barcode focus, only if no warning div content was set
+    if (!$.trim($("div.warning").html())) { $("#mdpi_barcode").focus() };
+  });
 </script>
-

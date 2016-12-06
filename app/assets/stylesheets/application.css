@@ -349,6 +349,14 @@ tr.packed {
     display: none;
 }
 
+#is_archived_table {
+    display: none;
+}
+
+#also_archived_table {
+    display: none;
+}
+
 .ephemera img {
   margin-left: auto;
   margin-right: auto;

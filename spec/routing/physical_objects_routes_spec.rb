@@ -24,6 +24,10 @@ describe "physical_objects" do
     expect(get("/physical_objects/has_ephemera")).to be_routable
   end
 
+  it "routes to is_archived" do
+    expect(get("/physical_objects/is_archived")).to route_to("physical_objects#is_archived")
+  end
+
   it "routes to split_update" do
     expect(patch("/physical_objects/:id/split_update")).to be_routable
   end
