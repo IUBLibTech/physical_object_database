@@ -781,5 +781,18 @@ describe PicklistsController do
     #   end
     # end
   end
+
+  describe "#resend" do
+    before(:each) do
+      physical_object
+      patch :resend, id: picklist.id, format: :html
+    end
+    it "marks objects for re-sending to Memnon" do
+      expect(physical_object.workflow_statuses.map { |ws| ws.workflow_status_template.name }).to include 'Re-send to Memnon'
+    end
+    it "redirects to back" do
+      expect(response).to redirect_to 'source_page'
+    end
+  end
 #privates
 end

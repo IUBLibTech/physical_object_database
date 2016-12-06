@@ -5,3 +5,4 @@ Boxed,The item has been placed in a box.,3
 Binned,The item has been placed in a bin.,4
 Unpacked,The item has gone through the returns process.,5
 Returned to Unit,The item has been returned to the home unit.,6
+Re-send to Memnon,The item has been flagged to re-send to Memnon.,7
