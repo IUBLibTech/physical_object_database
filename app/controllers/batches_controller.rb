@@ -1,5 +1,5 @@
 class BatchesController < ApplicationController
-  before_action :set_batch, only: [:show, :edit, :update, :destroy, :workflow_history, :add_bin, :list_bins]
+  before_action :set_batch, only: [:show, :edit, :update, :destroy, :workflow_history, :add_bin, :list_bins, :archived_to_picklist]
   before_action :authorize_collection, only: [:index, :new, :create]
 
   def index
@@ -52,6 +52,7 @@ class BatchesController < ApplicationController
   def show
     @available_bins = Bin.available_bins.where(format: @batch.format).eager_load(:physical_objects, :boxed_physical_objects)
     @bins = @batch.bins
+    @picklists = Picklist.where("complete = false").order('name').collect{|p| [p.name, p.id]}
     respond_to do |format|
       format.html
       format.xls
@@ -94,6 +95,22 @@ class BatchesController < ApplicationController
     response.headers['Content-Disposition'] = 'attachment; filename="batch_' + @batch.id.to_s + '_list_bins.xls"'
     respond_to do |format|
       format.xls
+    end
+  end
+
+  def archived_to_picklist
+    @picklist = Picklist.where(id: params[:picklist][:id]).first if params[:picklist]
+    if @picklist
+      @batch.bins.each do |bin|
+        (bin.physical_objects + bin.boxed_physical_objects).each do |po|
+          po.update_attributes(picklist: @picklist) if po.digital_statuses.last&.state == 'archived'
+        end
+      end
+      flash[:notice] = 'Archived items were successfully added to this picklist.'
+      redirect_to @picklist
+    else
+      flash[:warning] = 'Picklist not found.'
+      redirect_to :back
     end
   end
 
