@@ -52,6 +52,7 @@ Pod::Application.routes.draw do
     get :workflow_history, on: :member
     get :upload_show, on: :collection
     get :has_ephemera, on: :collection
+    get :is_archived, on: :collection
     get :create_multiple, on: :collection
     get :edit_ephemera, on: :member
     get :contained, on: :collection

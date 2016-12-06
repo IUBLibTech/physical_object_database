@@ -1096,6 +1096,28 @@ describe PhysicalObjectsController do
     end
   end
 
+  describe "GET is_archived" do
+    let(:get_is_archived) { get :is_archived, mdpi_barcode: barcoded_object.mdpi_barcode }
+    it "returns 'true' when is archived" do
+      barcoded_object.digital_statuses.create!(state: 'archived')
+      get_is_archived
+      expect(response.body).to eq "true"
+    end
+    it "returns 'false' isn't archived" do
+      get_is_archived
+      expect(response.body).to eq "false"
+    end
+    it "returns 'unknown physical Object' when physical object not found" do
+      get :is_archived, mdpi_barcode: 1234
+      expect(response.body).to eq "unknown physical Object"
+    end
+    it "returns 'unknown physical Object' when given a 0 barcode" do
+      physical_object
+      get :is_archived, mdpi_barcode: 0
+      expect(response.body).to eq "unknown physical Object"
+    end
+  end
+
   describe "GET edit_ephemera" do
     before(:each) { get :edit_ephemera, id: physical_object.id }
     it "assigns the object" do
