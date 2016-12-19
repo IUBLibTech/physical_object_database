@@ -13,7 +13,7 @@ class OneInchOpenReelVideoTm < ActiveRecord::Base
   BOX_FORMAT = false
   BIN_FORMAT = true
   # TM simple fields
-  SIMPLE_FIELDS = %w(format_version recording_standard tape_stock_brand format_duration image_format pack_deformation)
+  SIMPLE_FIELDS = %w(format_version recording_standard tape_stock_brand format_duration image_format pack_deformation size)
   FORMAT_VERSION_VALUES = hashify(['Type A', 'Type B', 'Type C', 'IVC', 'Unknown'])
   RECORDING_STANDARD_VALUES = hashify(%w(NTSC PAL SECAM Unknown))
   IMAGE_FORMAT_VALUES = hashify ['4:3', '16:9', 'Unknown']

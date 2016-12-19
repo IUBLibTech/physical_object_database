@@ -42,4 +42,10 @@ describe OneInchOpenReelVideoTm do
     end
   end
 
+  describe "has optional fields" do
+    specify "size" do
+      valid_one_inch_open_reel_video.size = nil
+      expect(valid_one_inch_open_reel_video).to be_valid
+    end
+  end
 end
