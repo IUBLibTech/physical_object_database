@@ -31,7 +31,14 @@ class OneInchOpenReelVideoTm < ActiveRecord::Base
     'Structural Damage' => 2
   }
   HUMANIZED_COLUMNS = {}
-  MANIFEST_EXPORT = {}
+  MANIFEST_EXPORT = {
+    "Recording standard" => :recording_standard,
+    "Format duration" => :format_duration,
+    "Size" => :size,
+    "Tape stock brand" => :tape_stock_brand,
+    "Image format" => :image_format,
+    "Format version" => :format_version
+  }
   include TechnicalMetadatumModule
 
   def default_values
