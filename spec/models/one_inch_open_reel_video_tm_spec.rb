@@ -30,7 +30,7 @@ describe OneInchOpenReelVideoTm do
 
   describe "manifest export" do
     specify "has desired headers" do
-      expect(valid_one_inch_open_reel_video.manifest_headers).to eq []
+      expect(valid_one_inch_open_reel_video.manifest_headers).to eq ["Recording standard", "Format duration", "Size", "Tape stock brand", "Image format", "Format version"]
     end
   end
 
@@ -42,4 +42,10 @@ describe OneInchOpenReelVideoTm do
     end
   end
 
+  describe "has optional fields" do
+    specify "size" do
+      valid_one_inch_open_reel_video.size = nil
+      expect(valid_one_inch_open_reel_video).to be_valid
+    end
+  end
 end

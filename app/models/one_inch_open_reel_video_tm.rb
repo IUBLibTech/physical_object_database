@@ -13,8 +13,8 @@ class OneInchOpenReelVideoTm < ActiveRecord::Base
   BOX_FORMAT = false
   BIN_FORMAT = true
   # TM simple fields
-  SIMPLE_FIELDS = %w(format_version recording_standard tape_stock_brand format_duration image_format pack_deformation)
-  FORMAT_VERSION_VALUES = hashify(%w(VHS SVHS Unknown))
+  SIMPLE_FIELDS = %w(format_version recording_standard tape_stock_brand format_duration image_format pack_deformation size)
+  FORMAT_VERSION_VALUES = hashify(['Type A', 'Type B', 'Type C', 'IVC', 'Unknown'])
   RECORDING_STANDARD_VALUES = hashify(%w(NTSC PAL SECAM Unknown))
   IMAGE_FORMAT_VALUES = hashify ['4:3', '16:9', 'Unknown']
   PACK_DEFORMATION_VALUES = hashify ['None', 'Minor', 'Moderate', 'Severe']
@@ -31,7 +31,14 @@ class OneInchOpenReelVideoTm < ActiveRecord::Base
     'Structural Damage' => 2
   }
   HUMANIZED_COLUMNS = {}
-  MANIFEST_EXPORT = {}
+  MANIFEST_EXPORT = {
+    "Recording standard" => :recording_standard,
+    "Format duration" => :format_duration,
+    "Size" => :size,
+    "Tape stock brand" => :tape_stock_brand,
+    "Image format" => :image_format,
+    "Format version" => :format_version
+  }
   include TechnicalMetadatumModule
 
   def default_values
