@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161212190843) do
+ActiveRecord::Schema.define(version: 20161219221806) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -399,6 +399,7 @@ ActiveRecord::Schema.define(version: 20161212190843) do
     t.boolean  "other_contaminants"
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
+    t.string   "size",                 limit: 255
   end
 
   create_table "open_reel_tms", force: :cascade do |t|
