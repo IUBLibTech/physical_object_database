@@ -7,6 +7,20 @@
       	    <th colspan="2">Assignment</th>
       	  </tr>
           <tr>
+            <th>Shipment</th>
+            <td>
+              <% if !@physical_object.shipment.nil? %>
+                <%= link_to(@physical_object.shipment.identifier, controller: 'shipments', action: 'show', id: @physical_object.shipment.id) if policy(@physical_object.shipment).show? %>
+              <% else %>
+                Not Assigned
+              <% end %>
+              <% if @edit_mode %>
+                <%= @physical_object.shipment.nil? ? "<br/>Assign to: ".html_safe : "<br/>Reassign to: ".html_safe %>
+                <%= f.collection_select :shipment_id, Shipment.order('identifier ASC'), :id, :identifier, {include_blank: 'None'} %>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
             <th>Picklist</th>
             <td>
               <% if !@physical_object.picklist.nil? %>
@@ -20,8 +34,6 @@
               <% end %>
             </td>
           </tr>
-
-
           <tr>
             <th>Bin</th>
             <td>

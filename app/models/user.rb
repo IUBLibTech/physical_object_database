@@ -74,6 +74,7 @@ class User < ActiveRecord::Base
     ReportsController => ALL_ACTIONS,
     ReturnsController => ALL_ACTIONS,
     SearchController => ALL_ACTIONS,
+    ShipmentsController => ALL_BUT_DELETE,
     SignalChainsController => NO_ACTIONS,
     SpreadsheetsController => ALL_BUT_DELETE,
     StatusTemplatesController => READ_ONLY,
@@ -100,6 +101,7 @@ class User < ActiveRecord::Base
     ReportsController => ALL_ACTIONS,
     ReturnsController => ALL_ACTIONS,
     SearchController => ALL_ACTIONS,
+    ShipmentsController => ALL_ACTIONS,
     SignalChainsController => READ_ONLY,
     SpreadsheetsController => ALL_ACTIONS,
     StatusTemplatesController => READ_ONLY,
@@ -126,6 +128,7 @@ class User < ActiveRecord::Base
     ReportsController => ALL_ACTIONS,
     ReturnsController => NO_ACTIONS,
     SearchController => ALL_ACTIONS,
+    ShipmentsController => READ_ONLY,
     SignalChainsController => ALL_BUT_DELETE,
     SpreadsheetsController => READ_ONLY,
     StatusTemplatesController => READ_ONLY,
@@ -160,6 +163,7 @@ class User < ActiveRecord::Base
     ReportsController => ALL_ACTIONS,
     ReturnsController => NO_ACTIONS,
     SearchController => ALL_ACTIONS,
+    ShipmentsController => READ_ONLY,
     SignalChainsController => ALL_ACTIONS,
     SpreadsheetsController => READ_ONLY,
     StatusTemplatesController => READ_ONLY,
@@ -170,6 +174,8 @@ class User < ActiveRecord::Base
   })
   COLLECTION_OWNER = NIL_ACCESS.merge({
     CollectionOwnerController => ALL_ACTIONS,
+    PhysicalObjectsController => { upload_show: true, upload_update: true },
+    SpreadsheetsController => READ_ONLY,
   })
 
   ROLE_PERMISSIONS = {

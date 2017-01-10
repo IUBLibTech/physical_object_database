@@ -21,7 +21,7 @@ class UmaticVideoTm < ActiveRecord::Base
   PACK_DEFORMATION_VALUES = hashify ["None", "Minor", "Moderate", "Severe"]
   RECORDING_STANDARD_VALUES = hashify ["NTSC", "PAL", "SECAM", "Unknown"]
   FORMAT_DURATION_VALUES = hashify %w(5 10 15 18 20 30 40 50 60 75 Unknown)
-  SIZE_VALUES = hashify ["Large", "Small"]
+  SIZE_VALUES = hashify ["Large", "Small", "Unknown"]
   IMAGE_FORMAT_VALUES = hashify ["4:3", "16:9", "Unknown"]
   FORMAT_VERSION_VALUES = hashify ["Low Band", "High Band", "SP", "PCM Audio", "Unknown"]
 
@@ -50,6 +50,14 @@ class UmaticVideoTm < ActiveRecord::Base
   def default_values
     self.recording_standard = "NTSC"
     self.image_format = "4:3"
+  end
+
+  def default_values_for_upload
+     default_values
+     self.pack_deformation = 'None'
+     self.format_duration = 'Unknown'
+     self.size = 'Unknown'
+     self.format_version = 'Unknown'
   end
 
   def damage

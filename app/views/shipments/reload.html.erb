@@ -1,0 +1,36 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to "Return to Shipment", shipment_path(@shipment) if policy(@shipment).show? %>
+  </div>
+<% end %>
+
+<h2>Reloading Shipment: <i><%= @shipment.identifier %></i></h2>
+
+<div style="padding-bottom: 20px">
+  <div>
+  <%= form_for(@shipment, url: reload_object_shipment_path, html: {id: "return_form"}) do |f| %>
+    <table class="center_inline">
+      <tr>
+        <td colspan="2"><div style="font-weight: bold; font-size: 120%">Scan a barcode to return the object</div></td>
+      </tr>
+      <tr>
+        <td>
+          <%= text_field_tag(:mdpi_barcode, nil) %>
+        </td>
+        <td>
+          <%= f.submit("Reload Physical Object", id: 'normal_submit') %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+
+    <div class="left" style="width: 48%">
+      <h2>Items to reload [<%= @unprocessed.size %>]</h2>
+      <%= render "unprocessed_physical_objects_table" %> 
+    </div>
+    <div class="left" style="width: 48%">
+      <h2>Items reloaded [<%= @processed.size %>]</h2>
+      <%= render "processed_physical_objects_table" %>
+    </div>
+  </div>
+</div>

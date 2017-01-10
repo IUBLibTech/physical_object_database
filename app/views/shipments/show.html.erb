@@ -1,0 +1,61 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to "Edit", edit_shipment_path(@shipment) if policy(@shipment).edit?%>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to "Unload", unload_shipment_path(@shipment) if policy(@shipment).unload?%>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to "Reload", reload_shipment_path(@shipment) if policy(@shipment).reload?%>
+  </div>
+  <div class="contextMenuItem">
+  <%= link_to "Delete", shipment_path(@shipment), method: :delete, data: { confirm: 'Are you sure you want to delete this Shipment?' } if policy(@shipment).destroy?%>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to "Shipments Index", shipments_path if policy(Shipment).index? %>
+  </div>
+<% end %>
+
+<div class="left">
+  <h2>Shipment</h2>
+  <%= render partial: 'form' %>
+</div>
+<div class="left">
+  <h2>Unloading/Reloading Progress:</h2>
+  <div>
+    <table style="text-align: center;">
+      <tr>
+        <th>To be unloaded</th>
+        <th>Unloaded</th>
+        <th>In digitization workflow</th>
+        <th>To be reloaded</th>
+        <th>Reloaded</th>
+      </tr>
+      <tr>
+        <td><%= @to_be_unloaded.size %></td>
+        <td><%= @unloaded.size %></td>
+        <td><%= @in_progress.size %></td>
+        <td><%= @to_be_reloaded.size %></td>
+        <td><%= @reloaded.size %></td>
+      </tr>
+      <tr>
+        <th colspan="5">TOTAL</th>
+      </tr>
+      <tr>
+        <td colspan="5"><%= @physical_objects.size %></td>
+      </tr>
+    </table>
+  </div>
+</div>
+<div style="clear: both;"/>
+
+<div>
+  <h2>Picklists [<%= @picklists.count %>]</h2>
+  <%= render partial: 'picklists/picklists_table' %>
+</div>
+<div>
+  <h2>Physical Objects [<%= @physical_objects.count %>]</h2>
+  <%= render partial: 'physical_objects/physical_objects_table' %>
+</div>
+
+

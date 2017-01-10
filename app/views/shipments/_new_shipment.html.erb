@@ -1,0 +1,25 @@
+<%= fields_for :shipment do |f| %>
+  <div class="left">
+    <h2>New Shipment</h2>
+    <table style="width: 300px;">
+      <tr>
+        <th>Name</th>
+        <td>
+          <%= f.text_field(:identifier) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Description</th>
+        <td>
+          <%= f.text_area(:description) %>
+        </td>
+      </tr>
+      <tr>
+        <th>Unit</th>
+        <td>
+          <%= f.collection_select :unit_id, Unit.where(id: @pundit_user&.unit&.id.to_i).order('abbreviation ASC'), :id, :abbreviation, {prompt: "Please specify a unit...", selected: @pundit_user&.unit&.id.to_i} %>
+        </td>
+      </tr>
+    </table>
+  </div>
+<% end %>

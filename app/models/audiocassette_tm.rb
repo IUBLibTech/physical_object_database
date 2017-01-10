@@ -23,7 +23,7 @@ class AudiocassetteTm < ActiveRecord::Base
   # TM simple fields
   SIMPLE_FIELDS = ['cassette_type', 'tape_type', 'sound_field', 'tape_stock_brand', 'noise_reduction', 'format_duration', 'pack_deformation']
   CASSETTE_TYPE_VALUES = hashify ['Compact', 'Mini', 'Micro']
-  TAPE_TYPE_VALUES = hashify ['', 'I', 'II', 'III', 'IV']
+  TAPE_TYPE_VALUES = hashify ['', 'I', 'II', 'III', 'IV', 'Unknown']
   SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
   NOISE_REDUCTION_VALUES = hashify ['None', 'Dolby B', 'Dolby C', 'Dolby Unknown', 'Unknown']
   PACK_DEFORMATION_VALUES = hashify ['None', 'Minor', 'Moderate', 'Severe']
@@ -76,6 +76,14 @@ class AudiocassetteTm < ActiveRecord::Base
     self.tape_type ||= ''
     self.noise_reduction ||= 'None'
     self.pack_deformation ||= 'None'
+  end
+
+  def default_values_for_upload
+     default_values
+     self.sound_field = 'Unknown'
+     self.format_duration = 'Unknown'
+     self.unknown_playback_speed = true
+     self.tape_type = 'Unknown'
   end
 
   def damage

@@ -29,6 +29,7 @@ Pod::Application.routes.draw do
 
   get 'collection_owner/', to: 'collection_owner#index', as: 'collection_owner_index'
   get 'collection_owner/search', to: 'collection_owner#search', as: 'collection_owner_search'
+  get 'collection_owner/upload_spreadsheet', to: 'collection_owner#upload_spreadsheet', as: 'collection_owner_upload_spreadsheet'
   post 'collection_owner/search_results', to: 'collection_owner#search_results', as: 'collection_owner_search_results'
   get 'collection_owner/:id', to: 'collection_owner#show', as: 'collection_owner_show'
 
@@ -162,6 +163,15 @@ Pod::Application.routes.draw do
   resources :search, controller: :search, only: [:index] do
     post :advanced_search, on: :collection
     post :search_results, on: :collection
+  end
+
+  resources :shipments do
+    get :unload, on: :member
+    patch :unload_object, on: :member
+    get :reload, on: :member
+    patch :reload_object, on: :member
+    get :shipments_list, on: :collection
+    get :new_shipment, on: :collection
   end
 
   resources :signal_chains do

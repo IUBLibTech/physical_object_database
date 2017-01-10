@@ -270,6 +270,12 @@ describe "has required attributes:" do
         expect(valid_po.picklist).to be_nil
       end
     end
+    describe "shipment" do
+      specify "can belong to a shipment" do
+        expect(valid_po).to respond_to :shipment_id
+        expect(valid_po.shipment).to be_nil
+      end
+    end
     describe "spreadsheet" do
       specify "can belong to a spreadsheet" do
         expect(valid_po).to respond_to :spreadsheet_id

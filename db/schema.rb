@@ -479,6 +479,7 @@ ActiveRecord::Schema.define(version: 20161219221806) do
     t.boolean  "billed",                                  default: false
     t.datetime "date_billed"
     t.string   "spread_sheet_filename",     limit: 255
+    t.integer  "shipment_id",               limit: 4
   end
 
   add_index "physical_objects", ["bin_id"], name: "index_physical_objects_on_bin_id", using: :btree
@@ -486,6 +487,7 @@ ActiveRecord::Schema.define(version: 20161219221806) do
   add_index "physical_objects", ["container_id"], name: "index_physical_objects_on_container_id", using: :btree
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
   add_index "physical_objects", ["picklist_id", "group_key_id", "group_position", "id"], name: "index_physical_objects_on_packing_sort", using: :btree
+  add_index "physical_objects", ["shipment_id"], name: "index_physical_objects_on_shipment_id", using: :btree
   add_index "physical_objects", ["spread_sheet_filename"], name: "index_physical_objects_on_spread_sheet_filename", using: :btree
   add_index "physical_objects", ["spreadsheet_id"], name: "index_physical_objects_on_spreadsheet_id", using: :btree
   add_index "physical_objects", ["unit_id"], name: "index_physical_objects_on_unit_id", using: :btree
@@ -506,10 +508,13 @@ ActiveRecord::Schema.define(version: 20161219221806) do
     t.datetime "updated_at"
     t.string   "destination", limit: 255
     t.boolean  "complete",                default: false
+    t.string   "format",      limit: 255
+    t.integer  "shipment_id", limit: 4
   end
 
   add_index "picklists", ["destination"], name: "index_picklists_on_destination", using: :btree
   add_index "picklists", ["name"], name: "index_picklists_on_name", unique: true, using: :btree
+  add_index "picklists", ["shipment_id"], name: "index_picklists_on_shipment_id", using: :btree
 
   create_table "preservation_problems", force: :cascade do |t|
     t.integer  "open_reel_tm_id",      limit: 4
@@ -533,6 +538,17 @@ ActiveRecord::Schema.define(version: 20161219221806) do
 
   add_index "processing_steps", ["machine_id"], name: "index_processing_steps_on_machine_id", using: :btree
   add_index "processing_steps", ["signal_chain_id"], name: "index_processing_steps_on_signal_chain_id", using: :btree
+
+  create_table "shipments", force: :cascade do |t|
+    t.string   "identifier",        limit: 255
+    t.string   "description",       limit: 255
+    t.string   "physical_location", limit: 255
+    t.integer  "unit_id",           limit: 4
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "shipments", ["unit_id"], name: "index_shipments_on_unit_id", using: :btree
 
   create_table "signal_chain_formats", force: :cascade do |t|
     t.integer  "signal_chain_id", limit: 4
@@ -704,4 +720,7 @@ ActiveRecord::Schema.define(version: 20161219221806) do
   add_foreign_key "doFiles", "doParts", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doFiles_ibfk_1"
   add_foreign_key "doFiles", "doParts", column: "partNumber", primary_key: "partNumber", name: "doFiles_ibfk_1"
   add_foreign_key "doParts", "doObjects", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doParts_ibfk_1"
+  add_foreign_key "physical_objects", "shipments"
+  add_foreign_key "picklists", "shipments"
+  add_foreign_key "shipments", "units"
 end

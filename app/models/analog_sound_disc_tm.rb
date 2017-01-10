@@ -22,14 +22,14 @@ class AnalogSoundDiscTm < ActiveRecord::Base
     "recording_method", "material", "substrate", "coating",
     "equalization", "sound_field", "country_of_origin", "label"
   ]
-  DIAMETER_VALUES = hashify [5, 6, 7, 8, 9, 10, 12, 16]
+  DIAMETER_VALUES = hashify [5, 6, 7, 8, 9, 10, 12, 16, 'Unknown']
   SPEED_VALUES = hashify [33.3, 45, 78, 'Unknown', 'Mixed']
-  GROOVE_SIZE_VALUES = hashify ['Coarse', 'Micro']
-  GROOVE_ORIENTATION_VALUES = hashify ['Lateral', 'Vertical']
-  RECORDING_METHOD_VALUES = hashify ['Pressed', 'Cut', 'Pregrooved']
-  MATERIAL_VALUES = hashify ['Shellac', 'Plastic', 'N/A']
-  SUBSTRATE_VALUES = hashify ["Aluminum", "Glass", "Fiber", "Steel", "Zinc", "N/A"]
-  COATING_VALUES = hashify ['None', 'Lacquer', 'N/A']
+  GROOVE_SIZE_VALUES = hashify ['Coarse', 'Micro', 'Unknown']
+  GROOVE_ORIENTATION_VALUES = hashify ['Lateral', 'Vertical', 'Unknown']
+  RECORDING_METHOD_VALUES = hashify ['Pressed', 'Cut', 'Pregrooved', 'Unknown']
+  MATERIAL_VALUES = hashify ['Shellac', 'Plastic', 'N/A', 'Unknown']
+  SUBSTRATE_VALUES = hashify ["Aluminum", "Glass", "Fiber", "Steel", "Zinc", "N/A", 'Unknown']
+  COATING_VALUES = hashify ['None', 'Lacquer', 'N/A', 'Unknown']
   EQUALIZATION_VALUES = hashify ['', 'RIAA', 'ffrr LP 1953', 'CCIR', 'NAB', 'NAB+80Hz', 'FLAT', 'US MID 30', 'WESTREX', 'HMW', 'ffrr 1949', 'Early DECCA', 'COLUMBIA', 'BSI', 'Other', 'Unknown']
   SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
   # (subtype is hidden in form)
@@ -119,11 +119,23 @@ class AnalogSoundDiscTm < ActiveRecord::Base
         coating: nil,
         material: nil,
         equalization: nil
+      },
+    "Unknown" => { diameter: 'Unknown',
+        speed: 'Unknown',
+        groove_size: 'Unknown',
+        groove_orientation: 'Unknown',
+        sound_field: 'Unknown',
+        recording_method: 'Unknown',
+        substrate: 'Unknown',
+        coating: 'Unknown',
+        material: 'Unknown',
+        equalization: 'Unknown'
       }
   }
 
-  def default_values
-    values_hash = DEFAULT_VALUES[subtype]
+  def default_values(subtype_set = nil)
+    subtype_set ||= subtype
+    values_hash = DEFAULT_VALUES[subtype_set]
     unless values_hash.nil?
       self.diameter ||= values_hash[:diameter]
       self.speed ||= values_hash[:speed]
@@ -136,6 +148,10 @@ class AnalogSoundDiscTm < ActiveRecord::Base
       self.material ||= values_hash[:material]
       self.equalization ||= values_hash[:equalization]
     end
+  end
+
+  def default_values_for_upload
+     default_values('Unknown')
   end
 
   def damage

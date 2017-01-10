@@ -310,7 +310,7 @@ def pack_list
 		end
 
 		def picklist_params
-			params.require(:picklist).permit(:name, :description, :destination, :complete)
+			params.require(:picklist).permit(:name, :description, :destination, :complete, :format, :shipment_id, :shipment)
 		end
 
 		def surrounding_physical_objects

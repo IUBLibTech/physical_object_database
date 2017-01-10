@@ -32,6 +32,10 @@ describe Picklist do
       picklist.description = ""
       expect(picklist).to be_valid
     end
+    it "allows a format" do
+      valid_picklist.format = nil
+      expect(valid_picklist).to be_valid
+    end
 
     # destination handled by shared examples
     include_examples "includes DestinationModule", FactoryGirl.build(:picklist)
@@ -86,6 +90,10 @@ describe Picklist do
       expect(picklist.physical_objects).to be_empty
       physical_object.picklist
       expect(picklist.physical_objects).not_to be_empty
+    end
+    it "can belong to a shipment" do
+      valid_picklist.shipment = nil
+      expect(valid_picklist).to be_valid
     end
   end
 

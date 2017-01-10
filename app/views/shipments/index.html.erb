@@ -1,0 +1,9 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to "Create Shipment", new_shipment_path if policy(Shipment).new? %>
+  </div>
+<% end %>
+<div>
+  <h2>Shipments</h2>
+  <%= render 'table' %>
+</div>

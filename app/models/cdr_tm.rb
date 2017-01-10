@@ -32,6 +32,10 @@ class CdrTm < ActiveRecord::Base
     self.format_duration ||= "Unknown"
   end
 
+  def default_values_for_upload
+     default_values
+  end
+
   # damage field
 
   # master_copies default of 1

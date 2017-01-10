@@ -41,6 +41,10 @@ class HalfInchOpenReelVideoTm < ActiveRecord::Base
     self.pack_deformation = 'None'
   end
 
+  def default_values_for_upload
+     default_values
+  end
+
   def damage
     pack_deformation
   end

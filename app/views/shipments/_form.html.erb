@@ -1,0 +1,42 @@
+<%= error_messages_for(@shipment) %>
+<%= form_for(@shipment) do |f| %>
+  <table>
+    <tr>
+      <th>Identifier</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.text_field :identifier %>
+	<% else %>
+          <%= @shipment.identifier %>
+	<% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Description</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.text_field :description %>
+	<% else %>
+          <%= @shipment.description %>
+	<% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Physical location</th>
+      <td>
+        <%= f.select(:physical_location, Bin::PHYSICAL_LOCATION_VALUES, {}, disabled: !@edit_mode) %>
+      </td>
+    </tr>
+    <tr>
+      <th>Unit</th>
+      <td>
+        <%= f.collection_select :unit_id, Unit.order('abbreviation ASC'), :id, :abbreviation, {prompt: "Please specify a unit..."}, disabled: !@edit_mode %>
+      </td>
+    </tr>
+  </table>
+  <% if @edit_mode %>
+    <div class="actions">
+      <%= f.submit(@submit_text) %>
+    </div>
+  <% end %>
+<% end %>
