@@ -46,7 +46,11 @@ class CollectionOwnerController < ApplicationController
         render :index
       end
     end
+  end
 
+  def upload_spreadsheet
+    @physical_object = PhysicalObject.new
+    render 'physical_objects/upload_show'
   end
 
   private

@@ -1,0 +1,20 @@
+<% @unprocessed.each do |p| %>
+	<%= form_for(p, url: {controller: 'physical_objects', action: "show", id: p.id}) do |f| %>
+		<table class="picklistTable">
+				<tr class="odd packed">
+					<td class='ephemera'>
+						<% if p.has_ephemera? %>
+							<%= image_tag "folder.png", {alt: 'had ephemera'} %>
+						<% end %>
+					</td>
+					<td>
+							<%= image_tag "gs_mdpi_barcode.png", {alt: "mdpi barcode"} %>
+							<%= f.text_field(:mdpi_barcode, readonly: true, maxlength: "14", size: "14", class: "mdpi") %>
+					</td>
+					<td>
+						<%= link_to("Call Number: #{p.call_number}", physical_object_path(p.id), target: "_blank") if policy(p).show? %>
+					</td>
+				</tr>
+		</table>
+	<% end %>
+<% end %>

@@ -51,6 +51,11 @@ class VhsTm < ActiveRecord::Base
     self.pack_deformation = 'None'
   end
 
+  def default_values_for_upload
+     default_values
+     self.format_duration = 'Unknown'
+  end
+
   def damage
     pack_deformation
   end

@@ -37,7 +37,10 @@ class ReturnsController < ApplicationController
           else
             @po.current_workflow_status = 'Returned to Unit'
             if @po.save
-              flash[:notice] = "Physical object (#{params[:mdpi_barcode]}) successfully set to Returned to Unit status."
+              flash[:notice] = "Physical object (#{params[:mdpi_barcode]}) successfully set to Returned to Unit status.".html_safe
+              if @po.shipment
+                flash[:notice] += "<br/>Associated to shipment: #{@po.shipment.identifier}".html_safe
+              end
             else
               flash[:warning] = "There was a problem updating the workflow status for Physical object (#{params[:mdpi_barcode]}); no changes were made.  Errors: #{@po.errors.full_messages.inspect}"
             end

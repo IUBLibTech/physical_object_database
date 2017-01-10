@@ -11,5 +11,8 @@ describe CollectionOwnerController, type: :routing do
   it "routes to #search_results" do
     expect(post("/collection_owner/search_results")).to route_to("collection_owner#search_results")
   end
+  it "routes to #upload_spreadsheet" do
+    expect(get("/collection_owner/upload_spreadsheet")).to route_to("collection_owner#upload_spreadsheet")
+  end
 end
 

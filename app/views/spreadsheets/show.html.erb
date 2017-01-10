@@ -3,7 +3,7 @@
     <%= link_to("View Imported Spreadsheets", spreadsheets_path) if policy(Spreadsheet).index? %>
   </div>
   <div class="contextMenuItem">
-    <%= link_to("Edit Spreadsheet", {:action => 'edit', :id => @spreadsheet.id}) if policy(@spreadsheet).show? %>
+    <%= link_to("Edit Spreadsheet", {:action => 'edit', :id => @spreadsheet.id}) if policy(@spreadsheet).edit? %>
   </div>
   <div class="contextMenuItem">
     <%= link_to("Delete Spreadsheet", @spreadsheet, method: :delete, data: {:confirm=>'Are you sure you want to delete this Spreadsheet?  This will also delete all associated physical objects.  It will retain any bins or boxes associated to the spreadsheet.'}) if policy(@spreadsheet).destroy? %>

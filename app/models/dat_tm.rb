@@ -38,6 +38,10 @@ class DatTm < ActiveRecord::Base
 
   # no default_values
 
+  # no additional values needed
+  def default_values_for_upload
+  end
+
   def damage
     return ""
   end
