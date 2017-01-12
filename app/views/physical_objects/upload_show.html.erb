@@ -21,7 +21,7 @@
           <% if @collection_owner %>
           <tr>
             <td>Associate objects to an existing shipment</td>
-            <td>
+            <td style="min-width: 21px;">
               <%= radio_button_tag(:type, "shipment", false, {onclick: "add_to_picklist(this)", id: 'shipment_radio', class: 'exclusive'}) %>
             </td>
           </tr>
