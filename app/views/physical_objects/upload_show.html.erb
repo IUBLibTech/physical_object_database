@@ -1,8 +1,12 @@
 <div>
 <h2>Upload Spread Sheet (CSV)</h2>
   <p>
-    Upload a CSV file with the first row containing header names and subsequent rows containing
-    Physical Object metadata. The file must be saved in UTF-8 encoding (see below for your version of Excel).
+    Upload a spreadsheet file with the first row containing header names and subsequent rows containing
+    Physical Object metadata. The file format must be either:
+    <ul>
+      <li>.xlsx (not .xls)</li>
+      <li>.csv saved in UTF-8 encoding (see instructions below for your version of Excel)</li>
+    </ul>
     See 
     <%= link_to("this Excel spreadsheet", download_spreadsheet_example_physical_objects_path)%> <%# no policy check for public file download %>
     for more details on file format.
@@ -11,9 +15,23 @@
 <div>
   <%= form_for(:physical_object, url: upload_update_physical_objects_path) do |f| %>
     <div class="left top5" style="width: 300px">
-      <h2>Picklist/Shipment Association</h2>
+      <h2><%= @collection_owner ? 'Shipment' : 'Picklist' %> Association</h2>
       <div>
         <table>
+          <% if @collection_owner %>
+          <tr>
+            <td>Associate objects to an existing shipment</td>
+            <td>
+              <%= radio_button_tag(:type, "shipment", false, {onclick: "add_to_picklist(this)", id: 'shipment_radio', class: 'exclusive'}) %>
+            </td>
+          </tr>
+          <tr>
+            <td>Associate objects to a new shipment</td>
+            <td>
+              <%= radio_button_tag(:type, "shipment_new", false, {onclick: "add_to_picklist(this)", id: 'shipment_new_radio', class: 'exclusive'}) %>
+            </td>
+          </tr>
+          <% else %>
           <tr>
             <td>No picklist/shipment association</td>
             <td style="min-width: 21px;">
@@ -32,18 +50,7 @@
               <%= radio_button_tag(:type, "new", false, {onclick: "add_to_picklist(this)", id: 'new_radio', class: 'exclusive'}) %>
             </td>
           </tr>
-          <tr>
-            <td>Associate objects to an existing shipment</td>
-            <td>
-              <%= radio_button_tag(:type, "shipment", false, {onclick: "add_to_picklist(this)", id: 'shipment_radio', class: 'exclusive'}) %>
-            </td>
-          </tr>
-          <tr>
-            <td>Associate objects to a new shipment</td>
-            <td>
-              <%= radio_button_tag(:type, "shipment_new", false, {onclick: "add_to_picklist(this)", id: 'shipment_new_radio', class: 'exclusive'}) %>
-            </td>
-          </tr>
+          <% end %>
         </table>
       </div>
       <div id="picklist_add_div">
@@ -63,7 +70,7 @@
   <% end %>
 </div>
 <div class="clear top15">
-  <h2>Saving Excel to UTF-8</h2>
+  <h2>Saving CSV to UTF-8 in Excel</h2>
     <div class="left">
       <ol>
         <li><b>For Excel running on Windows</b></li>

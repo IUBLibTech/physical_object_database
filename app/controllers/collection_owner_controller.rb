@@ -50,6 +50,7 @@ class CollectionOwnerController < ApplicationController
 
   def upload_spreadsheet
     @physical_object = PhysicalObject.new
+    @collection_owner = true
     render 'physical_objects/upload_show'
   end
 
