@@ -10,7 +10,7 @@ class PhysicalObjectsController < ApplicationController
   helper :all
 
   def download_spreadsheet_example
-    send_file("#{Rails.root}/public/CSV_Import.xlsx", filename: "CSV_Import.xlsx")
+    send_file("#{Rails.root}/public/Spreadsheet_Import.xlsx", filename: "Spreadsheet_Import.xlsx")
   end
 
   def new
