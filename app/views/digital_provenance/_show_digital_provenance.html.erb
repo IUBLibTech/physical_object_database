@@ -69,6 +69,10 @@
         <%= dp.link_to_add "Add Digital Master File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
         &nbsp-&nbsp
         <%= dp.link_to_add "Add PresInt File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+        <% if @dp.physical_object.format == 'Cylinder' %>
+          &nbsp-&nbsp
+          <%= dp.link_to_add "Add PresRef File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+        <% end %>
       <% end %>
     </div>
 	<% end %>
@@ -101,7 +105,36 @@
 					seq = ("000" + (parseFloat(seq) + 1)).slice(-2);
 					//seq = ("000" + $(visibleMasterTables).last().val()).slice(-2);
 					v = "MDPI_"+bc+"_"+seq+"_pres."+ext;
-				} else {
+				} else if (trig.text == "Add PresRef File") {
+                                        var visibleTables = $('.fields').filter(function () { return this.style.display != 'none'; });
+                                        visibleTables = $(visibleTables).find('table.digiprov');
+                                        var masterFilename = $('.digiprov')[$('.digiprov').length - 2].children[0].children[1].children[1].children[0].value
+                                        var pattern = "_[0-9]{2}_";
+                                        var seq = masterFilename.substring(masterFilename.search(pattern)+1, masterFilename.search(pattern)+3);
+                                        v = "MDPI_"+bc+"_"+seq+"_presRef."+ext;
+
+                                        //copy over all values from the master file.
+                                        var copyTable = visibleTables[visibleTables.length - 2];
+                                        var tds = $(copyTable).find('td > input');
+                                        // because collection_select pads the options with a "select signal chain" - the index can be off when
+                                        // the creating a presRef file from an existing/already saved master file. Determine whether to add one
+                                        var add = $(copyTable).find('select > option').first()[0].firstChild.textContent.startsWith("Select a signal") ? 0 : 1;
+                                        var selectIndex = $(copyTable).find('select').first().prop('selectedIndex') + add;
+                                        for (x = 4; x <12; x++) {
+                                        // exclude speed[4], stylus[9]
+                                          if (x != 4 && x != 9) {
+
+                                                val =  tds[x].value;
+                                                $(visibleTables).last().find('td > input')[x].value = val;
+                                          }
+                                        }
+                                        //add reference tone default value
+                                        $(visibleTables).last().find('td > input')[14].value = '440';
+
+                                        $(visibleTables).last().find('select option').eq(selectIndex).prop('selected', true);
+                                        $(visibleTables).last().addClass('presRef');
+                                } else {
+
 					var visibleTables = $('.fields').filter(function () { return this.style.display != 'none'; });
 					visibleTables = $(visibleTables).find('table.digiprov');
 					var masterFilename = $('.digiprov')[$('.digiprov').length - 2].children[0].children[1].children[1].children[0].value

@@ -10,6 +10,8 @@ FactoryGirl.define do
     volume_units 0
     analog_output_voltage 0
     peak -1
+    rumble_filter 1
+    reference_tone_frequency 1
 
     after(:build) do |dfp|
       dfp.filename = dfp.digital_provenance.physical_object.generate_filename unless dfp.filename.nil?

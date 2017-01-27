@@ -73,6 +73,8 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
              xml.stylus_size dfp.stylus_size.to_s
              xml.turnover dfp.turnover.to_s
              xml.rolloff dfp.rolloff.to_s
+             xml.rumble_filter dfp.rumble_filter.to_s
+             xml.reference_tone_frequency dfp.reference_tone_frequency.to_s
              xml.signal_chain do
                unless dfp.signal_chain.nil?
                  dfp.signal_chain.processing_steps.each do |device|

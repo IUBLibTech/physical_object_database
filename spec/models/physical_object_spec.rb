@@ -17,6 +17,7 @@ describe PhysicalObject do
   tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :betamax, :eight_mm, :half_inch_open_reel_video, :one_inch_open_reel_video, :umatic, :vhs]
   tm_factories = {
     'CD-R' => :cdr_tm,
+    'Cylinder' => :cylinder_tm,
     'DAT' => :dat_tm,
     'LP' => :analog_sound_disc_tm,
     'Lacquer Disc' => :analog_sound_disc_tm,
