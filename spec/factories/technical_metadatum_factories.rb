@@ -17,6 +17,10 @@ FactoryGirl.define do
      actable_type "CdrTm"
      association :actable, factory: :cdr_tm
    end
+   trait :cylinder do
+     actable_type "Cylinder"
+     association :actable, factory: :cylinder_tm
+   end
    trait :dat do
      actable_type "DatTm"
      association :actable, factory: :dat_tm
@@ -108,6 +112,23 @@ FactoryGirl.define do
     fungus 0
     other_contaminants 0
     format_duration ""
+  end
+
+  factory :cylinder_tm, class: CylinderTm do
+    size "Unknown"
+    material "Unknown"
+    groove_pitch "Unknown"
+    playback_speed "Unknown"
+    recording_method "Unknown"
+    # structural damage
+    fragmented 0
+    repaired_break 0
+    cracked 0
+    damaged_core 0
+    # preservation problems
+    fungus 0
+    efflorescence 0
+    other_contaminants 0
   end
 
   factory :dat_tm, class: DatTm do

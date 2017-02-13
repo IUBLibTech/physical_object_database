@@ -760,7 +760,7 @@ describe PhysicalObjectsController do
       end
     end
 
-    ['po_import_1_half_inch_open_reel_video_tape.csv', 'po_import_1_inch_open_reel_video_tape.csv', 'po_import_audiocassette.csv', "po_import_betacam.csv", 'po_import_betamax.csv', "po_import_8mm.csv", "po_import_cdr.csv", "po_import_cdr_iso-8559-1.csv", "po_import_cdr.xlsx", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv", "po_import_lacquer_disc.csv", "po_import_other_analog_sound_disc.csv", "po_import_umatic.csv", 'po_import_vhs.csv'].each do |filename|
+    ['po_import_1_half_inch_open_reel_video_tape.csv', 'po_import_1_inch_open_reel_video_tape.csv', 'po_import_audiocassette.csv', "po_import_betacam.csv", 'po_import_betamax.csv', "po_import_8mm.csv", "po_import_cdr.csv", "po_import_cdr_iso-8559-1.csv", "po_import_cdr.xlsx", "po_import_cylinder.csv", "po_import_DAT.csv", "po_import_orat.csv", "po_import_lp.csv", "po_import_lacquer_disc.csv", "po_import_other_analog_sound_disc.csv", "po_import_umatic.csv", 'po_import_vhs.csv'].each do |filename|
       context "specifying a file: #{filename}" do
         let(:post_args) { { physical_object: { csv_file: fixture_file_upload('files/' + filename, 'text/csv') } } }
         let(:upload_update) { post :upload_update, **post_args }

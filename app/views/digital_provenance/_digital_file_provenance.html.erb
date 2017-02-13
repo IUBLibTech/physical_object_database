@@ -1,124 +1,136 @@
 <div class="left">
-	<%= error_messages_for(f.object) %>
-	<% cssClass = (!f.object.filename.nil? and f.object.filename.include? 'presInt') ? 'presInt' : '' %>
-	<table class='digiprov <%= cssClass %>'>
-		<% if @edit_mode %>
-		<tr>
-			<td colspan='2'>
-				<%= f.link_to_remove('Delete Digital File', data: {confirm: 'Are you sure you want to delete this Digital File? The file will be deleted when you submit the form.'}) if policy(@dp).destroy? %>
-			</td>
-		</tr>
-		<% end %>
-		<tr>
-			<th>Filename<%= dp_requirement(:filename) %></th>
-			<td>
-				<%= f.text_field :filename, { class: 'filename', readonly: !@edit_mode, disabled: dp_na(:filename) } %>
-			</td>
-		</tr>
-		<tr>
-			<th>Date Digitized<%= dp_requirement(:date_digitized) %></th>
-			<td>
-				<%= f.text_field :display_date_digitized, readonly: !@edit_mode, disabled: dp_na(:date_digitized), class: "date" %>
-			</td>
-		</tr>
-		<tr>
-			<th>Comment<%= dp_requirement(:comments) %></th>
-			<td>
-				<%= f.text_area :comment, cols: '37', readonly: !@edit_mode, disabled: dp_na(:comment) %>
-			</td>
-		</tr>
-		<tr>
-			<th>Created By<%= dp_requirement(:created_by) %></th>
-			<td>
-				<%= f.text_field :created_by, readonly: !@edit_mode, disabled: dp_na(:created_by) %>
-			</td>
-		</tr>
-		<tr>
-			<th>Speed Used<%= dp_requirement(:speed_used) %></th>
-			<td>
-				<%= f.text_field :speed_used, readonly: !@edit_mode, disabled: dp_na(:speed_used), value: dp_na(:speed_used) ? nil : f.object.speed_used %>
-			</td>
-		</tr>
-		<tr>
-			<th>Reference Fluxivity (nWb/m)<%= dp_requirement(:tape_fluxivity) %></th>
-			<td>
-				<%= f.text_field :tape_fluxivity, readonly: !@edit_mode, disabled: dp_na(:tape_fluxivity), value: dp_na(:tape_fluxivity) ? nil : f.object.tape_fluxivity %>
-			</td>
-		</tr>
-		<tr>
-			<th>Gain (dB)<%= dp_requirement(:volume_units) %></th>
-			<td>
-				<%= f.text_field :volume_units, readonly: !@edit_mode, disabled: dp_na(:volume_units), value: dp_na(:volume_units) ? nil : f.object.volume_units %>
-			</td>
-		</tr>
-		<tr>
-			<th>Analog Output Voltage (dBu)<%= dp_requirement(:analog_output_voltage) %></th>
-			<td>
-				<%= f.text_field :analog_output_voltage, readonly: true, disabled: dp_na(:analog_output_voltage), value: dp_na(:analog_output_voltage) ? nil : f.object.analog_output_voltage %>
-			</td>
-		</tr>
-		<tr>
-			<th>Peak (dBfs)<%= dp_requirement(:peak) %></th>
-			<td>
-				<%= f.text_field :peak, readonly: true, disabled: dp_na(:peak), value: dp_na(:peak) ? nil : f.object.peak %>
-			</td>
-		</tr>
-		<tr>
-			<th>Stylus Size<%= dp_requirement(:stylus_size) %></th>
-			<td><%= f.text_field :stylus_size, readonly: !@edit_mode, disabled: dp_na(:stylus_size), value: dp_na(:stylus_size) ? nil : f.object.stylus_size %></td>
-		</tr>
-		<tr>
-			<th>Turnover<%= dp_requirement(:turnover) %></th>
-			<td><%= f.text_field :turnover, readonly: !@edit_mode, disabled: dp_na(:turnover), value: dp_na(:turnover) ? nil : f.object.turnover %></td>
-		</tr>
-		<tr>
-			<th>Rolloff<%= dp_requirement(:rolloff) %></th>
-			<td><%= f.text_field :rolloff, readonly: !@edit_mode, disabled: dp_na(:rolloff), value: dp_na(:rolloff) ? nil : f.object.rolloff %></td>
-		</tr>
-	  <tr>
-	    <th>Noise Reduction</th>
-	    <td><%= f.text_field :noise_reduction, readonly: !@edit_mode, disabled: dp_na(:noise_reduction), value: dp_na(:noise_reduction) ? nil : f.object.noise_reduction %></td>
-	  </tr>
-		<tr>
-			<th>Signal Chain<%= dp_requirement(:signal_chain_id) %></th>
-			<td>
-				<% if @edit_mode %>
-					<%= f.collection_select(:signal_chain_id, SignalChain.joins(:signal_chain_formats).where(signal_chain_formats: { format: @physical_object.format }).order('name'), :id, :name, {prompt: "Select a signal chain..."}, {disabled: !@edit_mode, class: "signal_chain_select"}) %>
-				<% else %>
-					<%= f.object.signal_chain ? f.object.signal_chain.name : 'Not assigned' %>
-				<% end %>
-			</td>
-		</tr>
-		<script type="text/javascript">
-			<% if @edit_mode %>
-			$(function (){
-				$('.date').datepicker();
-			});
-			<% end %>
-			$(function() {
-				$(".signal_chain_select").change(
-					function() {
-						signal_chain_id = $(this).val();
-						table = $(this).parent().parent().parent().parent();
-						$.ajax({
-							url: "../../signal_chains/ajax_show/"+signal_chain_id,
-							async: false,
-							data: {},
-							type: "GET",
-							dataType : "text",
-							success: function( text ) {
-								bad = table.find(".signal_chain_tr");
-								bad.remove();
-								table.append(text);
-							},
-							error: function( xhr, status, errorThrown ) {
-								alert("Oops! Html status: "+status)
-							}
-						})
-					});
-			});
-		</script>
-		<% @signal_chain = f.object.signal_chain %>
-		<%= render 'signal_chains/ajax_show_signal_chain' %>
+  <%= error_messages_for(f.object) %>
+  <% cssClass = (!f.object.filename.nil? and f.object.filename.include? 'presInt') ? 'presInt' : '' %>
+  <table class='digiprov <%= cssClass %>'>
+    <% if @edit_mode %>
+    <tr>
+      <td colspan='2'>
+        <%= f.link_to_remove('Delete Digital File', data: {confirm: 'Are you sure you want to delete this Digital File? The file will be deleted when you submit the form.'}) if policy(@dp).destroy? %>
+      </td>
+    </tr>
+    <% end %>
+    <tr>
+      <th>Filename<%= dp_requirement(:filename) %></th>
+      <td>
+        <%= f.text_field :filename, { class: 'filename', readonly: !@edit_mode, disabled: dp_na(:filename) } %>
+      </td>
+    </tr>
+    <tr>
+      <th>Date Digitized<%= dp_requirement(:date_digitized) %></th>
+      <td>
+        <%= f.text_field :display_date_digitized, readonly: !@edit_mode, disabled: dp_na(:date_digitized), class: "date" %>
+      </td>
+    </tr>
+    <tr>
+      <th>Comment<%= dp_requirement(:comments) %></th>
+      <td>
+        <%= f.text_area :comment, cols: '37', readonly: !@edit_mode, disabled: dp_na(:comment) %>
+      </td>
+    </tr>
+    <tr>
+      <th>Created By<%= dp_requirement(:created_by) %></th>
+      <td>
+        <%= f.text_field :created_by, readonly: !@edit_mode, disabled: dp_na(:created_by) %>
+      </td>
+    </tr>
+    <tr>
+      <th>Speed Used<%= dp_requirement(:speed_used) %></th>
+      <td>
+        <%= f.text_field :speed_used, readonly: !@edit_mode, disabled: dp_na(:speed_used), value: dp_na(:speed_used) ? nil : f.object.speed_used %>
+      </td>
+    </tr>
+    <tr>
+      <th>Reference Fluxivity (nWb/m)<%= dp_requirement(:tape_fluxivity) %></th>
+      <td>
+        <%= f.text_field :tape_fluxivity, readonly: !@edit_mode, disabled: dp_na(:tape_fluxivity), value: dp_na(:tape_fluxivity) ? nil : f.object.tape_fluxivity %>
+      </td>
+    </tr>
+    <tr>
+      <th>Gain (dB)<%= dp_requirement(:volume_units) %></th>
+      <td>
+        <%= f.text_field :volume_units, readonly: !@edit_mode, disabled: dp_na(:volume_units), value: dp_na(:volume_units) ? nil : f.object.volume_units %>
+      </td>
+    </tr>
+    <tr>
+      <th>Analog Output Voltage (dBu)<%= dp_requirement(:analog_output_voltage) %></th>
+      <td>
+        <%= f.text_field :analog_output_voltage, readonly: true, disabled: dp_na(:analog_output_voltage), value: dp_na(:analog_output_voltage) ? nil : f.object.analog_output_voltage %>
+      </td>
+    </tr>
+    <tr>
+      <th>Peak (dBfs)<%= dp_requirement(:peak) %></th>
+      <td>
+        <%= f.text_field :peak, readonly: true, disabled: dp_na(:peak), value: dp_na(:peak) ? nil : f.object.peak %>
+      </td>
+    </tr>
+    <tr>
+      <th>Stylus Size<%= dp_requirement(:stylus_size) %></th>
+      <td><%= f.text_field :stylus_size, readonly: !@edit_mode, disabled: dp_na(:stylus_size), value: dp_na(:stylus_size) ? nil : f.object.stylus_size %></td>
+    </tr>
+    <tr>
+      <th>Turnover<%= dp_requirement(:turnover) %></th>
+      <td><%= f.text_field :turnover, readonly: !@edit_mode, disabled: dp_na(:turnover), value: dp_na(:turnover) ? nil : f.object.turnover %></td>
+    </tr>
+    <tr>
+      <th>Rolloff<%= dp_requirement(:rolloff) %></th>
+      <td><%= f.text_field :rolloff, readonly: !@edit_mode, disabled: dp_na(:rolloff), value: dp_na(:rolloff) ? nil : f.object.rolloff %></td>
+    </tr>
+    <tr>
+      <th>Noise Reduction</th>
+      <td><%= f.text_field :noise_reduction, readonly: !@edit_mode, disabled: dp_na(:noise_reduction), value: dp_na(:noise_reduction) ? nil : f.object.noise_reduction %></td>
+    </tr>
+    <tr>
+      <th>Rumble filter (Hz)<%= dp_requirement(:rumble_filter) %></th>
+      <td>
+        <%= f.text_field :rumble_filter, readonly: !@edit_mode, disabled: dp_na(:rumble_filter), value: dp_na(:rumble_filter) ? nil : f.object.rumble_filter %>
+      </td>
+    </tr>
+    <tr>
+      <th>Reference tone frequency (Hz)<%= dp_requirement(:reference_tone_frequency) %></th>
+      <td>
+        <%= f.text_field :reference_tone_frequency, readonly: !@edit_mode, disabled: dp_na(:reference_tone_frequency), value: dp_na(:reference_tone_frequency) ? nil : f.object.reference_tone_frequency %>
+      </td>
+    </tr>
+    <tr>
+      <th>Signal Chain<%= dp_requirement(:signal_chain_id) %></th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.collection_select(:signal_chain_id, SignalChain.joins(:signal_chain_formats).where(signal_chain_formats: { format: @physical_object.format }).order('name'), :id, :name, {prompt: "Select a signal chain..."}, {disabled: !@edit_mode, class: "signal_chain_select"}) %>
+        <% else %>
+          <%= f.object.signal_chain ? f.object.signal_chain.name : 'Not assigned' %>
+        <% end %>
+      </td>
+    </tr>
+    <script type="text/javascript">
+      <% if @edit_mode %>
+      $(function (){
+        $('.date').datepicker();
+      });
+      <% end %>
+      $(function() {
+        $(".signal_chain_select").change(
+          function() {
+            signal_chain_id = $(this).val();
+            table = $(this).parent().parent().parent().parent();
+            $.ajax({
+              url: "../../signal_chains/ajax_show/"+signal_chain_id,
+              async: false,
+              data: {},
+              type: "GET",
+              dataType : "text",
+              success: function( text ) {
+                bad = table.find(".signal_chain_tr");
+                bad.remove();
+                table.append(text);
+              },
+              error: function( xhr, status, errorThrown ) {
+                alert("Oops! Html status: "+status)
+              }
+            })
+          });
+      });
+    </script>
+    <% @signal_chain = f.object.signal_chain %>
+    <%= render 'signal_chains/ajax_show_signal_chain' %>
 </table>
 </div>

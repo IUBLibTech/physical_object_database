@@ -15,6 +15,8 @@ class DigitalFileProvenance < ActiveRecord::Base
 	validates :volume_units, format: {with: /(^[+-]\d+[.\d]*$)|(^0$)/, message: "must be a signed (+/-) decimal value."}, allow_blank: true
 	validates :analog_output_voltage, format: {with: /(^[+-]\d+[.\d]*$)|(^0$)/, message: "must be a signed (+/-) decimal value."}, allow_blank: true
 	validates :peak, numericality: {only_integer: true, less_than: 0, message: "must be an integer value less than 0."}, allow_blank: true
+	validates :rumble_filter, numericality: {only_integer: true, greater_than: 0, message: "must be an integer value greater than 0."}, allow_blank: true
+	validates :reference_tone_frequency, numericality: {only_integer: true, greater_than: 0, message: "must be an integer value greater than 0."}, allow_blank: true
 
 	validate :filename_validation
 	validate :validate_signal_chain
@@ -31,7 +33,8 @@ class DigitalFileProvenance < ActiveRecord::Base
 		 'prod' => 'Production Master',
 		 'mezz' => 'Mezzanine File Version',
 		 'access' => 'Access File Version',
-		 'presInt' => 'Preservation Master - Intermediate'
+		 'presInt' => 'Preservation Master - Intermediate',
+		 'presRef' => 'Reference Tone'
 		}
 	FILE_USE_VALUES = FILE_USE_HASH.keys
 

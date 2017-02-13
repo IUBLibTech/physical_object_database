@@ -465,8 +465,13 @@ tr.packed {
   font-size: 85%;
 }
 
+
 table.presInt >tbody > tr > th {
     background-color: #F5D7D5;
+}
+
+table.presRef >tbody > tr > th {
+    background-color: #E5D7D5;
 }
 
 #uncheck_selected_button {
