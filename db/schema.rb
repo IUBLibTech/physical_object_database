@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170209181248) do
+ActiveRecord::Schema.define(version: 20170213164216) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -502,6 +502,7 @@ ActiveRecord::Schema.define(version: 20170209181248) do
   add_index "physical_objects", ["box_id"], name: "index_physical_objects_on_box_id", using: :btree
   add_index "physical_objects", ["container_id"], name: "index_physical_objects_on_container_id", using: :btree
   add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
+  add_index "physical_objects", ["mdpi_barcode"], name: "index_physical_objects_on_mdpi_barcode", using: :btree
   add_index "physical_objects", ["picklist_id", "group_key_id", "group_position", "id"], name: "index_physical_objects_on_packing_sort", using: :btree
   add_index "physical_objects", ["shipment_id"], name: "index_physical_objects_on_shipment_id", using: :btree
   add_index "physical_objects", ["spread_sheet_filename"], name: "index_physical_objects_on_spread_sheet_filename", using: :btree
