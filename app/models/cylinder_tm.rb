@@ -4,9 +4,9 @@ class CylinderTm < ActiveRecord::Base
   extend TechnicalMetadatumClassModule
   # TM module constants
   PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
-    speed_used: true,
-    volume_units: true,
-    stylus_size: true,
+    speed_used: false,
+    volume_units: false,
+    stylus_size: false,
     turnover: false,
     rolloff: false,
     rumble_filter: false,
