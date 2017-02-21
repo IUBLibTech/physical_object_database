@@ -113,25 +113,9 @@
                                         var seq = masterFilename.substring(masterFilename.search(pattern)+1, masterFilename.search(pattern)+3);
                                         v = "MDPI_"+bc+"_"+seq+"_presRef."+ext;
 
-                                        //copy over all values from the master file.
-                                        var copyTable = visibleTables[visibleTables.length - 2];
-                                        var tds = $(copyTable).find('td > input');
-                                        // because collection_select pads the options with a "select signal chain" - the index can be off when
-                                        // the creating a presRef file from an existing/already saved master file. Determine whether to add one
-                                        var add = $(copyTable).find('select > option').first()[0].firstChild.textContent.startsWith("Select a signal") ? 0 : 1;
-                                        var selectIndex = $(copyTable).find('select').first().prop('selectedIndex') + add;
-                                        for (x = 4; x <12; x++) {
-                                        // exclude speed[4], stylus[9]
-                                          if (x != 4 && x != 9) {
-
-                                                val =  tds[x].value;
-                                                $(visibleTables).last().find('td > input')[x].value = val;
-                                          }
-                                        }
-                                        //add reference tone default value
+                                        // don't copy over any values from the master file
+                                        // add reference tone default value
                                         $(visibleTables).last().find('td > input')[14].value = '440';
-
-                                        $(visibleTables).last().find('select option').eq(selectIndex).prop('selected', true);
                                         $(visibleTables).last().addClass('presRef');
                                 } else {
 
