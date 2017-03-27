@@ -163,8 +163,10 @@ module PhysicalObjectsHelper
           po.shipment = shipment unless shipment.nil?
           po.assign_inferred_workflow_status
           tm = po.ensure_tm
-          tm.default_values_for_upload
-          tm.class.parse_tm(tm, r) unless tm.nil?
+          unless tm.nil?
+            tm.default_values_for_upload
+            tm.class.parse_tm(tm, r)
+          end
           #Need extra check on box_id as we nullify bin_id for non-nil box_id
           if bin_id.nil? && r["Bin barcode"].to_i > 0 && box_id.nil?
             failed << [index, bin]
@@ -176,7 +178,7 @@ module PhysicalObjectsHelper
             failed << [index, po]
           else
             if tm.nil?
-              #error
+              #error handled earlier
             elsif tm.errors.any?
               failed << [index, tm]
             elsif po.save
