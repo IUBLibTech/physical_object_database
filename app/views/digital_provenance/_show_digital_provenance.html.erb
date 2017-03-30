@@ -71,7 +71,11 @@
         <%= dp.link_to_add "Add PresInt File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
         <% if @dp.physical_object.format == 'Cylinder' %>
           &nbsp-&nbsp
+          <%= dp.link_to_add "Add Prod File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+          &nbsp-&nbsp
           <%= dp.link_to_add "Add PresRef File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+          &nbsp-&nbsp
+          <%= dp.link_to_add "Add IntRef File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
         <% end %>
       <% end %>
     </div>
@@ -92,53 +96,64 @@
 			var v = "";
 			if ( el.val().length == 0) {
 				bc = $("#barcode").first().text();
-				if (trig.text == "Add Digital Master File") {
-					var visibleMasterTables = $('.fields').filter(function() {
-						return this.style.display != 'none';
-					});
-					visibleMasterTables = $(visibleMasterTables).find('.filename').filter(function() {
-						return this.value.indexOf('_pres.') != -1;
-					});
-					var fn = $(visibleMasterTables);
-					var pattern = "_[0-9]{2}_";
-					var seq = fn.length > 0 ? fn.last().val().substring(fn.last().val().search(pattern)+1, fn.last().val().search(pattern)+3) : "00";
-					seq = ("000" + (parseFloat(seq) + 1)).slice(-2);
-					//seq = ("000" + $(visibleMasterTables).last().val()).slice(-2);
-					v = "MDPI_"+bc+"_"+seq+"_pres."+ext;
-				} else if (trig.text == "Add PresRef File") {
-                                        var visibleTables = $('.fields').filter(function () { return this.style.display != 'none'; });
-                                        visibleTables = $(visibleTables).find('table.digiprov');
-                                        var masterFilename = $('.digiprov')[$('.digiprov').length - 2].children[0].children[1].children[1].children[0].value
-                                        var pattern = "_[0-9]{2}_";
-                                        var seq = masterFilename.substring(masterFilename.search(pattern)+1, masterFilename.search(pattern)+3);
-                                        v = "MDPI_"+bc+"_"+seq+"_presRef."+ext;
+				var visibleTables = $('.fields').filter(function() {
+					return this.style.display != 'none';
+				});
+                                visibleTables = $(visibleTables).find('table.digiprov');
+				var visibleMasterTables = $(visibleTables).find('.filename').filter(function() {
+					return this.value.indexOf('_pres.') != -1;
+				});
+				var fn = $(visibleMasterTables);
+				var pattern = "_[0-9]{2}_";
+				var seq = fn.length > 0 ? fn.last().val().substring(fn.last().val().search(pattern)+1, fn.last().val().search(pattern)+3) : "00";
 
-                                        // don't copy over any values from the master file
-                                        // add reference tone default value
-                                        $(visibleTables).last().find('td > input')[14].value = '440';
-                                        $(visibleTables).last().addClass('presRef');
-                                } else {
-
-					var visibleTables = $('.fields').filter(function () { return this.style.display != 'none'; });
-					visibleTables = $(visibleTables).find('table.digiprov');
-					var masterFilename = $('.digiprov')[$('.digiprov').length - 2].children[0].children[1].children[1].children[0].value
-					var pattern = "_[0-9]{2}_";
-					var seq = masterFilename.substring(masterFilename.search(pattern)+1, masterFilename.search(pattern)+3);
-					v = "MDPI_"+bc+"_"+seq+"_presInt."+ext;
-
-					//copy over all values from the master file.
+				if (trig.text != "Add Digital Master File") {
+					// prep to copy over all values from the previous file
 					var copyTable = visibleTables[visibleTables.length - 2];
 					var tds = $(copyTable).find('td > input');
 					// because collection_select pads the options with a "select signal chain" - the index can be off when
-					// the creating a presInt file from an existing/already saved master file. Determine whether to add one
+					// the creating a file from an existing/already saved master file. Determine whether to add one
 					var add = $(copyTable).find('select > option').first()[0].firstChild.textContent.startsWith("Select a signal") ? 0 : 1;
 					var selectIndex = $(copyTable).find('select').first().prop('selectedIndex') + add;
+}
+				if (trig.text == "Add Digital Master File") {
+                                        $(visibleTables).last().addClass('pres');
+					seq = ("000" + (parseFloat(seq) + 1)).slice(-2);
+					v = "MDPI_"+bc+"_"+seq+"_pres."+ext;
+				} else if (trig.text == "Add PresRef File") {
+                                        $(visibleTables).last().addClass('presRef');
+                                        v = "MDPI_"+bc+"_"+seq+"_presRef."+ext;
+                                        // add reference tone default value
+                                        $(visibleTables).last().find('td > input')[14].value = '440';
+                                } else if (trig.text == "Add PresInt File") {
+					$(visibleTables).last().addClass('presInt');
+					v = "MDPI_"+bc+"_"+seq+"_presInt."+ext;
+                                        // copy over any values from the previous file
 					for (x = 4; x <12; x++) {
 						val =  tds[x].value;
 						$(visibleTables).last().find('td > input')[x].value = val;
 					}
 					$(visibleTables).last().find('select option').eq(selectIndex).prop('selected', true);
-					$(visibleTables).last().addClass('presInt');
+                                } else if (trig.text == "Add IntRef File") {
+					$(visibleTables).last().addClass('intRef');
+					v = "MDPI_"+bc+"_"+seq+"_intRef."+ext;
+                                        // copy over any values from the previous file
+					for (x = 4; x <12; x++) {
+						val =  tds[x].value;
+						$(visibleTables).last().find('td > input')[x].value = val;
+					}
+					$(visibleTables).last().find('select option').eq(selectIndex).prop('selected', true);
+                                        // add reference tone default value
+                                        $(visibleTables).last().find('td > input')[14].value = '440';
+                                } else if (trig.text == "Add Prod File") {
+					$(visibleTables).last().addClass('prod');
+					v = "MDPI_"+bc+"_"+seq+"_prod."+ext;
+                                        // copy over any values from the previous file
+					for (x = 4; x <12; x++) {
+						val =  tds[x].value;
+						$(visibleTables).last().find('td > input')[x].value = val;
+					}
+					$(visibleTables).last().find('select option').eq(selectIndex).prop('selected', true);
 				}
 				el.val(v);
 			}
