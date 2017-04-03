@@ -18,6 +18,12 @@
 	}
 }
 
+#assigned_to_div {
+	select {
+		max-width: 400px;
+	}
+}
+
 #po_list {
   width: 1000px;
 }
