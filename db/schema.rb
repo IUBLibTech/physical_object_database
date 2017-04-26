@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170221191459) do
+ActiveRecord::Schema.define(version: 20170426123728) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -497,6 +497,7 @@ ActiveRecord::Schema.define(version: 20170221191459) do
     t.datetime "date_billed"
     t.string   "spread_sheet_filename",     limit: 255
     t.integer  "shipment_id",               limit: 4
+    t.boolean  "film"
   end
 
   add_index "physical_objects", ["bin_id"], name: "index_physical_objects_on_bin_id", using: :btree

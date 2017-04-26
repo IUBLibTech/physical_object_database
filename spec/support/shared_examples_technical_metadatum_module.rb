@@ -11,8 +11,8 @@ shared_examples "includes TechnicalMetadatumModule" do |tm_object|
     specify "TM_SUBTYPE as Boolean" do
       expect(tm_object.class.const_get(:TM_SUBTYPE)).to be_in([true, false])
     end
-    specify "TM_GENRE as :audio/:video" do
-      expect(tm_object.class.const_get(:TM_GENRE)).to be_in([:audio, :video])
+    specify "TM_GENRE as :audio/:video/:film" do
+      expect(tm_object.class.const_get(:TM_GENRE)).to be_in([:audio, :video, :film])
     end
     specify "TM_PARTIAL as String" do
       expect(tm_object.class.const_get(:TM_PARTIAL).class).to eq String

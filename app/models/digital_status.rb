@@ -13,6 +13,8 @@ class DigitalStatus < ActiveRecord::Base
 	@@Video_File_Auto_Accept = TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:video] * 24
 	# the number of hours after digitization start that an audio physical object is auto-accepted
 	@@Audio_File_Auto_Accept = TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:audio] * 24
+	# the number of hours after digitization start that a film physical object is auto-accepted
+	@@Film_File_Auto_Accept = TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:film] * 24
 	
 	# This scope returns an array of arrays containing all of the current digital statuses
 	# and their respective counts: [['failed', 3], ['queued', 10], etc]
@@ -140,6 +142,23 @@ class DigitalStatus < ActiveRecord::Base
 				WHERE dses.id = ns.ds_id and (options is not null and options != '#{serialized_empty_hash}') and decided is null
 			) as states inner join physical_objects
 			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Video_File_Auto_Accept} hour) <= utc_timestamp() and video = true
+			order by digital_start"
+		)
+	}
+
+	scope :expired_film_physical_objects, -> {
+		PhysicalObject.find_by_sql(
+			"select physical_objects.*
+			from (
+				SELECT physical_object_id
+				FROM (
+					SELECT max(id) as ds_id
+					FROM digital_statuses
+					GROUP BY physical_object_id
+				) AS ns INNER JOIN digital_statuses as dses
+				WHERE dses.id = ns.ds_id and (options is not null and options != '#{serialized_empty_hash}') and decided is null
+			) as states inner join physical_objects
+			where physical_objects.id = states.physical_object_id and date_add(digital_start, INTERVAL #{@@Film_File_Auto_Accept} hour) <= utc_timestamp() and film = true
 			order by digital_start"
 		)
 	}

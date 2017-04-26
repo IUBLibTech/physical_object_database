@@ -964,6 +964,8 @@ describe "has required attributes:" do
       before(:each) { barcoded_po.digital_start = created_at }
       { audio: { format: "CD-R", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:audio] },
         video: { format: "Betacam", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:video]}
+        # FIXME: add film example
+        # film: { format: "Film", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:film]}
       }.each do |genre, values|
         context "for #{genre} format" do
           before(:each) { barcoded_po.format = values[:format] }
