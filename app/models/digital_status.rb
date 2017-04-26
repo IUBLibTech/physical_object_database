@@ -9,11 +9,10 @@ class DigitalStatus < ActiveRecord::Base
 
 	DIGITAL_STATUS_START = "transferred"
 	serialized_empty_hash = "--- {}\n"
-        AUTO_ACCEPT_DELAY_DAYS = { video: 30, audio: 40 }
 	# the number of hours after digitization start that a video physical object is auto-accepted
-	@@Video_File_Auto_Accept = AUTO_ACCEPT_DELAY_DAYS[:video] * 24
+	@@Video_File_Auto_Accept = TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:video] * 24
 	# the number of hours after digitization start that an audio physical object is auto-accepted
-	@@Audio_File_Auto_Accept = AUTO_ACCEPT_DELAY_DAYS[:audio] * 24
+	@@Audio_File_Auto_Accept = TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:audio] * 24
 	
 	# This scope returns an array of arrays containing all of the current digital statuses
 	# and their respective counts: [['failed', 3], ['queued', 10], etc]

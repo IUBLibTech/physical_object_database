@@ -962,8 +962,8 @@ describe "has required attributes:" do
       let!(:created_at) { Time.now.change(nsec: 0) }
       before(:each) { barcoded_po.digital_statuses.create!(state: 'transferred', created_at: created_at) }
       before(:each) { barcoded_po.digital_start = created_at }
-      { audio: { format: "CD-R", day_count: DigitalStatus::AUTO_ACCEPT_DELAY_DAYS[:audio] },
-        video: { format: "Betacam", day_count: DigitalStatus::AUTO_ACCEPT_DELAY_DAYS[:video]}
+      { audio: { format: "CD-R", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:audio] },
+        video: { format: "Betacam", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:video]}
       }.each do |genre, values|
         context "for #{genre} format" do
           before(:each) { barcoded_po.format = values[:format] }
@@ -976,7 +976,7 @@ describe "has required attributes:" do
   end
 
   describe "#physical_object_query" do
-    skip "indirectly ested by picklist_specifications#query controller spec"
+    skip "indirectly tested by picklist_specifications#query controller spec"
   end
 
   describe "::physical_object_query" do

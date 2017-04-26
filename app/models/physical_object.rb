@@ -162,6 +162,8 @@ class PhysicalObject < ActiveRecord::Base
     digital_start ? (digital_start + auto_accept_days.days) : nil
   end
 
+  alias_method :expires, :auto_accept 
+
   def carrier_stream_index
     if self.group_key.nil?
       group_identifier + "_1_1"
@@ -223,15 +225,6 @@ class PhysicalObject < ActiveRecord::Base
     else
       "Digitization Has Not Begun"
     end
-  end
-
-  def expires
-    expiration = digital_start
-    unless expiration.nil?
-      delay = DigitalStatus::AUTO_ACCEPT_DELAY_DAYS[TechnicalMetadatumModule.tm_genres[self.format]]
-      expiration += delay.to_i.days
-    end
-    expiration
   end
 
   def master_copies
