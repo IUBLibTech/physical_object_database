@@ -129,6 +129,8 @@ class ApplicationController < ActionController::Base
         # fields for audiocassette
         :cassette_type, :tape_type, :noise_reduction, :damaged_tape, :damaged_shell,
         :zero_point46875_ips,
+        # fields for film
+        :gauge,
 
         # SEARCH: re-list select attributes with array values, allowing for multi-select
         :pack_deformation => [], :reel_size => [], :track_configuration => [],
@@ -159,7 +161,9 @@ class ApplicationController < ActionController::Base
         # fields for umatic video
         :size => [],
         # fields for audiocassette
-        cassette_type: [], tape_type: [], noise_reduction: []
+        cassette_type: [], tape_type: [], noise_reduction: [],
+        # fields for film
+        gauge: []
         )
     end
 

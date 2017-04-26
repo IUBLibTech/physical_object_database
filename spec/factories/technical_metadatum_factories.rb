@@ -41,6 +41,10 @@ FactoryGirl.define do
      actable_type "EightMillimeterVideoTm"
      association :actable, factory: :eight_mm_tm
    end
+   trait :film do
+     actable_type "FilmTm"
+     association :actable, factory: :film_tm
+   end
    trait :half_inch_open_reel_video do
      actable_type "HalfInchOpenReelVideoTm"
      association :actable, factory: :half_inch_open_reel_video_tm
@@ -230,6 +234,16 @@ FactoryGirl.define do
 
     trait :invalid do
       pack_deformation "invalid value"
+    end
+    trait :valid do
+    end
+  end
+
+  factory :film_tm, class: FilmTm do
+    gauge '8mm'
+
+    trait :invalid do
+      gauge 'invalid gauge value'
     end
     trait :valid do
     end

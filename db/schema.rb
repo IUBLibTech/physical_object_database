@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170426123728) do
+ActiveRecord::Schema.define(version: 20170426193540) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -332,6 +332,12 @@ ActiveRecord::Schema.define(version: 20170426123728) do
     t.string   "binder_system",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "film_tms", force: :cascade do |t|
+    t.string   "gauge",      limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "group_keys", force: :cascade do |t|
