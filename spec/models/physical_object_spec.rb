@@ -14,7 +14,7 @@ describe PhysicalObject do
   let(:bin) { FactoryGirl.create :bin }
   let(:batch) { FactoryGirl.create :batch }
 
-  tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :betamax, :eight_mm, :half_inch_open_reel_video, :one_inch_open_reel_video, :umatic, :vhs]
+  tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :betamax, :eight_mm, :half_inch_open_reel_video, :one_inch_open_reel_video, :umatic, :vhs, :film]
   tm_factories = {
     'CD-R' => :cdr_tm,
     'Cylinder' => :cylinder_tm,
@@ -32,7 +32,8 @@ describe PhysicalObject do
     '1-Inch Open Reel Video Tape' => :one_inch_open_reel_video_tm,
     'U-matic' => :umatic_tm,
     'VHS' => :vhs_tm,
-    'Audiocassette' => :audiocassette_tm
+    'Audiocassette' => :audiocassette_tm,
+    'Film' => :film_tm
   }
 
   describe "FactoryGirl" do
@@ -600,6 +601,10 @@ describe "has required attributes:" do
 	  valid_po.format = "Betacam"
 	  expect(valid_po.generate_filename).to match /\.mkv$/
 	end
+	specify ".mkv for film format" do
+	  valid_po.format = "Film"
+	  expect(valid_po.generate_filename).to match /\.mkv$/
+	end
 	specify "defaults to nil for unknown format" do
 	  valid_po.format = "Unknown format"
 	  expect(valid_po.generate_filename).to match /\.$/
@@ -963,9 +968,8 @@ describe "has required attributes:" do
       before(:each) { barcoded_po.digital_statuses.create!(state: 'transferred', created_at: created_at) }
       before(:each) { barcoded_po.digital_start = created_at }
       { audio: { format: "CD-R", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:audio] },
-        video: { format: "Betacam", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:video]}
-        # FIXME: add film example
-        # film: { format: "Film", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:film]}
+        video: { format: "Betacam", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:video]},
+        film: { format: "Film", day_count: TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:film]}
       }.each do |genre, values|
         context "for #{genre} format" do
           before(:each) { barcoded_po.format = values[:format] }

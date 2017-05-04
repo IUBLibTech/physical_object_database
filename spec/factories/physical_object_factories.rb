@@ -57,6 +57,10 @@ FactoryGirl.define do
       format "VHS"
       association :technical_metadatum, factory: [:technical_metadatum, :vhs]
     end
+    trait :film do
+      format "Film"
+      association :technical_metadatum, factory: [:technical_metadatum, :film]
+    end
     trait :boxable do
       cdr
     end
