@@ -84,6 +84,9 @@ describe Batch do
     it "has a default workflow status of Created" do
       expect(batch.current_workflow_status).to eq "Created"
     end
+    it "can belong to a spreadsheet" do
+      expect(batch).to respond_to(:spreadsheet=)
+    end
   end
 
   describe "#binned_physical_objects" do

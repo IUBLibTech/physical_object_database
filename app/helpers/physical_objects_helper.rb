@@ -8,7 +8,7 @@ module PhysicalObjectsHelper
   def PhysicalObjectsHelper.invalid_csv_headers(file, filename)
     #FIXME: get valid headers list more elegantly?
     #start with list of headers not corresponding to fields in physical object or any tm
-    valid_headers = ['Bin barcode', 'Bin identifier', 'Box barcode', 'Unit', 'Group key', 'Group total', 'Internal Notes', 'External Notes', 'Conditions']
+    valid_headers = ['Batch identifier', 'Batch description', 'Bin barcode', 'Bin identifier', 'Box barcode', 'Unit', 'Group key', 'Group total', 'Internal Notes', 'External Notes', 'Conditions', 'Film title', 'Replaces']
     valid_headers += PhysicalObject.valid_headers
     TechnicalMetadatumModule.tm_class_formats.keys.each do |tm_class|
       valid_headers += tm_class.valid_headers
@@ -28,6 +28,160 @@ module PhysicalObjectsHelper
     end
     invalid_headers_array = csv_headers.select { |x| !valid_headers.include?(x) }
     return invalid_headers_array
+  end
+
+  # For FilmDB XML
+  def PhysicalObjectsHelper.parse_xml(xml)
+    results = {}
+    batch_lookups = { 'Batch identifier' => 'identifier', 'Batch description' => 'description' }
+    bin_lookups = { 'Bin barcode' => 'mdpiBarcode', 'Bin identifier' => 'identifier' }
+    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Mold' => 'mold', 'Ad strip' => 'adStrip', 'Return to' => 'returnTo'
+     }
+    # FIXME: add workflow, on_demand, return_on_original_reel
+    multivalued_fieldsets = {
+      'Aspect ratio' => {
+        '1.33:1' => 'aspectRatios/ratio_1_33_1',
+        '1.37:1' => 'aspectRatios/ratio_1_37_1',
+        '1.66:1' => 'aspectRatios/ratio_1_66_1',
+        '1.85:1' => 'aspectRatios/ratio_1_85_1',
+        '2.35:1' => 'aspectRatios/ratio_2_35_1',
+        '2.39:1' => 'aspectRatios/ratio_2_39_1',
+        '2.59:1' => 'aspectRatios/ratio_2_59_1',
+      },
+      'Film generation' => {
+        'Projection print' => 'generations/projectionPrint',
+        'A roll' => 'generations/aRoll',
+        'B roll' => 'generations/bRoll',
+        'C roll' => 'generations/cRoll',
+        'D roll' => 'generations/dRoll',
+        'Answer print' => 'generations/answerPrint',
+        'Camera original' => 'generations/cameraOriginal',
+        'Composite' => 'generations/composite',
+        'Duplicate' => 'generations/duplicate',
+        'Edited' => 'generations/edited',
+        'Fine grain master' => 'generations/fineGrainMaster',
+        'Intermediate' => 'generations/intermediate',
+        'Kinescope' => 'generations/kinescope',
+        'Magnetic track' => 'generations/magneticTrack',
+        'Master' => 'generations/master',
+        'Mezzanine' => 'generations/mezzanine',
+        'Negative' => 'generations/negative',
+        'Optical sound track' => 'generations/OpticalSoundTrack',
+        'Original' => 'generations/original',
+        'Outs and trims' => 'generations/outsAndTrims',
+        'Positive' => 'generations/positive',
+        'Reversal' => 'generations/reversal',
+        'Separation master' => 'generations/separationMaster',
+        'Mixed generation' => 'generations/mixed',
+        'Original camera' => 'generations/originalCamera',
+        'Work print' => 'generations/workPrint',
+      },
+      'Base' => {
+        'Acetate' => 'bases/acetate',
+        'Polyester' => 'bases/polyester',
+        'Nitrate' => 'bases/nitrate',
+        'Mixed' => 'bases/mixed',
+      },
+      'Color' => {
+        'Bw' => 'color/blackAndWhite',
+        'Toned' => 'color/blackAndWhiteToned',
+        'Tinted' => 'color/blackAndWhiteTinted',
+        'Hand coloring' => 'color/handColoring',
+        'Stencil coloring' => 'color/stencilColoring',
+        'Color' => 'color/color',
+        'Ektachrome' => 'color/ektachrome',
+        'Kodachrome' => 'color/kodachrome',
+        'Technicolor' => 'color/technicolor',
+        'Anscochrome' => 'color/anscochrome',
+        'Eco' => 'color/eco',
+        'Eastman' => 'color/eastman',
+      },
+      'Sound field' => {
+        'Mono' => 'soundConfigurations/mono',
+        'Stereo' => 'soundConfigurations/stereo',
+        'Surround' => 'soundConfigurations/surround',
+        'Multi-track' => 'soundConfigurations/multiTrack',
+        'Dual' => 'soundConfigurations/dual',
+      },
+      'Sound format type' => {
+        'Optical' => 'soundFormats/optical',
+        'Optical variable area' => 'soundFormats/opticalVariableArea',
+        'Optical variable density' => 'soundFormats/opticalVariableDensity',
+        'Magnetic' => 'soundFormats/magnetic',
+        'Mixed sound format' => 'soundFormats/mixed',
+        'Digital sdds' => 'soundFormats/digitalSdds',
+        'Digital dts' => 'soundFormats/digitalDts',
+        'Digital dolby digital' => 'soundFormats/dolbyDigital',
+        'Sound on separate media' => 'soundFormats/soundOnSeparateMedia',
+      },
+    }
+    condition_ratings = {
+      'Brittle' => 'conditions/condition[type/text()="Brittle"]/value',
+      'Broken' => 'conditions/condition[type/text()="Broken"]/value',
+      'Channeling' => 'conditions/condition[type/text()="Channeling"]/value',
+      'Color fade' => 'conditions/condition[type/text()="Color Fade"]/value',
+      'Cue marks' => 'conditions/condition[type/text()="Cue Marks"]/value',
+      'Dirty' => 'conditions/condition[type/text()="Dirty"]/value',
+      'Edge damage' => 'conditions/condition[type/text()="Edge Damage"]/value',
+      'Holes' => 'conditions/condition[type/text()="Holes"]/value',
+      'Peeling' => 'conditions/condition[type/text()="Peeling"]/value',
+      'Perforation damage' => 'conditions/condition[type/text()="Perforation Damage"]/value',
+      'Rusty' => 'conditions/condition[type/text()="Rusty"]/value',
+      'Scratches' => 'conditions/condition[type/text()="Scratches"]/value',
+      'Soundtrack damage' => 'conditions/condition[type/text()="Soundtrack Damage"]/value',
+      'Splice damage' => 'conditions/condition[type/text()="Splice Damage"]/value',
+      'Stains' => 'conditions/condition[type/text()="Stains"]/value',
+      'Sticky' => 'conditions/condition[type/text()="Sticky"]/value',
+      'Tape residue' => 'conditions/condition[type/text()="Tape Residue"]/value',
+      'Tearing' => 'conditions/condition[type/text()="Tearing"]/value',
+      'Warp' => 'conditions/condition[type/text()="Warp"]/value',
+      'Water damage' => 'conditions/condition[type/text()="Water Damage"]/value',
+    }
+    preservation_problems = {
+      'Poor wind' => 'conditions/condition[type/text()="Poor Wind"]/type',
+      'Not on core or reel' => 'conditions/condition[type/text()="Not on Core or Reel"]/type',
+      'Lacquer treated' => 'conditions/condition[type/text()="Lacquer Treated"]/type',
+      'Replasticized' => 'conditions/condition[type/text()="Replasticized"]/type',
+      'Dusty' => 'conditions/condition[type/text()="Dusty"]/type',
+      'Spoking' => 'conditions/condition[type/text()="Spoking"]/type',
+    }
+
+    valid_headers = batch_lookups.keys + bin_lookups.keys + po_lookups.keys + multivalued_fieldsets.keys + condition_ratings.keys + ['Preservation problems']
+
+    tempfile = Tempfile.new(['filmdb_', '.csv'])
+    begin
+      CSV.open(tempfile.path, 'w') do |csv|
+        csv << valid_headers
+      end
+      @xml = Nokogiri::XML(xml).remove_namespaces!
+      @xml.xpath('//batch').each do |batch|
+        batch_values = batch_lookups.values.map { |v| batch.xpath(v)&.first&.content.to_s }
+        batch.xpath('bin').each do |bin|
+          bin_values = bin_lookups.values.map { |v| bin.xpath(v)&.first&.content.to_s }
+          bin.xpath('physicalObjects/physicalObject').each do |po|
+            po_values = po_lookups.values.map { |v| po.xpath(v)&.first&.content.to_s }
+            # replace true/false from FilmDB with yes/no for Memnon
+            po_values.map! { |e| e.match(/^true$/i) ? 'Yes' : e }
+            po_values.map! { |e| e.match(/^false$/i) ? 'No' : e }
+# FIXME: add film title for group key, replaces
+            condition_values = condition_ratings.values.map { |v| po.xpath(v)&.first&.content.to_s[0].to_i }
+            multi_values = multivalued_fieldsets.values.map do |h|
+              h.select { |k,v| po.xpath(v)&.first&.content.to_s == 'true' }.keys.join(', ')
+            end 
+            preservation_problem_values = Array.wrap(preservation_problems.select { |k,v| po.xpath(v)&.first&.content.to_s.present? }.keys.join(', '))
+            CSV.open(tempfile.path, 'ab') do |csv|
+               row = batch_values + bin_values + po_values + multi_values + condition_values + preservation_problem_values
+               csv << row
+            end
+          end
+        end
+      end
+      results = PhysicalObjectsHelper.parse_csv(tempfile.path, true, nil, Pathname.new(tempfile.path).basename.to_s)
+    ensure
+      tempfile.close
+      tempfile.unlink
+    end
+    results
   end
   
   def PhysicalObjectsHelper.parse_csv(file, header_validation, picklist, filename, shipment = nil)
@@ -87,12 +241,25 @@ module PhysicalObjectsHelper
           unit_id = nil
           unit = Unit.find_by(abbreviation: r["Unit"])
           unit_id = unit.id unless unit.nil?
+
+          batch_id = nil
+          batch = Batch.find_by(identifier: r['Batch identifier'])
+          batch_id = batch.id unless batch.nil?
+# FIXME: read batch description, if available?
+          if batch_id.nil? && r['Batch identifier'].present?
+            batch = Batch.new(identifier: r['Batch identifier'], description: r['Batch description'])
+            # FIXME: add test for batch creation?
+            batch.spreadsheet = spreadsheet
+            batch.save # FIXME: catch failure case for batch save?  what about bin save?
+            batch_id = batch.id
+          end
     
           bin_id = nil
           bin = Bin.find_by(mdpi_barcode: r["Bin barcode"].to_i)
           bin_id = bin.id unless bin.nil?
+#FIXME: read bin description, if available?
           if bin_id.nil? && r["Bin barcode"].to_i > 0
-            bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: r["Bin identifier"], description: "Created by spreadsheet upload of " + filename + " at " + Time.now.to_s.split(" ")[0,2].join(" ") + ", Row " + (index + 1).to_s)
+            bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: r["Bin identifier"], description: "Created by spreadsheet upload of " + filename + " at " + Time.now.to_s.split(" ")[0,2].join(" ") + ", Row " + (index + 1).to_s, batch_id: batch_id)
             bin.spreadsheet = spreadsheet
             bin.save
             bin_id = bin.id
@@ -111,12 +278,12 @@ module PhysicalObjectsHelper
           bin_id = nil if !box_id.nil?
     
           current_group_key = r["Group key"]
+          film_title = r["Film title"].to_i
           group_total = r["Group total"].to_i
           group_total = 1 if group_total.zero?
           if current_group_key.blank?
             group_key_id = nil
-          elsif
-            current_group_key != previous_group_key
+          elsif current_group_key != previous_group_key
             group_key = GroupKey.new
             group_key.group_total = group_total
             group_key.save
@@ -167,8 +334,10 @@ module PhysicalObjectsHelper
             tm.default_values_for_upload
             tm.class.parse_tm(tm, r)
           end
+          if batch_id.nil? && r['Batch identifier'].present?
+            failed << [index, batch]
           #Need extra check on box_id as we nullify bin_id for non-nil box_id
-          if bin_id.nil? && r["Bin barcode"].to_i > 0 && box_id.nil?
+          elsif bin_id.nil? && r["Bin barcode"].to_i > 0 && box_id.nil?
             failed << [index, bin]
           elsif box_id.nil? && r["Box barcode"].to_i > 0
             failed << [index, box]

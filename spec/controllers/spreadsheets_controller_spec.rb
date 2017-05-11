@@ -24,6 +24,9 @@ describe SpreadsheetsController do
       it "assigns the requested spreadsheet as @spreadsheet" do
         expect(assigns(:spreadsheet)).to eq spreadsheet 
       end
+      it "assigns associated batches objects as @batches" do
+        expect(assigns(:batches)).to eq []
+      end
       it "assigns associated bins objects as @bins" do
         expect(assigns(:bins)).to eq []
       end

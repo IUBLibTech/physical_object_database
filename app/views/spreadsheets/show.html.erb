@@ -25,6 +25,10 @@
     <%= render 'physical_objects/physical_objects_table' %>
   </div>
   <div>
+    <h2>Batches created via this spreadsheet: <%= @batches.size %></h2>
+    <%= render 'batches/batch_table' %>
+  </div>
+  <div>
     <h2>Bins created via this spreadsheet: <%= @bins.size %></h2>
     <%= render 'bins/bins_table' %>
   </div>
