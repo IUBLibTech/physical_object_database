@@ -34,7 +34,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 		 'mezz' => 'Mezzanine File Version',
 		 'access' => 'Access File Version',
 		 'presInt' => 'Preservation Master - Intermediate',
-		 'presRef' => 'Reference Tone',
+		 'presRef' => 'Reference Tone - Preservation Master',
                  'intRef' => 'Reference Tone - Intermediate'
 		}
 	FILE_USE_VALUES = FILE_USE_HASH.keys
