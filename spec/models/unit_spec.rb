@@ -95,8 +95,8 @@ describe Unit do
         before(:each) { valid_unit.institution = "Indiana University" }
         context "for Bloomington campus" do
           before(:each) { valid_unit.campus = "Bloomington" }
-          it "returns institution campus" do
-            expect(valid_unit.home).to eq "#{valid_unit.institution} #{valid_unit.campus.to_s}"
+          it "returns institution-campus" do
+            expect(valid_unit.home).to eq "#{valid_unit.institution}-#{valid_unit.campus.to_s}"
           end
         end
         context "for other campuses" do

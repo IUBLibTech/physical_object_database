@@ -552,14 +552,14 @@ describe "has required attributes:" do
       context "with collection_identifier" do
         before(:each) { valid_po.collection_identifier = "collection identifier" }
 	context "with call_number" do
-          let(:file_bext) { "Indiana University Bloomington. #{valid_po.unit.name}. collection identifier. call number. File use: " }
+          let(:file_bext) { "Indiana University-Bloomington. #{valid_po.unit.name}. collection identifier. call number. File use: " }
 	  before(:each) { valid_po.call_number = "call number" }
           it "returns correct text" do
             expect(valid_po.file_bext).to eq file_bext
           end
 	end
 	context "without call_number" do
-	  let(:file_bext) { "Indiana University Bloomington. #{valid_po.unit.name}. collection identifier. File use: " }
+	  let(:file_bext) { "Indiana University-Bloomington. #{valid_po.unit.name}. collection identifier. File use: " }
 	  before(:each) { valid_po.call_number = "" }
 	  it "returns correct text" do
 	    expect(valid_po.file_bext).to eq file_bext
@@ -569,14 +569,14 @@ describe "has required attributes:" do
       context "without collection_identifier" do
         before(:each) { valid_po.collection_identifier = "" }
         context "with call_number" do
-          let(:file_bext) { "Indiana University Bloomington. #{valid_po.unit.name}. call number. File use: " }
+          let(:file_bext) { "Indiana University-Bloomington. #{valid_po.unit.name}. call number. File use: " }
           before(:each) { valid_po.call_number = "call number" }
           it "returns correct text" do
             expect(valid_po.file_bext).to eq file_bext
           end
         end
         context "without call_number" do
-          let(:file_bext) { "Indiana University Bloomington. #{valid_po.unit.name}. File use: " }
+          let(:file_bext) { "Indiana University-Bloomington. #{valid_po.unit.name}. File use: " }
           before(:each) { valid_po.call_number = "" }
           it "returns correct text" do
             expect(valid_po.file_bext).to eq file_bext
@@ -588,7 +588,7 @@ describe "has required attributes:" do
       expect(valid_po.file_icmt).to eq valid_po.file_bext
     end
     it "#file_iarl" do
-      expect(valid_po.file_iarl).to eq "Indiana University Bloomington. #{valid_po.unit.name}."
+      expect(valid_po.file_iarl).to eq "Indiana University-Bloomington. #{valid_po.unit.name}."
     end
     describe "#generate_filename" do
       describe "infers extension from format" do
