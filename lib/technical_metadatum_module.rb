@@ -43,7 +43,7 @@ module TechnicalMetadatumModule
   }
 
   GENRE_AUTO_ACCEPT_DAYS = {
-    audio: 45,
+    audio: 40,
     video: 30
   }
 

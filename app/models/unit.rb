@@ -11,7 +11,6 @@ class Unit < ActiveRecord::Base
   def home
     home_text = ""
     home_text = institution.to_s + (institution.to_s.blank? ? "" : " ") + campus.to_s
-    home_text = 'Indiana University-Bloomington' if home_text == 'Indiana University Bloomington'
     home_text
   end
 
