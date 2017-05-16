@@ -218,7 +218,7 @@ shared_examples "includes TechnicalMetadatumModule" do |tm_object|
       end
     end
     context "for an audio format" do
-      include_examples "format_auto_accept_days examples", "CD-R", 45
+      include_examples "format_auto_accept_days examples", "CD-R", 40
     end
     context "for a video format" do
       include_examples "format_auto_accept_days examples", "U-matic", 30
