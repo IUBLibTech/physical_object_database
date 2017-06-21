@@ -142,8 +142,29 @@ class ReturnsController < ApplicationController
 	  when "Returned to Staging Area"
 	    unprocessed_objects = @bin.physical_objects.select { |po| !po.current_workflow_status.in?(["Unpacked", "Returned to Unit"]) and !po.has_condition?("Missing") }
 	    if unprocessed_objects.empty?
-	      @bin.update_attributes(current_workflow_status: 'Unpacked')
-	      redirect_to return_bins_return_path(@bin.batch)
+	      if @bin.format == 'Film'
+                result = @bin.post_to_filmdb
+                begin
+                  xml = Nokogiri::XML(result.body).remove_namespaces!
+                  error = xml.xpath('//error').first&.content.to_s
+                  success = xml.xpath('//success').first&.content.to_s
+                rescue
+                  xml = nil
+                end
+                if success.present?
+                  @bin.update_attributes(current_workflow_status: 'Unpacked')
+                  redirect_to return_bins_return_path(@bin.batch)
+                elsif error.present?
+                  flash[:warning] = "Error updating FilmDB: #{error}".html_safe
+	          redirect_to return_bin_return_path(@bin)
+                else
+                  flash[:warning] = "Failure updating FilmDB: <xmp>#{result.body.slice(0,100)}</xmp>".html_safe
+	          redirect_to return_bin_return_path(@bin)
+                end
+              else
+	        @bin.update_attributes(current_workflow_status: 'Unpacked')
+	        redirect_to return_bins_return_path(@bin.batch)
+	      end
 	    else
 	      flash[:warning] = "There are #{unprocessed_objects.size} Physical Objects from this Bin that have either not been scanned for return or are missing. All missing items must have a condition status of <i>Missing</i> before a Bin can be marked as <i>Unpacked</i>".html_safe
 	      redirect_to return_bin_return_path(@bin)

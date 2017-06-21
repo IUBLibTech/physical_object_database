@@ -1,0 +1,9 @@
+development:
+  filmdb_update_url: 'http://sycamore.dlib.indiana.edu:8527/services/update_batch/'
+
+test:
+  filmdb_update_url: 'http://sycamore.dlib.indiana.edu:8529/services/update_batch/'
+
+production:
+  filmdb_update_url: 'http://sycamore.dlib.indiana.edu:8528/services/update_batch/'
+

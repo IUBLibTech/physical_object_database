@@ -83,6 +83,7 @@ group :development, :test do
   #allows capybara access to session variable
   gem 'rack_session_access'
   gem 'rspec-rails'
+  gem 'webmock'
   gem 'byebug'
 end
 

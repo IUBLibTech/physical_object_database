@@ -3,6 +3,7 @@ describe Bin do
   let(:batch) {FactoryGirl.create :batch }
   let(:pl) {}
   let(:bin) { FactoryGirl.create :bin, batch: batch }
+  let(:film_bin) { FactoryGirl.create :bin, format: 'Film' }
   let(:box) { FactoryGirl.create :box, bin: bin }
   let(:valid_bin) { FactoryGirl.build :bin }
   let(:invalid_bin) { FactoryGirl.build :bin, :invalid }
@@ -311,6 +312,29 @@ describe Bin do
     end
     it "returns only bins without batches" do
       expect(Bin.available_bins.sort).to eq [created_bin, sealed_bin].sort
+    end
+  end
+
+  describe "#post_to_filmdb" do
+    before(:each) do
+      stub_request(:get, /sycamore/).
+        with(headers: {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
+        to_return(status: 200, body: "stubbed response", headers: {})
+      stub_request(:post, /sycamore/).
+        with(headers: {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
+        to_return(status: 200, body: "stubbed response", headers: {})
+    end
+    context "for non-film bins" do
+      it "returns nil" do
+        expect(bin.format).not_to eq 'Film'
+        expect(bin.post_to_filmdb).to be_nil
+      end
+    end
+    context "for film bins" do
+      it "connects to FilmDB" do
+        expect(film_bin.format).to eq 'Film'
+        expect(film_bin.post_to_filmdb.body).to eq 'stubbed response'
+      end
     end
   end
 
