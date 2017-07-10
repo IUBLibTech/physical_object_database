@@ -62,6 +62,7 @@ describe DigitalFileAutoAcceptor do
     let(:state_updates) { DigitalFileAutoAcceptor::STATE_UPDATES }
     let(:audio_objects) { FactoryGirl.create_list :physical_object, state_updates.size, :barcoded, :cdr }
     let(:video_objects) { FactoryGirl.create_list :physical_object, state_updates.size, :barcoded, :betacam }
+    let(:film_objects) { FactoryGirl.create_list :physical_object, state_updates.size, :barcoded, :film }
     shared_examples "auto_accept examples" do #requires let(:object_set)
       before(:each) do
         object_set.each_with_index do |po_object, index|
@@ -102,6 +103,10 @@ describe DigitalFileAutoAcceptor do
     end
     context "on video objects" do
       let(:object_set) { video_objects }
+      include_examples "auto_accept examples"
+    end
+    context "on film objects" do
+      let(:object_set) { film_objects }
       include_examples "auto_accept examples"
     end
   end

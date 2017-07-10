@@ -125,6 +125,24 @@ class DigitalFileAutoAcceptor
                                         aa_logger.info("UNKNOWN STATE: No change for #{po.mdpi_barcode}, #{current_state}")
                                 end
 			end
+                        film = DigitalStatus.expired_film_physical_objects
+                        film.each do |po|
+                               current_state = po.current_digital_status.state
+                                decided = STATE_UPDATES[current_state]
+                                if decided
+                                        po.current_digital_status.update_attributes(decided: decided)
+                                        if po.current_digital_status.errors.any?
+                                                aa_logger.info("ERROR Auto accepting #{po.mdpi_barcode}, #{current_state} -> #{decided}: #{po.current_digital_status.errors.full_messages.join(', ')}")
+                                        else
+                                                aa_logger.info("Auto accepting #{po.mdpi_barcode}, #{current_state} -> #{decided}")
+
+                                        end
+                                elsif STATE_UPDATES.keys.include? current_state
+                                        aa_logger.info("No change for #{po.mdpi_barcode}, #{current_state}")
+                                else
+                                        aa_logger.info("UNKNOWN STATE: No change for #{po.mdpi_barcode}, #{current_state}")
+                                end
+                        end
 		rescue Exception => e
 			aa_logger.info("EXCEPTION IN AUTO_ACCEPT: #{e.message << e.backtrace.join("\n")}")
 		end
