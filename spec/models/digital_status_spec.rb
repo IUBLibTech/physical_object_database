@@ -118,8 +118,10 @@ describe DigitalStatus do
       let!(:expired_audio) { FactoryGirl.create :physical_object, :cdr, digital_start: expired_time }
       let!(:unexpired_video) { FactoryGirl.create :physical_object, :umatic, digital_start: unexpired_time }
       let!(:expired_video) { FactoryGirl.create :physical_object, :umatic, digital_start: expired_time }
+      let!(:unexpired_film) { FactoryGirl.create :physical_object, :film, digital_start: unexpired_time }
+      let!(:expired_film) { FactoryGirl.create :physical_object, :film, digital_start: expired_time }
       before(:each) do
-        [unexpired_audio, expired_audio, unexpired_video, expired_video].each do |po|
+        [unexpired_audio, expired_audio, unexpired_video, expired_video, unexpired_film, expired_film].each do |po|
           ds = FactoryGirl.build :digital_status, physical_object: po, options: { foo: 'bar' }
           ds.save!
         end
@@ -132,6 +134,11 @@ describe DigitalStatus do
       describe "expired_video_physical_objects" do
         it "returns expired video objects" do
           expect(DigitalStatus.expired_video_physical_objects).to eq [expired_video]
+        end
+      end
+      describe "expired_film_physical_objects" do
+        it "returns expired film objects" do
+          expect(DigitalStatus.expired_film_physical_objects).to eq [expired_film]
         end
       end
     end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170221191459) do
+ActiveRecord::Schema.define(version: 20170504182115) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -334,6 +334,117 @@ ActiveRecord::Schema.define(version: 20170221191459) do
     t.datetime "updated_at"
   end
 
+  create_table "film_tms", force: :cascade do |t|
+    t.string   "gauge",                    limit: 255
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.boolean  "projection_print"
+    t.boolean  "a_roll"
+    t.boolean  "b_roll"
+    t.boolean  "c_roll"
+    t.boolean  "d_roll"
+    t.boolean  "answer_print"
+    t.boolean  "camera_original"
+    t.boolean  "composite"
+    t.boolean  "duplicate"
+    t.boolean  "edited"
+    t.boolean  "fine_grain_master"
+    t.boolean  "intermediate"
+    t.boolean  "kinescope"
+    t.boolean  "magnetic_track"
+    t.boolean  "master"
+    t.boolean  "mezzanine"
+    t.boolean  "negative"
+    t.boolean  "optical_sound_track"
+    t.boolean  "original"
+    t.boolean  "outs_and_trims"
+    t.boolean  "positive"
+    t.boolean  "reversal"
+    t.boolean  "work_print"
+    t.boolean  "separation_master"
+    t.boolean  "mixed_generation"
+    t.boolean  "original_camera"
+    t.string   "footage",                  limit: 255
+    t.boolean  "acetate"
+    t.boolean  "polyester"
+    t.boolean  "nitrate"
+    t.boolean  "mixed"
+    t.string   "frame_rate",               limit: 255
+    t.boolean  "bw"
+    t.boolean  "toned"
+    t.boolean  "tinted"
+    t.boolean  "hand_coloring"
+    t.boolean  "stencil_coloring"
+    t.boolean  "color"
+    t.boolean  "ektachrome"
+    t.boolean  "kodachrome"
+    t.boolean  "technicolor"
+    t.boolean  "anscochrome"
+    t.boolean  "eco"
+    t.boolean  "eastman"
+    t.string   "aspect_ratio",             limit: 255
+    t.boolean  "one_point33"
+    t.boolean  "one_point37"
+    t.boolean  "one_point66"
+    t.boolean  "one_point85"
+    t.boolean  "two_point35"
+    t.boolean  "two_point39"
+    t.boolean  "two_point59"
+    t.boolean  "anamorphic"
+    t.string   "sound",                    limit: 255
+    t.boolean  "optical"
+    t.boolean  "optical_variable_area"
+    t.boolean  "optical_variable_density"
+    t.boolean  "magnetic"
+    t.boolean  "digital_sdds"
+    t.boolean  "digital_dts"
+    t.boolean  "digital_dolby_digital"
+    t.boolean  "sound_on_separate_media"
+    t.boolean  "mixed_sound_format"
+    t.string   "clean",                    limit: 255
+    t.string   "resolution",               limit: 255
+    t.string   "workflow",                 limit: 255
+    t.string   "on_demand",                limit: 255
+    t.string   "return_on_original_reel",  limit: 255
+    t.string   "brittle",                  limit: 255
+    t.string   "broken",                   limit: 255
+    t.string   "channeling",               limit: 255
+    t.string   "color_fade",               limit: 255
+    t.string   "cue_marks",                limit: 255
+    t.string   "dirty",                    limit: 255
+    t.string   "edge_damage",              limit: 255
+    t.string   "holes",                    limit: 255
+    t.string   "peeling",                  limit: 255
+    t.string   "perforation_damage",       limit: 255
+    t.string   "rusty",                    limit: 255
+    t.string   "scratches",                limit: 255
+    t.string   "soundtrack_damage",        limit: 255
+    t.string   "splice_damage",            limit: 255
+    t.string   "stains",                   limit: 255
+    t.string   "sticky",                   limit: 255
+    t.string   "tape_residue",             limit: 255
+    t.string   "tearing",                  limit: 255
+    t.string   "warp",                     limit: 255
+    t.string   "water_damage",             limit: 255
+    t.boolean  "poor_wind"
+    t.boolean  "not_on_core_or_reel"
+    t.boolean  "lacquer_treated"
+    t.boolean  "replasticized"
+    t.boolean  "dusty"
+    t.boolean  "spoking"
+    t.string   "mold",                     limit: 255
+    t.string   "shrinkage",                limit: 255
+    t.string   "ad_strip",                 limit: 255
+    t.string   "missing_footage",          limit: 255
+    t.string   "miscellaneous",            limit: 255
+    t.string   "return_to",                limit: 255
+    t.boolean  "sound_mono"
+    t.boolean  "sound_stereo"
+    t.boolean  "sound_surround"
+    t.boolean  "sound_multi_track"
+    t.boolean  "sound_dual"
+  end
+
   create_table "group_keys", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -497,6 +608,7 @@ ActiveRecord::Schema.define(version: 20170221191459) do
     t.datetime "date_billed"
     t.string   "spread_sheet_filename",     limit: 255
     t.integer  "shipment_id",               limit: 4
+    t.boolean  "film"
   end
 
   add_index "physical_objects", ["bin_id"], name: "index_physical_objects_on_bin_id", using: :btree
