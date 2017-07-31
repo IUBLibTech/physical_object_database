@@ -274,8 +274,6 @@ FactoryGirl.define do
     reversal false
     work_print false
     separation_master false
-    mixed_generation false
-    original_camera false
     acetate false
     polyester false
     nitrate false
@@ -299,7 +297,8 @@ FactoryGirl.define do
     two_point35 false
     two_point39 false
     two_point59 false
-    anamorphic false
+    two_point66 false
+    anamorphic ''
     optical false
     optical_variable_area false
     optical_variable_density false
@@ -307,8 +306,9 @@ FactoryGirl.define do
     digital_sdds false
     digital_dts false
     digital_dolby_digital false
+    digital_dolby_a false
+    digital_dolby_sr false
     sound_on_separate_media false
-    mixed_sound_format false
     poor_wind false
     not_on_core_or_reel false
     lacquer_treated false
@@ -341,6 +341,17 @@ FactoryGirl.define do
     warp '0'
     water_damage '0'
     return_to 'Return value'
+    track_count ''
+    format_duration ''
+    stock_agfa false
+    stock_ansco false
+    stock_dupont false
+    stock_orwo false
+    stock_fuji false
+    stock_gevaert false
+    stock_kodak false
+    stock_ferrania false
+    conservation_actions ''
 
     trait :invalid do
       gauge 'invalid gauge value'
