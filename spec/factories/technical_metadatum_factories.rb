@@ -243,13 +243,12 @@ FactoryGirl.define do
     gauge '8mm'
     frame_rate '16 fps'
     sound 'Sound'
-    sound_mono true
-    clean 'false'
+    clean 'No'
     resolution '2k'
     workflow '1'
-    on_demand 'false'
-    return_on_original_reel 'false'
-    mold 'false'
+    on_demand 'No'
+    return_on_original_reel 'No'
+    mold 'No'
     ad_strip '0.0'
     projection_print false
     a_roll false
@@ -274,6 +273,9 @@ FactoryGirl.define do
     positive false
     reversal false
     work_print false
+    separation_master false
+    mixed_generation false
+    original_camera false
     acetate false
     polyester false
     nitrate false
@@ -306,6 +308,7 @@ FactoryGirl.define do
     digital_dts false
     digital_dolby_digital false
     sound_on_separate_media false
+    mixed_sound_format false
     poor_wind false
     not_on_core_or_reel false
     lacquer_treated false
@@ -324,6 +327,11 @@ FactoryGirl.define do
     perforation_damage '0'
     rusty '0'
     scratches '0'
+    sound_dual false
+    sound_mono false
+    sound_multi_track false
+    sound_stereo false
+    sound_surround false
     soundtrack_damage '0'
     splice_damage '0'
     stains '0'
@@ -332,6 +340,7 @@ FactoryGirl.define do
     tearing '0'
     warp '0'
     water_damage '0'
+    return_to 'Return value'
 
     trait :invalid do
       gauge 'invalid gauge value'

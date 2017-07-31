@@ -278,6 +278,38 @@ class ResponsesController < ActionController::Base
     render template: "responses/processing_classes_response.xml.builder", layout: false, status: 200
   end
 
+  def push_filmdb_objects
+    xml = request.body.read
+    @success = true
+    @status = 200
+    @message = "SUCCESS"
+
+    @results = PhysicalObjectsHelper.parse_xml(xml)
+    @failures = @results['failed'] || []
+    if @failures.any?
+      @message = "FAILURES: #{@failures.size}\n"
+      @failures.each do |failure|
+        @message += "Row #{failure[0]}: #{failure[1].class}\n"
+        @message += "#{failure[1].inspect}\n"
+        @message += "#{failure[1].errors.full_messages}\n"
+        if failure[1].is_a?(PhysicalObject) && failure[1].ensure_tm&.errors.any?
+          @message += "#{failure[1].ensure_tm.inspect}\n"
+          @message += "#{failure[1].ensure_tm.errors.full_messages}\n"
+        end
+      end
+      spreadsheet = @results[:spreadsheet]
+      if spreadsheet
+        spreadsheet.batches.destroy_all
+        spreadsheet.bins.destroy_all
+        spreadsheet.boxes.destroy_all
+        spreadsheet.destroy
+      end
+      @success = false
+    end
+
+    render plain: @message, status: @status
+  end
+
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?

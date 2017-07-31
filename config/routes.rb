@@ -121,6 +121,7 @@ Pod::Application.routes.draw do
   get 'responses/objects/avalon_url/:group_key_id', to: 'responses#avalon_url', as: 'pull_avalon_url'
   get 'responses/objects/digitizing_entity/:mdpi_barcode', to: 'responses#digitizing_entity', as: 'pull_digitizing_entity'
   get 'responses/processing_classes', to: 'responses#processing_classes', as: 'responses_processing_classes'
+  post 'responses/objects/push_filmdb_objects', to: 'responses#push_filmdb_objects', as: 'push_filmdb_objects'
 
   get 'quality_control/statuses/:status', to: 'quality_control#index', as: 'quality_control_status'
   get 'quality_control/', to: 'quality_control#index', as: 'quality_control_index'

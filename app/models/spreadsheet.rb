@@ -3,6 +3,7 @@
 #
 class Spreadsheet < ActiveRecord::Base
 
+  has_many :batches, dependent: :nullify
   has_many :bins
   has_many :boxes
   has_many :physical_objects, dependent: :destroy

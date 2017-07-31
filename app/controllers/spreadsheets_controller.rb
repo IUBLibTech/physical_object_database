@@ -67,6 +67,7 @@ class SpreadsheetsController < ApplicationController
     end
 
     def set_associated_objects
+      @batches = @spreadsheet.batches
       @bins = @spreadsheet.bins
       @boxes = @spreadsheet.boxes
       @physical_objects = @spreadsheet.physical_objects
