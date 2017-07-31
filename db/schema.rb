@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170504182115) do
+ActiveRecord::Schema.define(version: 20170727114726) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -72,9 +72,11 @@ ActiveRecord::Schema.define(version: 20170504182115) do
     t.integer  "workflow_index",  limit: 4
     t.string   "destination",     limit: 255
     t.string   "format",          limit: 255
+    t.integer  "spreadsheet_id",  limit: 4
   end
 
   add_index "batches", ["destination"], name: "index_batches_on_destination", using: :btree
+  add_index "batches", ["spreadsheet_id"], name: "index_batches_on_spreadsheet_id", using: :btree
   add_index "batches", ["workflow_status"], name: "index_batches_on_workflow_status", using: :btree
 
   create_table "betacam_tms", force: :cascade do |t|
@@ -847,6 +849,7 @@ ActiveRecord::Schema.define(version: 20170504182115) do
     t.string "state", limit: 255
   end
 
+  add_foreign_key "batches", "spreadsheets"
   add_foreign_key "doFiles", "doParts", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doFiles_ibfk_1"
   add_foreign_key "doFiles", "doParts", column: "partNumber", primary_key: "partNumber", name: "doFiles_ibfk_1"
   add_foreign_key "doParts", "doObjects", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doParts_ibfk_1"

@@ -12,15 +12,15 @@ class FilmTm < ActiveRecord::Base
   BIN_FORMAT = true
   # TM simple fields
   SIMPLE_FIELDS = ['gauge', 'footage', 'frame_rate', 'sound', 'clean', 'resolution', 'workflow', 'on_demand', 'return_on_original_reel', 'brittle', 'broken', 'channeling', 'color_fade', 'cue_marks', 'dirty', 'edge_damage', 'holes', 'peeling', 'perforation_damage', 'rusty', 'scratches', 'soundtrack_damage', 'splice_damage', 'stains', 'sticky', 'tape_residue', 'tearing', 'warp', 'water_damage', 'mold', 'shrinkage', 'ad_strip', 'missing_footage', 'miscellaneous', 'return_to']
-  GAUGE_VALUES = hashify ['8mm', 'super 8mm', '9.5mm', '16mm', 'super 16mm', '28mm', '35mm', '35/32mm', '70mm']
+  GAUGE_VALUES = hashify ['8mm', 'Super 8mm', '9.5mm', '16mm', 'Super 16mm', '28mm', '35mm', '35/32mm', '70mm']
   FRAME_RATE_VALUES = hashify ['', '16 fps', '18 fps', '24 fps']
   SOUND_VALUES = hashify ['', 'Sound', 'Silent']
-  CLEAN_VALUES = hashify ['', 'true', 'false', 'Hand clean only']
+  CLEAN_VALUES = hashify ['', 'Yes', 'No', 'Hand clean only']
   RESOLUTION_VALUES = hashify ['', '2k', '4k', '5k']
   WORKFLOW_VALUES = hashify ['', '1', '2', 'evaluate']
-  ON_DEMAND_VALUES = hashify ['', 'true', 'false']
-  RETURN_ON_ORIGINAL_REEL_VALUES = hashify ['', 'true', 'false']
-  MOLD_VALUES = hashify ['', 'true', 'false', 'Treated']
+  ON_DEMAND_VALUES = hashify ['', 'Yes', 'No']
+  RETURN_ON_ORIGINAL_REEL_VALUES = hashify ['', 'Yes', 'No']
+  MOLD_VALUES = hashify ['', 'Yes', 'No', 'Treated']
   AD_STRIP_VALUES = hashify ['', '0.0', '0.5', '1.0', '1.5', '2.0', '2.5', '3.0']
   CONDITION_RATINGS = hashify ['0', '1', '2', '3', '4']
   BRITTLE_VALUES = CONDITION_RATINGS
@@ -77,7 +77,12 @@ class FilmTm < ActiveRecord::Base
     one_point85: '1.85:1',
     two_point35: '2.35:1',
     two_point39: '2.39:1',
-    two_point59: '2.59:1'
+    two_point59: '2.59:1',
+    sound_mono: 'Mono',
+    sound_stereo: 'Stereo',
+    sound_surround: 'Surround',
+    sound_multi_track: 'Multi-track',
+    sound_dual: 'Dual'
   }
   MANIFEST_EXPORT = {
     'Year' => :year,

@@ -953,4 +953,38 @@ describe ResponsesController do
       end
     end
   end
+
+  describe "#push_filmdb_objects" do
+    before(:each) { post :push_filmdb_objects, request_xml, content_type: 'application/xml' }
+    context 'with valid xml' do
+      let(:request_xml) { File.read('spec/fixtures/filmdb.xml') }
+      it "sets @success to true" do
+        expect(assigns(:success)).to eq true
+      end
+      it "sets @message to success" do
+        expect(assigns(:message)).to match /success/i
+      end
+      it "persists a spreadsheet" do
+        expect(assigns(:results)[:spreadsheet]).to be_persisted
+      end
+      it "renders something" do
+        expect(response.body).to match /success/i
+      end
+    end
+    context 'with invalid xml' do
+      let(:request_xml) { File.read('spec/fixtures/filmdb_bad.xml') }
+      it 'sets @success to false' do
+        expect(assigns(:success)).to eq false
+      end
+      it 'sets @message to failure' do
+        expect(assigns(:message)).to match /fail/i
+      end
+      it 'does not persist spreadsheet' do
+        expect(assigns(:results)[:spreadsheet]).not_to be_persisted
+      end
+      it 'renders something' do
+        expect(response.body).to match /fail/i
+      end
+    end
+  end
 end

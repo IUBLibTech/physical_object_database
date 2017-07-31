@@ -1,4 +1,5 @@
 class Batch < ActiveRecord::Base
+        belongs_to :spreadsheet
 	has_many :bins
 	has_many :workflow_statuses, :dependent => :destroy
 

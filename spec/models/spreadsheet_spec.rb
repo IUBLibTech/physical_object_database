@@ -3,6 +3,7 @@ describe Spreadsheet do
   let(:valid_spreadsheet) { FactoryGirl.build :spreadsheet }
   let(:box) { FactoryGirl.create :box, spreadsheet: spreadsheet }
   let(:bin) { FactoryGirl.create :bin, spreadsheet: spreadsheet }
+  let(:batch) { FactoryGirl.create :batch, spreadsheet: spreadsheet }
   let(:physical_object) { FactoryGirl.create :physical_object, :cdr, spreadsheet: spreadsheet }
 
   it "gets a valid object from FactoryGirl" do
@@ -28,6 +29,14 @@ describe Spreadsheet do
   end
 
   describe "relationships:" do
+    it "has many batches" do
+      expect(valid_spreadsheet.batches.size).to eq 0
+    end
+    specify "batches are NOT deleted upon spreadsheet deletion" do
+      batch_id = batch.id
+      spreadsheet.destroy
+      expect(Batch.where(id: batch_id)).not_to be_empty
+    end
     it "has many bins" do
       expect(valid_spreadsheet.bins.size).to eq 0
     end

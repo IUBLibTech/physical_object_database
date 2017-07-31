@@ -34,6 +34,14 @@
     </td>
   </tr>
   <tr>
+    <th>Imported from spreadsheet</th>
+    <td>
+    <% if @batch.spreadsheet %>
+      <%= link_to("#{@batch.spreadsheet.filename}", @batch.spreadsheet) if policy(@batch.spreadsheet).show? %>
+    <% end %>
+    </td>
+  </tr>
+  <tr>
     <th>Objects Count</th>
     <td><%= @batch.physical_objects_count %></td>
   </tr>
