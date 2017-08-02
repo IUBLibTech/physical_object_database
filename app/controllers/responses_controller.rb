@@ -287,16 +287,7 @@ class ResponsesController < ActionController::Base
     @results = PhysicalObjectsHelper.parse_xml(xml)
     @failures = @results['failed'] || []
     if @failures.any?
-      @message = "FAILURES: #{@failures.size}\n"
-      @failures.each do |failure|
-        @message += "Row #{failure[0]}: #{failure[1].class}\n"
-        @message += "#{failure[1].inspect}\n"
-        @message += "#{failure[1].errors.full_messages}\n"
-        if failure[1].is_a?(PhysicalObject) && failure[1].ensure_tm&.errors.any?
-          @message += "#{failure[1].ensure_tm.inspect}\n"
-          @message += "#{failure[1].ensure_tm.errors.full_messages}\n"
-        end
-      end
+      @message = failures_to_hashes.to_json
       spreadsheet = @results[:spreadsheet]
       if spreadsheet
         spreadsheet.batches.destroy_all
@@ -341,4 +332,13 @@ class ResponsesController < ActionController::Base
       end
     end
 
+    def failures_to_hashes
+      @failures.map do |failure|
+        { row: failure[0],
+          class: failure[1].class.to_s,
+          errors: failure[1].errors.full_messages,
+          attributes: failure[1].attributes
+        }.stringify_keys
+      end
+    end
 end
