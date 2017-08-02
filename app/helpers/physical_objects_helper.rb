@@ -35,7 +35,7 @@ module PhysicalObjectsHelper
     results = {}
     batch_lookups = { 'Batch identifier' => 'identifier', 'Batch description' => 'description' }
     bin_lookups = { 'Bin barcode' => 'mdpiBarcode', 'Bin identifier' => 'identifier' }
-    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Mold' => 'mold', 'Ad strip' => 'adStrip', 'Return to' => 'returnTo'
+    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Mold' => 'mold', 'Ad strip' => 'adStrip', 'Return to' => 'returnTo', 'Anamorphic' => 'anamorphic', 'Conservation actions' => 'conservationActions', 'Track count' => 'trackCount', 'Format duration' => 'duration'
      }
     # FIXME: add workflow, on_demand, return_on_original_reel
     multivalued_fieldsets = {
@@ -47,6 +47,7 @@ module PhysicalObjectsHelper
         '2.35:1' => 'aspectRatios/ratio_2_35_1',
         '2.39:1' => 'aspectRatios/ratio_2_39_1',
         '2.59:1' => 'aspectRatios/ratio_2_59_1',
+        '2.66:1' => 'aspectRatios/ratio_2_66_1',
       },
       'Film generation' => {
         'Projection print' => 'generations/projectionPrint',
@@ -66,14 +67,12 @@ module PhysicalObjectsHelper
         'Master' => 'generations/master',
         'Mezzanine' => 'generations/mezzanine',
         'Negative' => 'generations/negative',
-        'Optical sound track' => 'generations/OpticalSoundTrack',
+        'Optical soundtrack' => 'generations/OpticalSoundTrack',
         'Original' => 'generations/original',
         'Outs and trims' => 'generations/outsAndTrims',
         'Positive' => 'generations/positive',
         'Reversal' => 'generations/reversal',
         'Separation master' => 'generations/separationMaster',
-        'Mixed generation' => 'generations/mixed',
-        'Original camera' => 'generations/originalCamera',
         'Work print' => 'generations/workPrint',
       },
       'Base' => {
@@ -83,7 +82,7 @@ module PhysicalObjectsHelper
         'Mixed' => 'bases/mixed',
       },
       'Color' => {
-        'Bw' => 'color/blackAndWhite',
+        'Black and white' => 'color/blackAndWhite',
         'Toned' => 'color/blackAndWhiteToned',
         'Tinted' => 'color/blackAndWhiteTinted',
         'Hand coloring' => 'color/handColoring',
@@ -100,20 +99,31 @@ module PhysicalObjectsHelper
         'Mono' => 'soundConfigurations/mono',
         'Stereo' => 'soundConfigurations/stereo',
         'Surround' => 'soundConfigurations/surround',
-        'Multi-track' => 'soundConfigurations/multiTrack',
-        'Dual' => 'soundConfigurations/dual',
+        'Multi-track (i.e. Maurer)' => 'soundConfigurations/multiTrack',
+        'Dual mono' => 'soundConfigurations/dual',
       },
       'Sound format type' => {
         'Optical' => 'soundFormats/optical',
-        'Optical variable area' => 'soundFormats/opticalVariableArea',
-        'Optical variable density' => 'soundFormats/opticalVariableDensity',
+        'Optical: variable area' => 'soundFormats/opticalVariableArea',
+        'Optical: variable density' => 'soundFormats/opticalVariableDensity',
         'Magnetic' => 'soundFormats/magnetic',
-        'Mixed sound format' => 'soundFormats/mixed',
-        'Digital sdds' => 'soundFormats/digitalSdds',
-        'Digital dts' => 'soundFormats/digitalDts',
-        'Digital dolby digital' => 'soundFormats/dolbyDigital',
+        'Digital: SDDS' => 'soundFormats/digitalSdds',
+        'Digital: DTS' => 'soundFormats/digitalDts',
+        'Digital: Dolby Digital' => 'soundFormats/dolbyDigital',
+        'Digital: Dolby A' => 'soundFormats/dolbyA',
+        'Digital: Dolby SR' => 'soundFormats/dolbySr',
         'Sound on separate media' => 'soundFormats/soundOnSeparateMedia',
       },
+      'Stock' => {
+        'Agfa' => 'stocks/agfa',
+        'Ansco' => 'stocks/ansco',
+        'Dupont' => 'stocks/dupont',
+        'Orwo' => 'stocks/orwo',
+        'Fuji' => 'stocks/fuji',
+        'Gaevert' => 'stocks/gaevert',
+        'Kodak' => 'stocks/kodak',
+        'Ferrania' => 'stocks/ferrania',
+      }
     }
     condition_ratings = {
       'Brittle' => 'conditions/condition[type/text()="Brittle"]/value',
@@ -247,7 +257,7 @@ module PhysicalObjectsHelper
           batch_id = batch.id unless batch.nil?
 # FIXME: read batch description, if available?
           if batch_id.nil? && r['Batch identifier'].present?
-            batch = Batch.new(identifier: r['Batch identifier'], description: r['Batch description'])
+            batch = Batch.new(identifier: r['Batch identifier'], description: r['Batch description'], format: r[PhysicalObject.human_attribute_name("format")])
             # FIXME: add test for batch creation?
             batch.spreadsheet = spreadsheet
             batch.save # FIXME: catch failure case for batch save?  what about bin save?
@@ -259,7 +269,7 @@ module PhysicalObjectsHelper
           bin_id = bin.id unless bin.nil?
 #FIXME: read bin description, if available?
           if bin_id.nil? && r["Bin barcode"].to_i > 0
-            bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: r["Bin identifier"], description: "Created by spreadsheet upload of " + filename + " at " + Time.now.to_s.split(" ")[0,2].join(" ") + ", Row " + (index + 1).to_s, batch_id: batch_id)
+            bin = Bin.new(mdpi_barcode: r["Bin barcode"].to_i, identifier: r["Bin identifier"], description: "Created by spreadsheet upload of " + filename + " at " + Time.now.to_s.split(" ")[0,2].join(" ") + ", Row " + (index + 1).to_s, batch_id: batch_id, format: r[PhysicalObject.human_attribute_name("format")])
             bin.spreadsheet = spreadsheet
             bin.save
             bin_id = bin.id

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727114726) do
+ActiveRecord::Schema.define(version: 20170731171419) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -338,8 +338,8 @@ ActiveRecord::Schema.define(version: 20170727114726) do
 
   create_table "film_tms", force: :cascade do |t|
     t.string   "gauge",                    limit: 255
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
     t.boolean  "projection_print"
     t.boolean  "a_roll"
     t.boolean  "b_roll"
@@ -364,8 +364,6 @@ ActiveRecord::Schema.define(version: 20170727114726) do
     t.boolean  "reversal"
     t.boolean  "work_print"
     t.boolean  "separation_master"
-    t.boolean  "mixed_generation"
-    t.boolean  "original_camera"
     t.string   "footage",                  limit: 255
     t.boolean  "acetate"
     t.boolean  "polyester"
@@ -392,7 +390,6 @@ ActiveRecord::Schema.define(version: 20170727114726) do
     t.boolean  "two_point35"
     t.boolean  "two_point39"
     t.boolean  "two_point59"
-    t.boolean  "anamorphic"
     t.string   "sound",                    limit: 255
     t.boolean  "optical"
     t.boolean  "optical_variable_area"
@@ -402,7 +399,6 @@ ActiveRecord::Schema.define(version: 20170727114726) do
     t.boolean  "digital_dts"
     t.boolean  "digital_dolby_digital"
     t.boolean  "sound_on_separate_media"
-    t.boolean  "mixed_sound_format"
     t.string   "clean",                    limit: 255
     t.string   "resolution",               limit: 255
     t.string   "workflow",                 limit: 255
@@ -445,6 +441,21 @@ ActiveRecord::Schema.define(version: 20170727114726) do
     t.boolean  "sound_surround"
     t.boolean  "sound_multi_track"
     t.boolean  "sound_dual"
+    t.boolean  "two_point66"
+    t.string   "anamorphic",               limit: 255
+    t.boolean  "digital_dolby_a"
+    t.boolean  "digital_dolby_sr"
+    t.string   "track_count",              limit: 255
+    t.string   "format_duration",          limit: 255
+    t.boolean  "stock_agfa"
+    t.boolean  "stock_ansco"
+    t.boolean  "stock_dupont"
+    t.boolean  "stock_orwo"
+    t.boolean  "stock_fuji"
+    t.boolean  "stock_gevaert"
+    t.boolean  "stock_kodak"
+    t.boolean  "stock_ferrania"
+    t.text     "conservation_actions",     limit: 65535
   end
 
   create_table "group_keys", force: :cascade do |t|
