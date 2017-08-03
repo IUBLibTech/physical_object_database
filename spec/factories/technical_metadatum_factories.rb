@@ -351,6 +351,10 @@ FactoryGirl.define do
     stock_gevaert false
     stock_kodak false
     stock_ferrania false
+    stock_three_m false
+    stock_agfa_gevaert false
+    stock_pathe false
+    stock_unknown false
     conservation_actions ''
 
     trait :invalid do

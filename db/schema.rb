@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170803154346) do
+ActiveRecord::Schema.define(version: 20170803193830) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -456,6 +456,10 @@ ActiveRecord::Schema.define(version: 20170803154346) do
     t.boolean  "stock_kodak"
     t.boolean  "stock_ferrania"
     t.text     "conservation_actions",     limit: 65535
+    t.boolean  "stock_three_m"
+    t.boolean  "stock_agfa_gevaert"
+    t.boolean  "stock_pathe"
+    t.boolean  "stock_unknown"
   end
 
   create_table "group_keys", force: :cascade do |t|

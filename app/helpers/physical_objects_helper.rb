@@ -123,6 +123,10 @@ module PhysicalObjectsHelper
         'Gaevert' => 'stocks/gaevert',
         'Kodak' => 'stocks/kodak',
         'Ferrania' => 'stocks/ferrania',
+        '3M' => 'stocks/three_m', # FIXME: verify with Andrew 4 new stock values
+        'Agfa-Gevaert' => 'stocks/agfa_gevaert', # FIXME: verify with Andrew 4 new stock values
+        'Pathe' => 'stocks/pathe', # FIXME: verify with Andrew 4 new stock values
+        'Unknown' => 'stocks/unknown', # FIXME: verify with Andrew 4 new stock values
       }
     }
     condition_ratings = {
