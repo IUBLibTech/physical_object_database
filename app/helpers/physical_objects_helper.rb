@@ -292,9 +292,16 @@ module PhysicalObjectsHelper
           group_total = r["Group total"].to_i
           group_total = 1 if group_total.zero?
           if current_group_key.blank?
-            group_key_id = nil
+            if film_title > 0
+              group_key = PhysicalObjectsHelper.group_key_for_filmdb_title(film_title)
+              group_key.group_total = group_total
+              group_key.save
+              group_key_id = group_key.id
+            else
+              group_key_id = nil
+            end
           elsif current_group_key != previous_group_key
-            group_key = GroupKey.new
+            group_key = PhysicalObjectsHelper.group_key_for_filmdb_title(film_title)
             group_key.group_total = group_total
             group_key.save
             group_key_id = group_key.id
@@ -406,4 +413,11 @@ module PhysicalObjectsHelper
     {"succeeded" => succeeded, "failed" => failed, spreadsheet: spreadsheet}
   end
 
+  def PhysicalObjectsHelper.group_key_for_filmdb_title(title_id)
+    group_key = GroupKey.where(filmdb_title_id: title_id).first
+    if group_key.nil?
+      group_key = GroupKey.create(filmdb_title_id: title_id)
+    end
+    group_key
+  end
 end

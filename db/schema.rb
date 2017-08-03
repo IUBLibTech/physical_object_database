@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170731171419) do
+ActiveRecord::Schema.define(version: 20170803154346) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -461,8 +461,9 @@ ActiveRecord::Schema.define(version: 20170731171419) do
   create_table "group_keys", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "group_total", limit: 4
-    t.string   "avalon_url",  limit: 255
+    t.integer  "group_total",     limit: 4
+    t.string   "avalon_url",      limit: 255
+    t.integer  "filmdb_title_id", limit: 4
   end
 
   create_table "half_inch_open_reel_video_tms", force: :cascade do |t|
