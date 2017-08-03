@@ -22,6 +22,11 @@ describe GroupKey do
 	expect(valid_group_key).not_to be_valid
       end
     end
+    describe "filmdb_title_id" do
+      it "exists" do
+        expect(valid_group_key).to respond_to(:filmdb_title_id)
+      end
+    end
   end
 
   describe "has relationships:" do
