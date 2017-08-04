@@ -54,7 +54,7 @@ class FilmTm < ActiveRecord::Base
   ASPECT_RATIO_FIELDS = ['one_point33', 'one_point37', 'one_point66', 'one_point85', 'two_point35', 'two_point39', 'two_point59', 'two_point66']
   SOUND_FIELD_FIELDS = ['sound_mono', 'sound_stereo', 'sound_surround', 'sound_multi_track', 'sound_dual']
   SOUND_FORMAT_TYPE_FIELDS = ['optical', 'optical_variable_area', 'optical_variable_density', 'magnetic', 'digital_sdds', 'digital_dts', 'digital_dolby_digital', 'sound_on_separate_media']
-  STOCK_FIELDS = ['stock_agfa', 'stock_ansco', 'stock_dupont', 'stock_orwo', 'stock_fuji', 'stock_gevaert', 'stock_kodak', 'stock_ferrania']
+  STOCK_FIELDS = ['stock_agfa', 'stock_ansco', 'stock_dupont', 'stock_orwo', 'stock_fuji', 'stock_gevaert', 'stock_kodak', 'stock_ferrania', 'stock_three_m', 'stock_agfa_gevaert', 'stock_pathe', 'stock_unknown']
   MULTIVALUED_FIELDSETS = {
     'Film generation' => :FILM_GENERATION_FIELDS,
     'Base' => :BASE_FIELDS,
@@ -105,6 +105,11 @@ class FilmTm < ActiveRecord::Base
     stock_gevaert: 'Gevaert',
     stock_kodak: 'Kodak',
     stock_ferrania: 'Ferrania',
+    stock_three_m: '3M',
+    stock_agfa_gevaert: 'Agfa-Gevaert',
+    stock_pathe: 'Pathe',
+    stock_unknown: 'Unknown',
+
   }
   MANIFEST_EXPORT = {
     'Year' => :year,
