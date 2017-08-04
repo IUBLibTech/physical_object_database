@@ -977,13 +977,14 @@ describe ResponsesController do
         expect(assigns(:success)).to eq false
       end
       it 'sets @message to failure' do
-        expect(assigns(:message)).to match /fail/i
+        expect(assigns(:message)).to match /errors/i
       end
       it 'does not persist spreadsheet' do
         expect(assigns(:results)[:spreadsheet]).not_to be_persisted
       end
-      it 'renders something' do
-        expect(response.body).to match /fail/i
+      it 'renders json' do
+        expect{JSON::parse(response.body)}.not_to raise_error
+        expect(JSON::parse(response.body)).to be_a Array
       end
     end
   end
