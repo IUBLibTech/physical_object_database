@@ -41,6 +41,10 @@ class ReturnsController < ApplicationController
               if @po.shipment
                 flash[:notice] += "<br/>Associated to shipment: #{@po.shipment.identifier}".html_safe
               end
+              if @po.format == 'Film'
+                flash[:notice] += "<br/>Unit: #{@po.unit&.abbreviation}: #{@po.unit&.name}".html_safe
+                flash[:notice] += "<br/>Return to: #{@po.ensure_tm&.return_to}".html_safe
+              end
             else
               flash[:warning] = "There was a problem updating the workflow status for Physical object (#{params[:mdpi_barcode]}); no changes were made.  Errors: #{@po.errors.full_messages.inspect}"
             end
@@ -77,6 +81,10 @@ class ReturnsController < ApplicationController
 			else
 				msg = "Physical Object with barcode #{@po.mdpi_barcode} was successfully returned. ".html_safe +
 						(@po.has_ephemera ? (@po.ephemera_returned ? 'Its ephemera was also returned.' : "<b class='warning'>Its ephemera was NOT returned.</b>".html_safe) : '')
+                                if @po.format == 'Film'
+                                  msg += "<br/>Unit: #{@po.unit&.abbreviation}: #{@po.unit&.name}".html_safe
+                                  msg += "<br/>Return to: #{@po.ensure_tm&.return_to}".html_safe
+                                end
 				flash[:notice] = msg
 			end
 		end
