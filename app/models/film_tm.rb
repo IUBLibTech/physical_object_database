@@ -109,6 +109,7 @@ class FilmTm < ActiveRecord::Base
     stock_agfa_gevaert: 'Agfa-Gevaert',
     stock_pathe: 'Pathe',
     stock_unknown: 'Unknown',
+    ad_strip: 'AD strip',
 
   }
   MANIFEST_EXPORT = {
