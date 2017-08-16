@@ -46,7 +46,7 @@ module TechnicalMetadatumModule
   GENRE_AUTO_ACCEPT_DAYS = {
     audio: 40,
     video: 30,
-    film: 7
+    film: 30
   }
 
   # For including classes: set empty default values, which class can override
