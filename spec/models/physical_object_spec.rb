@@ -5,6 +5,7 @@ describe PhysicalObject do
   let(:barcoded_po) { FactoryGirl.create :physical_object, :cdr, :barcoded }
   let(:grouped_po) { FactoryGirl.build :physical_object, :cdr, group_key: po.group_key }
   let(:video_po) { FactoryGirl.build :physical_object, :umatic }
+  let(:film_po) { FactoryGirl.build :physical_object, :film }
   let(:boxable_po) { FactoryGirl.build :physical_object, :boxable, :barcoded }
   let(:binnable_po) { FactoryGirl.build :physical_object, :binnable, :barcoded }
   let(:valid_po) { FactoryGirl.build :physical_object, :cdr, unit: Unit.where(campus: 'Bloomington').first }
@@ -468,6 +469,7 @@ describe "has required attributes:" do
         before(:each) do
           valid_po.digital_start = Time.now
           video_po.digital_start = Time.now
+          film_po.digital_start = Time.now
         end
         specify "for an audio format, returns audio delay" do
           expect(valid_po.auto_accept).not_to be_nil
@@ -476,6 +478,10 @@ describe "has required attributes:" do
         specify "for video format, returns video delay" do
           expect(video_po.auto_accept).not_to be_nil
           expect(video_po.auto_accept).to eq (video_po.digital_start + TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:video].days)
+        end
+        specify "for film format, returns film  delay" do
+          expect(film_po.auto_accept).not_to be_nil
+          expect(film_po.auto_accept).to eq (film_po.digital_start + TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:film].days)
         end
       end
     end
