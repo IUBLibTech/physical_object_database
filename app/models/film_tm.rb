@@ -54,6 +54,7 @@ class FilmTm < ActiveRecord::Base
   ASPECT_RATIO_FIELDS = ['one_point33', 'one_point37', 'one_point66', 'one_point85', 'two_point35', 'two_point39', 'two_point59', 'two_point66']
   SOUND_FIELD_FIELDS = ['sound_mono', 'sound_stereo', 'sound_surround', 'sound_multi_track', 'sound_dual']
   SOUND_FORMAT_TYPE_FIELDS = ['optical', 'optical_variable_area', 'optical_variable_density', 'magnetic', 'digital_sdds', 'digital_dts', 'digital_dolby_digital', 'sound_on_separate_media']
+  SOUND_CONTENT_TYPE_FIELDS = ['music_track', 'effects_track', 'composite_track', 'dialog', 'outtakes']
   STOCK_FIELDS = ['stock_agfa', 'stock_ansco', 'stock_dupont', 'stock_orwo', 'stock_fuji', 'stock_gevaert', 'stock_kodak', 'stock_ferrania', 'stock_three_m', 'stock_agfa_gevaert', 'stock_pathe', 'stock_unknown']
   MULTIVALUED_FIELDSETS = {
     'Film generation' => :FILM_GENERATION_FIELDS,
@@ -62,6 +63,7 @@ class FilmTm < ActiveRecord::Base
     'Aspect ratio' => :ASPECT_RATIO_FIELDS,
     'Sound field' => :SOUND_FIELD_FIELDS,
     'Sound format type' => :SOUND_FORMAT_TYPE_FIELDS,
+    'Sound content type' => :SOUND_CONTENT_TYPE_FIELDS,
     'Preservation problems' => :PRESERVATION_PROBLEM_FIELDS,
     'Stock' => :STOCK_FIELDS
   }
@@ -124,6 +126,7 @@ class FilmTm < ActiveRecord::Base
     'Anamorphic' => :anamorphic,
     'Sound' => :sound,
     'Sound format type' => :sound_format_type,
+    'Sound content type' => :sound_content_type,
     'Sound field' => :sound_field,
     'Clean' => :clean,
     'Resolution' => :resolution,

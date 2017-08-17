@@ -161,8 +161,8 @@
             <soundOnSeparateMedia>false</soundOnSeparateMedia>
           </soundFormats>
           <soundContent>
-            <musicTrack>false</musicTrack>
-            <effectsTrack>false</effectsTrack>
+            <musicTrack>true</musicTrack>
+            <effectsTrack>true</effectsTrack>
             <dialog>false</dialog>
             <compositeTrack>false</compositeTrack>
             <outtakes>false</outtakes>

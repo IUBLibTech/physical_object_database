@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170803193830) do
+ActiveRecord::Schema.define(version: 20170816191128) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -460,6 +460,11 @@ ActiveRecord::Schema.define(version: 20170803193830) do
     t.boolean  "stock_agfa_gevaert"
     t.boolean  "stock_pathe"
     t.boolean  "stock_unknown"
+    t.boolean  "music_track"
+    t.boolean  "effects_track"
+    t.boolean  "composite_track"
+    t.boolean  "dialog"
+    t.boolean  "outtakes"
   end
 
   create_table "group_keys", force: :cascade do |t|
@@ -865,9 +870,6 @@ ActiveRecord::Schema.define(version: 20170803193830) do
     t.string "state", limit: 255
   end
 
-  add_foreign_key "batches", "spreadsheets"
-  add_foreign_key "doFiles", "doParts", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doFiles_ibfk_1"
-  add_foreign_key "doFiles", "doParts", column: "partNumber", primary_key: "partNumber", name: "doFiles_ibfk_1"
   add_foreign_key "doParts", "doObjects", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doParts_ibfk_1"
   add_foreign_key "physical_objects", "shipments"
   add_foreign_key "picklists", "shipments"

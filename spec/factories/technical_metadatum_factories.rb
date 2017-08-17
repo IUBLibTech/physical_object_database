@@ -356,6 +356,11 @@ FactoryGirl.define do
     stock_pathe false
     stock_unknown false
     conservation_actions ''
+    music_track false
+    effects_track false
+    composite_track false
+    dialog false
+    outtakes false
 
     trait :invalid do
       gauge 'invalid gauge value'
