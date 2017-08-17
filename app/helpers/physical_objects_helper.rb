@@ -418,10 +418,9 @@ module PhysicalObjectsHelper
   end
 
   def PhysicalObjectsHelper.group_key_for_filmdb_title(title_id)
-    group_key = GroupKey.where(filmdb_title_id: title_id).first
-    if group_key.nil?
-      group_key = GroupKey.create(filmdb_title_id: title_id)
-    end
+    group_key = nil
+    group_key = GroupKey.where(filmdb_title_id: title_id).first if title_id.to_i > 0
+    group_key = GroupKey.create(filmdb_title_id: title_id) if group_key.nil?
     group_key
   end
 end
