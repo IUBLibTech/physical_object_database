@@ -11,8 +11,9 @@ class FilmTm < ActiveRecord::Base
   BOX_FORMAT = false
   BIN_FORMAT = true
   # TM simple fields
-  SIMPLE_FIELDS = ['gauge', 'footage', 'frame_rate', 'sound', 'clean', 'resolution', 'workflow', 'on_demand', 'return_on_original_reel', 'brittle', 'broken', 'channeling', 'color_fade', 'cue_marks', 'dirty', 'edge_damage', 'holes', 'peeling', 'perforation_damage', 'rusty', 'scratches', 'soundtrack_damage', 'splice_damage', 'stains', 'sticky', 'tape_residue', 'tearing', 'warp', 'water_damage', 'mold', 'shrinkage', 'ad_strip', 'missing_footage', 'miscellaneous', 'return_to', 'anamorphic', 'track_count', 'format_duration', 'conservation_actions']
+  SIMPLE_FIELDS = ['gauge', 'footage', 'frame_rate', 'sound', 'clean', 'resolution', 'color_space', 'workflow', 'on_demand', 'return_on_original_reel', 'brittle', 'broken', 'channeling', 'color_fade', 'cue_marks', 'dirty', 'edge_damage', 'holes', 'peeling', 'perforation_damage', 'rusty', 'scratches', 'soundtrack_damage', 'splice_damage', 'stains', 'sticky', 'tape_residue', 'tearing', 'warp', 'water_damage', 'mold', 'shrinkage', 'ad_strip', 'missing_footage', 'miscellaneous', 'return_to', 'anamorphic', 'track_count', 'format_duration', 'conservation_actions']
   ANAMORPHIC_VALUES = hashify ['', 'Yes', 'No']
+  # FIXME: add values list for color_space
   GAUGE_VALUES = hashify ['8mm', 'Super 8mm', '9.5mm', '16mm', 'Super 16mm', '28mm', '35mm', '35/32mm', '70mm']
   FRAME_RATE_VALUES = hashify ['', '16 fps', '18 fps', '24 fps']
   SOUND_VALUES = hashify ['', 'Sound', 'Silent']
@@ -130,6 +131,7 @@ class FilmTm < ActiveRecord::Base
     'Sound field' => :sound_field,
     'Clean' => :clean,
     'Resolution' => :resolution,
+    'Color space' => :color_space,
     'Workflow' => :workflow,
     'On demand' => :on_demand,
     'Return on original reel' => :return_on_original_reel,

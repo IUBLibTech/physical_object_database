@@ -31,7 +31,7 @@ describe FilmTm do
 
   describe "manifest export" do
     specify "has desired headers" do
-      expect(film_tm.manifest_headers).to eq ['Year', 'Gauge', 'Film generation', 'Footage', 'Base', 'Frame rate', 'Color', 'Aspect ratio', 'Anamorphic', 'Sound', 'Sound format type', 'Sound content type', 'Sound field', 'Clean', 'Resolution', 'Workflow', 'On demand', 'Return on original reel', 'Film condition', 'Mold', 'Shrinkage', 'AD strip', 'Missing footage', 'Track count', 'Format duration', 'Stock', 'Conservation actions - IU', 'Miscellaneous', 'Return to']
+      expect(film_tm.manifest_headers).to eq ['Year', 'Gauge', 'Film generation', 'Footage', 'Base', 'Frame rate', 'Color', 'Aspect ratio', 'Anamorphic', 'Sound', 'Sound format type', 'Sound content type', 'Sound field', 'Clean', 'Resolution', 'Color space', 'Workflow', 'On demand', 'Return on original reel', 'Film condition', 'Mold', 'Shrinkage', 'AD strip', 'Missing footage', 'Track count', 'Format duration', 'Stock', 'Conservation actions - IU', 'Miscellaneous', 'Return to']
     end
   end
 
