@@ -1,5 +1,6 @@
 # Does not inherit from ApplicationController to avoid requiring sign-in here
 class SessionsController < ActionController::Base
+  require 'net/http'
 
   def cas_reg
     "https://cas-reg.uits.iu.edu"

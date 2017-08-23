@@ -1,2 +1,4 @@
 qc_user: qcProcess
 qc_pass: processPassword
+filmdb_user: filmdb_user
+filmdb_pass: filmdb_pass
