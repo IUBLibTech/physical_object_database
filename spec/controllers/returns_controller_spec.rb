@@ -9,6 +9,9 @@ describe ReturnsController do
   let(:box) { FactoryGirl.create :box, bin: bin, format: bin.format }
   let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
   let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
+  let(:film_batch) { FactoryGirl.create :batch, identifier: "Film Batch", format: 'Film' }
+  let(:film_bin) { FactoryGirl.create :bin, batch: film_batch, format: 'Film', identifier: 'Film bin' }
+  let(:film_object) { FactoryGirl.create :physical_object, :film, :barcoded, bin: film_bin }
 
   before(:each) do
     batch.current_workflow_status = "Returned"
@@ -454,23 +457,79 @@ describe ReturnsController do
     context "on a Bin Returned to Staging Area" do
       before(:each) do
         bin.current_workflow_status = "Returned to Staging Area"
-        bin.save
+        bin.save!
+        film_bin.current_workflow_status = "Returned to Staging Area"
+        film_bin.save!
       end
       context "all objects Unpacked" do
-        before(:each) do
-          binned_object.current_workflow_status = "Unpacked"
-          binned_object.save
-          patch_action
+        context "for a non-Film" do
+          before(:each) do
+            binned_object.current_workflow_status = "Unpacked"
+            binned_object.save
+            patch_action
+          end
+          it "assigns @bin" do
+            expect(assigns(:bin)).to eq bin
+          end
+          it "updates bin workflow status to Unpacked" do
+            bin.reload
+            expect(bin.current_workflow_status).to eq "Unpacked"
+          end
+          it "redirects to return_bins action for batch" do
+            expect(response).to redirect_to return_bins_return_path(bin.batch.id)
+          end
         end
-        it "assigns @bin" do
-          expect(assigns(:bin)).to eq bin
-        end
-        it "updates bin workflow status to Unpacked" do
-          bin.reload
-          expect(bin.current_workflow_status).to eq "Unpacked"
-        end
-        it "redirects to return_bins action for batch" do
-          expect(response).to redirect_to return_bins_return_path(bin.batch.id)
+        context "for a Film" do
+          let(:result_struct) { Struct.new(:body) }
+          let(:failure_result) { result_struct.new('Failure text') }
+          let(:error_result) { result_struct.new('<filmdbService><error>Error text</error></filmdbService>') }
+          let(:success_result) { result_struct.new('<filmdbService><success>Success text</success></filmdbService>') }
+          before(:each) do
+            film_object.current_workflow_status = 'Unpacked'
+            film_object.save!
+          end
+          context "when FilmDB push fails" do
+            before(:each) do
+              allow_any_instance_of(Bin).to receive(:post_to_filmdb).and_return(failure_result)
+              patch :bin_unpacked, id: film_bin.id
+            end
+            it "sets a warning" do
+              expect(flash[:warning]).to match /^Failure/
+            end
+            it "does NOT update bin workflow status" do
+              film_bin.reload
+              expect(film_bin.current_workflow_status).not_to eq "Unpacked"
+            end
+          end
+          context "when FilmDB push errors" do
+            before(:each) do
+              allow_any_instance_of(Bin).to receive(:post_to_filmdb).and_return(error_result)
+              patch :bin_unpacked, id: film_bin.id
+            end
+            it "sets a warning" do
+              expect(flash[:warning]).to match /^Error/
+            end
+            it "does NOT update bin workflow status" do
+              film_bin.reload
+              expect(film_bin.current_workflow_status).not_to eq "Unpacked"
+            end
+          end
+          context "when FilmDB push succeeds" do
+            before(:each) do
+              allow_any_instance_of(Bin).to receive(:post_to_filmdb).and_return(success_result)
+              patch :bin_unpacked, id: film_bin.id
+            end
+            it "assigns @bin" do
+              expect(assigns(:bin)).to eq film_bin
+            end
+            it "updates bin workflow status to Unpacked" do
+              film_bin.reload
+              expect(film_bin.current_workflow_status).to eq "Unpacked"
+            end
+            it "redirects to return_bins action for batch" do
+              expect(response).to redirect_to return_bins_return_path(film_bin.batch.id)
+            end
+          end
         end
       end
       context "not all objects Unpacked" do

@@ -1,4 +1,6 @@
 class Bin < ActiveRecord::Base
+  require 'net/http'
+
 	default_scope { order(:identifier) }
 	after_initialize :default_values
         
@@ -115,4 +117,14 @@ class Bin < ActiveRecord::Base
     end
   end
 
+  def post_to_filmdb
+    return unless self.format == 'Film'
+    uri = URI.parse(Pod.config[:filmdb_update_url].to_s + self.mdpi_barcode.to_s)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = false # FIXME: change to true?
+    request = Net::HTTP::Post.new(uri.path)
+    request.basic_auth(Settings.filmdb_user, Settings.filmdb_pass)
+    result = http.request(request)
+    result
+  end
 end

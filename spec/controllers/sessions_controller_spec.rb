@@ -14,6 +14,11 @@ describe SessionsController do
   end
 
   describe "#new" do
+    before(:each) do
+      stub_request(:get, /cas.iu.edu/).
+        with(headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+        to_return(status: 200, body: "yes", headers: {})
+    end
     before(:each) { get :new }
     let(:cas) { "https://cas.iu.edu" }
     it "redirects to cas login" do
@@ -21,8 +26,13 @@ describe SessionsController do
     end
   end
   describe "#validate_login" do
-    before(:each) { get :validate_login, casticket: casticket }
     context "with invalid casticket" do
+      before(:each) do
+        stub_request(:get, /cas.iu.edu/).
+          with(headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+          to_return(status: 200, body: "no", headers: {})
+      end
+      before(:each) { get :validate_login, casticket: casticket }
       let(:casticket) { 'foo' }
       it "assigns @casticket" do
         expect(assigns(:casticket)).to eq casticket
@@ -34,7 +44,24 @@ describe SessionsController do
         expect(response).to redirect_to "#{root_url}denied.html"
       end
     end
-    #FIXME: test valid casticket, somehow?
+    context "with valid casticket" do
+      before(:each) do
+        stub_request(:get, /cas.iu.edu/).
+          with(headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+          to_return(status: 200, body: "yes--web_admin--", headers: {})
+      end
+      before(:each) { get :validate_login, casticket: casticket }
+      let(:casticket) { 'valid' }
+      it "assigns @casticket" do
+        expect(assigns(:casticket)).to eq casticket
+      end
+      it "assigns @resp=yes" do
+        expect(assigns(:resp)).to match /^yes/
+      end
+      it "redirects to root_url" do
+        expect(response).to redirect_to root_url
+      end
+    end
   end
   describe "#destroy" do
     let(:destroy_session) { delete :destroy }
