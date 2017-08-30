@@ -18,7 +18,7 @@ class FilmTm < ActiveRecord::Base
   FRAME_RATE_VALUES = hashify ['', '16 fps', '18 fps', '24 fps']
   SOUND_VALUES = hashify ['', 'Sound', 'Silent']
   CLEAN_VALUES = hashify ['', 'Yes', 'No', 'Hand clean only']
-  RESOLUTION_VALUES = hashify ['', '2k', '4k', '5k', 'HD', 'Sepmag']
+  RESOLUTION_VALUES = hashify ['', '2k', '4k', '5k', 'HD', 'Audio only']
   WORKFLOW_VALUES = hashify ['', '1', '2', 'evaluate']
   ON_DEMAND_VALUES = hashify ['', 'Yes', 'No']
   RETURN_ON_ORIGINAL_REEL_VALUES = hashify ['', 'Yes', 'No']
