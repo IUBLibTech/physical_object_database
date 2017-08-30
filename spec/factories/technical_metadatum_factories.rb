@@ -361,6 +361,7 @@ FactoryGirl.define do
     composite_track false
     dialog false
     outtakes false
+    color_space 'Logarithmic 10 bit'
 
     trait :invalid do
       gauge 'invalid gauge value'
