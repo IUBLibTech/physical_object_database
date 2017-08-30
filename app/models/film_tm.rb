@@ -135,7 +135,7 @@ class FilmTm < ActiveRecord::Base
     'Workflow' => :workflow,
     'On demand' => :on_demand,
     'Return on original reel' => :return_on_original_reel,
-    'Film condition' => :film_condition,
+    'Condition - IU' => :film_condition,
     'Mold' => :mold,
     'Shrinkage' => :shrinkage,
     'AD strip' => :ad_strip,
@@ -151,8 +151,18 @@ class FilmTm < ActiveRecord::Base
   include YearModule
 
   CONDITION_FIELDS = [:brittle, :broken, :channeling, :color_fade, :cue_marks, :dirty, :edge_damage, :holes, :peeling, :perforation_damage, :rusty, :scratches, :soundtrack_damage, :splice_damage, :stains, :sticky, :tape_residue, :tearing, :warp, :water_damage]
-  def film_condition
+  def rated_conditions
     CONDITION_FIELDS.select { |f| self.send(f).to_i > 0 }.map { |f| "#{f.to_s.capitalize}: #{self.send(f)}" }.join(', ')
+  end
+
+  def film_condition
+    [preservation_problem, rated_conditions].select(&:present?).join(', ')
+  end
+
+  # override #preservation_problems since Memnon only wants them listed in film_condition
+  # #preservation_problem still works
+  def preservation_problems
+    ''
   end
 
   def default_values

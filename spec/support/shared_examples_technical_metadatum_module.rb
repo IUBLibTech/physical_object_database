@@ -169,8 +169,12 @@ shared_examples "includes TechnicalMetadatumModule" do |tm_object|
   end
 
   describe "#preservation_problems" do
-    it "returns humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS)" do
-     expect(tm_object.preservation_problems).to eq tm_object.humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS)
+    it "returns humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS) or blank, for film" do
+     if tm_object.class == FilmTm
+       expect(tm_object.preservation_problems).to be_blank
+     else
+       expect(tm_object.preservation_problems).to eq tm_object.humanize_boolean_fieldset(:PRESERVATION_PROBLEM_FIELDS)
+     end
    end
   end
 
