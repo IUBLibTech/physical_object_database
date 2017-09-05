@@ -13,12 +13,12 @@ class FilmTm < ActiveRecord::Base
   # TM simple fields
   SIMPLE_FIELDS = ['gauge', 'footage', 'frame_rate', 'sound', 'clean', 'resolution', 'color_space', 'workflow', 'on_demand', 'return_on_original_reel', 'brittle', 'broken', 'channeling', 'color_fade', 'cue_marks', 'dirty', 'edge_damage', 'holes', 'peeling', 'perforation_damage', 'rusty', 'scratches', 'soundtrack_damage', 'splice_damage', 'stains', 'sticky', 'tape_residue', 'tearing', 'warp', 'water_damage', 'mold', 'shrinkage', 'ad_strip', 'missing_footage', 'miscellaneous', 'return_to', 'anamorphic', 'track_count', 'format_duration', 'conservation_actions']
   ANAMORPHIC_VALUES = hashify ['', 'Yes', 'No']
-  # FIXME: add values list for color_space
+  COLOR_SPACE_VALUES = hashify ['', 'Logarithmic 10 bit', 'Linear 10 bit', 'Linear 16 bit'] 
   GAUGE_VALUES = hashify ['8mm', 'Super 8mm', '9.5mm', '16mm', 'Super 16mm', '28mm', '35mm', '35/32mm', '70mm']
   FRAME_RATE_VALUES = hashify ['', '16 fps', '18 fps', '24 fps']
   SOUND_VALUES = hashify ['', 'Sound', 'Silent']
   CLEAN_VALUES = hashify ['', 'Yes', 'No', 'Hand clean only']
-  RESOLUTION_VALUES = hashify ['', '2k', '4k', '5k', 'HD', 'Sepmag']
+  RESOLUTION_VALUES = hashify ['', '2k', '4k', '5k', 'HD', 'Audio only']
   WORKFLOW_VALUES = hashify ['', '1', '2', 'evaluate']
   ON_DEMAND_VALUES = hashify ['', 'Yes', 'No']
   RETURN_ON_ORIGINAL_REEL_VALUES = hashify ['', 'Yes', 'No']
@@ -131,11 +131,11 @@ class FilmTm < ActiveRecord::Base
     'Sound field' => :sound_field,
     'Clean' => :clean,
     'Resolution' => :resolution,
-    'Color space' => :color_space,
+    'Sample encoding' => :color_space,
     'Workflow' => :workflow,
     'On demand' => :on_demand,
     'Return on original reel' => :return_on_original_reel,
-    'Film condition' => :film_condition,
+    'Condition - IU' => :film_condition,
     'Mold' => :mold,
     'Shrinkage' => :shrinkage,
     'AD strip' => :ad_strip,
@@ -151,8 +151,18 @@ class FilmTm < ActiveRecord::Base
   include YearModule
 
   CONDITION_FIELDS = [:brittle, :broken, :channeling, :color_fade, :cue_marks, :dirty, :edge_damage, :holes, :peeling, :perforation_damage, :rusty, :scratches, :soundtrack_damage, :splice_damage, :stains, :sticky, :tape_residue, :tearing, :warp, :water_damage]
-  def film_condition
+  def rated_conditions
     CONDITION_FIELDS.select { |f| self.send(f).to_i > 0 }.map { |f| "#{f.to_s.capitalize}: #{self.send(f)}" }.join(', ')
+  end
+
+  def film_condition
+    [preservation_problem, rated_conditions].select(&:present?).join(', ')
+  end
+
+  # override #preservation_problems since Memnon only wants them listed in film_condition
+  # #preservation_problem still works
+  def preservation_problems
+    ''
   end
 
   def default_values
@@ -171,6 +181,7 @@ class FilmTm < ActiveRecord::Base
     self.ad_strip ||= ''
     self.track_count ||= ''
     self.anamorphic ||= ''
+    self.color_space ||= ''
   end
 
   # damage field
