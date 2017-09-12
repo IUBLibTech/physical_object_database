@@ -290,7 +290,9 @@ FactoryGirl.define do
     anscochrome false
     eco false
     eastman false
+    one_point18 false
     one_point33 false
+    one_point36 false
     one_point37 false
     one_point66 false
     one_point85 false

@@ -319,6 +319,8 @@
             <ratio_2_35_1>false</ratio_2_35_1>
             <ratio_2_39_1>false</ratio_2_39_1>
             <ratio_2_59_1>false</ratio_2_59_1>
+            <ratio_1_36_1>false</ratio_1_36_1>
+            <ratio_1_18_1>false</ratio_18_1>
           </aspectRatios>
           <soundFormats>
             <optical>false</optical>
