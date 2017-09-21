@@ -52,7 +52,7 @@ class FilmTm < ActiveRecord::Base
   FILM_GENERATION_FIELDS = ['projection_print', 'a_roll', 'b_roll', 'c_roll', 'd_roll', 'answer_print', 'camera_original', 'composite', 'duplicate', 'edited', 'fine_grain_master', 'intermediate', 'kinescope', 'magnetic_track', 'master', 'mezzanine', 'negative', 'optical_sound_track', 'original', 'outs_and_trims', 'positive', 'reversal', 'work_print', 'separation_master']
   BASE_FIELDS = ['acetate', 'polyester', 'nitrate', 'mixed']
   COLOR_FIELDS = ['bw', 'toned', 'tinted', 'hand_coloring', 'stencil_coloring', 'color', 'ektachrome', 'kodachrome', 'technicolor', 'anscochrome', 'eco', 'eastman']
-  ASPECT_RATIO_FIELDS = ['one_point33', 'one_point37', 'one_point66', 'one_point85', 'two_point35', 'two_point39', 'two_point59', 'two_point66']
+  ASPECT_RATIO_FIELDS = ['one_point18', 'one_point33', 'one_point36', 'one_point37', 'one_point66', 'one_point85', 'two_point35', 'two_point39', 'two_point59', 'two_point66']
   SOUND_FIELD_FIELDS = ['sound_mono', 'sound_stereo', 'sound_surround', 'sound_multi_track', 'sound_dual']
   SOUND_FORMAT_TYPE_FIELDS = ['optical', 'optical_variable_area', 'optical_variable_density', 'magnetic', 'digital_sdds', 'digital_dts', 'digital_dolby_digital', 'sound_on_separate_media']
   SOUND_CONTENT_TYPE_FIELDS = ['music_track', 'effects_track', 'composite_track', 'dialog', 'outtakes']
@@ -78,7 +78,9 @@ class FilmTm < ActiveRecord::Base
     'Preservation problem fields' => 3
   }
   HUMANIZED_COLUMNS = {
+    one_point18: '1.18:1',
     one_point33: '1.33:1',
+    one_point36: '1.36:1',
     one_point37: '1.37:1',
     one_point66: '1.66:1',
     one_point85: '1.85:1',

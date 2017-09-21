@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170830150737) do
+ActiveRecord::Schema.define(version: 20170912133741) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -466,6 +466,8 @@ ActiveRecord::Schema.define(version: 20170830150737) do
     t.boolean  "dialog"
     t.boolean  "outtakes"
     t.string   "color_space",              limit: 255
+    t.boolean  "one_point36"
+    t.boolean  "one_point18"
   end
 
   create_table "group_keys", force: :cascade do |t|
