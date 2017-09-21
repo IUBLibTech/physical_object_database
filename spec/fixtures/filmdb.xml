@@ -13,7 +13,7 @@
       <physicalObjects>
         <physicalObject>
           <filmdbId>1</filmdbId>
-          <groupIdentifier>FDB00000001</groupIdentifier>
+          <titleId>75</titleId>
           <mdpiBarcode>40000000000028</mdpiBarcode>
           <iucatBarcode>30000065070611</iucatBarcode>
           <format>Film</format>
@@ -48,6 +48,7 @@
           <returnTo>In Storage (Awaiting Ingest)</returnTo>
           <resolution>4k</resolution>
           <clean>false</clean>
+          <returnOnOriginalReel>false</returnOnOriginalReel>
           <originalIdentifiers>
 	</originalIdentifiers>
           <editions>
