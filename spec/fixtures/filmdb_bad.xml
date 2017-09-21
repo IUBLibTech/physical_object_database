@@ -13,7 +13,7 @@
       <physicalObjects>
         <physicalObject>
           <filmdbId>1</filmdbId>
-          <groupIdentifier>FDB00000001</groupIdentifier>
+          <titleId>75</titleId>
           <mdpiBarcode>40000000000028</mdpiBarcode>
           <iucatBarcode>30000065070611</iucatBarcode>
           <format>Film</format>
@@ -47,6 +47,7 @@
           <returnTo>In Storage (Awaiting Ingest)</returnTo>
           <resolution>4k</resolution>
           <clean>false</clean>
+          <returnOnOriginalReel>false</returnOnOriginalReel>
           <originalIdentifiers>
 	</originalIdentifiers>
           <editions>
@@ -148,6 +149,8 @@
             <ratio_2_35_1>false</ratio_2_35_1>
             <ratio_2_39_1>false</ratio_2_39_1>
             <ratio_2_59_1>false</ratio_2_59_1>
+            <ratio_1_36_1>false</ratio_1_36_1>
+            <ratio_1_18_1>false</ratio_18_1>
           </aspectRatios>
           <soundFormats>
             <optical>false</optical>

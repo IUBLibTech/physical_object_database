@@ -35,13 +35,13 @@ module PhysicalObjectsHelper
     results = {}
     batch_lookups = { 'Batch identifier' => 'identifier', 'Batch description' => 'description' }
     bin_lookups = { 'Bin barcode' => 'mdpiBarcode', 'Bin identifier' => 'identifier' }
-    # FIXME: verify colorSpace mapping
-    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Color space' => 'colorSpace', 'Mold' => 'mold', 'AD strip' => 'conditions/adStrip', 'Return to' => 'returnTo', 'Anamorphic' => 'anamorphic', 'Conservation actions' => 'conservationActions', 'Track count' => 'trackCount', 'Format duration' => 'duration', 'Footage' => 'footage', 'Title' => 'title', 'Collection name' => 'collectionName', 'Title control number' => 'iucatTitleControlNumber', 'Film title' => 'titleId',
+    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Color space' => 'colorSpace', 'Mold' => 'mold', 'AD strip' => 'conditions/adStrip', 'Return to' => 'returnTo', 'Anamorphic' => 'anamorphic', 'Conservation actions' => 'conservationActions', 'Track count' => 'trackCount', 'Format duration' => 'duration', 'Footage' => 'footage', 'Title' => 'title', 'Collection name' => 'collectionName', 'Title control number' => 'iucatTitleControlNumber', 'Film title' => 'titleId', 'Return on original reel' => 'returnOnOriginalReel'
      }
-    # FIXME: add workflow, on_demand, return_on_original_reel
     multivalued_fieldsets = {
       'Aspect ratio' => {
+        '1.18:1' => 'aspectRatios/ratio_1_18_1',
         '1.33:1' => 'aspectRatios/ratio_1_33_1',
+        '1.36:1' => 'aspectRatios/ratio_1_36_1',
         '1.37:1' => 'aspectRatios/ratio_1_37_1',
         '1.66:1' => 'aspectRatios/ratio_1_66_1',
         '1.85:1' => 'aspectRatios/ratio_1_85_1',
