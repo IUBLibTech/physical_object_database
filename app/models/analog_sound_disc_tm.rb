@@ -76,7 +76,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
         material: "Plastic",
         equalization: ""
       },
-    "Aluminum Disc" => { diameter: nil,
+    "Aluminum Disc" => {
         diameter: 'Unknown',
         speed: 'Unknown',
         groove_size: 'Coarse',
