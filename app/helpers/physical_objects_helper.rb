@@ -75,6 +75,7 @@ module PhysicalObjectsHelper
         'Reversal' => 'generations/reversal',
         'Separation master' => 'generations/separationMaster',
         'Work print' => 'generations/workPrint',
+        'Other' => 'generations/other',
       },
       'Base' => {
         'Acetate' => 'bases/acetate',
@@ -109,6 +110,7 @@ module PhysicalObjectsHelper
         'Composite track' => 'soundContent/compositeTrack',
         'Dialog' => 'soundContent/dialog',
         'Outtakes' => 'soundContent/outtakes',
+        'Narration' => 'soundContent/narration',
       },
       'Sound format type' => {
         'Optical' => 'soundFormats/optical',

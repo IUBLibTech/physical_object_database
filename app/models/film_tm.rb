@@ -49,13 +49,13 @@ class FilmTm < ActiveRecord::Base
 
   # TM Boolean fieldsets
   PRESERVATION_PROBLEM_FIELDS = ['poor_wind', 'not_on_core_or_reel', 'lacquer_treated', 'replasticized', 'dusty', 'spoking']
-  FILM_GENERATION_FIELDS = ['projection_print', 'a_roll', 'b_roll', 'c_roll', 'd_roll', 'answer_print', 'camera_original', 'composite', 'duplicate', 'edited', 'fine_grain_master', 'intermediate', 'kinescope', 'magnetic_track', 'master', 'mezzanine', 'negative', 'optical_sound_track', 'original', 'outs_and_trims', 'positive', 'reversal', 'work_print', 'separation_master']
+  FILM_GENERATION_FIELDS = ['projection_print', 'a_roll', 'b_roll', 'c_roll', 'd_roll', 'answer_print', 'camera_original', 'composite', 'duplicate', 'edited', 'fine_grain_master', 'intermediate', 'kinescope', 'magnetic_track', 'master', 'mezzanine', 'negative', 'optical_sound_track', 'original', 'outs_and_trims', 'positive', 'reversal', 'work_print', 'separation_master', 'other_generation']
   BASE_FIELDS = ['acetate', 'polyester', 'nitrate', 'mixed']
   COLOR_FIELDS = ['bw', 'toned', 'tinted', 'hand_coloring', 'stencil_coloring', 'color', 'ektachrome', 'kodachrome', 'technicolor', 'anscochrome', 'eco', 'eastman']
   ASPECT_RATIO_FIELDS = ['one_point18', 'one_point33', 'one_point36', 'one_point37', 'one_point66', 'one_point85', 'two_point35', 'two_point39', 'two_point59', 'two_point66']
   SOUND_FIELD_FIELDS = ['sound_mono', 'sound_stereo', 'sound_surround', 'sound_multi_track', 'sound_dual']
   SOUND_FORMAT_TYPE_FIELDS = ['optical', 'optical_variable_area', 'optical_variable_density', 'magnetic', 'digital_sdds', 'digital_dts', 'digital_dolby_digital', 'sound_on_separate_media']
-  SOUND_CONTENT_TYPE_FIELDS = ['music_track', 'effects_track', 'composite_track', 'dialog', 'outtakes']
+  SOUND_CONTENT_TYPE_FIELDS = ['music_track', 'effects_track', 'composite_track', 'dialog', 'outtakes', 'narration']
   STOCK_FIELDS = ['stock_agfa', 'stock_ansco', 'stock_dupont', 'stock_orwo', 'stock_fuji', 'stock_gevaert', 'stock_kodak', 'stock_ferrania', 'stock_three_m', 'stock_agfa_gevaert', 'stock_pathe', 'stock_unknown']
   MULTIVALUED_FIELDSETS = {
     'Film generation' => :FILM_GENERATION_FIELDS,
@@ -115,7 +115,7 @@ class FilmTm < ActiveRecord::Base
     stock_pathe: 'Pathe',
     stock_unknown: 'Unknown',
     ad_strip: 'AD strip',
-
+    other_generation: 'Other',
   }
   MANIFEST_EXPORT = {
     'Year' => :year,
