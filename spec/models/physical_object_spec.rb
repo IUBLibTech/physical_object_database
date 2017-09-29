@@ -21,6 +21,7 @@ describe PhysicalObject do
     'Cylinder' => :cylinder_tm,
     'DAT' => :dat_tm,
     'LP' => :analog_sound_disc_tm,
+    'Aluminum Disc' => :analog_sound_disc_tm,
     'Lacquer Disc' => :analog_sound_disc_tm,
     '45' => :analog_sound_disc_tm,
     '78' => :analog_sound_disc_tm,

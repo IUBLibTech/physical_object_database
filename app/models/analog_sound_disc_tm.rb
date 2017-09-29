@@ -10,7 +10,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
     turnover: false,
     rolloff: false,
   })
-  TM_FORMAT = ['LP', 'Lacquer Disc', '45', '78', 'Other Analog Sound Disc']
+  TM_FORMAT = ['LP', 'Aluminum Disc', 'Lacquer Disc', '45', '78', 'Other Analog Sound Disc']
   TM_SUBTYPE = true
   TM_GENRE = :audio
   TM_PARTIAL = 'show_analog_sound_disc_tm'
@@ -33,7 +33,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
   EQUALIZATION_VALUES = hashify ['', 'RIAA', 'ffrr LP 1953', 'CCIR', 'NAB', 'NAB+80Hz', 'FLAT', 'US MID 30', 'WESTREX', 'HMW', 'ffrr 1949', 'Early DECCA', 'COLUMBIA', 'BSI', 'Other', 'Unknown']
   SOUND_FIELD_VALUES = hashify ['Mono', 'Stereo', 'Unknown']
   # (subtype is hidden in form)
-  SUBTYPE_VALUES = hashify ['LP', 'Lacquer Disc', '45', '78', 'Other Analog Sound Disc']
+  SUBTYPE_VALUES = hashify TM_FORMAT
   # TM Boolean fieldsets
   PRESERVATION_PROBLEM_FIELDS = [
     "delamination", "exudation", "oxidation"
@@ -75,6 +75,18 @@ class AnalogSoundDiscTm < ActiveRecord::Base
         coating: "N/A",
         material: "Plastic",
         equalization: ""
+      },
+    "Aluminum Disc" => { diameter: nil,
+        diameter: 'Unknown',
+        speed: 'Unknown',
+        groove_size: 'Coarse',
+        groove_orientation: "Lateral",
+        sound_field: "Mono",
+        recording_method: "Cut",
+        substrate: "Aluminum",
+        coating: "N/A",
+        material: "N/A",
+        equalization: "Other"
       },
     "Lacquer Disc" => { diameter: nil,
         speed: nil,
