@@ -364,6 +364,8 @@ FactoryGirl.define do
     dialog false
     outtakes false
     color_space 'Logarithmic 10 bit'
+    narration false
+    other_generation false
 
     trait :invalid do
       gauge 'invalid gauge value'
