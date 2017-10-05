@@ -371,6 +371,25 @@ describe "has required attributes:" do
     end
   end
 
+  describe "Digital workflow fields" do
+    describe "#digital_workflow_status" do
+      it 'returns a string' do
+        expect(valid_po.digital_workflow_status).to be_a String
+      end
+    end
+    describe "#digital_workflow_category" do
+      it 'returns a string' do
+        expect(valid_po.digital_workflow_category).to be_a String
+      end
+      it 'accepts String versions of the acceptable enum integers' do
+        expect { valid_po.digital_workflow_category = '0' }.not_to raise_error
+      end
+      it 'rejcts String versions of the unacceptable enum integers' do
+        expect { valid_po.digital_workflow_category = '9' }.to raise_error ArgumentError
+      end
+    end
+  end
+
   describe "mdpi_barcode" do
     it "accepts 0 values" do
       valid_po.mdpi_barcode = 0

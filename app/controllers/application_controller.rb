@@ -87,10 +87,12 @@ class ApplicationController < ActionController::Base
         :has_ephemera, :ephemera_returned, :author, :catalog_key, :collection_name, :generation, :oclc_number,
         :other_copies, :year, :bin, :bin_id, :unit, :unit_id, :current_workflow_status, :picklist_id,
         :shipment, :shipment_id, :spreadsheet, :spreadsheet_id, :box, :box_id,
+        :digital_workflow_status, :digital_workflow_category,
         condition_statuses_attributes: [:id, :condition_status_template_id, :notes, :active, :user, :_destroy],
         notes_attributes: [:id, :body, :user, :export, :_destroy],
         # SEARCH multi-select values
-        generation: [], workflow_status: []
+        generation: [], workflow_status: [],
+        digital_workflow_status: [], digital_workflow_category: []
         # multi-select _id attributes are handled in the search controller
         )
     end

@@ -1,6 +1,6 @@
 class PhysicalObject < ActiveRecord::Base
   XML_INCLUDE = [:group_total, :carrier_stream_index, :current_workflow_status]
-  XML_EXCLUDE = [:box_id, :bin_id, :picklist_id, :spreadsheet_id, :unit_id, :workflow_index, :group_key_id, :workflow_status, :format_duration]
+  XML_EXCLUDE = [:box_id, :bin_id, :picklist_id, :spreadsheet_id, :unit_id, :workflow_index, :group_key_id, :workflow_status, :format_duration, :digital_workflow_status, :digital_workflow_category]
   include XMLExportModule
   include WorkflowStatusModule
   include ConditionStatusModule
@@ -40,6 +40,8 @@ class PhysicalObject < ActiveRecord::Base
   accepts_nested_attributes_for :notes, allow_destroy: true
   # below line supports kludge workaround for bug POD-648
   accepts_nested_attributes_for :workflow_statuses, allow_destroy: false
+
+  enum digital_workflow_category: [:not_started, :started, :succeeded, :failed]
 
   # default per_page value can be overriden in a request
   self.per_page = 50
@@ -335,6 +337,15 @@ class PhysicalObject < ActiveRecord::Base
     self.digital_provenance
   end
 
+  # Fixes issue with enum not recognizing stringified version of enum integer
+  def digital_workflow_category=(val)
+    if val.in? PhysicalObject.digital_workflow_categories.values.map(&:to_s)
+      super(val.to_i)
+    else
+      super
+    end
+  end
+
   def display_workflow_status
     if self.current_workflow_status.in? ["Binned", "Boxed"]
       if self.container_bin
@@ -548,6 +559,7 @@ private
     self.generation ||= ""
     self.group_position ||= 1
     self.mdpi_barcode ||= 0
+    self.digital_workflow_status = ''
     self.ensure_digiprov
   end
 

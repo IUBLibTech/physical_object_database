@@ -90,6 +90,7 @@ class ResponsesController < ActionController::Base
         if ds.state == DigitalStatus::DIGITAL_STATUS_START
           ds.physical_object.update_attributes(digital_start: ds.updated_at)
         end
+        ds.update_physical_object
         @status = 200
         @success = true
       else
