@@ -295,6 +295,16 @@ describe ResponsesController do
         it "creates a digital status" do
           expect(barcoded_object.digital_statuses.size).to eq 1
         end
+        it 'updates physical object digital workflow status' do
+          expect(barcoded_object.digital_workflow_status).to be_blank
+          barcoded_object.reload
+          expect(barcoded_object.digital_workflow_status).to eq state
+        end
+        it 'updates physical object digital workflow category' do
+          expect(barcoded_object.digital_workflow_category).to eq 'not_started'
+          barcoded_object.reload
+          expect(barcoded_object.digital_workflow_category).to eq category
+        end
         it "renders success XML" do
           expect(response.body).to match /<success>true/
         end
@@ -304,6 +314,7 @@ describe ResponsesController do
       end
       context "for digital_status_start value" do
         let(:state) { DigitalStatus::DIGITAL_STATUS_START }
+        let(:category) { 'started' }
         include_examples "valid xml examples"
         it "updates physical_object.digital_start" do
           expect(barcoded_object.digital_start).to be_nil
@@ -312,14 +323,14 @@ describe ResponsesController do
         end
       end
       context "for other values" do
-        let(:state) { 'accept' }
+        let(:state) { 'to_delete' }
+        let(:category) { 'failed' }
         include_examples "valid xml examples"
         it "does not update physical_object.digital_start" do
           expect(barcoded_object.digital_start).to be_nil
           barcoded_object.reload
           expect(barcoded_object.digital_start).to be_nil
         end
-
       end
     end
   end
