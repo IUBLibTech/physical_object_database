@@ -2,7 +2,8 @@
 <% title_limit=42 %>
 <table id="po_list">
   <tr class="header">
-    <th>Current Status</th>
+    <th>Physical Status</th>
+    <th>Digital Status</th>
     <th>MDPI barcode</th>
     <th>Call number</th>
     <th>Title</th>
@@ -15,6 +16,7 @@
     <% css_class = "#{count.odd? ? 'odd' : 'even'}" %>
     <tr class='<%= css_class %>'>
      <td><%= po.display_workflow_status %></td>
+     <td><%= po.digital_workflow_category&.titleize %></td>
      <td><%= po.mdpi_barcode %></td>
      <td><%= po.call_number %></td>
      <td title="<%= po.title.to_s.length <= title_limit ? "" : po.title %>"><%= po.title.to_s.length <= title_limit ? po.title : po.title[0,title_limit - 3] + '...'%></td>
