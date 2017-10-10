@@ -999,4 +999,30 @@ describe ResponsesController do
       end
     end
   end
+
+  describe "#digital_workflow" do
+    context "with a valid barcode" do
+      before(:each) { get :digital_workflow, mdpi_barcode: barcoded_object.mdpi_barcode }
+      it "assigns @physical_object" do
+        expect(assigns(:physical_object)).to eq barcoded_object
+      end
+      it "returns success=true XML" do
+        expect(response.body).to match /<success.*true<\/success>/
+      end
+      it "returns data XML" do
+        expect(response.body).to match /<digital_start/
+      end
+      it "returns a 200 status" do
+        expect(response).to have_http_status(200)
+      end
+    end
+    context "with a 0 barcode" do
+      before(:each) { get :digital_workflow, mdpi_barcode: physical_object.mdpi_barcode }
+      include_examples "barcode 0"
+    end
+    context "with an unmatched barcode" do
+      before(:each) { get :digital_workflow, mdpi_barcode: unmatched_barcode }
+      include_examples "barcode not found"
+    end
+  end
 end
