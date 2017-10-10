@@ -66,12 +66,23 @@
     </td>
   </tr>
   <tr>
-    <th>Workflow Status</th>
+    <th>Physical Workflow Status</th>
     <td>
       <% if @search_mode %>
         <%= f.select :workflow_status, WorkflowStatusTemplate.where(object_type: 'Physical Object', name: PhysicalObject::COLLECTION_OWNER_STATUSES[0..2]).order(:sequence_index).collect { |wst| [wst.name, wst.name] }, { }, multiple: true, size: WorkflowStatusTemplate.where(object_type: 'Physical Object', name: PhysicalObject::COLLECTION_OWNER_STATUSES[0..2]).size %>
       <% else %>
         <%= @physical_object.display_workflow_status %>
+      <% end %>
+    </td>
+  </tr>
+
+  <tr>
+    <th>Digital Workflow Category</th>
+    <td>
+      <% if @search_mode %>
+        <%= f.select :digital_workflow_category, PhysicalObject.digital_workflow_categories.collect { |h,k| [h.titleize, k] }, { }, multiple: true, size: PhysicalObject.digital_workflow_categories.size %>
+      <% else %>
+        <%= @physical_object.digital_workflow_category&.titleize %>
       <% end %>
     </td>
   </tr>
