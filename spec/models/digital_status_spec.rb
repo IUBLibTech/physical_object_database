@@ -1,5 +1,6 @@
 describe DigitalStatus do
   let(:po) { FactoryGirl.create(:physical_object, :cdr, :barcoded) }
+  let(:ds) { FactoryGirl.create(:digital_status, physical_object: po, physical_object_mdpi_barcode: po.mdpi_barcode) }
   let(:valid_ds) { FactoryGirl.build(:digital_status, :valid) }
   let(:invalid_ds) { FactoryGirl.build(:digital_status, :invalid) }
 
@@ -311,6 +312,39 @@ describe DigitalStatus do
             expect(DigitalStatus.actionable_status?(s)).to eq false
           end
         end
+      end
+    end
+  end
+
+  describe "#update_physical_object" do
+    before(:each) do
+      ds.state = state
+      ds.save!
+    end
+    context 'with a state -> category mapping available' do
+      let(:state) { 'rejected' }
+      it 'updates digital_workflow_status' do
+        original_status = po.digital_workflow_status
+        ds.update_physical_object
+        expect(po.digital_workflow_status).not_to eq original_status
+      end
+      it 'updates digital_workflow_category' do
+        original_category = po.digital_workflow_category
+        ds.update_physical_object
+        expect(po.digital_workflow_category).not_to eq original_category
+      end
+    end
+    context 'without a state -> category mapping' do
+      let(:state) { 'made-up state' }
+      it 'updates digital_workflow_status' do
+        original_status = po.digital_workflow_status
+        ds.update_physical_object
+        expect(po.digital_workflow_status).not_to eq original_status
+      end
+      it 'does not update digital_workflow_category' do
+        original_category = po.digital_workflow_category
+        ds.update_physical_object
+        expect(po.digital_workflow_category).to eq original_category
       end
     end
   end

@@ -31,6 +31,7 @@
         <Cell><Data ss:Type="String"><%= po.year %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.generation %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.workflow_status %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.digital_workflow_category&.titleize %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.updated_at %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.has_ephemera? %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.other_notes(false) %></Data></Cell>

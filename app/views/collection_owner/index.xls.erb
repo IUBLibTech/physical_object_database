@@ -24,7 +24,8 @@
         <Cell><Data ss:Type="String">Call Number</Data></Cell>
         <Cell><Data ss:Type="String">IUCAT Barcode</Data></Cell>
         <Cell><Data ss:Type="String">Year</Data></Cell>
-        <Cell><Data ss:Type="String">Workflow Status</Data></Cell>
+        <Cell><Data ss:Type="String">Physical Status</Data></Cell>
+        <Cell><Data ss:Type="String">Digital Status</Data></Cell>
         <Cell><Data ss:Type="String">Author</Data></Cell>
         <Cell><Data ss:Type="String">Title Control Number</Data></Cell>
         <Cell><Data ss:Type="String">Catalog Key</Data></Cell>
@@ -57,6 +58,7 @@
         <Cell><Data ss:Type="String"><%= po.iucat_barcode %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.year %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.workflow_status %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= po.digital_workflow_category&.titleize %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.author %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.title_control_number %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.catalog_key %></Data></Cell>

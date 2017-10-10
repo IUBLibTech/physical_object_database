@@ -213,5 +213,19 @@ class DigitalStatus < ActiveRecord::Base
 	def set_mdpi_barcode_from_object
 		self.physical_object_mdpi_barcode = self.physical_object.mdpi_barcode if self.physical_object && self.physical_object_mdpi_barcode.blank?
 	end
+
+  def update_physical_object
+    physical_object.update_attribute(:digital_workflow_status, state)
+    states_to_category = {
+      ['transferred'] => 1,
+      ['qc_passed', 'to_distribute', 'dist_film', 'dist_kinsey', 'distributing', 'dist_wait', 'dist_failed', 'to_archive', 'archived'] => 2,
+      ['rejected', 'failed', 'qc_failed', 'to_delete', 'deleted'] => 3
+    }
+    states_to_category.each do |states, category|
+      if state.in? states
+        physical_object.update_attribute(:digital_workflow_category, category)
+      end
+    end
+  end
 end
 
