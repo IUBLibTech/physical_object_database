@@ -13,6 +13,10 @@
       <th>Filename<%= dp_requirement(:filename) %></th>
       <td>
         <%= f.text_field :filename, { class: 'filename', readonly: !@edit_mode, disabled: dp_na(:filename) } %>
+        <%= submit_tag "#{f.object.filename}", :type => 'button', class: 'filename_button', 'data-clipboard-text' => "#{f.object.filename}" %>
+        <script type="text/javascript">
+          var clip = new Clipboard('.filename_button');
+        </script>
       </td>
     </tr>
     <tr>
