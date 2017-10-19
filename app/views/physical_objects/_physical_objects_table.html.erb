@@ -63,6 +63,12 @@
       <% elsif !@group_key.nil? %>
         <%= link_to("Remove", ungroup_physical_object_path(po), method: :post, data: {confirm: 'Are you sure you want to remove this Physical Object from the Group Key?'}) if policy(po).ungroup? %>
     <% end %>
+    <% if policy(po.ensure_digiprov).show? %>
+      <br/>
+      Digiprov: <%= link_to("Show", digital_provenance_path(po.id), class: 'action show') %>
+      <%= link_to("Edit", edit_digital_provenance_path(po.id), :class => 'action edit') if policy(po.ensure_digiprov).edit? %>
+      <br/>
+    <% end %>
     <% if (@search && !po.staging_requested) %>
       <div id='div_<%= "stage_#{po.id}" %>' class="inline">| <%= link_to("Stage",  quality_control_ajax_stage_path(po.id), method: :post, remote: true, id: "stage_#{po.id}", class: 'stage_link', data: { type: :json }) if policy(:quality_control).stage? %></div>
     <% end %>
