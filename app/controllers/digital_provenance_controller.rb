@@ -8,11 +8,12 @@ class DigitalProvenanceController < ApplicationController
 	before_action :normalize_dates, only: [:update]
 
 	def show
-		
+	  @hide_dp_na = true
 	end
 
 	def edit
 		@edit_mode = true
+		@hide_dp_na = true
 	end
 
 	def update
@@ -35,6 +36,7 @@ class DigitalProvenanceController < ApplicationController
 			redirect_to action: :show
 		else
 			@edit_mode = true
+                        @hide_dp_na = true
 			render action: :edit 
 		end
 	end
