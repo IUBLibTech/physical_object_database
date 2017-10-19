@@ -154,7 +154,7 @@ class PhysicalObjectsController < ApplicationController
       end
       if updated 
         flash[:notice] = "Physical Object successfully updated".html_safe
-        redirect_to(action: 'index')
+        redirect_to @physical_object
       else
         @edit_mode = true
         @display_assigned = true
