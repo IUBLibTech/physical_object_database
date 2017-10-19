@@ -13,6 +13,9 @@ class DigitalProvenanceController < ApplicationController
 
 	def edit
 		@edit_mode = true
+           if @physical_object&.format == 'Cylinder' && @dp&.digital_file_provenances.none?
+             @dp.ensure_dfp
+           end
 	end
 
 	def update
