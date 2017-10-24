@@ -17,10 +17,22 @@
 </h2>
 <div>
   <div class="left half">
-    Current Automated QC Status: <b><%= %></b>
+    Next object in bin:
+    <% if @next_po %>
+      <%= @next_po.call_number %> (<%= @next_po.mdpi_barcode %>)
+      <%= link_to('Show', digital_provenance_path(@next_po.id)) %> | 
+      <%= link_to('Edit', edit_digital_provenance_path(@next_po.id)) %>
+    <% else %>
+      None
+    <% end %>
   </div>
   <div class="left half">
-    Stage this objects digital files
+    Next bin:
+    <% if @next_bin %>
+      <%= link_to("#{@next_bin.identifier} (#{@next_bin.mdpi_barcode})", bin_path(@next_bin)) %>
+    <% else %>
+      None
+    <% end %>
   </div>
 </div>
 <%= render(partial: 'digital_provenance/show_digital_provenance') %>

@@ -27,6 +27,7 @@ describe DigitalProvenanceController do
     it "renders :show" do
       expect(response).to render_template :show
     end
+    pending "calls set_nexts"
   end
 
   describe "GET edit" do
@@ -41,6 +42,7 @@ describe DigitalProvenanceController do
     it "renders :edit" do
       expect(response).to render_template :edit
     end
+    pending "calls set_nexts"
   end
 
   describe "PATCH update" do

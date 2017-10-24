@@ -2,6 +2,7 @@ class DigitalProvenanceController < ApplicationController
 	include ApplicationHelper
 
 	before_action :set_po, only: [:show, :edit, :update]
+	before_action :set_nexts, only: [:show, :edit]
 
 	# converts the mm/dd/yyyy format of jquery datepicker field into something that rails can
 	# correctly parse into a datetime
@@ -54,5 +55,16 @@ class DigitalProvenanceController < ApplicationController
 		@dp = @physical_object.digital_provenance
 		authorize @dp
 	end
+
+  def set_nexts
+    @bin = @physical_object&.bin
+    @batch = @bin&.batch
+    if @bin
+      @next_po = @bin.physical_objects.order(:call_number).select { |po| po.call_number > @physical_object.call_number }.first
+    end
+    if @batch
+      @next_bin = @batch.bins.order(:identifier).select { |bin| bin.identifier > @bin.identifier }.first
+    end
+  end
 	
 end
