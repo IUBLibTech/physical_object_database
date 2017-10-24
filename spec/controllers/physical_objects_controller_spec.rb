@@ -330,7 +330,7 @@ describe PhysicalObjectsController do
         expect(physical_object.title).to eq "Updated title"
       end
       it "redirects to the updated object" do
-        expect(response).to redirect_to(controller: :physical_objects, action: :index) 
+        expect(response).to redirect_to(controller: :physical_objects, action: :show, id: physical_object.id) 
       end
       it "saved digiprov" do
         physical_object.reload
