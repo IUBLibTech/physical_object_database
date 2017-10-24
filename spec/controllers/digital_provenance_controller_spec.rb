@@ -21,9 +21,13 @@ describe DigitalProvenanceController do
   describe "GET show" do
     before(:each) { get :show, id: physical_object.id }
     include_examples "assigns objects"
+    it 'assigns @hide_dp_na' do
+      expect(assigns(:hide_dp_na)).to eq true
+    end
     it "renders :show" do
       expect(response).to render_template :show
     end
+    pending "calls set_nexts"
   end
 
   describe "GET edit" do
@@ -32,9 +36,13 @@ describe DigitalProvenanceController do
     it "assigns @edit_mode" do
       expect(assigns(:edit_mode)).to eq true
     end
-    it "renders :show" do
+    it 'assigns @hide_dp_na' do
+      expect(assigns(:hide_dp_na)).to eq true
+    end
+    it "renders :edit" do
       expect(response).to render_template :edit
     end
+    pending "calls set_nexts"
   end
 
   describe "PATCH update" do
@@ -74,6 +82,9 @@ describe DigitalProvenanceController do
       before(:each) { patch :update, id: physical_object.id, digital_provenance: { digital_file_provenances_attributes: { "1" => {} } } }
       it "assigns @edit_mode" do
         expect(assigns(:edit_mode)).to eq true
+      end
+      it 'assigns @hide_dp_na' do
+        expect(assigns(:hide_dp_na)).to eq true
       end
       it "re-renders edit action" do
         expect(response).to render_template :edit

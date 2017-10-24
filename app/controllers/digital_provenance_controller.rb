@@ -2,17 +2,22 @@ class DigitalProvenanceController < ApplicationController
 	include ApplicationHelper
 
 	before_action :set_po, only: [:show, :edit, :update]
+	before_action :set_nexts, only: [:show, :edit]
 
 	# converts the mm/dd/yyyy format of jquery datepicker field into something that rails can
 	# correctly parse into a datetime
 	before_action :normalize_dates, only: [:update]
 
 	def show
-		
+	  @hide_dp_na = true
 	end
 
 	def edit
 		@edit_mode = true
+		@hide_dp_na = true
+           if @physical_object&.format == 'Cylinder' && @dp&.digital_file_provenances.none?
+             @dp.ensure_dfp
+           end
 	end
 
 	def update
@@ -35,6 +40,7 @@ class DigitalProvenanceController < ApplicationController
 			redirect_to action: :show
 		else
 			@edit_mode = true
+                        @hide_dp_na = true
 			render action: :edit 
 		end
 	end
@@ -52,5 +58,16 @@ class DigitalProvenanceController < ApplicationController
 		@dp = @physical_object.digital_provenance
 		authorize @dp
 	end
+
+  def set_nexts
+    @bin = @physical_object&.bin
+    @batch = @bin&.batch
+    if @bin
+      @next_po = @bin.physical_objects.order(:call_number).select { |po| po.call_number > @physical_object.call_number }.first
+    end
+    if @batch
+      @next_bin = @batch.bins.order(:identifier).select { |bin| bin.identifier > @bin.identifier }.first
+    end
+  end
 	
 end

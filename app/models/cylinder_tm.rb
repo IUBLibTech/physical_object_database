@@ -7,9 +7,9 @@ class CylinderTm < ActiveRecord::Base
     speed_used: false,
     volume_units: false,
     stylus_size: false,
-    turnover: false,
-    rolloff: false,
-    rumble_filter: false,
+    turnover: nil,
+    rolloff: nil,
+    rumble_filter: nil,
     reference_tone_frequency: false,
   }) 
   # PROVENANCE_REQUIREMENTS unchanged from default

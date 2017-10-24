@@ -9,89 +9,93 @@
       </td>
     </tr>
     <% end %>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:filename) && @hide_dp_na %>>
       <th>Filename<%= dp_requirement(:filename) %></th>
       <td>
         <%= f.text_field :filename, { class: 'filename', readonly: !@edit_mode, disabled: dp_na(:filename) } %>
+        <%= submit_tag "#{f.object.filename}", :type => 'button', class: 'filename_button', 'data-clipboard-text' => "#{f.object.filename}" %>
+        <script type="text/javascript">
+          var clip = new Clipboard('.filename_button');
+        </script>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:date_digitized) && @hide_dp_na %>>
       <th>Date Digitized<%= dp_requirement(:date_digitized) %></th>
       <td>
         <%= f.text_field :display_date_digitized, readonly: !@edit_mode, disabled: dp_na(:date_digitized), class: "date" %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:comment) && @hide_dp_na %>>
       <th>Comment<%= dp_requirement(:comments) %></th>
       <td>
         <%= f.text_area :comment, cols: '37', readonly: !@edit_mode, disabled: dp_na(:comment) %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:created_by) && @hide_dp_na %>>
       <th>Created By<%= dp_requirement(:created_by) %></th>
       <td>
         <%= f.text_field :created_by, readonly: !@edit_mode, disabled: dp_na(:created_by) %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:speed_used) && @hide_dp_na %>>
       <th>Speed Used<%= dp_requirement(:speed_used) %></th>
       <td>
         <%= f.text_field :speed_used, readonly: !@edit_mode, disabled: dp_na(:speed_used), value: dp_na(:speed_used) ? nil : f.object.speed_used %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:tape_fluxivity) && @hide_dp_na %>>
       <th>Reference Fluxivity (nWb/m)<%= dp_requirement(:tape_fluxivity) %></th>
       <td>
         <%= f.text_field :tape_fluxivity, readonly: !@edit_mode, disabled: dp_na(:tape_fluxivity), value: dp_na(:tape_fluxivity) ? nil : f.object.tape_fluxivity %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:volume_units) && @hide_dp_na %>>
       <th>Gain (dB)<%= dp_requirement(:volume_units) %></th>
       <td>
         <%= f.text_field :volume_units, readonly: !@edit_mode, disabled: dp_na(:volume_units), value: dp_na(:volume_units) ? nil : f.object.volume_units %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:analog_output_voltage) && @hide_dp_na %>>
       <th>Analog Output Voltage (dBu)<%= dp_requirement(:analog_output_voltage) %></th>
       <td>
         <%= f.text_field :analog_output_voltage, readonly: true, disabled: dp_na(:analog_output_voltage), value: dp_na(:analog_output_voltage) ? nil : f.object.analog_output_voltage %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:peak) && @hide_dp_na %>>
       <th>Peak (dBfs)<%= dp_requirement(:peak) %></th>
       <td>
         <%= f.text_field :peak, readonly: true, disabled: dp_na(:peak), value: dp_na(:peak) ? nil : f.object.peak %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:stylus_size) && @hide_dp_na %>>
       <th>Stylus Size<%= dp_requirement(:stylus_size) %></th>
       <td><%= f.text_field :stylus_size, readonly: !@edit_mode, disabled: dp_na(:stylus_size), value: dp_na(:stylus_size) ? nil : f.object.stylus_size %></td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:turnover) && @hide_dp_na %>>
       <th>Turnover<%= dp_requirement(:turnover) %></th>
       <td><%= f.text_field :turnover, readonly: !@edit_mode, disabled: dp_na(:turnover), value: dp_na(:turnover) ? nil : f.object.turnover %></td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:rolloff) && @hide_dp_na %>>
       <th>Rolloff<%= dp_requirement(:rolloff) %></th>
       <td><%= f.text_field :rolloff, readonly: !@edit_mode, disabled: dp_na(:rolloff), value: dp_na(:rolloff) ? nil : f.object.rolloff %></td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:noise_reduction) && @hide_dp_na %>>
       <th>Noise Reduction</th>
       <td><%= f.text_field :noise_reduction, readonly: !@edit_mode, disabled: dp_na(:noise_reduction), value: dp_na(:noise_reduction) ? nil : f.object.noise_reduction %></td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:rumble_filter) && @hide_dp_na %>>
       <th>Rumble filter (Hz)<%= dp_requirement(:rumble_filter) %></th>
       <td>
         <%= f.text_field :rumble_filter, readonly: !@edit_mode, disabled: dp_na(:rumble_filter), value: dp_na(:rumble_filter) ? nil : f.object.rumble_filter %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:reference_tone_frequency) && @hide_dp_na %>>
       <th>Reference tone frequency (Hz)<%= dp_requirement(:reference_tone_frequency) %></th>
       <td>
         <%= f.text_field :reference_tone_frequency, readonly: !@edit_mode, disabled: dp_na(:reference_tone_frequency), value: dp_na(:reference_tone_frequency) ? nil : f.object.reference_tone_frequency %>
       </td>
     </tr>
-    <tr>
+    <tr <%= 'style=display:none;' if dp_na(:signal_chain_id) && @hide_dp_na %>>
       <th>Signal Chain<%= dp_requirement(:signal_chain_id) %></th>
       <td>
         <% if @edit_mode %>

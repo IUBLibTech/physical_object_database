@@ -124,12 +124,12 @@
                                         $(visibleTables).last().addClass('presRef');
                                         v = "MDPI_"+bc+"_"+seq+"_presRef."+ext;
                                         // add reference tone default value
-                                        $(visibleTables).last().find('td > input')[14].value = '440';
+                                        $(visibleTables).last().find('td > input')[15].value = '440';
                                 } else if (trig.text == "Add PresInt File") {
 					$(visibleTables).last().addClass('presInt');
 					v = "MDPI_"+bc+"_"+seq+"_presInt."+ext;
                                         // copy over any values from the previous file
-					for (x = 4; x <12; x++) {
+					for (x = 5; x < 13; x++) {
 						val =  tds[x].value;
 						$(visibleTables).last().find('td > input')[x].value = val;
 					}
@@ -138,23 +138,25 @@
 					$(visibleTables).last().addClass('intRef');
 					v = "MDPI_"+bc+"_"+seq+"_intRef."+ext;
                                         // copy over any values from the previous file
-					for (x = 4; x <12; x++) {
+					for (x = 5; x < 13; x++) {
 						val =  tds[x].value;
 						$(visibleTables).last().find('td > input')[x].value = val;
 					}
 					$(visibleTables).last().find('select option').eq(selectIndex).prop('selected', true);
                                         // add reference tone default value
-                                        $(visibleTables).last().find('td > input')[14].value = '440';
+                                        $(visibleTables).last().find('td > input')[15].value = '440';
                                 } else if (trig.text == "Add Prod File") {
 					$(visibleTables).last().addClass('prod');
 					v = "MDPI_"+bc+"_"+seq+"_prod."+ext;
                                         // copy over any values from the previous file
-					for (x = 4; x <12; x++) {
+					for (x = 5; x < 13; x++) {
 						val =  tds[x].value;
 						$(visibleTables).last().find('td > input')[x].value = val;
 					}
 					$(visibleTables).last().find('select option').eq(selectIndex).prop('selected', true);
 				}
+                                $(visibleTables).last().find('.filename_button').prop('value', v);
+                                $(visibleTables).last().find('.filename_button').attr('data-clipboard-text', v);
 				el.val(v);
 			}
 		});
