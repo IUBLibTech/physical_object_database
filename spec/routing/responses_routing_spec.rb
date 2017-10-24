@@ -56,5 +56,10 @@ describe ResponsesController do
       expect(get: "/responses/processing_classes/").to route_to("responses#processing_classes")
     end
 
+    it "routes to #digital_workflow" do
+      expect(get: "/responses/objects/1/digital_workflow").to route_to("responses#digital_workflow", mdpi_barcode: "1")
+    end
+
+
   end
 end

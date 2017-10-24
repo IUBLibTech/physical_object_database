@@ -10,7 +10,7 @@ class ResponsesController < ActionController::Base
 
   before_action :authenticate
 
-  before_action :set_physical_object, only: [:metadata, :full_metadata, :digiprov_metadata, :grouping, :pull_state, :push_memnon_qc, :digitizing_entity]
+  before_action :set_physical_object, only: [:metadata, :full_metadata, :digiprov_metadata, :grouping, :pull_state, :push_memnon_qc, :digitizing_entity, :digital_workflow]
   before_action :set_request_xml, only: [:notify, :push_status, :transfer_result]
 
   # GET /responses/objects/:mdpi_barcode/metadata
@@ -302,6 +302,15 @@ class ResponsesController < ActionController::Base
     render plain: @message, status: @status
   end
 
+  # GET /responses/objects/:mdpi_barcode/digital_workflow
+  def digital_workflow
+    if @physical_object
+      @status = 200
+      @success = true
+    end
+    render template: 'responses/digital_workflow.xml.builder', layout: false, status: @status
+  end
+
   private
     def set_physical_object
       @physical_object = PhysicalObject.find_by(mdpi_barcode: response_params[:mdpi_barcode]) unless response_params[:mdpi_barcode].to_i.zero?
@@ -312,7 +321,6 @@ class ResponsesController < ActionController::Base
         @dp = @physical_object.ensure_digiprov
       end
     end
-
 
     def set_request_xml
       @request_xml = Nokogiri::XML(request.body.read)
