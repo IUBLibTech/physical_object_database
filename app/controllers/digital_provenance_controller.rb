@@ -63,10 +63,10 @@ class DigitalProvenanceController < ApplicationController
     @bin = @physical_object&.bin
     @batch = @bin&.batch
     if @bin
-      @next_po = @bin.physical_objects.order(:call_number).select { |po| po.call_number > @physical_object.call_number }.first
+      @next_po = @bin.physical_objects.order(:call_number).select { |po| po.call_number.to_s > @physical_object.call_number.to_s }.first
     end
     if @batch
-      @next_bin = @batch.bins.order(:identifier).select { |bin| bin.identifier > @bin.identifier }.first
+      @next_bin = @batch.bins.order(:identifier).select { |bin| bin.identifier.to_s > @bin.identifier.to_s }.first
     end
   end
 	
