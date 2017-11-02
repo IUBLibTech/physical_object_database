@@ -129,6 +129,7 @@ FactoryGirl.define do
     repaired_break 0
     cracked 0
     damaged_core 0
+    out_of_round 0
     # preservation problems
     fungus 0
     efflorescence 0
