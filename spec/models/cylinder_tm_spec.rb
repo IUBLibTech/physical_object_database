@@ -7,7 +7,7 @@ describe CylinderTm do
   end
 
   describe "has optional fields:" do
-    [:playback_speed, :fragmented, :repaired_break, :cracked, :damaged_core, :fungus, :efflorescence, :other_contaminants].each do |att|
+    [:playback_speed, :fragmented, :repaired_break, :cracked, :damaged_core, :out_of_round, :fungus, :efflorescence, :other_contaminants].each do |att|
       specify "#{att}" do
         cylinder_tm.send("#{att}=", nil)
         expect(cylinder_tm).to be_valid

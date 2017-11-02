@@ -121,7 +121,7 @@ class ApplicationController < ActionController::Base
         # fields for betamax
         :oxide,
         # fields for cylinder
-        :groove_pitch, :fragmented, :repaired_break, :damaged_core, :efflorescence,
+        :groove_pitch, :fragmented, :repaired_break, :damaged_core, :out_of_round, :efflorescence,
         # fields for eight mm video
         :playback_speed, :binder_system,
         # fields of half inch open reel video
@@ -156,7 +156,7 @@ class ApplicationController < ActionController::Base
         # fields for betamax
         :oxide => [],
         # fields for cylinder
-        :groove_pitch => [], :fragmented => [], :repaired_break => [], :damaged_core => [], :efflorescence => [],
+        :groove_pitch => [], :fragmented => [], :repaired_break => [], :damaged_core => [], :out_of_round => [], :efflorescence => [],
         # fields for eight mm video
         :playback_speed => [], :binder_system => [],
         # fields for half inch open reel video
