@@ -26,7 +26,7 @@ class CylinderTm < ActiveRecord::Base
   GROOVE_PITCH_VALUES = hashify ["100 tpi", "200 tpi", "Other", "Unknown"]
   RECORDING_METHOD_VALUES = hashify ["Cut", "Molded", "Unknown"]
   # TM Boolean fieldsets
-  STRUCTURAL_DAMAGE_FIELDS = ["fragmented", "repaired_break", "cracked", "damaged_core"]
+  STRUCTURAL_DAMAGE_FIELDS = ["fragmented", "repaired_break", "cracked", "damaged_core", "out_of_round"]
   PRESERVATION_PROBLEM_FIELDS = ["fungus", "efflorescence", "other_contaminants"]
   MULTIVALUED_FIELDSETS = {
     "Structural Damage" => :STRUCTURAL_DAMAGE_FIELDS,
