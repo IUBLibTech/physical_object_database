@@ -23,8 +23,7 @@ gem "nested_form"
 gem 'rails', '~> 4.2.0'
 
 # Use mysql as the database for Active Record
-# hold back mysql2 gem as newer ones are actually broken with newer activerecord
-gem 'mysql2', '~> 0.3.20'
+gem 'mysql2'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
