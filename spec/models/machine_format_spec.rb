@@ -1,9 +1,9 @@
 describe MachineFormat do
-  let(:machine_format) { FactoryGirl.create :machine_format }
-  let(:valid_machine_format) { FactoryGirl.build :machine_format }
-  let(:invalid_machine_format) { FactoryGirl.build :machine_format, :invalid }
+  let(:machine_format) { FactoryBot.create :machine_format }
+  let(:valid_machine_format) { FactoryBot.build :machine_format }
+  let(:invalid_machine_format) { FactoryBot.build :machine_format, :invalid }
 
-  describe "FactoryGirl object generation" do
+  describe "FactoryBot object generation" do
     it "returns a valid object" do
       expect(valid_machine_format).to be_valid
     end
@@ -17,7 +17,7 @@ describe MachineFormat do
         valid_machine_format.format = nil
         expect(valid_machine_format).not_to be_valid
       end
-      let(:duplicate_machine_format) { FactoryGirl.build :machine_format, machine: machine_format.machine, format: machine_format.format }
+      let(:duplicate_machine_format) { FactoryBot.build :machine_format, machine: machine_format.machine, format: machine_format.format }
       it "must be unique within parent scope" do
         expect(machine_format).to be_valid
         expect(duplicate_machine_format).not_to be_valid

@@ -1,8 +1,8 @@
 describe DatTm do
 
-  let(:dat_tm) {FactoryGirl.build :dat_tm }
+  let(:dat_tm) {FactoryBot.build :dat_tm }
 
-  it "gets a valid object from FactoryGirl" do
+  it "gets a valid object from FactoryBot" do
     expect(dat_tm).to be_valid
   end
 
@@ -19,7 +19,7 @@ describe DatTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:dat_tm) 
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:dat_tm) 
 
   describe "#master_copies" do
     it "returns 1" do

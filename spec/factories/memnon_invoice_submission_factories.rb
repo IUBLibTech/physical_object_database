@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :memnon_invoice_submission, class: MemnonInvoiceSubmission do
     filename "factory_girl.xlsx"

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :staging_percent, class: StagingPercentage do
     format "CD-R"

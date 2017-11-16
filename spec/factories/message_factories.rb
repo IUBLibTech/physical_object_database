@@ -1,7 +1,7 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :message, class: Message do
-    content "FactoryGirl message content"
+    content "FactoryBot message content"
 
     trait :invalid do
       content ""

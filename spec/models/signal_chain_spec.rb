@@ -1,13 +1,13 @@
 describe SignalChain do
   let(:format) { "CD-R" }
-  let(:signal_chain) { FactoryGirl.create :signal_chain }
-  let(:dfp) { FactoryGirl.create :digital_file_provenance, signal_chain: signal_chain }
-  let(:machine) { FactoryGirl.create :machine }
-  let(:processing_step) { FactoryGirl.create :processing_step, :with_formats, formats: [format], signal_chain: signal_chain, machine: machine }
-  let(:valid_signal_chain) { FactoryGirl.build :signal_chain }
-  let(:invalid_signal_chain) { FactoryGirl.build :signal_chain, :invalid }
+  let(:signal_chain) { FactoryBot.create :signal_chain }
+  let(:dfp) { FactoryBot.create :digital_file_provenance, signal_chain: signal_chain }
+  let(:machine) { FactoryBot.create :machine }
+  let(:processing_step) { FactoryBot.create :processing_step, :with_formats, formats: [format], signal_chain: signal_chain, machine: machine }
+  let(:valid_signal_chain) { FactoryBot.build :signal_chain }
+  let(:invalid_signal_chain) { FactoryBot.build :signal_chain, :invalid }
 
-  describe "FactoryGirl object generation" do
+  describe "FactoryBot object generation" do
     it "returns a valid object" do
       expect(valid_signal_chain).to be_valid
     end

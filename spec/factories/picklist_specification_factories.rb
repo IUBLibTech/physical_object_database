@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :picklist_specification, class: PicklistSpecification do
     name "Test Pick List"

@@ -1,8 +1,8 @@
 describe StagingPercentagesController do
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
-  let(:valid_sp) { FactoryGirl.create :staging_percent }
-  let(:invalid_sp) { FactoryGirl.create :staging_percent, :invalid }
-  let(:percentage) { FactoryGirl.create :staging_percent }
+  let(:valid_sp) { FactoryBot.create :staging_percent }
+  let(:invalid_sp) { FactoryBot.create :staging_percent, :invalid }
+  let(:percentage) { FactoryBot.create :staging_percent }
 
   describe "GET index" do
     before(:each) { get :index }

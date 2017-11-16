@@ -1,7 +1,7 @@
 describe "physical_objects/index" do
 
-  let(:po_cdr) { FactoryGirl.create :physical_object, :cdr }
-  let(:po_dat) { FactoryGirl.create :physical_object, :dat }
+  let(:po_cdr) { FactoryBot.create :physical_object, :cdr }
+  let(:po_dat) { FactoryBot.create :physical_object, :dat }
 
   it "lists physical objects" do
     @physical_objects = [po_cdr, po_dat]

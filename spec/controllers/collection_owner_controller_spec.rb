@@ -5,9 +5,9 @@ describe CollectionOwnerController do
   let(:unit_bad) { Unit.last }
   let(:status_good) { 'Returned to Unit' }
   let(:status_bad) { 'Unassigned' }
-  let!(:po_good) { FactoryGirl.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_good, workflow_status: status_good ) }
-  let!(:po_bad_unit) { FactoryGirl.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_bad, workflow_status: status_good ) }
-  let!(:po_bad_status) { FactoryGirl.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_good, workflow_status: status_bad ) }
+  let!(:po_good) { FactoryBot.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_good, workflow_status: status_good ) }
+  let!(:po_bad_unit) { FactoryBot.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_bad, workflow_status: status_good ) }
+  let!(:po_bad_status) { FactoryBot.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_good, workflow_status: status_bad ) }
 
   shared_examples "no unit affiliation" do
     before(:each) { expect(assigns(:pundit_user).unit).to be_nil }

@@ -2,12 +2,12 @@ describe PicklistSpecificationsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:picklist_specification) { FactoryGirl.create(:picklist_specification, :cdr) }
-  let(:valid_picklist_specification) { FactoryGirl.build(:picklist_specification, :cdr) }
-  let(:invalid_picklist_specification) { FactoryGirl.build(:invalid_picklist_specification, :cdr) }
-  let(:picklist) { FactoryGirl.create(:picklist, name: 'first') }
-  let(:picklist2) { FactoryGirl.create(:picklist, name: 'second') }
-  let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
+  let(:picklist_specification) { FactoryBot.create(:picklist_specification, :cdr) }
+  let(:valid_picklist_specification) { FactoryBot.build(:picklist_specification, :cdr) }
+  let(:invalid_picklist_specification) { FactoryBot.build(:invalid_picklist_specification, :cdr) }
+  let(:picklist) { FactoryBot.create(:picklist, name: 'first') }
+  let(:picklist2) { FactoryBot.create(:picklist, name: 'second') }
+  let(:physical_object) { FactoryBot.create(:physical_object, :cdr) }
 
   describe "GET index" do
     before(:each) do
@@ -63,7 +63,7 @@ describe PicklistSpecificationsController do
 
   describe "POST create" do
     context "with valid attributes" do
-      let(:creation) { post :create, ps: valid_picklist_specification.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+      let(:creation) { post :create, ps: valid_picklist_specification.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm) }
       it "saves the new object in the database" do
         expect{ creation }.to change(PicklistSpecification, :count).by(1)
       end
@@ -74,7 +74,7 @@ describe PicklistSpecificationsController do
     end
 
     context "with invalid attributes" do
-      let(:creation) { post :create, ps: invalid_picklist_specification.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+      let(:creation) { post :create, ps: invalid_picklist_specification.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm) }
       it "does not save the new object in the database" do
         expect{ creation }.not_to change(PicklistSpecification, :count)
       end
@@ -102,13 +102,13 @@ describe PicklistSpecificationsController do
       end
       context "with same format" do
         before(:each) do
-          put :update, id: picklist_specification.id, ps: FactoryGirl.attributes_for(:picklist_specification, name: "Updated Test Picklist Specification"), tm: FactoryGirl.attributes_for(:cdr_tm)
+          put :update, id: picklist_specification.id, ps: FactoryBot.attributes_for(:picklist_specification, name: "Updated Test Picklist Specification"), tm: FactoryBot.attributes_for(:cdr_tm)
         end
         include_examples "successful PUT update examples"
       end
       context "with changed format" do
         before(:each) do
-          put :update, id: picklist_specification.id, ps: FactoryGirl.attributes_for(:picklist_specification, name: "Updated Test Picklist Specification", format: "DAT"), tm: FactoryGirl.attributes_for(:dat_tm)
+          put :update, id: picklist_specification.id, ps: FactoryBot.attributes_for(:picklist_specification, name: "Updated Test Picklist Specification", format: "DAT"), tm: FactoryBot.attributes_for(:dat_tm)
         end
         include_examples "successful PUT update examples"
         it "destroys original tm" do
@@ -119,7 +119,7 @@ describe PicklistSpecificationsController do
     end
     context "with invalid object attributes" do
       before(:each) do
-        put :update, id: picklist_specification.id, ps: FactoryGirl.attributes_for(:invalid_picklist_specification), tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: picklist_specification.id, ps: FactoryBot.attributes_for(:invalid_picklist_specification), tm: FactoryBot.attributes_for(:cdr_tm)
       end
 
       it "locates the requested object" do
@@ -136,7 +136,7 @@ describe PicklistSpecificationsController do
     end
     context "with invalid tm attributes" do
       before(:each) do
-        put :update, id: picklist_specification.id, ps: FactoryGirl.attributes_for(:picklist_specification), tm: FactoryGirl.attributes_for(:dat_tm)
+        put :update, id: picklist_specification.id, ps: FactoryBot.attributes_for(:picklist_specification), tm: FactoryBot.attributes_for(:dat_tm)
       end
       it "locates the requested object" do
         expect(assigns(:ps)).to eq picklist_specification

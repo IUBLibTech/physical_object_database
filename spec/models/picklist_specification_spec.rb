@@ -1,11 +1,11 @@
 describe PicklistSpecification do
 
 
-  let(:picklist_specification) { FactoryGirl.create :picklist_specification, :cdr }
-  let(:valid_picklist_specification) { FactoryGirl.build :picklist_specification, :cdr }
-  let(:invalid_picklist_specification) { FactoryGirl.build :invalid_picklist_specification, :cdr }
+  let(:picklist_specification) { FactoryBot.create :picklist_specification, :cdr }
+  let(:valid_picklist_specification) { FactoryBot.build :picklist_specification, :cdr }
+  let(:invalid_picklist_specification) { FactoryBot.build :invalid_picklist_specification, :cdr }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "generates a valid object" do
       expect(valid_picklist_specification).to be_valid
       expect(valid_picklist_specification.technical_metadatum).to be_valid

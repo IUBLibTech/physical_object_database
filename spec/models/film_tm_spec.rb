@@ -1,9 +1,9 @@
 describe FilmTm do
-  let(:film_tm) { FactoryGirl.create :film_tm }
-  let(:valid_film_tm) { FactoryGirl.build :film_tm }
-  let(:invalid_film_tm) { FactoryGirl.build :film_tm, :invalid }
+  let(:film_tm) { FactoryBot.create :film_tm }
+  let(:valid_film_tm) { FactoryBot.build :film_tm }
+  let(:invalid_film_tm) { FactoryBot.build :film_tm, :invalid }
 
-  describe 'FactoryGirl' do
+  describe 'FactoryBot' do
     it 'provides a valid object' do
       expect(valid_film_tm).to be_valid
     end
@@ -12,7 +12,7 @@ describe FilmTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:film_tm)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:film_tm)
 
   describe "has validated fields:" do
     [:gauge].each do |field|

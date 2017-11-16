@@ -1,8 +1,8 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :shipment, class: Shipment do
-    identifier "FactoryGirl shipment"
-    description "FactoryGirl shipment"
+    identifier "FactoryBot shipment"
+    description "FactoryBot shipment"
     physical_location ""
     unit_id Unit.first.id
 

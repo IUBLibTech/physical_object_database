@@ -3,7 +3,7 @@ describe ProcessingStepsController do
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
   let(:formats) { ['CD-R'] }
-  let!(:processing_step) { FactoryGirl.create :processing_step, :with_formats, formats: formats }
+  let!(:processing_step) { FactoryBot.create :processing_step, :with_formats, formats: formats }
 
   describe "DELETE #destroy" do
     let(:delete_destroy) { delete :destroy, id: processing_step.id }

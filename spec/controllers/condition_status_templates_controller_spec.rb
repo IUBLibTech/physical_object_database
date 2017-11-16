@@ -3,10 +3,10 @@ describe ConditionStatusTemplatesController do
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
   let(:cst) { ConditionStatusTemplate.first }
-  let(:temp_cst) { FactoryGirl.create :condition_status_template }
-  let(:temp_cs) { FactoryGirl.create(:condition_status, condition_status_template: temp_cst) }
-  let(:valid_attributes) { FactoryGirl.attributes_for(:condition_status_template) }
-  let(:invalid_attributes) { FactoryGirl.attributes_for(:condition_status_template, :invalid) }
+  let(:temp_cst) { FactoryBot.create :condition_status_template }
+  let(:temp_cs) { FactoryBot.create(:condition_status, condition_status_template: temp_cst) }
+  let(:valid_attributes) { FactoryBot.attributes_for(:condition_status_template) }
+  let(:invalid_attributes) { FactoryBot.attributes_for(:condition_status_template, :invalid) }
 
   describe "GET #index" do
     before(:each) { get :index }

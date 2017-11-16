@@ -1,11 +1,11 @@
 describe Machine do
   let(:format) { "CD-R" }
-  let(:machine) { FactoryGirl.create :machine }
-  let(:processing_step) { FactoryGirl.create :processing_step, :with_formats, formats: [format], machine: machine }
-  let(:valid_machine) { FactoryGirl.build :machine }
-  let(:invalid_machine) { FactoryGirl.build :machine, :invalid }
+  let(:machine) { FactoryBot.create :machine }
+  let(:processing_step) { FactoryBot.create :processing_step, :with_formats, formats: [format], machine: machine }
+  let(:valid_machine) { FactoryBot.build :machine }
+  let(:invalid_machine) { FactoryBot.build :machine, :invalid }
 
-  describe "FactoryGirl object generation" do
+  describe "FactoryBot object generation" do
     it "returns a valid object" do
       expect(valid_machine).to be_valid
     end

@@ -1,14 +1,14 @@
 describe BatchesController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
-  let(:batch) { FactoryGirl.create(:batch) }
-  let(:returned) { FactoryGirl.create(:batch, identifier: 'returned', current_workflow_status: 'Returned', format: TechnicalMetadatumModule.box_formats.first) }
-  let(:bin) { FactoryGirl.create(:bin, identifier: "bin") }
-  let(:batched_bin) { FactoryGirl.create(:bin, identifier: "batched_bin", batch: batch) }
-  let(:binned_box) { FactoryGirl.create(:box, bin: batched_bin) }
-  let(:po_dat) { FactoryGirl.create(:physical_object, :barcoded, :dat, box: binned_box, digital_start: Time.now) }
-  let(:valid_batch) { FactoryGirl.build(:batch) }
-  let(:invalid_batch) { FactoryGirl.build(:invalid_batch) }
+  let(:batch) { FactoryBot.create(:batch) }
+  let(:returned) { FactoryBot.create(:batch, identifier: 'returned', current_workflow_status: 'Returned', format: TechnicalMetadatumModule.box_formats.first) }
+  let(:bin) { FactoryBot.create(:bin, identifier: "bin") }
+  let(:batched_bin) { FactoryBot.create(:bin, identifier: "batched_bin", batch: batch) }
+  let(:binned_box) { FactoryBot.create(:box, bin: batched_bin) }
+  let(:po_dat) { FactoryBot.create(:physical_object, :barcoded, :dat, box: binned_box, digital_start: Time.now) }
+  let(:valid_batch) { FactoryBot.build(:batch) }
+  let(:invalid_batch) { FactoryBot.build(:invalid_batch) }
 
   describe "GET index" do
     context "with no filters" do
@@ -128,14 +128,14 @@ describe BatchesController do
   describe "GET show" do
     before(:each) { bin; po_dat }
     context "in HTML format" do
-      let!(:other_batch) { FactoryGirl.create(:batch, identifier: "other_batch") }
-      let!(:unavailable_mismatched_bin) { FactoryGirl.create(:bin, identifier: "unavailable_mismatched_bin", batch: other_batch) }
-      let!(:unavailable_mismatched_po) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: unavailable_mismatched_bin) }
-      let!(:available_matched_bin) { FactoryGirl.create(:bin, identifier: "available_matched_bin") }
-      let!(:available_matched_box) { FactoryGirl.create(:box, bin: available_matched_bin) }
-      let!(:available_matched_po) { FactoryGirl.create(:physical_object, :barcoded, :dat, box: available_matched_box) }
-      let!(:available_mismatched_bin) { FactoryGirl.create(:bin, identifier: "available_mismatched_bin") }
-      let!(:available_mismatched_po) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: available_mismatched_bin) }
+      let!(:other_batch) { FactoryBot.create(:batch, identifier: "other_batch") }
+      let!(:unavailable_mismatched_bin) { FactoryBot.create(:bin, identifier: "unavailable_mismatched_bin", batch: other_batch) }
+      let!(:unavailable_mismatched_po) { FactoryBot.create(:physical_object, :barcoded, :binnable, bin: unavailable_mismatched_bin) }
+      let!(:available_matched_bin) { FactoryBot.create(:bin, identifier: "available_matched_bin") }
+      let!(:available_matched_box) { FactoryBot.create(:box, bin: available_matched_bin) }
+      let!(:available_matched_po) { FactoryBot.create(:physical_object, :barcoded, :dat, box: available_matched_box) }
+      let!(:available_mismatched_bin) { FactoryBot.create(:bin, identifier: "available_mismatched_bin") }
+      let!(:available_mismatched_po) { FactoryBot.create(:physical_object, :barcoded, :binnable, bin: available_mismatched_bin) }
       before(:each) { get :show, id: batch.id }
       it "assigns the requested object to @batch" do
         expect(assigns(:batch)).to eq batch
@@ -218,7 +218,7 @@ describe BatchesController do
     end
 
     context "with invalid attributes" do
-      let(:creation) { post :create, batch: invalid_batch.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+      let(:creation) { post :create, batch: invalid_batch.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm) }
       it "does not save the new object in the database" do
         batch
 	expect{ creation }.not_to change(Batch, :count)
@@ -233,7 +233,7 @@ describe BatchesController do
   describe "PUT update" do
     context "with valid attributes" do
       before(:each) do
-        put :update, id: batch.id, batch: FactoryGirl.attributes_for(:batch, identifier: "Updated Test Batch")
+        put :update, id: batch.id, batch: FactoryBot.attributes_for(:batch, identifier: "Updated Test Batch")
       end
 
       it "locates the requested object" do
@@ -250,7 +250,7 @@ describe BatchesController do
     end
     context "with invalid attributes" do
       before(:each) do
-        put :update, id: batch.id, batch: FactoryGirl.attributes_for(:invalid_batch)
+        put :update, id: batch.id, batch: FactoryBot.attributes_for(:invalid_batch)
       end
 
       it "locates the requested object" do
@@ -369,9 +369,9 @@ describe BatchesController do
       end
     end
     context "with a picklist specified" do
-      let(:picklist) { FactoryGirl.create(:picklist) }
-      let(:archived) { FactoryGirl.create(:physical_object, :binnable, :barcoded, bin: bin) }
-      let(:unarchived) { FactoryGirl.create(:physical_object, :binnable, :barcoded, bin: bin) }
+      let(:picklist) { FactoryBot.create(:picklist) }
+      let(:archived) { FactoryBot.create(:physical_object, :binnable, :barcoded, bin: bin) }
+      let(:unarchived) { FactoryBot.create(:physical_object, :binnable, :barcoded, bin: bin) }
       before(:each) do
         unarchived
         archived.digital_statuses.create!(state: 'archived')

@@ -1,9 +1,9 @@
 describe DigitalProvenance, type: :model do
-  let(:dp) { FactoryGirl.create :digital_provenance }
-  let(:valid_dp) { FactoryGirl.build :digital_provenance }
-  let(:invalid_dp) { FactoryGirl.build :digital_provenance, :invalid }
+  let(:dp) { FactoryBot.create :digital_provenance }
+  let(:valid_dp) { FactoryBot.build :digital_provenance }
+  let(:invalid_dp) { FactoryBot.build :digital_provenance, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_dp).to be_valid
     end

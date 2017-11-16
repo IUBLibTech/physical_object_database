@@ -33,11 +33,11 @@ describe InvoiceHelper do
     end
     context "with a processable invoice" do
       let(:mis) { MemnonInvoiceSubmission.last }
-      let!(:good_po) { FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000070013, digital_start: Time.now, title: "good_po") }
-      let!(:po1) {FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000780546, digital_start: Time.now, billed: true, title: "already billed")}
-      let!(:po2) {FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000727679, digital_start: nil, title: "not on sda")}
-      let!(:po3) {FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000646374, digital_start: Time.now, title: "missing filename")}
-      let!(:po4) {FactoryGirl.create(:physical_object, :cdr, mdpi_barcode: 40000000649485, digital_start: Time.now, title: "duplicate filename")}
+      let!(:good_po) { FactoryBot.create(:physical_object, :cdr, mdpi_barcode: 40000000070013, digital_start: Time.now, title: "good_po") }
+      let!(:po1) {FactoryBot.create(:physical_object, :cdr, mdpi_barcode: 40000000780546, digital_start: Time.now, billed: true, title: "already billed")}
+      let!(:po2) {FactoryBot.create(:physical_object, :cdr, mdpi_barcode: 40000000727679, digital_start: nil, title: "not on sda")}
+      let!(:po3) {FactoryBot.create(:physical_object, :cdr, mdpi_barcode: 40000000646374, digital_start: Time.now, title: "missing filename")}
+      let!(:po4) {FactoryBot.create(:physical_object, :cdr, mdpi_barcode: 40000000649485, digital_start: Time.now, title: "duplicate filename")}
       let!(:unbilled_pos) { [po2, po3, po4] }
 
       context "with a good invoice" do

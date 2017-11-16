@@ -1,13 +1,13 @@
 describe Picklist do
 
-  let(:picklist) { FactoryGirl.create :picklist }
-  let(:valid_picklist) { FactoryGirl.build :picklist }
-  let(:invalid_picklist) { FactoryGirl.build :picklist, :invalid }
-  let(:physical_object) { FactoryGirl.create :physical_object, :boxable, picklist: picklist }
-  let(:blocking_condition) { FactoryGirl.create :condition_status, :physical_object, active: true, blocks_packing: true, physical_object: physical_object }
-  let(:box) { FactoryGirl.create :box }
+  let(:picklist) { FactoryBot.create :picklist }
+  let(:valid_picklist) { FactoryBot.build :picklist }
+  let(:invalid_picklist) { FactoryBot.build :picklist, :invalid }
+  let(:physical_object) { FactoryBot.create :physical_object, :boxable, picklist: picklist }
+  let(:blocking_condition) { FactoryBot.create :condition_status, :physical_object, active: true, blocks_packing: true, physical_object: physical_object }
+  let(:box) { FactoryBot.create :box }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_picklist).to be_valid
     end
@@ -38,7 +38,7 @@ describe Picklist do
     end
 
     # destination handled by shared examples
-    include_examples "includes DestinationModule", FactoryGirl.build(:picklist)
+    include_examples "includes DestinationModule", FactoryBot.build(:picklist)
 
     describe "complete indicator:" do
       before(:each) { picklist.complete = true }
@@ -109,14 +109,14 @@ describe Picklist do
         end
       end
       context "with any unpacked objects" do
-        before(:each) { FactoryGirl.create(:physical_object, :barcoded, :boxable, picklist: picklist) }
+        before(:each) { FactoryBot.create(:physical_object, :barcoded, :boxable, picklist: picklist) }
         before(:each) { expect(picklist.physical_objects).not_to be_empty }
         it "returns true" do
           expect(picklist.all_packed?).to eq false
         end
       end
       context "with only packed objects" do
-        before(:each) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: box, picklist: picklist) }
+        before(:each) { FactoryBot.create(:physical_object, :barcoded, :boxable, box: box, picklist: picklist) }
         before(:each) { expect(picklist.physical_objects).not_to be_empty }
         it "returns false" do
           expect(picklist.all_packed?).to eq true

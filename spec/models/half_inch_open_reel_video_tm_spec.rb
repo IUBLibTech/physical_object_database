@@ -1,9 +1,9 @@
 describe HalfInchOpenReelVideoTm do
-  let(:half_inch_open_reel_video) { FactoryGirl.create :half_inch_open_reel_video_tm, :valid }
-  let(:valid_half_inch_open_reel_video) { FactoryGirl.build :half_inch_open_reel_video_tm, :valid }
-  let(:invalid_half_inch_open_reel_video) { FactoryGirl.build :half_inch_open_reel_video_tm, :invalid }
+  let(:half_inch_open_reel_video) { FactoryBot.create :half_inch_open_reel_video_tm, :valid }
+  let(:valid_half_inch_open_reel_video) { FactoryBot.build :half_inch_open_reel_video_tm, :valid }
+  let(:invalid_half_inch_open_reel_video) { FactoryBot.build :half_inch_open_reel_video_tm, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(half_inch_open_reel_video).to be_valid
       expect(valid_half_inch_open_reel_video).to be_valid
@@ -34,7 +34,7 @@ describe HalfInchOpenReelVideoTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:half_inch_open_reel_video_tm, :valid)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:half_inch_open_reel_video_tm, :valid)
 
   describe "#master_copies" do
     it "returns 1" do

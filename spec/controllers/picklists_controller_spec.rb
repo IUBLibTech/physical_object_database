@@ -2,14 +2,14 @@ describe PicklistsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:picklist) { FactoryGirl.create(:picklist, name: 'one') }
-  let(:valid_picklist) { FactoryGirl.build(:picklist, name: 'two') }
-  let(:invalid_picklist) { FactoryGirl.build(:invalid_picklist) }
-  let(:physical_object) { FactoryGirl.create(:physical_object, :boxable, picklist: picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode ) }
-  let(:box) { FactoryGirl.create(:box) }
-  let(:bin) { FactoryGirl.create(:bin) }
-  let(:blocked) { FactoryGirl.create(:physical_object, :boxable, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
-  let(:condition) { FactoryGirl.create(:condition_status, :physical_object, blocks_packing: true, active: true)}
+  let(:picklist) { FactoryBot.create(:picklist, name: 'one') }
+  let(:valid_picklist) { FactoryBot.build(:picklist, name: 'two') }
+  let(:invalid_picklist) { FactoryBot.build(:invalid_picklist) }
+  let(:physical_object) { FactoryBot.create(:physical_object, :boxable, picklist: picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode ) }
+  let(:box) { FactoryBot.create(:box) }
+  let(:bin) { FactoryBot.create(:bin) }
+  let(:blocked) { FactoryBot.create(:physical_object, :boxable, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
+  let(:condition) { FactoryBot.create(:condition_status, :physical_object, blocks_packing: true, active: true)}
 
   #no index
 
@@ -116,7 +116,7 @@ describe PicklistsController do
   describe "PUT update on member" do
     context "with valid attributes" do
       before(:each) do
-        put :update, id: picklist.id, picklist: FactoryGirl.attributes_for(:picklist, name: "Updated Test Picklist", complete: true)
+        put :update, id: picklist.id, picklist: FactoryBot.attributes_for(:picklist, name: "Updated Test Picklist", complete: true)
       end
 
       it "locates the requested object" do
@@ -134,7 +134,7 @@ describe PicklistsController do
     end
     context "with invalid attributes" do
       before(:each) do
-        put :update, id: picklist.id, picklist: FactoryGirl.attributes_for(:invalid_picklist)
+        put :update, id: picklist.id, picklist: FactoryBot.attributes_for(:invalid_picklist)
       end
 
       it "locates the requested object" do
@@ -331,13 +331,13 @@ describe PicklistsController do
 #:pack_box_button
 #:previous_unpacked_button
 #:next_unpacked_button
-    let(:pack_picklist) { FactoryGirl.create(:picklist, name: "Foo") }
-    let(:pack_bin) { FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier: "binbar") }
-    let(:pack_box) { FactoryGirl.create(:box, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
+    let(:pack_picklist) { FactoryBot.create(:picklist, name: "Foo") }
+    let(:pack_bin) { FactoryBot.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier: "binbar") }
+    let(:pack_box) { FactoryBot.create(:box, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode) }
     let(:pack_list) { patch :pack_list, args }
-    let!(:po1) { FactoryGirl.create(:physical_object, :binnable, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "A" ) }
-    let!(:po2) { FactoryGirl.create(:physical_object, :binnable, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "B" )}
-    let!(:po3) { FactoryGirl.create(:physical_object, :binnable, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "C" ) }
+    let!(:po1) { FactoryBot.create(:physical_object, :binnable, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "A" ) }
+    let!(:po2) { FactoryBot.create(:physical_object, :binnable, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "B" )}
+    let!(:po3) { FactoryBot.create(:physical_object, :binnable, picklist: pack_picklist, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, call_number: "C" ) }
     let(:tm) {}
 
     pack_mode = "auto-box"

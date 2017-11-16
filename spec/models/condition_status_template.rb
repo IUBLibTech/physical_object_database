@@ -1,8 +1,8 @@
 describe ConditionStatusTemplate do
-  let(:condition_status_template) { FactoryGirl.create(:condition_status_template) }
-  let(:condition_status) { FactoryGirl.create(:condition_status, condition_status_template: condition_status_template) }
-  let(:valid_condition_status_template) { FactoryGirl.build(:condition_status_template) }
-  let(:invalid_condition_status_template) { FactoryGirl.build(:condition_status_template, :invalid) }
+  let(:condition_status_template) { FactoryBot.create(:condition_status_template) }
+  let(:condition_status) { FactoryBot.create(:condition_status, condition_status_template: condition_status_template) }
+  let(:valid_condition_status_template) { FactoryBot.build(:condition_status_template) }
+  let(:invalid_condition_status_template) { FactoryBot.build(:condition_status_template, :invalid) }
 
   describe "should be seeded with data:" do
     seeded_values = { "Bin" => 0, "Physical Object" => 9 }
@@ -13,7 +13,7 @@ describe ConditionStatusTemplate do
     end
   end
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "returns a valid object" do
       expect(valid_condition_status_template).to be_valid
     end

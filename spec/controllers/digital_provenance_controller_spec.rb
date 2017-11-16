@@ -2,9 +2,9 @@ describe DigitalProvenanceController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
-  let(:valid_dp) { FactoryGirl.build :digital_provenance }
-  let(:invalid_dp) { FactoryGirl.build :digital_provenance, :invalid }
+  let(:physical_object) { FactoryBot.create :physical_object, :cdr, :barcoded }
+  let(:valid_dp) { FactoryBot.build :digital_provenance }
+  let(:invalid_dp) { FactoryBot.build :digital_provenance, :invalid }
 
   shared_examples "assigns objects" do
     it "assigns physical object" do

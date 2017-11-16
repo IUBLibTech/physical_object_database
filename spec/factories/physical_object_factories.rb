@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   states = []
 
@@ -79,7 +79,7 @@ FactoryGirl.define do
       after(:create) do |po|
         unless final_status.nil?
           states.each do |s|
-            FactoryGirl.create( :digital_status, physical_object_id: po.id, state: s)
+            FactoryBot.create( :digital_status, physical_object_id: po.id, state: s)
             break if final_status == s
           end
         end
@@ -91,10 +91,10 @@ FactoryGirl.define do
     association :group_key, factory: :group_key
     #association :digital_provenance, factory: :digital_provenance
     after(:build) do |po|
-      po.digital_provenance ||= FactoryGirl.build(:digital_provenance, physical_object: po)
+      po.digital_provenance ||= FactoryBot.build(:digital_provenance, physical_object: po)
     end
     #at least one must be set of MDPI barcode, IUCAT barcode, title, call number
-    title "FactoryGirl object"
+    title "FactoryBot object"
     #mdpi_barcode { BarcodeHelper.valid_mdpi_barcode }
     shipment_id nil
 
