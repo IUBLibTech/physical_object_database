@@ -19,6 +19,7 @@
           <format>Film</format>
           <unit>B-IULMIA</unit>
           <title>La Roue</title>
+          <titleId>123</titleId>
           <alternativeTitle/>
           <collectionName/>
           <accompanyingDocumentation/>
@@ -166,11 +167,12 @@
             <soundOnSeparateMedia>false</soundOnSeparateMedia>
           </soundFormats>
           <soundContent>
-            <musicTrack>false</musicTrack>
-            <effectsTrack>false</effectsTrack>
+            <musicTrack>true</musicTrack>
+            <effectsTrack>true</effectsTrack>
             <dialog>false</dialog>
             <compositeTrack>false</compositeTrack>
             <outtakes>false</outtakes>
+            <narration>false</narration>
           </soundContent>
           <soundConfigurations>
             <mono>false</mono>
@@ -325,6 +327,8 @@
             <ratio_2_35_1>false</ratio_2_35_1>
             <ratio_2_39_1>false</ratio_2_39_1>
             <ratio_2_59_1>false</ratio_2_59_1>
+            <ratio_1_36_1>false</ratio_1_36_1>
+            <ratio_1_18_1>false</ratio_18_1>
           </aspectRatios>
           <soundFormats>
             <optical>false</optical>

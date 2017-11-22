@@ -17,6 +17,10 @@ FactoryBot.define do
       format "CD-R"
       association :technical_metadatum, factory: [:technical_metadatum, :cdr]
     end
+    trait :cylinder do
+      format "Cylinder"
+      association :technical_metadatum, factory: [:technical_metadatum, :cylinder]
+    end
     trait :dat do
       format "DAT"
       association :technical_metadatum, factory: [:technical_metadatum, :dat]

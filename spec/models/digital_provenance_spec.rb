@@ -54,4 +54,14 @@ describe DigitalProvenance, type: :model do
     end
   end
 
+  describe "#ensure_dfp" do
+    context "for a Cylinder, with no file provenance" do
+      let(:cylinder) { FactoryBot.create :physical_object, :cylinder }
+      let(:cylinder_dp) { FactoryBot.create :digital_provenance, physical_object: cylinder }
+      it "creates 5 digital file provenance" do
+        expect { cylinder_dp.ensure_dfp }.to change(DigitalFileProvenance, :count).by(5)
+      end
+    end
+  end
+
 end
