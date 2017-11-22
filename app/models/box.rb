@@ -76,4 +76,10 @@ class Box < ActiveRecord::Base
     end
   end
 
+  # Updates "Not started" physical objects to "Rejected" (by Memnon)
+  def reject_physical_objects
+    self.physical_objects.where(digital_workflow_category: 'not_started').each do |po|
+      po.update_attribute(:digital_workflow_category, 'rejected')
+    end
+  end
 end

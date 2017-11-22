@@ -14,6 +14,9 @@
 					<td>
 						<%= link_to("Call Number: #{p.call_number}", physical_object_path(p.id), target: "_blank") if policy(p).show? %>
 					</td>
+                                        <td class="<%= p.succeeded? ? '' : 'rejected' %>">
+                                                <%= p.digital_workflow_category&.titleize %>
+                                        </td>
 				</tr>
 		</table>
 	<% end %>
