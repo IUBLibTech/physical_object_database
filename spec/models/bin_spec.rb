@@ -338,5 +338,37 @@ describe Bin do
     end
   end
 
+  describe "#reject_physical_objects" do
+    context "for binned objects" do
+      it 'updates "Not started" objects to "Rejected"' do
+        expect(binned_object.digital_workflow_category).to eq 'not_started'
+        bin.reject_physical_objects
+        binned_object.reload
+        expect(binned_object.digital_workflow_category).to eq 'rejected'
+      end
+      it 'does not modify objects in other digital workflow categories' do
+        binned_object.succeeded!
+        expect(binned_object.digital_workflow_category).to eq 'succeeded'
+        bin.reject_physical_objects
+        binned_object.reload
+        expect(binned_object.digital_workflow_category).to eq 'succeeded'
+      end
+    end
+    context "for boxed objects" do
+      it 'updates "Not started" objects to "Rejected"' do
+        expect(boxed_object.digital_workflow_category).to eq 'not_started'
+        bin.reject_physical_objects
+        boxed_object.reload
+        expect(boxed_object.digital_workflow_category).to eq 'rejected'
+      end
+      it 'does not modify objects in other digital workflow categories' do
+        boxed_object.succeeded!
+        expect(boxed_object.digital_workflow_category).to eq 'succeeded'
+        bin.reject_physical_objects
+        boxed_object.reload
+        expect(boxed_object.digital_workflow_category).to eq 'succeeded'
+      end
+    end
+  end
 end
 

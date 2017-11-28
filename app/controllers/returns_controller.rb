@@ -97,6 +97,8 @@ class ReturnsController < ApplicationController
 		elsif @bin.current_workflow_status == "Batched"
 			@bin.current_workflow_status = "Returned to Staging Area"
 			if @bin.save
+                                # assume anything 'not_started' was rejected
+				@bin.reject_physical_objects
 				flash[:notice] = "Bin has been successfully Returned to Staging Area."
 			else
 				flash[:warning] = "Error updating Bin workflow status: #{@bin.errors.full_messages}"

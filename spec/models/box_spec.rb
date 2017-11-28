@@ -283,5 +283,21 @@ describe Box do
       end
     end
   end
+
+  describe "#reject_physical_objects" do
+    it 'updates "Not started" objects to "Rejected"' do
+      expect(boxed_object.digital_workflow_category).to eq 'not_started'
+      box.reject_physical_objects
+      boxed_object.reload
+      expect(boxed_object.digital_workflow_category).to eq 'rejected'
+    end
+    it 'does not modify objects in other digital workflow categories' do
+      boxed_object.succeeded!
+      expect(boxed_object.digital_workflow_category).to eq 'succeeded'
+      box.reject_physical_objects
+      boxed_object.reload
+      expect(boxed_object.digital_workflow_category).to eq 'succeeded'
+    end
+  end
 end
 

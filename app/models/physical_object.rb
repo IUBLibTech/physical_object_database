@@ -41,7 +41,7 @@ class PhysicalObject < ActiveRecord::Base
   # below line supports kludge workaround for bug POD-648
   accepts_nested_attributes_for :workflow_statuses, allow_destroy: false
 
-  enum digital_workflow_category: [:not_started, :started, :succeeded, :failed]
+  enum digital_workflow_category: [:not_started, :started, :succeeded, :failed, :rejected]
 
   # default per_page value can be overriden in a request
   self.per_page = 50

@@ -238,10 +238,10 @@
         <th>Digital Workflow Category</th>
         <td>
           <% if @search_mode %>
-            <%= f.select :digital_workflow_category, PhysicalObject.digital_workflow_categories.collect { |h,k| [h.titleize, k] }, { }, multiple: true, size: PhysicalObject.digital_workflow_categories.size %>
+            <%= f.select :digital_workflow_category, PhysicalObject.digital_workflow_categories.collect { |h,k| [h.to_s.titleize, k] }, { }, multiple: true, size: PhysicalObject.digital_workflow_categories.size %>
           <% else %>
             <% if @physical_object.persisted? && policy(@physical_object.ensure_digiprov).show? %>
-              <%= link_to(@physical_object.digital_workflow_category.titleize, {:controller => 'digital_provenance', :action => 'show', :id => @physical_object.id}) %>
+              <%= link_to(@physical_object.digital_workflow_category&.titleize, {:controller => 'digital_provenance', :action => 'show', :id => @physical_object.id}) %>
             <% else %>
               <%= @physical_object.digital_workflow_category&.titleize %>
             <% end %>

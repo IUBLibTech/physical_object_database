@@ -149,12 +149,17 @@ describe ReturnsController do
     context "on a loaded bin" do
       context "when successful" do
         before(:each) do
+          binned_object
           patch_action
         end
         it "sets the bin workflow status to Returned to Staging Area" do
           expect(bin.current_workflow_status).to eq "Batched"
           bin.reload
           expect(bin.current_workflow_status).to eq "Returned to Staging Area"
+        end
+        it "rejects 'Not Started' physical objects" do
+          binned_object.reload
+          expect(binned_object.digital_workflow_category).to eq 'rejected'
         end
         it "flashes a success message" do
           expect(flash[:notice]).to match /success/

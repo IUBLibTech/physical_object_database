@@ -16,7 +16,7 @@ class Bin < ActiveRecord::Base
         validate :validate_batch_container
 	before_save :assign_inferred_workflow_status
 	before_destroy :remove_physical_objects, prepend: true
-  after_save :set_container_format
+	after_save :set_container_format
         include WorkflowStatusModule
         has_many :condition_statuses, :dependent => :destroy
         accepts_nested_attributes_for :condition_statuses, allow_destroy: true
@@ -126,5 +126,13 @@ class Bin < ActiveRecord::Base
     request.basic_auth(Settings.filmdb_user, Settings.filmdb_pass)
     result = http.request(request)
     result
+  end
+
+  # Updates "Not started" physical objects to "Rejected" (by Memnon)
+  def reject_physical_objects
+    self.physical_objects.where(digital_workflow_category: 'not_started').each do |po|
+      po.update_attribute(:digital_workflow_category, 'rejected')
+    end
+    self.boxes.each { |box| box.reject_physical_objects }
   end
 end
