@@ -1,17 +1,17 @@
 describe Box do
 
-  let(:bin) { FactoryGirl.create :bin}
-  let(:box) { FactoryGirl.create :box, bin: bin }
-  let(:valid_box) { FactoryGirl.build :box }
-  let(:invalid_box) { FactoryGirl.build :box, :invalid }
-  let(:valid_bin) { FactoryGirl.build :bin }
-  let(:boxed_object) { FactoryGirl.create :physical_object, :cdr, :barcoded, box: box}
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
-  let(:open_reel) { FactoryGirl.create :physical_object, :open_reel, :barcoded, bin: bin }
-  let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
-  let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:bin) { FactoryBot.create :bin}
+  let(:box) { FactoryBot.create :box, bin: bin }
+  let(:valid_box) { FactoryBot.build :box }
+  let(:invalid_box) { FactoryBot.build :box, :invalid }
+  let(:valid_bin) { FactoryBot.build :bin }
+  let(:boxed_object) { FactoryBot.create :physical_object, :cdr, :barcoded, box: box}
+  let(:physical_object) { FactoryBot.create :physical_object, :cdr, :barcoded }
+  let(:open_reel) { FactoryBot.create :physical_object, :open_reel, :barcoded, bin: bin }
+  let(:boxed_object) { FactoryBot.create :physical_object, :barcoded, :boxable, box: box }
+  let(:binned_object) { FactoryBot.create :physical_object, :barcoded, :binnable, bin: bin }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "gets a valid object by default" do
       expect(valid_box).to be_valid
     end

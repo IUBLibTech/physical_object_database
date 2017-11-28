@@ -1,8 +1,8 @@
 describe GroupKey do
-  let(:group_key) { FactoryGirl.create(:group_key) }
-  let(:valid_group_key) { FactoryGirl.build(:group_key) }
-  let(:grouped_physical_object) { FactoryGirl.create(:physical_object, :cdr, group_key: group_key) }
-  let(:ungrouped_physical_object) { FactoryGirl.create(:physical_object, :cdr, group_key: nil) }
+  let(:group_key) { FactoryBot.create(:group_key) }
+  let(:valid_group_key) { FactoryBot.build(:group_key) }
+  let(:grouped_physical_object) { FactoryBot.create(:physical_object, :cdr, group_key: group_key) }
+  let(:ungrouped_physical_object) { FactoryBot.create(:physical_object, :cdr, group_key: nil) }
 
   describe "has attributes:" do
     describe "group_total" do

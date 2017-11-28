@@ -1,7 +1,7 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :spreadsheet, class: Spreadsheet do
-    filename "FactoryGirl_spreadsheet #{Time.now}.csv"
+    filename "FactoryBot_spreadsheet #{Time.now}.csv"
     note "Lorem ipsum"
   end
 

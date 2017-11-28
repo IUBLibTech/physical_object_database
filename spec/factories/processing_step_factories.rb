@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :processing_step, class: ProcessingStep do
     position 1

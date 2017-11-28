@@ -364,6 +364,7 @@ module PhysicalObjectsHelper
           unless tm.nil?
             tm.default_values_for_upload
             tm.class.parse_tm(tm, r)
+            tm.valid?
           end
           if batch_id.nil? && r['Batch identifier'].present?
             failed << [index, batch]

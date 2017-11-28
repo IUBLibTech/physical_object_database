@@ -1,9 +1,9 @@
 describe Shipment do
-  let(:shipment) { FactoryGirl.create :shipment }
-  let(:valid_shipment) { FactoryGirl.build :shipment }
-  let(:invalid_shipment) { FactoryGirl.build :shipment, :invalid }
+  let(:shipment) { FactoryBot.create :shipment }
+  let(:valid_shipment) { FactoryBot.build :shipment }
+  let(:invalid_shipment) { FactoryBot.build :shipment, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_shipment).to be_valid
     end

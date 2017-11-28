@@ -5,12 +5,12 @@ describe UsersController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   
-  let(:user) { FactoryGirl.create(:user) }
-  let(:valid_user) { FactoryGirl.build(:user) }
-  let(:invalid_user) { FactoryGirl.build(:user, :invalid) }
+  let(:user) { FactoryBot.create(:user) }
+  let(:valid_user) { FactoryBot.build(:user) }
+  let(:invalid_user) { FactoryBot.build(:user, :invalid) }
 
-  let(:valid_attributes) { FactoryGirl.attributes_for(:user) }
-  let(:invalid_attributes) { FactoryGirl.attributes_for(:user, :invalid) }
+  let(:valid_attributes) { FactoryBot.attributes_for(:user) }
+  let(:invalid_attributes) { FactoryBot.attributes_for(:user, :invalid) }
 
   describe "GET #index" do
     before(:each) do

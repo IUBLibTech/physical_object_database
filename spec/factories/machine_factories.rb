@@ -1,7 +1,7 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :machine, class: Machine do
-    category "FactoryGirl machine"
+    category "FactoryBot machine"
     serial "serial"
     manufacturer "manufacturer"
     model "model"

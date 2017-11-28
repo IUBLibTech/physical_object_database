@@ -520,6 +520,9 @@ private
         else
           query_results = query_results.joins(object_table)
         end
+        if terms.keys.include? :picklist_specification_id
+          query_results = add_search_terms(query_results, :technical_metadata, { :picklist_specification_id => terms.delete(:picklist_specification_id) })
+        end
         query_results = add_search_terms(query_results, object_table.to_sym, terms)
       end
     end

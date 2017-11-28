@@ -1,8 +1,8 @@
 describe Note do
-  let(:note) { FactoryGirl.create(:note) }
-  let(:valid_note) { FactoryGirl.build(:note) }
+  let(:note) { FactoryBot.create(:note) }
+  let(:valid_note) { FactoryBot.build(:note) }
 
-  it "gets a valid object from FactoryGirl" do
+  it "gets a valid object from FactoryBot" do
     expect(valid_note).to be_valid
   end
 

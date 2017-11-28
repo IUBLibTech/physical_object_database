@@ -1,17 +1,17 @@
 describe Bin do
 
-  let(:batch) {FactoryGirl.create :batch }
+  let(:batch) {FactoryBot.create :batch }
   let(:pl) {}
-  let(:bin) { FactoryGirl.create :bin, batch: batch }
-  let(:film_bin) { FactoryGirl.create :bin, format: 'Film' }
-  let(:box) { FactoryGirl.create :box, bin: bin }
-  let(:valid_bin) { FactoryGirl.build :bin }
-  let(:invalid_bin) { FactoryGirl.build :bin, :invalid }
-  let(:valid_batch) { FactoryGirl.build :batch }
-  let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
-  let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
+  let(:bin) { FactoryBot.create :bin, batch: batch }
+  let(:film_bin) { FactoryBot.create :bin, format: 'Film' }
+  let(:box) { FactoryBot.create :box, bin: bin }
+  let(:valid_bin) { FactoryBot.build :bin }
+  let(:invalid_bin) { FactoryBot.build :bin, :invalid }
+  let(:valid_batch) { FactoryBot.build :batch }
+  let(:binned_object) { FactoryBot.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:boxed_object) { FactoryBot.create :physical_object, :barcoded, :boxable, box: box }
 
-  describe "FactoryGirl creation" do
+  describe "FactoryBot creation" do
     specify "makes a valid bin" do
       expect(valid_bin).to be_valid
       expect(bin).to be_valid
@@ -21,7 +21,7 @@ describe Bin do
     end
   end
 
-  include_examples "includes DestinationModule", FactoryGirl.build(:bin)
+  include_examples "includes DestinationModule", FactoryBot.build(:bin)
 
   describe "has required fields:" do
     it "identifier" do
@@ -284,7 +284,7 @@ describe Bin do
 
   # it_behaves_like "includes ConditionStatusModule:"
   describe "includes ConditionStatusModule:" do
-    let(:condition_status) { FactoryGirl.create(:condition_status, :bin, bin: bin) }
+    let(:condition_status) { FactoryBot.create(:condition_status, :bin, bin: bin) }
     let(:target_object) { bin }
     let(:class_title) { "Bin" }
 
@@ -303,8 +303,8 @@ describe Bin do
 
   describe ".available_bins scope" do
     let!(:batched_bin) { bin }
-    let!(:created_bin) { FactoryGirl.create :bin, identifier: 'created' }
-    let!(:sealed_bin) { FactoryGirl.create :bin, identifier: 'sealed' }
+    let!(:created_bin) { FactoryBot.create :bin, identifier: 'created' }
+    let!(:sealed_bin) { FactoryBot.create :bin, identifier: 'sealed' }
     before(:each) do
       sealed_bin.current_workflow_status = "Sealed"
       sealed_bin.save!

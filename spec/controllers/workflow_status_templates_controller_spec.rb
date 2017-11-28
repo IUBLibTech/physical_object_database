@@ -3,9 +3,9 @@ describe WorkflowStatusTemplatesController do
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
   let(:wst) { WorkflowStatusTemplate.first }
-  let(:temp_wst) { FactoryGirl.create :workflow_status_template }
-  let(:valid_attributes) { FactoryGirl.attributes_for(:workflow_status_template) }
-  let(:invalid_attributes) { FactoryGirl.attributes_for(:workflow_status_template, :invalid) }
+  let(:temp_wst) { FactoryBot.create :workflow_status_template }
+  let(:valid_attributes) { FactoryBot.attributes_for(:workflow_status_template) }
+  let(:invalid_attributes) { FactoryBot.attributes_for(:workflow_status_template, :invalid) }
 
   describe "GET #show" do
     before(:each) { get :show, id: wst.id }

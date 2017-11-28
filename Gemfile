@@ -23,8 +23,7 @@ gem "nested_form"
 gem 'rails', '~> 4.2.0'
 
 # Use mysql as the database for Active Record
-# hold back mysql2 gem as newer ones are actually broken with newer activerecord
-gem 'mysql2', '~> 0.3.20'
+gem 'mysql2'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'
@@ -98,7 +97,7 @@ group :test do
   gem 'capybara-webkit'
   gem 'launchy' # for viewing capybara pages
   gem 'connection_pool' # for sharing client/server session in capybara tests with js: true
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   #gem 'cucumber', '1.2.5' # Spork not supported as of Cucumber 1.3.0, need to use 1.2.5
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'

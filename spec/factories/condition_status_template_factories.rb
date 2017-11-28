@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :condition_status_template, class: ConditionStatusTemplate do
     name "Factory Girl condition status template"

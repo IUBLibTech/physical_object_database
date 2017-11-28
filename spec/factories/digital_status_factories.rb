@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :digital_status, class: DigitalStatus do
   	physical_object_id nil
@@ -12,7 +12,7 @@ FactoryGirl.define do
 		trait :valid do
 			after(:build) do |ds, evaluator|
 				if ds.physical_object.nil?
-					ds.physical_object = FactoryGirl.build :physical_object, :cdr, :barcoded
+					ds.physical_object = FactoryBot.build :physical_object, :cdr, :barcoded
 					ds.physical_object_mdpi_barcode = ds.physical_object.mdpi_barcode
 				end
 			end

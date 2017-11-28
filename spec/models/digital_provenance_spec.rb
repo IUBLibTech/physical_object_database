@@ -1,9 +1,9 @@
 describe DigitalProvenance, type: :model do
-  let(:dp) { FactoryGirl.create :digital_provenance }
-  let(:valid_dp) { FactoryGirl.build :digital_provenance }
-  let(:invalid_dp) { FactoryGirl.build :digital_provenance, :invalid }
+  let(:dp) { FactoryBot.create :digital_provenance }
+  let(:valid_dp) { FactoryBot.build :digital_provenance }
+  let(:invalid_dp) { FactoryBot.build :digital_provenance, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_dp).to be_valid
     end
@@ -51,6 +51,16 @@ describe DigitalProvenance, type: :model do
   describe "#digitizing_entity_values" do
     it "returns the class constant" do
       expect(valid_dp.digitizing_entity_values).to eq DigitalProvenance::DIGITIZING_ENTITY_VALUES
+    end
+  end
+
+  describe "#ensure_dfp" do
+    context "for a Cylinder, with no file provenance" do
+      let(:cylinder) { FactoryBot.create :physical_object, :cylinder }
+      let(:cylinder_dp) { FactoryBot.create :digital_provenance, physical_object: cylinder }
+      it "creates 5 digital file provenance" do
+        expect { cylinder_dp.ensure_dfp }.to change(DigitalFileProvenance, :count).by(5)
+      end
     end
   end
 

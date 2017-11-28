@@ -1,7 +1,7 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :signal_chain, class: SignalChain do
-    name "FactoryGirl signal chain"
+    name "FactoryBot signal chain"
 
     trait :invalid do
       name nil

@@ -1,8 +1,8 @@
 describe AudiocassetteTm do
 
-  let(:audiocassette_tm) { FactoryGirl.build :audiocassette_tm }
+  let(:audiocassette_tm) { FactoryBot.build :audiocassette_tm }
 
-  it 'gets a valid object from FactoryGirl' do
+  it 'gets a valid object from FactoryBot' do
     expect(audiocassette_tm).to be_valid
   end
 
@@ -53,7 +53,7 @@ describe AudiocassetteTm do
     end
   end
 
-  it_behaves_like 'includes TechnicalMetadatumModule', FactoryGirl.build(:audiocassette_tm)
+  it_behaves_like 'includes TechnicalMetadatumModule', FactoryBot.build(:audiocassette_tm)
 
   describe "#master_copies" do
     it "returns 2" do

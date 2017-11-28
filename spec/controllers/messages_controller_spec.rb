@@ -2,7 +2,7 @@ describe MessagesController, :type => :controller do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let!(:message) { FactoryGirl.create :message }
+  let!(:message) { FactoryBot.create :message }
 
   describe "GET index" do
     before(:each) { get :index }
@@ -47,7 +47,7 @@ describe MessagesController, :type => :controller do
   describe "POST create" do
     shared_examples "POST create examples" do |request_format|
       describe "with valid params" do
-        let(:post_params) { FactoryGirl.attributes_for :message }
+        let(:post_params) { FactoryBot.attributes_for :message }
         it "creates a new Message" do
           expect { post_create }.to change(Message, :count).by(1)
         end
@@ -69,7 +69,7 @@ describe MessagesController, :type => :controller do
 	end
       end
       describe "with invalid params" do
-        let(:post_params) { FactoryGirl.attributes_for :message, :invalid }
+        let(:post_params) { FactoryBot.attributes_for :message, :invalid }
         it "does not create a new message" do
           expect { post_create }.not_to change(Message, :count)
         end

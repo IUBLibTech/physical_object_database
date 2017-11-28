@@ -2,14 +2,14 @@ describe GroupKeysController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:valid_group_key) { FactoryGirl.build(:group_key) }
-  let(:invalid_group_key) { FactoryGirl.build(:invalid_group_key) }
-  let(:group_key) { FactoryGirl.create(:group_key) }
-  let(:group_keyed_object) { FactoryGirl.create(:physical_object, :cdr, group_key: group_key) }
-  let(:second_keyed_object) { FactoryGirl.create(:physical_object, :cdr, group_key: group_key, group_position: 2) }
-  let(:ungrouped_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded, group_key: nil) }
+  let(:valid_group_key) { FactoryBot.build(:group_key) }
+  let(:invalid_group_key) { FactoryBot.build(:invalid_group_key) }
+  let(:group_key) { FactoryBot.create(:group_key) }
+  let(:group_keyed_object) { FactoryBot.create(:physical_object, :cdr, group_key: group_key) }
+  let(:second_keyed_object) { FactoryBot.create(:physical_object, :cdr, group_key: group_key, group_position: 2) }
+  let(:ungrouped_object) { FactoryBot.create(:physical_object, :cdr, :barcoded, group_key: nil) }
 
-  describe "FactoryGirl creation" do
+  describe "FactoryBot creation" do
     specify "makes a valid group key" do
       expect(valid_group_key).to be_valid
     end
@@ -113,7 +113,7 @@ describe GroupKeysController do
   describe "PUT update" do
     context "with valid attributes" do
       before(:each) do
-        put :update, id: group_key.id, group_key: FactoryGirl.attributes_for(:group_key, group_total: 42)
+        put :update, id: group_key.id, group_key: FactoryBot.attributes_for(:group_key, group_total: 42)
       end
       it "locates the requested object" do
         expect(assigns(:group_key)).to eq group_key
@@ -129,7 +129,7 @@ describe GroupKeysController do
     end
     context "with invalid attributes" do
       before(:each) do
-        put :update, id: group_key.id, group_key: FactoryGirl.attributes_for(:invalid_group_key)
+        put :update, id: group_key.id, group_key: FactoryBot.attributes_for(:invalid_group_key)
       end
       it "locates the requested object" do
         expect(assigns(:group_key)).to eq group_key
@@ -243,7 +243,7 @@ describe GroupKeysController do
 	end
       end
       context "NOT emptying the former group" do
-        let!(:sibling_object) { FactoryGirl.create :physical_object, :cdr, group_key: ungrouped_object.group_key }
+        let!(:sibling_object) { FactoryBot.create :physical_object, :cdr, group_key: ungrouped_object.group_key }
         it "changes the object's group and position" do
           patch_include
           ungrouped_object.reload

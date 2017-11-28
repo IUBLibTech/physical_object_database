@@ -1,11 +1,11 @@
 describe DigitalFileProvenance do
   let(:new_dfp) { DigitalFileProvenance.new }
-  let(:dfp) { FactoryGirl.create :digital_file_provenance }
-  let(:valid_dfp) { FactoryGirl.build(:digital_file_provenance, digital_provenance: FactoryGirl.build(:digital_provenance), signal_chain:(FactoryGirl.build :signal_chain)) }
+  let(:dfp) { FactoryBot.create :digital_file_provenance }
+  let(:valid_dfp) { FactoryBot.build(:digital_file_provenance, digital_provenance: FactoryBot.build(:digital_provenance), signal_chain:(FactoryBot.build :signal_chain)) }
   before(:each) do
     valid_dfp.signal_chain.signal_chain_formats.new(format: valid_dfp.digital_provenance.physical_object.format)
   end
-  let(:invalid_dfp) { FactoryGirl.build(:digital_file_provenance, :invalid, digital_provenance: FactoryGirl.build(:digital_provenance), signal_chain:(FactoryGirl.build :signal_chain)) }
+  let(:invalid_dfp) { FactoryBot.build(:digital_file_provenance, :invalid, digital_provenance: FactoryBot.build(:digital_provenance), signal_chain:(FactoryBot.build :signal_chain)) }
   describe "has default values" do
     specify "created_by" do
       expect(new_dfp.created_by).not_to be_blank
@@ -24,7 +24,7 @@ describe DigitalFileProvenance do
     end
   end
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_dfp).to be_valid
     end
@@ -144,7 +144,7 @@ describe DigitalFileProvenance do
       end
     end
     describe "signal chain" do
-      let(:signal_chain) { FactoryGirl.build :signal_chain }
+      let(:signal_chain) { FactoryBot.build :signal_chain }
       it "belongs to" do
         expect(valid_dfp).to respond_to :signal_chain_id
       end

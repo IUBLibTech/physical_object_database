@@ -4,7 +4,7 @@ describe PhysicalObjectsHelper do
   describe '.group_key_for_filmdb_title' do
     let(:title_id) { 123 }
     context 'with an existing group key' do
-      let!(:existing_group_key) { FactoryGirl.create :group_key, filmdb_title_id: title_id }
+      let!(:existing_group_key) { FactoryBot.create :group_key, filmdb_title_id: title_id }
       it 'returns the exiting group key' do
         expect(PhysicalObjectsHelper.group_key_for_filmdb_title(title_id)).to eq existing_group_key
       end

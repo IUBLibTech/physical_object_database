@@ -2,9 +2,9 @@ describe ApplicationHelper do
   let(:valid_barcode) { 40152053079381 }
   let(:invalid_barcode) { 40152053079380 }
   let(:zero_barcode) { 0 }
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: valid_barcode }
-  let(:bin) { FactoryGirl.create :bin, mdpi_barcode: valid_barcode }
-  let(:box) { FactoryGirl.create :box, mdpi_barcode: valid_barcode }
+  let(:physical_object) { FactoryBot.create :physical_object, :cdr, mdpi_barcode: valid_barcode }
+  let(:bin) { FactoryBot.create :bin, mdpi_barcode: valid_barcode }
+  let(:box) { FactoryBot.create :box, mdpi_barcode: valid_barcode }
 
   describe "::valid_barcode?" do
     it "accepts a 0 barcode" do

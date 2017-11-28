@@ -2,9 +2,9 @@ describe SpreadsheetsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:spreadsheet) { FactoryGirl.create :spreadsheet }
-  let(:valid_spreadsheet) { FactoryGirl.build :spreadsheet }
-  let(:invalid_spreadsheet) { FactoryGirl.build :invalid_spreadsheet }
+  let(:spreadsheet) { FactoryBot.create :spreadsheet }
+  let(:valid_spreadsheet) { FactoryBot.build :spreadsheet }
+  let(:invalid_spreadsheet) { FactoryBot.build :invalid_spreadsheet }
 
   describe "GET index" do
     before(:each) do
@@ -68,7 +68,7 @@ describe SpreadsheetsController do
   describe "PUT update" do
     context "with valid params" do
       before(:each) do
-        put :update, id: spreadsheet.id, spreadsheet: FactoryGirl.attributes_for(:spreadsheet, filename: "Updated filename")
+        put :update, id: spreadsheet.id, spreadsheet: FactoryBot.attributes_for(:spreadsheet, filename: "Updated filename")
       end
 
       it "updates the requested spreadsheet" do
@@ -88,7 +88,7 @@ describe SpreadsheetsController do
 
     describe "with invalid params" do
       before(:each) do
-        put :update, id: spreadsheet.id, spreadsheet: FactoryGirl.attributes_for(:invalid_spreadsheet)
+        put :update, id: spreadsheet.id, spreadsheet: FactoryBot.attributes_for(:invalid_spreadsheet)
       end
       it "assigns the spreadsheet as @spreadsheet" do
         expect(assigns(:spreadsheet)).to eq spreadsheet 
@@ -119,7 +119,7 @@ describe SpreadsheetsController do
       end
     end
     context "with updated objects" do
-      let(:physical_object) { FactoryGirl.create :physical_object, :cdr, spreadsheet: spreadsheet }
+      let(:physical_object) { FactoryBot.create :physical_object, :cdr, spreadsheet: spreadsheet }
       before(:each) do
         physical_object.updated_at = Time.now() + 10
         physical_object.save

@@ -1,6 +1,6 @@
 # requires a trait to assign the proper workflow template:
 #   :bin, :batch, or :physical_object
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :workflow_status, class: WorkflowStatus do
     # select an existing workflow status template as these are seed data

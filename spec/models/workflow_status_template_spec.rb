@@ -1,8 +1,8 @@
 describe WorkflowStatusTemplate do
   # need to manually destroy after each creation, as this is a seed data table
-  let(:workflow_status_template) { FactoryGirl.create(:workflow_status_template) }
-  let(:valid_workflow_status_template) { FactoryGirl.build(:workflow_status_template) }
-  let(:invalid_workflow_status_template) { FactoryGirl.build(:workflow_status_template, :invalid) }
+  let(:workflow_status_template) { FactoryBot.create(:workflow_status_template) }
+  let(:valid_workflow_status_template) { FactoryBot.build(:workflow_status_template) }
+  let(:invalid_workflow_status_template) { FactoryBot.build(:workflow_status_template, :invalid) }
 
   describe "should be seeded with data:" do
     seeded_values = { "Batch" => 6, "Bin" => 5, "Physical Object" => 7 }
@@ -13,7 +13,7 @@ describe WorkflowStatusTemplate do
     end
   end
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_workflow_status_template).to be_valid
     end

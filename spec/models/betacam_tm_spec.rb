@@ -1,9 +1,9 @@
 describe BetacamTm do
-  let(:betacam) { FactoryGirl.create :betacam_tm, :valid }
-  let(:valid_betacam) { FactoryGirl.build :betacam_tm, :valid }
-  let(:invalid_betacam) { FactoryGirl.build :betacam_tm, :invalid }
+  let(:betacam) { FactoryBot.create :betacam_tm, :valid }
+  let(:valid_betacam) { FactoryBot.build :betacam_tm, :valid }
+  let(:invalid_betacam) { FactoryBot.build :betacam_tm, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(betacam).to be_valid
       expect(valid_betacam).to be_valid
@@ -34,8 +34,8 @@ describe BetacamTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:betacam_tm, :valid)
-  it_behaves_like "includes YearModule", FactoryGirl.build(:betacam_tm, :valid)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:betacam_tm, :valid)
+  it_behaves_like "includes YearModule", FactoryBot.build(:betacam_tm, :valid)
 
   describe "#master_copies" do
     it "returns 1" do

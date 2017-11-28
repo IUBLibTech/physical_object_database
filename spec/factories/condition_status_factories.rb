@@ -1,6 +1,6 @@
 # Requires specifying a trait argument: :bin, or :physical_object
 #
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :condition_status, class: ConditionStatus do
     transient do

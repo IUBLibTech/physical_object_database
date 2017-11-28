@@ -2,12 +2,12 @@ describe MachinesController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   
-  let(:machine) { FactoryGirl.create(:machine) }
-  let(:valid_machine) { FactoryGirl.build(:machine) }
-  let(:invalid_machine) { FactoryGirl.build(:machine, :invalid) }
+  let(:machine) { FactoryBot.create(:machine) }
+  let(:valid_machine) { FactoryBot.build(:machine) }
+  let(:invalid_machine) { FactoryBot.build(:machine, :invalid) }
 
-  let(:valid_attributes) { FactoryGirl.attributes_for(:machine) }
-  let(:invalid_attributes) { FactoryGirl.attributes_for(:machine, :invalid) }
+  let(:valid_attributes) { FactoryBot.attributes_for(:machine) }
+  let(:invalid_attributes) { FactoryBot.attributes_for(:machine, :invalid) }
 
   describe "GET #index" do
     before(:each) do
@@ -122,8 +122,8 @@ describe MachinesController do
     before(:each) { machine }
     context "when failed" do
       before(:each) do
-        FactoryGirl.create :machine_format, machine: machine, format: "CD-R"
-        FactoryGirl.create :processing_step, :with_formats, machine: machine, formats: ["CD-R"]
+        FactoryBot.create :machine_format, machine: machine, format: "CD-R"
+        FactoryBot.create :processing_step, :with_formats, machine: machine, formats: ["CD-R"]
       end
       it "does not destroy the requested machine" do
         expect { delete_destroy }.not_to change(Machine, :count)

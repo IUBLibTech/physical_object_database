@@ -1,9 +1,9 @@
 describe UmaticVideoTm do
-  let(:umatic) { FactoryGirl.create :umatic_tm, :valid }
-  let(:valid_umatic) { FactoryGirl.build :umatic_tm, :valid }
-  let(:invalid_umatic) { FactoryGirl.build :umatic_tm, :invalid }
+  let(:umatic) { FactoryBot.create :umatic_tm, :valid }
+  let(:valid_umatic) { FactoryBot.build :umatic_tm, :valid }
+  let(:invalid_umatic) { FactoryBot.build :umatic_tm, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(umatic).to be_valid
       expect(valid_umatic).to be_valid
@@ -35,7 +35,7 @@ describe UmaticVideoTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:umatic_tm)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:umatic_tm)
 
   describe "has virtual fields:" do
     specify "#damage for pack_deformation" do

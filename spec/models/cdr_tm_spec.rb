@@ -1,8 +1,8 @@
 describe CdrTm do
 
-  let(:cdr_tm) {FactoryGirl.build :cdr_tm }
+  let(:cdr_tm) {FactoryBot.build :cdr_tm }
 
-  it "gets a valid object from FactoryGirl" do
+  it "gets a valid object from FactoryBot" do
     expect(cdr_tm).to be_valid
   end
 
@@ -25,7 +25,7 @@ describe CdrTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:cdr_tm) 
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:cdr_tm) 
 
   describe "#master_copies" do
     it "returns 1" do

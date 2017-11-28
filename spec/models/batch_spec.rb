@@ -1,22 +1,22 @@
 describe Batch do
 
-  let(:batch) { FactoryGirl.create :batch }
-  let(:valid_batch) { FactoryGirl.build :batch }
-  let(:invalid_batch) { FactoryGirl.build :invalid_batch }
-  let(:duplicate) { FactoryGirl.build :batch, identifier: "duplicate" }
-  let(:bin) { FactoryGirl.create :bin, batch: batch }
-  let(:box) { FactoryGirl.create :box, bin: bin }
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
-  let(:open_reel) { FactoryGirl.create :physical_object, :open_reel, :barcoded, bin: bin }
-  let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
-  let(:other_binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
-  let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
-  let(:other_boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
+  let(:batch) { FactoryBot.create :batch }
+  let(:valid_batch) { FactoryBot.build :batch }
+  let(:invalid_batch) { FactoryBot.build :invalid_batch }
+  let(:duplicate) { FactoryBot.build :batch, identifier: "duplicate" }
+  let(:bin) { FactoryBot.create :bin, batch: batch }
+  let(:box) { FactoryBot.create :box, bin: bin }
+  let(:physical_object) { FactoryBot.create :physical_object, :cdr }
+  let(:open_reel) { FactoryBot.create :physical_object, :open_reel, :barcoded, bin: bin }
+  let(:binned_object) { FactoryBot.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:other_binned_object) { FactoryBot.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:boxed_object) { FactoryBot.create :physical_object, :barcoded, :boxable, box: box }
+  let(:other_boxed_object) { FactoryBot.create :physical_object, :barcoded, :boxable, box: box }
 
   let!(:later_time) { Time.now.in_time_zone.change(usec: 0) }
   let!(:earlier_time) { later_time - 1000 }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid batch" do
       expect(valid_batch).to be_valid
     end
@@ -25,7 +25,7 @@ describe Batch do
     end
   end
 
-  include_examples "includes DestinationModule", FactoryGirl.build(:batch)
+  include_examples "includes DestinationModule", FactoryBot.build(:batch)
 
   describe "has required fields:" do
     it "requires an identifier" do

@@ -2,26 +2,26 @@ describe BinsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:batch) { FactoryGirl.create(:batch) }
-  let(:bin) { FactoryGirl.create(:bin) }
-  let(:other_bin) { FactoryGirl.create(:bin, identifier: 'other_bin') }
-  let(:sealed) {FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier:"UNIQUE!", current_workflow_status: "Sealed")} 
-  let(:box) { FactoryGirl.create(:box, bin: bin, format: bin.format) }
-  let(:valid_boxed_object) { FactoryGirl.build(:physical_object, :boxable) }
-  let(:boxed_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: box) }
+  let(:batch) { FactoryBot.create(:batch) }
+  let(:bin) { FactoryBot.create(:bin) }
+  let(:other_bin) { FactoryBot.create(:bin, identifier: 'other_bin') }
+  let(:sealed) {FactoryBot.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, identifier:"UNIQUE!", current_workflow_status: "Sealed")} 
+  let(:box) { FactoryBot.create(:box, bin: bin, format: bin.format) }
+  let(:valid_boxed_object) { FactoryBot.build(:physical_object, :boxable) }
+  let(:boxed_object) { FactoryBot.create(:physical_object, :barcoded, :boxable, box: box) }
   let(:box_format) { valid_boxed_object.format }
   let(:other_box_format) { TechnicalMetadatumModule.box_formats.first }
-  let(:other_boxed_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: unassigned_box) }
-  let(:binned_object) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: bin) }
-  let(:unassigned_object) { FactoryGirl.create(:physical_object, :boxable) }
-  let(:unassigned_box) { FactoryGirl.create(:box, format: box_format) }
-  let(:assigned_box) { FactoryGirl.create(:box, format: box_format, bin: other_bin) }
-  let(:unassigned_mismatched_box) { FactoryGirl.create(:box, format: other_box_format) }
-  let(:unassigned_unformatted_box) { FactoryGirl.create(:box) }
-  let(:picklist) { FactoryGirl.create(:picklist) }
-  let!(:complete) { FactoryGirl.create(:picklist, name: 'complete', complete: true)}
-  let(:valid_bin) { FactoryGirl.build(:bin) }
-  let(:invalid_bin) { FactoryGirl.build(:invalid_bin) }
+  let(:other_boxed_object) { FactoryBot.create(:physical_object, :barcoded, :boxable, box: unassigned_box) }
+  let(:binned_object) { FactoryBot.create(:physical_object, :barcoded, :binnable, bin: bin) }
+  let(:unassigned_object) { FactoryBot.create(:physical_object, :boxable) }
+  let(:unassigned_box) { FactoryBot.create(:box, format: box_format) }
+  let(:assigned_box) { FactoryBot.create(:box, format: box_format, bin: other_bin) }
+  let(:unassigned_mismatched_box) { FactoryBot.create(:box, format: other_box_format) }
+  let(:unassigned_unformatted_box) { FactoryBot.create(:box) }
+  let(:picklist) { FactoryBot.create(:picklist) }
+  let!(:complete) { FactoryBot.create(:picklist, name: 'complete', complete: true)}
+  let(:valid_bin) { FactoryBot.build(:bin) }
+  let(:invalid_bin) { FactoryBot.build(:invalid_bin) }
 
   describe "GET index" do
     context "with no filters" do
@@ -122,11 +122,11 @@ describe BinsController do
       end
     end
     describe "format filter" do
-      let!(:bin_of_objects) { FactoryGirl.create(:bin, identifier: "bin of objects") }
-      let!(:bin_of_boxes) { FactoryGirl.create(:bin, identifier: "bin of boxes") }
-      let!(:binned_box) { FactoryGirl.create(:box, bin: bin_of_boxes) }
-      let!(:box_format_object) { FactoryGirl.create(:physical_object, :barcoded, :boxable, box: binned_box) }
-      let!(:bin_format_object) { FactoryGirl.create(:physical_object, :barcoded, :binnable, bin: bin_of_objects) }
+      let!(:bin_of_objects) { FactoryBot.create(:bin, identifier: "bin of objects") }
+      let!(:bin_of_boxes) { FactoryBot.create(:bin, identifier: "bin of boxes") }
+      let!(:binned_box) { FactoryBot.create(:box, bin: bin_of_boxes) }
+      let!(:box_format_object) { FactoryBot.create(:physical_object, :barcoded, :boxable, box: binned_box) }
+      let!(:bin_format_object) { FactoryBot.create(:physical_object, :barcoded, :binnable, bin: bin_of_objects) }
       before(:each) do
         box
         unassigned_box
@@ -277,7 +277,7 @@ describe BinsController do
       end
     end
     context "with invalid attributes" do
-      let(:creation) { post :create, bin: invalid_bin.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+      let(:creation) { post :create, bin: invalid_bin.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm) }
       it "does not save the new physical object in the database" do
         bin
         expect{ creation }.not_to change(Bin, :count)
@@ -292,7 +292,7 @@ describe BinsController do
   describe "PUT update" do
     context "with valid attributes" do
       before(:each) do
-        put :update, id: bin.id, bin: FactoryGirl.attributes_for(:bin, identifier: "Updated Test Bin")
+        put :update, id: bin.id, bin: FactoryBot.attributes_for(:bin, identifier: "Updated Test Bin")
       end
       it "locates the requested object" do
         expect(assigns(:bin)).to eq bin
@@ -308,7 +308,7 @@ describe BinsController do
     end
     context "with invalid attributes" do
       before(:each) do
-        put :update, id: bin.id, bin: FactoryGirl.attributes_for(:invalid_bin)
+        put :update, id: bin.id, bin: FactoryBot.attributes_for(:invalid_bin)
       end
 
       it "locates the requested object" do
@@ -518,7 +518,7 @@ describe BinsController do
   end
 
   describe "Patch seal Bin" do
-    let(:sealed) {FactoryGirl.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, current_workflow_status: "Sealed")} 
+    let(:sealed) {FactoryBot.create(:bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode, current_workflow_status: "Sealed")} 
     context "with a sealable Bin" do
       before(:each) do
         patch :seal, id: bin.id

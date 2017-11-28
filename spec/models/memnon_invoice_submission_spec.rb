@@ -1,7 +1,7 @@
 describe MemnonInvoiceSubmission do
-  let(:valid_invoice) { FactoryGirl.build :memnon_invoice_submission }
+  let(:valid_invoice) { FactoryBot.build :memnon_invoice_submission }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_invoice).to be_valid
     end

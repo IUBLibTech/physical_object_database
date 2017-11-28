@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :batch, class: Batch do
     identifier "Test Batch"
