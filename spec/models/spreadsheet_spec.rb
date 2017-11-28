@@ -1,12 +1,12 @@
 describe Spreadsheet do
-  let(:spreadsheet) { FactoryGirl.create :spreadsheet }
-  let(:valid_spreadsheet) { FactoryGirl.build :spreadsheet }
-  let(:box) { FactoryGirl.create :box, spreadsheet: spreadsheet }
-  let(:bin) { FactoryGirl.create :bin, spreadsheet: spreadsheet }
-  let(:batch) { FactoryGirl.create :batch, spreadsheet: spreadsheet }
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr, spreadsheet: spreadsheet }
+  let(:spreadsheet) { FactoryBot.create :spreadsheet }
+  let(:valid_spreadsheet) { FactoryBot.build :spreadsheet }
+  let(:box) { FactoryBot.create :box, spreadsheet: spreadsheet }
+  let(:bin) { FactoryBot.create :bin, spreadsheet: spreadsheet }
+  let(:batch) { FactoryBot.create :batch, spreadsheet: spreadsheet }
+  let(:physical_object) { FactoryBot.create :physical_object, :cdr, spreadsheet: spreadsheet }
 
-  it "gets a valid object from FactoryGirl" do
+  it "gets a valid object from FactoryBot" do
     expect(valid_spreadsheet).to be_valid
   end
 

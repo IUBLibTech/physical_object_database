@@ -1,9 +1,9 @@
 describe StagingPercentage do
-  let(:valid_sp) { FactoryGirl.build :staging_percent }
-  let(:invalid_sp) { FactoryGirl.build :staging_percent, :invalid }
-  let(:sp) { FactoryGirl.create :sp }
+  let(:valid_sp) { FactoryBot.build :staging_percent }
+  let(:invalid_sp) { FactoryBot.build :staging_percent, :invalid }
+  let(:sp) { FactoryBot.create :sp }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_sp).to be_valid
     end

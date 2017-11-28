@@ -1,9 +1,9 @@
 describe EightMillimeterVideoTm do
-  let(:eight_mm) { FactoryGirl.create :eight_mm_tm, :valid }
-  let(:valid_eight_mm) { FactoryGirl.build :eight_mm_tm, :valid }
-  let(:invalid_eight_mm) { FactoryGirl.build :eight_mm_tm, :invalid }
+  let(:eight_mm) { FactoryBot.create :eight_mm_tm, :valid }
+  let(:valid_eight_mm) { FactoryBot.build :eight_mm_tm, :valid }
+  let(:invalid_eight_mm) { FactoryBot.build :eight_mm_tm, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(eight_mm).to be_valid
       expect(valid_eight_mm).to be_valid
@@ -34,7 +34,7 @@ describe EightMillimeterVideoTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:eight_mm_tm, :valid)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:eight_mm_tm, :valid)
 
   describe "#master_copies" do
     it "returns 1" do

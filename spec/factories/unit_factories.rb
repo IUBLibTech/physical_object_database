@@ -1,6 +1,6 @@
 # Note that units must be manually destroyed after creation, as this table
 # is NOT truncated in order to preserve seed data
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :unit, class: Unit do
     abbreviation "B-TEST"

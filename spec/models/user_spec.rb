@@ -1,13 +1,13 @@
 describe User do
   # users are seed data and must be manually deleted
-  let(:user) { FactoryGirl.create :user }
-  let(:valid_user) { FactoryGirl.build :user }
-  let(:invalid_user) { FactoryGirl.build :user, :invalid }
+  let(:user) { FactoryBot.create :user }
+  let(:valid_user) { FactoryBot.build :user }
+  let(:invalid_user) { FactoryBot.build :user, :invalid }
 
   let(:invalid_username) { "invalid username" }
   let(:valid_username) { "web_admin" }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     specify ":valid_user is valid" do
       expect(valid_user).to be_valid
     end
@@ -57,11 +57,11 @@ describe User do
     before(:each) { user }
     after(:each) { user.destroy }
     specify "unique name" do
-      duplicate_user = FactoryGirl.build :user, name: user.name
+      duplicate_user = FactoryBot.build :user, name: user.name
       expect(duplicate_user).not_to be_valid
     end
     specify "unique username" do
-      duplicate_user = FactoryGirl.build :user, username: user.username
+      duplicate_user = FactoryBot.build :user, username: user.username
       expect(duplicate_user).not_to be_valid
     end
   end

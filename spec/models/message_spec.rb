@@ -1,9 +1,9 @@
 describe Message, :type => :model do
-  let(:message) { FactoryGirl.create :message }
-  let(:valid_message) { FactoryGirl.build :message }
-  let(:invalid_message) { FactoryGirl.build :message, :invalid }
+  let(:message) { FactoryBot.create :message }
+  let(:valid_message) { FactoryBot.build :message }
+  let(:invalid_message) { FactoryBot.build :message, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_message).to be_valid
     end

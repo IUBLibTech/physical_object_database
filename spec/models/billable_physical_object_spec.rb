@@ -1,6 +1,6 @@
 describe BillablePhysicalObject do
-  let(:valid_bpo) { FactoryGirl.build :billable_physical_object }
-  describe "FactoryGirl" do
+  let(:valid_bpo) { FactoryBot.build :billable_physical_object }
+  describe "FactoryBot" do
     it "returns a valid object" do
     end
   end

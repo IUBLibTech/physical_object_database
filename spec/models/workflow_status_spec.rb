@@ -1,11 +1,11 @@
 describe WorkflowStatus do
-  let(:workflow_status) { FactoryGirl.create(:workflow_status, :physical_object) }
-  let(:valid_workflow_status) { FactoryGirl.build(:workflow_status, :physical_object) }
-  let(:physical_object) { FactoryGirl.create(:physical_object, :boxable) }
-  let(:batch) { FactoryGirl.create(:batch) }
-  let(:bin) { FactoryGirl.create(:bin) }
+  let(:workflow_status) { FactoryBot.create(:workflow_status, :physical_object) }
+  let(:valid_workflow_status) { FactoryBot.build(:workflow_status, :physical_object) }
+  let(:physical_object) { FactoryBot.create(:physical_object, :boxable) }
+  let(:batch) { FactoryBot.create(:batch) }
+  let(:bin) { FactoryBot.create(:bin) }
 
-  it "gets a valid workflow status from FactoryGirl" do
+  it "gets a valid workflow status from FactoryBot" do
     expect(valid_workflow_status).to be_valid
   end
 

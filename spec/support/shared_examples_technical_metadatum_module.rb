@@ -191,7 +191,7 @@ shared_examples "includes TechnicalMetadatumModule" do |tm_object|
     context "without specifying a format" do
       context "with an object" do
         before(:each) do
-          tm_object.physical_object = FactoryGirl.build(:physical_object, :cdr) if tm_object.respond_to?(:physical_object)
+          tm_object.physical_object = FactoryBot.build(:physical_object, :cdr) if tm_object.respond_to?(:physical_object)
           expect(tm_object.physical_object).not_to be_nil
         end
         it "uses the object format" do

@@ -1,10 +1,10 @@
 describe ConditionStatus do
-  let(:condition_status) { FactoryGirl.create(:condition_status, :physical_object) }
-  let(:valid_condition_status) { FactoryGirl.build(:condition_status, :physical_object) }
-  let(:bin) { FactoryGirl.create(:bin) }
-  let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
+  let(:condition_status) { FactoryBot.create(:condition_status, :physical_object) }
+  let(:valid_condition_status) { FactoryBot.build(:condition_status, :physical_object) }
+  let(:bin) { FactoryBot.create(:bin) }
+  let(:physical_object) { FactoryBot.create(:physical_object, :cdr) }
 
-  it "gets a valid object from FactoryGirl" do
+  it "gets a valid object from FactoryBot" do
     expect(valid_condition_status).to be_valid
   end
 

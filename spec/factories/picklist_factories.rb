@@ -1,8 +1,8 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :picklist, class: Picklist do
-    name "FactoryGirl picklist"
-    description "FactoryGirl picklist description"
+    name "FactoryBot picklist"
+    description "FactoryBot picklist description"
     destination "Memnon"
     complete false
     format nil

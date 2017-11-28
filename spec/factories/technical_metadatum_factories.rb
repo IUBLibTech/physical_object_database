@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :technical_metadatum, class: TechnicalMetadatum do
    # actable_id

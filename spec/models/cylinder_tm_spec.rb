@@ -1,8 +1,8 @@
 describe CylinderTm do
 
-  let(:cylinder_tm) {FactoryGirl.build :cylinder_tm }
+  let(:cylinder_tm) {FactoryBot.build :cylinder_tm }
 
-  it "gets a valid object from FactoryGirl" do
+  it "gets a valid object from FactoryBot" do
     expect(cylinder_tm).to be_valid
   end
 
@@ -24,7 +24,7 @@ describe CylinderTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:cylinder_tm) 
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:cylinder_tm) 
 
   describe "#master_copies" do
     it "returns 1" do

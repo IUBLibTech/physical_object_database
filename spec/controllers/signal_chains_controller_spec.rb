@@ -3,12 +3,12 @@ describe SignalChainsController do
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
  
   let(:formats) { ['CD-R'] } 
-  let(:signal_chain) { FactoryGirl.create(:signal_chain, :with_formats, formats: formats) }
-  let(:valid_signal_chain) { FactoryGirl.build(:signal_chain, :with_formats, formats: formats) }
-  let(:invalid_signal_chain) { FactoryGirl.build(:signal_chain, :invalid, :with_formats, formats: formats) }
+  let(:signal_chain) { FactoryBot.create(:signal_chain, :with_formats, formats: formats) }
+  let(:valid_signal_chain) { FactoryBot.build(:signal_chain, :with_formats, formats: formats) }
+  let(:invalid_signal_chain) { FactoryBot.build(:signal_chain, :invalid, :with_formats, formats: formats) }
 
-  let(:valid_attributes) { FactoryGirl.attributes_for(:signal_chain) }
-  let(:invalid_attributes) { FactoryGirl.attributes_for(:signal_chain, :invalid) }
+  let(:valid_attributes) { FactoryBot.attributes_for(:signal_chain) }
+  let(:invalid_attributes) { FactoryBot.attributes_for(:signal_chain, :invalid) }
 
   describe "GET #index" do
     before(:each) do
@@ -126,7 +126,7 @@ describe SignalChainsController do
       end
     end
     context "when failed" do
-      before(:each) { FactoryGirl.create :digital_file_provenance, signal_chain: signal_chain }
+      before(:each) { FactoryBot.create :digital_file_provenance, signal_chain: signal_chain }
       it "does not destroy the signal_chain" do
         expect{ delete_destroy }.not_to change(SignalChain, :count)
       end
@@ -142,7 +142,7 @@ describe SignalChainsController do
   end
 
   describe "#include" do
-    let!(:machine) { FactoryGirl.create(:machine, :with_formats, formats: formats) }
+    let!(:machine) { FactoryBot.create(:machine, :with_formats, formats: formats) }
     context "when successful" do
       before(:each) do
         put :include, id: signal_chain.id, machine_id: machine.id, position: signal_chain.processing_steps.size + 1
@@ -173,8 +173,8 @@ describe SignalChainsController do
   end
 
   describe "PATCH #reorder" do
-    let!(:step1) { FactoryGirl.create :processing_step, :with_formats, signal_chain: signal_chain, position: 1, formats: formats }
-    let!(:step2) { FactoryGirl.create :processing_step, :with_formats, signal_chain: signal_chain, position: 2, formats: formats }
+    let!(:step1) { FactoryBot.create :processing_step, :with_formats, signal_chain: signal_chain, position: 1, formats: formats }
+    let!(:step2) { FactoryBot.create :processing_step, :with_formats, signal_chain: signal_chain, position: 2, formats: formats }
     before(:each) do
       patch :reorder, id: signal_chain.id, reorder_submission: reorder_submission
     end

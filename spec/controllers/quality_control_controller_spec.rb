@@ -2,17 +2,17 @@ describe QualityControlController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let!(:po) { FactoryGirl.create :physical_object, :open_reel, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
-  let!(:po1) { FactoryGirl.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
-  let!(:po2) { FactoryGirl.create :physical_object, :dat, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
-  let!(:po3) { FactoryGirl.create :physical_object, :betacam, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
+  let!(:po) { FactoryBot.create :physical_object, :open_reel, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
+  let!(:po1) { FactoryBot.create :physical_object, :cdr, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
+  let!(:po2) { FactoryBot.create :physical_object, :dat, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
+  let!(:po3) { FactoryBot.create :physical_object, :betacam, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
   let(:all_objects) { [po, po1, po2, po3] }
   let(:iu_objects) { [po, po1] }
   let(:memnon_objects) { [po2, po3] }
 
-  let(:ds) { FactoryGirl.create :digital_status, :valid, state: "failed" }
-  let(:ds1) { FactoryGirl.create :digital_status, :valid, state: "accepted" }
-  let(:ds2) { FactoryGirl.create :digital_status, :valid, state: "transfered" }
+  let(:ds) { FactoryBot.create :digital_status, :valid, state: "failed" }
+  let(:ds1) { FactoryBot.create :digital_status, :valid, state: "accepted" }
+  let(:ds2) { FactoryBot.create :digital_status, :valid, state: "transfered" }
 
   describe "#index" do
     context "with no status filter" do

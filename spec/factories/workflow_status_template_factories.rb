@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :workflow_status_template, class: WorkflowStatusTemplate do
     name "Factory Girl workflow status template"

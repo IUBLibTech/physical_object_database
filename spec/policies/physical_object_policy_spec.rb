@@ -1,6 +1,6 @@
 describe PhysicalObjectPolicy do
   subject { PhysicalObjectPolicy.new(user, physical_object) }
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
+  let(:physical_object) { FactoryBot.create :physical_object, :cdr }
   WEB_ADMIN = User.find_by(username: "web_admin")
 
   context "web_admin user" do

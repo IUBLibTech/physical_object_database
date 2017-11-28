@@ -5,16 +5,16 @@ describe ResponsesController do
     basic_auth
     request.env['HTTP_REFERER'] = 'source_page'
   end
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr }
-  let(:barcoded_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
-  let(:format_version_object) { FactoryGirl.create :physical_object, :vhs, :barcoded }
+  let(:physical_object) { FactoryBot.create :physical_object, :cdr }
+  let(:barcoded_object) { FactoryBot.create :physical_object, :cdr, :barcoded }
+  let(:format_version_object) { FactoryBot.create :physical_object, :vhs, :barcoded }
   let(:test_object) do
-    test_object = FactoryGirl.create :physical_object, :cdr
+    test_object = FactoryBot.create :physical_object, :cdr
     test_object.mdpi_barcode = 49000000000000
     test_object.save!(validate: false)
     test_object
   end
-  let(:group_key) { FactoryGirl.create :group_key }
+  let(:group_key) { FactoryBot.create :group_key }
   let!(:unmatched_barcode) { 1234 }
 
   describe "requires BasicAuth" do
@@ -373,7 +373,7 @@ describe ResponsesController do
   end
 
   describe "#pull_state" do
-    let!(:po) { FactoryGirl.create( :physical_object, :cdr, :barcoded) }
+    let!(:po) { FactoryBot.create( :physical_object, :cdr, :barcoded) }
     context "with a 0 barcode" do
       before(:each) do
         get :pull_state, mdpi_barcode: physical_object.mdpi_barcode
@@ -402,7 +402,7 @@ describe ResponsesController do
       end
     end
     context "physical object has digital status but no decision" do
-      let!(:ds) { FactoryGirl.create :digital_status, physical_object_id: po.id, physical_object_mdpi_barcode: po.mdpi_barcode} 
+      let!(:ds) { FactoryBot.create :digital_status, physical_object_id: po.id, physical_object_mdpi_barcode: po.mdpi_barcode} 
       before(:each) do
         expect(ds.decided).to be_nil
         get :pull_state, mdpi_barcode: po.mdpi_barcode
@@ -418,7 +418,7 @@ describe ResponsesController do
       end
     end
     context "physical object has digital status and decision" do
-      let!(:ds) { FactoryGirl.create :digital_status, physical_object_id: po.id, physical_object_mdpi_barcode: po.mdpi_barcode }
+      let!(:ds) { FactoryBot.create :digital_status, physical_object_id: po.id, physical_object_mdpi_barcode: po.mdpi_barcode }
       before(:each) do
         ds.decided = ds.options.keys[0].to_s
         ds.save
@@ -444,10 +444,10 @@ describe ResponsesController do
     end
   end
 
-  let!(:po_requested) { FactoryGirl.create :physical_object, :cdr, :barcoded, staging_requested: true, staged: false }
-  let!(:po_nothing) { FactoryGirl.create :physical_object, :cdr, :barcoded, staging_requested: false, staged: false }
+  let!(:po_requested) { FactoryBot.create :physical_object, :cdr, :barcoded, staging_requested: true, staged: false }
+  let!(:po_nothing) { FactoryBot.create :physical_object, :cdr, :barcoded, staging_requested: false, staged: false }
   # Below case should not happen -- but if it did, it would be included in results
-  let!(:po_staged) { FactoryGirl.create :physical_object, :cdr, :barcoded, staging_requested: true, staged: true }
+  let!(:po_staged) { FactoryBot.create :physical_object, :cdr, :barcoded, staging_requested: true, staged: true }
   describe "#transfers_index" do    
     before(:each) do 
       get :transfers_index
@@ -621,7 +621,7 @@ describe ResponsesController do
       end
       context "with an error" do
         let(:error_po) do
-          error_po = FactoryGirl.create :physical_object, :cdr, :barcoded
+          error_po = FactoryBot.create :physical_object, :cdr, :barcoded
           error_po.unit = nil
           error_po.save!(validate: false)
           error_po
@@ -712,8 +712,8 @@ describe ResponsesController do
   end
 
   describe "#flags" do
-    let(:no_flag) { FactoryGirl.create :physical_object, :cdr, :barcoded}
-    let(:flag) { FactoryGirl.create :physical_object, :cdr, :barcoded}
+    let(:no_flag) { FactoryBot.create :physical_object, :cdr, :barcoded}
+    let(:flag) { FactoryBot.create :physical_object, :cdr, :barcoded}
 
     context "DigiProv without a flag" do
       before(:each) { 
@@ -760,7 +760,7 @@ describe ResponsesController do
       end
     end
     context "when physical object found" do
-      let(:po) { FactoryGirl.create(:physical_object, :cdr, :barcoded) }
+      let(:po) { FactoryBot.create(:physical_object, :cdr, :barcoded) }
       let(:mdpi_barcode) { po.mdpi_barcode }
       context "when digitizing_entity does not exist" do
         before(:each) do

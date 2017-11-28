@@ -2,9 +2,9 @@ describe SearchController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:physical_object) { FactoryGirl.create :physical_object, :boxable, :barcoded, title: "test title", call_number: "test call number" }
-  let(:bin) { FactoryGirl.create :bin }
-  let(:box) { FactoryGirl.create :box }
+  let(:physical_object) { FactoryBot.create :physical_object, :boxable, :barcoded, title: "test title", call_number: "test call number" }
+  let(:bin) { FactoryBot.create :bin }
+  let(:box) { FactoryBot.create :box }
   
 
   describe "GET #index" do
@@ -99,13 +99,13 @@ describe SearchController do
 
   describe "GET #advanced_search" do
     pending "test search limit?"
-    let!(:picklist) { FactoryGirl.create :picklist }
+    let!(:picklist) { FactoryBot.create :picklist }
     let!(:attributes_1) { { title: "TITLE", has_ephemera: true, generation: "Unknown", picklist: nil } }
     let!(:attributes_2) { { title: "TITLE 2", has_ephemera: nil, generation: "", picklist: picklist } }
-    let!(:cdr_1) { FactoryGirl.create :physical_object, :cdr, unit: Unit.all[0], **attributes_1 }
-    let!(:cdr_2) { FactoryGirl.create :physical_object, :cdr, unit: Unit.all[1], **attributes_2 }
-    let!(:betacam_1) { FactoryGirl.create :physical_object, :betacam, unit: Unit.all[2], **attributes_1 }
-    let!(:betacam_2) { FactoryGirl.create :physical_object, :betacam, unit: Unit.all[3], **attributes_2 }
+    let!(:cdr_1) { FactoryBot.create :physical_object, :cdr, unit: Unit.all[0], **attributes_1 }
+    let!(:cdr_2) { FactoryBot.create :physical_object, :cdr, unit: Unit.all[1], **attributes_2 }
+    let!(:betacam_1) { FactoryBot.create :physical_object, :betacam, unit: Unit.all[2], **attributes_1 }
+    let!(:betacam_2) { FactoryBot.create :physical_object, :betacam, unit: Unit.all[3], **attributes_2 }
     let(:omit_picklisted) { nil }
     let(:po_terms) { {format: ""} }
     let(:tm_terms) { {fungus: ""} }

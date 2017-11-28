@@ -2,16 +2,16 @@ describe ReturnsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:batch) { FactoryGirl.create :batch, identifier: "Created Batch" }
-  let(:created_batch) { FactoryGirl.create :batch, identifier: "Returned Batch" }
-  let(:bin) { FactoryGirl.create :bin, batch: batch }
-  let(:other_bin) { FactoryGirl.create :bin, batch: batch, identifier: "other bin", format: batch.format }
-  let(:box) { FactoryGirl.create :box, bin: bin, format: bin.format }
-  let(:binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
-  let(:boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
-  let(:film_batch) { FactoryGirl.create :batch, identifier: "Film Batch", format: 'Film' }
-  let(:film_bin) { FactoryGirl.create :bin, batch: film_batch, format: 'Film', identifier: 'Film bin' }
-  let(:film_object) { FactoryGirl.create :physical_object, :film, :barcoded, bin: film_bin }
+  let(:batch) { FactoryBot.create :batch, identifier: "Created Batch" }
+  let(:created_batch) { FactoryBot.create :batch, identifier: "Returned Batch" }
+  let(:bin) { FactoryBot.create :bin, batch: batch }
+  let(:other_bin) { FactoryBot.create :bin, batch: batch, identifier: "other bin", format: batch.format }
+  let(:box) { FactoryBot.create :box, bin: bin, format: bin.format }
+  let(:binned_object) { FactoryBot.create :physical_object, :barcoded, :binnable, bin: bin }
+  let(:boxed_object) { FactoryBot.create :physical_object, :barcoded, :boxable, box: box }
+  let(:film_batch) { FactoryBot.create :batch, identifier: "Film Batch", format: 'Film' }
+  let(:film_bin) { FactoryBot.create :bin, batch: film_batch, format: 'Film', identifier: 'Film bin' }
+  let(:film_object) { FactoryBot.create :physical_object, :film, :barcoded, bin: film_bin }
 
   before(:each) do
     batch.current_workflow_status = "Returned"
@@ -66,9 +66,9 @@ describe ReturnsController do
       end
     end
     context "on binned objects" do
-      let(:shipped_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
-      let(:unpacked_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
-      let(:returned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable, bin: bin }
+      let(:shipped_object) { FactoryBot.create :physical_object, :barcoded, :binnable, bin: bin }
+      let(:unpacked_object) { FactoryBot.create :physical_object, :barcoded, :binnable, bin: bin }
+      let(:returned_object) { FactoryBot.create :physical_object, :barcoded, :binnable, bin: bin }
       before(:each) do
         batch.save
         bin.save
@@ -82,9 +82,9 @@ describe ReturnsController do
       include_examples "return_bin behavior"
     end
     context "on boxed objects" do
-      let(:shipped_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
-      let(:unpacked_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
-      let(:returned_object) { FactoryGirl.create :physical_object, :barcoded, :boxable, box: box }
+      let(:shipped_object) { FactoryBot.create :physical_object, :barcoded, :boxable, box: box }
+      let(:unpacked_object) { FactoryBot.create :physical_object, :barcoded, :boxable, box: box }
+      let(:returned_object) { FactoryBot.create :physical_object, :barcoded, :boxable, box: box }
       before(:each) do
         batch.save
         bin.save
@@ -149,12 +149,17 @@ describe ReturnsController do
     context "on a loaded bin" do
       context "when successful" do
         before(:each) do
+          binned_object
           patch_action
         end
         it "sets the bin workflow status to Returned to Staging Area" do
           expect(bin.current_workflow_status).to eq "Batched"
           bin.reload
           expect(bin.current_workflow_status).to eq "Returned to Staging Area"
+        end
+        it "rejects 'Not Started' physical objects" do
+          binned_object.reload
+          expect(binned_object.digital_workflow_category).to eq 'rejected'
         end
         it "flashes a success message" do
           expect(flash[:notice]).to match /success/
@@ -550,7 +555,7 @@ describe ReturnsController do
         end
         context "remainder marked Missing (inactive)" do
           before(:each) do
-            FactoryGirl.create :condition_status, physical_object: binned_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id, active: false
+            FactoryBot.create :condition_status, physical_object: binned_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id, active: false
             patch_action
           end
           it "assigns @bin" do
@@ -565,7 +570,7 @@ describe ReturnsController do
         end
         context "remainder marked Missing (active)" do
           before(:each) do
-            FactoryGirl.create :condition_status, physical_object: binned_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id
+            FactoryBot.create :condition_status, physical_object: binned_object, condition_status_template_id: ConditionStatusTemplate.find_by(object_type: "Physical Object", name: "Missing").id
             patch_action
           end
           it "assigns @bin" do

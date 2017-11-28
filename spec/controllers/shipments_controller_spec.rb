@@ -2,9 +2,9 @@ describe ShipmentsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:valid_attributes) { FactoryGirl.attributes_for :shipment }
-  let(:invalid_attributes) { FactoryGirl.attributes_for :shipment, :invalid }
-  let(:shipment) { FactoryGirl.create :shipment }
+  let(:valid_attributes) { FactoryBot.attributes_for :shipment }
+  let(:invalid_attributes) { FactoryBot.attributes_for :shipment, :invalid }
+  let(:shipment) { FactoryBot.create :shipment }
 
   describe "GET #index" do
     before(:each) do
@@ -162,7 +162,7 @@ describe ShipmentsController do
         include_examples 'common behaviors'
       end
       context "object not in shipment" do
-        let(:external_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
+        let(:external_object) { FactoryBot.create :physical_object, :cdr, :barcoded }
         let(:mdpi_barcode) { external_object.mdpi_barcode }
         it "flashes warning: not in shipment" do
           expect(flash[:warning]).to match /not.*ship/i
@@ -170,8 +170,8 @@ describe ShipmentsController do
         include_examples 'common behaviors'
       end
       context "object already unloaded" do
-        let(:picklist) { FactoryGirl.create :picklist }
-        let(:unloaded_object) { FactoryGirl.create :physical_object, :cdr, :barcoded, shipment: shipment, picklist: picklist }
+        let(:picklist) { FactoryBot.create :picklist }
+        let(:unloaded_object) { FactoryBot.create :physical_object, :cdr, :barcoded, shipment: shipment, picklist: picklist }
         let(:mdpi_barcode) { unloaded_object.mdpi_barcode }
         it "flashes notice: already unloaded" do
           expect(flash[:notice]).to match /already.*unloaded/
@@ -180,7 +180,7 @@ describe ShipmentsController do
       end
     end
     context "with a valid object" do
-      let(:valid_object) { FactoryGirl.create :physical_object, :cdr, :barcoded, shipment: shipment }
+      let(:valid_object) { FactoryBot.create :physical_object, :cdr, :barcoded, shipment: shipment }
       let(:mdpi_barcode) { valid_object.mdpi_barcode }
       include_examples 'common behaviors'
       it 'assigns @po' do
@@ -227,7 +227,7 @@ describe ShipmentsController do
         include_examples 'common behaviors'
       end
       context "object not in shipment" do
-        let(:external_object) { FactoryGirl.create :physical_object, :cdr, :barcoded }
+        let(:external_object) { FactoryBot.create :physical_object, :cdr, :barcoded }
         let(:mdpi_barcode) { external_object.mdpi_barcode }
         it "flashes warning: not in shipment" do
           expect(flash[:warning]).to match /not.*ship/i
@@ -235,8 +235,8 @@ describe ShipmentsController do
         include_examples 'common behaviors'
       end
       context "object already repacked" do
-        let(:picklist) { FactoryGirl.create :picklist }
-        let(:reloaded_object) { FactoryGirl.create :physical_object, :cdr, :barcoded, shipment: shipment, current_workflow_status: 'Returned to Unit' }
+        let(:picklist) { FactoryBot.create :picklist }
+        let(:reloaded_object) { FactoryBot.create :physical_object, :cdr, :barcoded, shipment: shipment, current_workflow_status: 'Returned to Unit' }
         let(:mdpi_barcode) { reloaded_object.mdpi_barcode }
         it "flashes notice: already repacked" do
           expect(flash[:notice]).to match /already.*repacked/
@@ -244,8 +244,8 @@ describe ShipmentsController do
         include_examples 'common behaviors'
       end
       context "object has invalid workflow status" do
-        let(:picklist) { FactoryGirl.create :picklist }
-        let(:invalid_object) { FactoryGirl.create :physical_object, :cdr, :barcoded, shipment: shipment, current_workflow_status: 'Unassigned' }
+        let(:picklist) { FactoryBot.create :picklist }
+        let(:invalid_object) { FactoryBot.create :physical_object, :cdr, :barcoded, shipment: shipment, current_workflow_status: 'Unassigned' }
         let(:mdpi_barcode) { invalid_object.mdpi_barcode }
         it "flashes notice: invalid workflow status" do
           expect(flash[:warning]).to match /cannot.*repack/
@@ -254,7 +254,7 @@ describe ShipmentsController do
       end
     end
     context "with a valid object" do
-      let(:valid_object) { FactoryGirl.create :physical_object, :cdr, :barcoded, shipment: shipment, current_workflow_status: 'Unpacked' }
+      let(:valid_object) { FactoryBot.create :physical_object, :cdr, :barcoded, shipment: shipment, current_workflow_status: 'Unpacked' }
       let(:mdpi_barcode) { valid_object.mdpi_barcode }
       include_examples 'common behaviors'
       it 'assigns @po' do

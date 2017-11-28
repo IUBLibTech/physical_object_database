@@ -1,7 +1,7 @@
 describe QcXmlModule do
   let(:including_class) { Class.new { include QcXmlModule } }
   let(:test_object) { including_class.new }
-  let(:po) { FactoryGirl.create :physical_object, :cdr }
+  let(:po) { FactoryBot.create :physical_object, :cdr }
   let(:digitizing_entity) { 'Memnon Archiving Services Inc' }
   let(:manual_check) { 'No' }
   let(:xml) { '<?xml version="1.0"?>

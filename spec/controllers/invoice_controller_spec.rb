@@ -1,7 +1,7 @@
 describe InvoiceController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
-  let(:mis) { FactoryGirl.create :memnon_invoice_submission }
+  let(:mis) { FactoryBot.create :memnon_invoice_submission }
   let(:good_invoice) { fixture_file_upload("Memnon Good.xlsx") }
   let(:bad_invoice) { fixture_file_upload("memnon_invoice_new_cases.xlsx") }
 

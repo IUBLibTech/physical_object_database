@@ -86,7 +86,7 @@ class PicklistSpecificationsController < ApplicationController
     po.format = @ps.format
     if @ps.ensure_tm
       tm_attributes = @ps.ensure_tm.attributes
-      tm_attributes.delete_if { |k, v| k.to_sym.in? [:id, :created_at, :updated_at] }
+      tm_attributes.delete_if { |k, v| k.to_sym.in? [:id, :created_at, :updated_at, :picklist_specification_id] }
       tm = po.ensure_tm
       if tm
         tm.attributes.keys.each { |att| tm[att] = nil }

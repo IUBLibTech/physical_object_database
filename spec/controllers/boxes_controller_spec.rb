@@ -2,18 +2,18 @@ describe BoxesController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:batch) { FactoryGirl.create(:batch) }
-  let(:bin) { FactoryGirl.create(:bin) }
-  let(:other_bin) { FactoryGirl.create(:bin, identifier: "other " + bin.identifier) }
-  let(:box) { FactoryGirl.create(:box) }
-  let(:binned_box) { FactoryGirl.create(:box, bin: bin) }
-  let(:boxed_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded, box: box) }
-  let(:binned_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded, bin: bin) }
-  let(:picklist) { FactoryGirl.create(:picklist) }
-  let!(:complete) {FactoryGirl.create(:picklist, name: 'complete', complete: true)}
-  let(:spreadsheet) { FactoryGirl.create(:spreadsheet) }
-  let(:valid_box) { FactoryGirl.build(:box) }
-  let(:invalid_box) { FactoryGirl.build(:invalid_box) }
+  let(:batch) { FactoryBot.create(:batch) }
+  let(:bin) { FactoryBot.create(:bin) }
+  let(:other_bin) { FactoryBot.create(:bin, identifier: "other " + bin.identifier) }
+  let(:box) { FactoryBot.create(:box) }
+  let(:binned_box) { FactoryBot.create(:box, bin: bin) }
+  let(:boxed_object) { FactoryBot.create(:physical_object, :cdr, :barcoded, box: box) }
+  let(:binned_object) { FactoryBot.create(:physical_object, :cdr, :barcoded, bin: bin) }
+  let(:picklist) { FactoryBot.create(:picklist) }
+  let!(:complete) {FactoryBot.create(:picklist, name: 'complete', complete: true)}
+  let(:spreadsheet) { FactoryBot.create(:spreadsheet) }
+  let(:valid_box) { FactoryBot.build(:box) }
+  let(:invalid_box) { FactoryBot.build(:invalid_box) }
 
   describe "GET index" do
     context "specifying a bin" do
@@ -46,8 +46,8 @@ describe BoxesController do
     context "without specifying a bin" do
       let(:format1) { TechnicalMetadatumModule.box_formats.first }
       let(:format2) { TechnicalMetadatumModule.box_formats.last }
-      let!(:box1) { FactoryGirl.create(:box, format: format1, description: 'box1', bin: bin) }
-      let!(:box2) { FactoryGirl.create(:box, format: format2, description: 'box2') }
+      let!(:box1) { FactoryBot.create(:box, format: format1, description: 'box1', bin: bin) }
+      let!(:box2) { FactoryBot.create(:box, format: format2, description: 'box2') }
       before(:each) do
         get :index, format: format, assignment: assignment, tm_format: tm_format, description: description
       end
@@ -248,7 +248,7 @@ describe BoxesController do
   describe "PUT update" do
     context "with valid attributes" do
       before(:each) do
-        put :update, id: box.id, box: FactoryGirl.attributes_for(:box, spreadsheet_id: spreadsheet.id)
+        put :update, id: box.id, box: FactoryBot.attributes_for(:box, spreadsheet_id: spreadsheet.id)
       end
       it "locates the requested object" do
         expect(assigns(:box)).to eq box
@@ -264,7 +264,7 @@ describe BoxesController do
     end
     context "with invalid attributes" do
       before(:each) do
-        put :update, id: box.id, box: FactoryGirl.attributes_for(:invalid_box)
+        put :update, id: box.id, box: FactoryBot.attributes_for(:invalid_box)
       end
       it "locates the requested object" do
         expect(assigns(:box)).to eq box

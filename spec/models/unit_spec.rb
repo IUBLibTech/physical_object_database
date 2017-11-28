@@ -1,16 +1,16 @@
 describe Unit do
 
-  let(:unit) { FactoryGirl.create :unit }
-  let(:valid_unit) { FactoryGirl.build :unit }
-  let(:invalid_unit) { FactoryGirl.build :unit, :invalid }
-  let(:duplicate) { FactoryGirl.build :unit }
-  let(:physical_object) { FactoryGirl.create :physical_object, :cdr, unit: unit }
+  let(:unit) { FactoryBot.create :unit }
+  let(:valid_unit) { FactoryBot.build :unit }
+  let(:invalid_unit) { FactoryBot.build :unit, :invalid }
+  let(:duplicate) { FactoryBot.build :unit }
+  let(:physical_object) { FactoryBot.create :physical_object, :cdr, unit: unit }
   describe "should be seeded with data:" do
     it "78 values" do
       expect(Unit.all.size).to be >= 78
     end
   end
-  describe "FactoryGirl object generation" do
+  describe "FactoryBot object generation" do
     it "returns a valid unit" do
       expect(valid_unit).to be_valid
     end

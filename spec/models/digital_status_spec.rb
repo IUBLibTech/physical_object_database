@@ -1,10 +1,10 @@
 describe DigitalStatus do
-  let(:po) { FactoryGirl.create(:physical_object, :cdr, :barcoded) }
-  let(:ds) { FactoryGirl.create(:digital_status, physical_object: po, physical_object_mdpi_barcode: po.mdpi_barcode) }
-  let(:valid_ds) { FactoryGirl.build(:digital_status, :valid) }
-  let(:invalid_ds) { FactoryGirl.build(:digital_status, :invalid) }
+  let(:po) { FactoryBot.create(:physical_object, :cdr, :barcoded) }
+  let(:ds) { FactoryBot.create(:digital_status, physical_object: po, physical_object_mdpi_barcode: po.mdpi_barcode) }
+  let(:valid_ds) { FactoryBot.build(:digital_status, :valid) }
+  let(:invalid_ds) { FactoryBot.build(:digital_status, :invalid) }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(valid_ds).to be_valid
     end
@@ -54,9 +54,9 @@ describe DigitalStatus do
     results = { failed: 3, queued: 4 }
     before(:each) do
       results.each do |status, count|
-        ds_list = FactoryGirl.create_list(:digital_status, count, :valid, state: status.to_s, options: { foo: 1, bar: 2})
+        ds_list = FactoryBot.create_list(:digital_status, count, :valid, state: status.to_s, options: { foo: 1, bar: 2})
         ds_list.each do |ds|
-          po = FactoryGirl.create :physical_object, :cdr, :barcoded
+          po = FactoryBot.create :physical_object, :cdr, :barcoded
           ds.physical_object = po
 #ds.decided = status.to_s + ' decision'
           ds.save!
@@ -115,15 +115,15 @@ describe DigitalStatus do
     describe "expired object scopes:" do
       let!(:unexpired_time) { Time.now }
       let!(:expired_time) { unexpired_time - 365.days }
-      let!(:unexpired_audio) { FactoryGirl.create :physical_object, :cdr, digital_start: unexpired_time }
-      let!(:expired_audio) { FactoryGirl.create :physical_object, :cdr, digital_start: expired_time }
-      let!(:unexpired_video) { FactoryGirl.create :physical_object, :umatic, digital_start: unexpired_time }
-      let!(:expired_video) { FactoryGirl.create :physical_object, :umatic, digital_start: expired_time }
-      let!(:unexpired_film) { FactoryGirl.create :physical_object, :film, digital_start: unexpired_time }
-      let!(:expired_film) { FactoryGirl.create :physical_object, :film, digital_start: expired_time }
+      let!(:unexpired_audio) { FactoryBot.create :physical_object, :cdr, digital_start: unexpired_time }
+      let!(:expired_audio) { FactoryBot.create :physical_object, :cdr, digital_start: expired_time }
+      let!(:unexpired_video) { FactoryBot.create :physical_object, :umatic, digital_start: unexpired_time }
+      let!(:expired_video) { FactoryBot.create :physical_object, :umatic, digital_start: expired_time }
+      let!(:unexpired_film) { FactoryBot.create :physical_object, :film, digital_start: unexpired_time }
+      let!(:expired_film) { FactoryBot.create :physical_object, :film, digital_start: expired_time }
       before(:each) do
         [unexpired_audio, expired_audio, unexpired_video, expired_video, unexpired_film, expired_film].each do |po|
-          ds = FactoryGirl.build :digital_status, physical_object: po, options: { foo: 'bar' }
+          ds = FactoryBot.build :digital_status, physical_object: po, options: { foo: 'bar' }
           ds.save!
         end
       end

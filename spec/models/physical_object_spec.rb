@@ -1,19 +1,19 @@
 describe PhysicalObject do
   include TechnicalMetadatumModule
 
-  let(:po) { FactoryGirl.create :physical_object, :cdr }
-  let(:barcoded_po) { FactoryGirl.create :physical_object, :cdr, :barcoded }
-  let(:grouped_po) { FactoryGirl.build :physical_object, :cdr, group_key: po.group_key }
-  let(:video_po) { FactoryGirl.build :physical_object, :umatic }
-  let(:film_po) { FactoryGirl.build :physical_object, :film }
-  let(:boxable_po) { FactoryGirl.build :physical_object, :boxable, :barcoded }
-  let(:binnable_po) { FactoryGirl.build :physical_object, :binnable, :barcoded }
-  let(:valid_po) { FactoryGirl.build :physical_object, :cdr, unit: Unit.where(campus: 'Bloomington').first }
-  let(:invalid_po) { FactoryGirl.build :physical_object, :cdr }
-  let(:picklist) { FactoryGirl.create :picklist }
-  let(:box) { FactoryGirl.create :box }
-  let(:bin) { FactoryGirl.create :bin }
-  let(:batch) { FactoryGirl.create :batch }
+  let(:po) { FactoryBot.create :physical_object, :cdr }
+  let(:barcoded_po) { FactoryBot.create :physical_object, :cdr, :barcoded }
+  let(:grouped_po) { FactoryBot.build :physical_object, :cdr, group_key: po.group_key }
+  let(:video_po) { FactoryBot.build :physical_object, :umatic }
+  let(:film_po) { FactoryBot.build :physical_object, :film }
+  let(:boxable_po) { FactoryBot.build :physical_object, :boxable, :barcoded }
+  let(:binnable_po) { FactoryBot.build :physical_object, :binnable, :barcoded }
+  let(:valid_po) { FactoryBot.build :physical_object, :cdr, unit: Unit.where(campus: 'Bloomington').first }
+  let(:invalid_po) { FactoryBot.build :physical_object, :cdr }
+  let(:picklist) { FactoryBot.create :picklist }
+  let(:box) { FactoryBot.create :box }
+  let(:bin) { FactoryBot.create :bin }
+  let(:batch) { FactoryBot.create :batch }
 
   tm_types = [:cdr, :dat, :lp, :open_reel, :betacam, :betamax, :eight_mm, :half_inch_open_reel_video, :one_inch_open_reel_video, :umatic, :vhs, :film]
   tm_factories = {
@@ -38,10 +38,10 @@ describe PhysicalObject do
     'Film' => :film_tm
   }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     tm_types.each do |tm_type|
       context "with tm_type: #{tm_type}" do
-        let(:valid_po) { FactoryGirl.build :physical_object, tm_type }
+        let(:valid_po) { FactoryBot.build :physical_object, tm_type }
         specify "provides a valid object" do
           expect(valid_po).to be_valid
           expect(valid_po.technical_metadatum).to be_valid
@@ -57,7 +57,7 @@ describe PhysicalObject do
 describe "sets proper media type" do
     tm_types.each do |tm_type|
     context "with tm_type: #{tm_type}" do
-      let(:po) { FactoryGirl.create :physical_object, tm_type }
+      let(:po) { FactoryBot.create :physical_object, tm_type }
       specify "saves proper media type" do
         expect(po.audio).to eq (TechnicalMetadatumModule.tm_genres[po.format] == :audio ? true : nil)
         expect(po.video).to eq (TechnicalMetadatumModule.tm_genres[po.format] == :video ? true : nil)
@@ -154,7 +154,7 @@ describe "has required attributes:" do
         describe "boxable format: #{format}" do
           before(:each) do
             valid_po.format = format
-            valid_po.ensure_tm.assign_attributes(FactoryGirl.attributes_for tm_factories[format])
+            valid_po.ensure_tm.assign_attributes(FactoryBot.attributes_for tm_factories[format])
           end
           specify "cannot belong to a bin and box" do
             valid_po.box = box
@@ -180,7 +180,7 @@ describe "has required attributes:" do
             specify "cannot belong to a box containing other formats" do
               format_value = TechnicalMetadatumModule.box_formats[index - 1]
               po.format = format_value
-              po.ensure_tm.assign_attributes(FactoryGirl.attributes_for tm_factories[format_value])
+              po.ensure_tm.assign_attributes(FactoryBot.attributes_for tm_factories[format_value])
 	            po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
               po.box = box
               po.save!
@@ -199,7 +199,7 @@ describe "has required attributes:" do
         describe "binnable format: #{format}" do
           before(:each) do
             valid_po.format = format
-            valid_po.ensure_tm.assign_attributes(FactoryGirl.attributes_for tm_factories[format])
+            valid_po.ensure_tm.assign_attributes(FactoryBot.attributes_for tm_factories[format])
           end
           specify "cannot belong to a bin and box" do
             valid_po.box = box
@@ -226,7 +226,7 @@ describe "has required attributes:" do
             specify "cannot belong to a bin containing other formats" do
               format_value = TechnicalMetadatumModule.bin_formats[index - 1]
               po.format = format_value
-              po.ensure_tm.assign_attributes(FactoryGirl.attributes_for tm_factories[format_value])
+              po.ensure_tm.assign_attributes(FactoryBot.attributes_for tm_factories[format_value])
 	            po.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
               po.bin = bin
               po.save!
@@ -453,14 +453,14 @@ describe "has required attributes:" do
   end
   describe "::to_csv" do
     it "lists the picklist, if present" do
-      expect(PhysicalObject.to_csv([], picklist)).to eq "Picklist:,FactoryGirl picklist\n"
+      expect(PhysicalObject.to_csv([], picklist)).to eq "Picklist:,FactoryBot picklist\n"
     end
     it "does not list the picklist, if absent" do
       expect(PhysicalObject.to_csv([], nil)).to eq ""
     end
     it "lists physical objects" do
       po.save
-      expect(PhysicalObject.to_csv([po])).to match(/FactoryGirl object/i)
+      expect(PhysicalObject.to_csv([po])).to match(/FactoryBot object/i)
     end
   end
 
@@ -732,10 +732,10 @@ describe "has required attributes:" do
     describe "#condition_notes" do
       condition_user = "condition_user"
       let(:cst_templates) { ConditionStatusTemplate.where(object_type: "Physical Object") }
-      let!(:active1) { FactoryGirl.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Active 1", active: true, condition_status_template_id: cst_templates[0].id }
-      let!(:active2) { FactoryGirl.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Active 2", active: true, condition_status_template_id: cst_templates[1].id }
-      let!(:inactive1) { FactoryGirl.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Inactive 1", active: false, condition_status_template_id: cst_templates[2].id }
-      let!(:inactive2) { FactoryGirl.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Inactive 2", active: false, condition_status_template_id: cst_templates[3].id }
+      let!(:active1) { FactoryBot.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Active 1", active: true, condition_status_template_id: cst_templates[0].id }
+      let!(:active2) { FactoryBot.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Active 2", active: true, condition_status_template_id: cst_templates[1].id }
+      let!(:inactive1) { FactoryBot.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Inactive 1", active: false, condition_status_template_id: cst_templates[2].id }
+      let!(:inactive2) { FactoryBot.create :condition_status, physical_object_id: po.id, user: condition_user, notes: "Inactive 2", active: false, condition_status_template_id: cst_templates[3].id }
       [false, true].each do |include_metadata|
         context "include_metadata: #{include_metadata}" do
           let!(:export_results) { po.reload; po.condition_notes(include_metadata) }
@@ -765,10 +765,10 @@ describe "has required attributes:" do
         end
         describe "#other_notes" do
           note_user = "note_user"
-          let!(:external1) { FactoryGirl.create :note, physical_object: po, export: true, body: "External 1", user: note_user }
-          let!(:external2) { FactoryGirl.create :note, physical_object: po, export: true, body: "External 2", user: note_user }
-          let!(:internal1) { FactoryGirl.create :note, physical_object: po, export: false, body: "Internal 1", user: note_user }
-          let!(:internal2) { FactoryGirl.create :note, physical_object: po, export: false, body: "Internal 2", user: note_user }
+          let!(:external1) { FactoryBot.create :note, physical_object: po, export: true, body: "External 1", user: note_user }
+          let!(:external2) { FactoryBot.create :note, physical_object: po, export: true, body: "External 2", user: note_user }
+          let!(:internal1) { FactoryBot.create :note, physical_object: po, export: false, body: "Internal 1", user: note_user }
+          let!(:internal2) { FactoryBot.create :note, physical_object: po, export: false, body: "Internal 2", user: note_user }
           [ { export_flag: false, include_metadata: false },
             { export_flag: false, include_metadata: true },
             { export_flag: true, include_metadata: false },
@@ -855,7 +855,7 @@ describe "has required attributes:" do
         end
 
         it_behaves_like "includes ConditionStatusModule" do
-          let(:condition_status) { FactoryGirl.create(:condition_status, :physical_object, physical_object: po) }
+          let(:condition_status) { FactoryBot.create(:condition_status, :physical_object, physical_object: po) }
           let(:target_object) { po }
           let(:class_title) { "Physical Object" }
         end
@@ -1024,7 +1024,7 @@ describe "has required attributes:" do
         {active: false, blocks_packing: false } => false }.each do |values, result|
         describe "with #{values.inspect}" do
           it "returns #{result}" do
-            temp_cs = FactoryGirl.build :condition_status, :physical_object, **values
+            temp_cs = FactoryBot.build :condition_status, :physical_object, **values
             cs = po.condition_statuses.new
             cs.assign_attributes(active: temp_cs.active, condition_status_template_id: temp_cs.condition_status_template_id)
             cs.save!
@@ -1065,7 +1065,7 @@ describe "has required attributes:" do
       end
     end
     context "with a digital_provenance" do
-      let(:original_dp) { FactoryGirl.build :digital_provenance, physical_object: valid_po, comments: "original dp" }
+      let(:original_dp) { FactoryBot.build :digital_provenance, physical_object: valid_po, comments: "original dp" }
       before(:each) { valid_po.digital_provenance = original_dp }
       it "returns the existing provenance" do
         expect(valid_po.digital_provenance).to eq original_dp

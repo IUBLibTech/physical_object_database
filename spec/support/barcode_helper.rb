@@ -2,7 +2,7 @@
 # Methods to generate valid/invalid MDPI barcodes
 #
 # Automatically included in model and controller specs
-# In FactoryGirl, call via:
+# In FactoryBot, call via:
 #   BarcodeHelper.valid_mdpi_barcode
 #   BarcodeHelper.invalid_mdpi_barcode
 #

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :machine_format, class: MachineFormat do
     association :machine, factory: :machine

@@ -1,10 +1,10 @@
 describe ProcessingStep do
   let(:formats) { ["CD-R"] }
-  let(:processing_step) { FactoryGirl.create :processing_step, :with_formats, formats: formats }
-  let(:valid_processing_step) { FactoryGirl.build :processing_step, :with_formats, formats: formats }
-  let(:invalid_processing_step) { FactoryGirl.build :processing_step, :invalid, :with_formats, formats: formats }
+  let(:processing_step) { FactoryBot.create :processing_step, :with_formats, formats: formats }
+  let(:valid_processing_step) { FactoryBot.build :processing_step, :with_formats, formats: formats }
+  let(:invalid_processing_step) { FactoryBot.build :processing_step, :invalid, :with_formats, formats: formats }
 
-  describe "FactoryGirl object generation" do
+  describe "FactoryBot object generation" do
     it "returns a valid object" do
       expect(valid_processing_step).to be_valid
     end

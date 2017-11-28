@@ -1,5 +1,5 @@
 describe "Picklist management" do
-  let(:picklist) { FactoryGirl.create(:picklist) }
+  let(:picklist) { FactoryBot.create(:picklist) }
   before(:each) do 
     sign_in
   end

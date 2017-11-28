@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :group_key, class: GroupKey do
     group_total 1

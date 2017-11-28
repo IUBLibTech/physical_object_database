@@ -3,7 +3,7 @@
 # tm_object
 #
 shared_examples "includes YearModule" do |tm_object|
-  let(:year_physical_object) { FactoryGirl.build :physical_object, :cdr, year: 1985 }
+  let(:year_physical_object) { FactoryBot.build :physical_object, :cdr, year: 1985 }
 
   describe "#year" do
     context "without a physical object set" do

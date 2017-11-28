@@ -1,9 +1,9 @@
 feature "Picklist Processing", js: true do
 
   pending "Rewrite tests using new pick list processing functionality" do 
-    let(:picklist) { FactoryGirl.create :picklist }
-    let(:bin) { FactoryGirl.create :bin }
-    let(:physical_object) { FactoryGirl.create :physical_object, :cdr, picklist: picklist, bin: bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
+    let(:picklist) { FactoryBot.create :picklist }
+    let(:bin) { FactoryBot.create :bin }
+    let(:physical_object) { FactoryBot.create :physical_object, :cdr, picklist: picklist, bin: bin, mdpi_barcode: BarcodeHelper.valid_mdpi_barcode }
 
     before(:each) do
       sign_in

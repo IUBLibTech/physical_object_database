@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :bin, class: Bin do
     identifier "Test Bin"

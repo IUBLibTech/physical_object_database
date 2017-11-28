@@ -1,8 +1,8 @@
 describe AnalogSoundDiscTm do
 
-  let(:analog_sound_disc_tm) {FactoryGirl.build :analog_sound_disc_tm }
+  let(:analog_sound_disc_tm) {FactoryBot.build :analog_sound_disc_tm }
 
-  it "gets a valid object from FactoryGirl" do
+  it "gets a valid object from FactoryBot" do
     expect(analog_sound_disc_tm).to be_valid
   end
 
@@ -67,7 +67,7 @@ describe AnalogSoundDiscTm do
   describe "has virtual fields" do
     let(:year) { '1985' }
     specify "#year" do
-      physical_object = FactoryGirl.create(:physical_object, :lp, year: year)
+      physical_object = FactoryBot.create(:physical_object, :lp, year: year)
       analog_sound_disc_tm.physical_object = physical_object
       expect(analog_sound_disc_tm.year).to eq year
     end
@@ -79,8 +79,8 @@ describe AnalogSoundDiscTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:analog_sound_disc_tm) 
-  it_behaves_like "includes YearModule", FactoryGirl.build(:analog_sound_disc_tm)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:analog_sound_disc_tm) 
+  it_behaves_like "includes YearModule", FactoryBot.build(:analog_sound_disc_tm)
 
   describe "#master_copies" do
     it "returns 2" do

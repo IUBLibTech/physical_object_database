@@ -5,14 +5,14 @@ describe UnitsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   
-  let(:unit) { FactoryGirl.create(:unit) }
-  let(:valid_unit) { FactoryGirl.build(:unit) }
-  let(:invalid_unit) { FactoryGirl.build(:unit, :invalid) }
+  let(:unit) { FactoryBot.create(:unit) }
+  let(:valid_unit) { FactoryBot.build(:unit) }
+  let(:invalid_unit) { FactoryBot.build(:unit, :invalid) }
   
-  let(:unit_object) { FactoryGirl.create(:physical_object, :boxable, unit: unit) }
+  let(:unit_object) { FactoryBot.create(:physical_object, :boxable, unit: unit) }
 
-  let(:valid_attributes) { FactoryGirl.attributes_for(:unit) }
-  let(:invalid_attributes) { FactoryGirl.attributes_for(:unit, :invalid) }
+  let(:valid_attributes) { FactoryBot.attributes_for(:unit) }
+  let(:invalid_attributes) { FactoryBot.attributes_for(:unit, :invalid) }
 
   describe "GET #index" do
     before(:each) do

@@ -2,20 +2,20 @@ describe PhysicalObjectsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
-  let(:physical_object) { FactoryGirl.create(:physical_object, :cdr) }
-  let(:picklist_specification) { FactoryGirl.create(:picklist_specification, :cdr) }
-  let(:barcoded_object) { FactoryGirl.create(:physical_object, :cdr, :barcoded) }
-  let(:second_object) { FactoryGirl.create(:physical_object, :cdr, unit: physical_object.unit, group_key: physical_object.group_key, group_position: 2) }
-  let(:valid_physical_object) { FactoryGirl.build(:physical_object, :cdr, unit: physical_object.unit) }
-  let(:invalid_physical_object) { FactoryGirl.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
-  let(:boxed_physical_object) { FactoryGirl.build(:physical_object, :cdr, :barcoded, unit: physical_object.unit, box: box, picklist: picklist) }
-  let(:binned_physical_object) { FactoryGirl.build(:physical_object, :betacam, :barcoded, unit: physical_object.unit, bin: bin, picklist: picklist) }
-  let(:group_key) { FactoryGirl.create(:group_key) }
-  let(:picklist) { FactoryGirl.create(:picklist) }
-  let(:shipment) { FactoryGirl.create(:shipment) }
-  let(:full_box) { FactoryGirl.create(:box, full: true) }
-  let(:box) { FactoryGirl.create(:box) }
-  let(:bin) { FactoryGirl.create(:bin) }
+  let(:physical_object) { FactoryBot.create(:physical_object, :cdr) }
+  let(:picklist_specification) { FactoryBot.create(:picklist_specification, :cdr) }
+  let(:barcoded_object) { FactoryBot.create(:physical_object, :cdr, :barcoded) }
+  let(:second_object) { FactoryBot.create(:physical_object, :cdr, unit: physical_object.unit, group_key: physical_object.group_key, group_position: 2) }
+  let(:valid_physical_object) { FactoryBot.build(:physical_object, :cdr, unit: physical_object.unit) }
+  let(:invalid_physical_object) { FactoryBot.build(:invalid_physical_object, :cdr, unit: physical_object.unit) }
+  let(:boxed_physical_object) { FactoryBot.build(:physical_object, :cdr, :barcoded, unit: physical_object.unit, box: box, picklist: picklist) }
+  let(:binned_physical_object) { FactoryBot.build(:physical_object, :betacam, :barcoded, unit: physical_object.unit, bin: bin, picklist: picklist) }
+  let(:group_key) { FactoryBot.create(:group_key) }
+  let(:picklist) { FactoryBot.create(:picklist) }
+  let(:shipment) { FactoryBot.create(:shipment) }
+  let(:full_box) { FactoryBot.create(:box, full: true) }
+  let(:box) { FactoryBot.create(:box) }
+  let(:bin) { FactoryBot.create(:bin) }
   let(:sealed_bin) { bin.current_workflow_status = "Sealed"; bin.save!; bin }
   CARRYOVER_ATTRIBUTES = [:format, :unit_id, :picklist_id, :box_id, :bin_id, :collection_identifier, :collection_name, :shipment_id]
 
@@ -115,7 +115,7 @@ describe PhysicalObjectsController do
         end
       end
       context "without repeat" do
-        let(:creation) { post :create, physical_object: boxed_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm)}
+        let(:creation) { post :create, physical_object: boxed_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm)}
         include_examples "common successful POST create behaviors"
         it "redirects to the objects index" do
           creation
@@ -124,7 +124,7 @@ describe PhysicalObjectsController do
       end
       context "with repeat: true" do
         let(:title) { "repeated title" }
-        let(:creation) { post :create, repeat: 'true', grouped: grouped, physical_object: chosen_po.attributes.symbolize_keys.merge(title: title), tm: FactoryGirl.attributes_for(chosen_factory)}
+        let(:creation) { post :create, repeat: 'true', grouped: grouped, physical_object: chosen_po.attributes.symbolize_keys.merge(title: title), tm: FactoryBot.attributes_for(chosen_factory)}
         shared_examples "common successful repeat creation behaviors" do
           include_examples "common successful POST create behaviors"
           it "assigns a new @physical_object" do
@@ -207,11 +207,11 @@ describe PhysicalObjectsController do
       end
     end
     context "with invalid attributes" do
-      let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm) }
+      let(:creation) { post :create, physical_object: invalid_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm) }
       include_examples "common failed POST create behaviors"
     end
     context "assigning to a non-existant box" do
-      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: 42 }
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm), box_mdpi_barcode: 42 }
       include_examples "common failed POST create behaviors"
       it "assigns errors[:box]" do
         creation
@@ -220,7 +220,7 @@ describe PhysicalObjectsController do
       end
     end
     context "assigning to a full box" do
-      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: full_box.mdpi_barcode }
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm), box_mdpi_barcode: full_box.mdpi_barcode }
       include_examples "common failed POST create behaviors"
       it "assigns errors[:box]" do
         creation
@@ -229,7 +229,7 @@ describe PhysicalObjectsController do
       end
     end
     context "assigning to a non-existent bin" do
-      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), bin_mdpi_barcode: 42 }
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm), bin_mdpi_barcode: 42 }
       include_examples "common failed POST create behaviors"
       it "assigns errors[:bin]" do
         creation
@@ -238,7 +238,7 @@ describe PhysicalObjectsController do
       end
     end
     context "assigning to a sealed bin" do
-      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), bin_mdpi_barcode: sealed_bin.mdpi_barcode }
+      let(:creation) { post :create, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm), bin_mdpi_barcode: sealed_bin.mdpi_barcode }
       include_examples "common failed POST create behaviors"
       it "assigns errors[:bin]" do
         creation
@@ -294,7 +294,7 @@ describe PhysicalObjectsController do
   end
 
   describe "Directions recorded" do
-    let!(:dr_po) { FactoryGirl.create(:physical_object, :open_reel, title: "Some title") }
+    let!(:dr_po) { FactoryBot.create(:physical_object, :open_reel, title: "Some title") }
     context "creation" do
       it "intializes calculated_directions_recorded and copies value to directions_recorded" do
         expect(dr_po).to be_valid
@@ -306,7 +306,7 @@ describe PhysicalObjectsController do
 
     context "POST #update" do
       before(:each) do
-        put :update, id: dr_po.id, physical_object: FactoryGirl.attributes_for(:physical_object, :open_reel, title: "Updated title"), tm: FactoryGirl.attributes_for(:open_reel_tm, directions_recorded: 5)
+        put :update, id: dr_po.id, physical_object: FactoryBot.attributes_for(:physical_object, :open_reel, title: "Updated title"), tm: FactoryBot.attributes_for(:open_reel_tm, directions_recorded: 5)
       end
       it "updates directions_recorded" do
         dr_po.reload
@@ -318,7 +318,7 @@ describe PhysicalObjectsController do
   describe "PUT update" do
     context "with valid attributes" do
       before(:each) do
-        put :update, id: physical_object.id, physical_object: FactoryGirl.attributes_for(:physical_object, :cdr, title: "Updated title"), tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: FactoryBot.attributes_for(:physical_object, :cdr, title: "Updated title"), tm: FactoryBot.attributes_for(:cdr_tm)
       end
 
       it "locates the requested object" do
@@ -339,16 +339,16 @@ describe PhysicalObjectsController do
     end
     context "with invalid attributes" do
       before(:each) do
-        put :update, id: physical_object.id, physical_object: FactoryGirl.attributes_for(:invalid_physical_object, :cdr), tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: FactoryBot.attributes_for(:invalid_physical_object, :cdr), tm: FactoryBot.attributes_for(:cdr_tm)
       end
 
       it "locates the requested object" do
         expect(assigns(:physical_object)).to eq physical_object
       end
       it "does not change the object's attributes" do
-        expect(physical_object.title).to eq "FactoryGirl object"
+        expect(physical_object.title).to eq "FactoryBot object"
         physical_object.reload
-        expect(physical_object.title).to eq "FactoryGirl object"
+        expect(physical_object.title).to eq "FactoryBot object"
       end
       it "re-renders the :edit template" do
         expect(response).to render_template(:edit)
@@ -356,7 +356,7 @@ describe PhysicalObjectsController do
     end
     context "assigning to a non-existent box" do
       before(:each) do
-        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: 42
+        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm), box_mdpi_barcode: 42
       end
       it "assigns errors[:box]" do
         expect(assigns(:physical_object).errors[:box]).not_to be_empty
@@ -365,7 +365,7 @@ describe PhysicalObjectsController do
     end
     context "assigning to a full box" do
       before(:each) do
-        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), box_mdpi_barcode: full_box.mdpi_barcode
+        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm), box_mdpi_barcode: full_box.mdpi_barcode
       end
       it "assigns errors[:box]" do
         expect(assigns(:physical_object).errors[:box]).not_to be_empty
@@ -374,7 +374,7 @@ describe PhysicalObjectsController do
     end
     context "assigning to a non-existent bin" do
       before(:each) do
-        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), bin_mdpi_barcode: 42
+        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm), bin_mdpi_barcode: 42
       end
       it "assigns errors[:bin]" do
         expect(assigns(:physical_object).errors[:bin]).not_to be_empty
@@ -383,7 +383,7 @@ describe PhysicalObjectsController do
     end
     context "assigning to a sealed bin" do
       before(:each) do
-        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryGirl.attributes_for(:cdr_tm), bin_mdpi_barcode: sealed_bin.mdpi_barcode 
+        put :update, id: physical_object.id, physical_object: valid_physical_object.attributes.symbolize_keys, tm: FactoryBot.attributes_for(:cdr_tm), bin_mdpi_barcode: sealed_bin.mdpi_barcode 
       end
       it "assigns errors[:bin]" do
         expect(assigns(:physical_object).errors[:bin]).not_to be_empty
@@ -396,23 +396,23 @@ describe PhysicalObjectsController do
       let(:barcoded_params) { { picklist_id: picklist.id, mdpi_barcode: valid_mdpi_barcode } }
 
       specify "Unassigned for empty params" do
-        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryBot.attributes_for(:cdr_tm)
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "Unassigned"
       end
       specify "On Pick List for picklist assignment" do
-        put :update, id: physical_object.id, physical_object: on_pick_list_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: on_pick_list_params, tm: FactoryBot.attributes_for(:cdr_tm)
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "On Pick List"
       end
       specify "On Pick List for picklist + barcode" do
-        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryBot.attributes_for(:cdr_tm)
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "On Pick List"
       end
       specify "Reverts to Unassigned after On Pick List" do
-        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryGirl.attributes_for(:cdr_tm)
-        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryGirl.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: barcoded_params, tm: FactoryBot.attributes_for(:cdr_tm)
+        put :update, id: physical_object.id, physical_object: unassigned_params, tm: FactoryBot.attributes_for(:cdr_tm)
         physical_object.reload
         expect(physical_object.current_workflow_status).to eq "Unassigned"
         expect(physical_object.workflow_statuses.size).to be >= 3 # Unassigned, On Pick List, Unassigned
@@ -477,7 +477,7 @@ describe PhysicalObjectsController do
     context "on a boxed object" do
       before(:each) do
         physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-        physical_object.box = FactoryGirl.create(:box)
+        physical_object.box = FactoryBot.create(:box)
         physical_object.save!
         split_show
       end
@@ -486,9 +486,9 @@ describe PhysicalObjectsController do
     context "on a binned object" do
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
-        physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+        physical_object.ensure_tm.assign_attributes(FactoryBot.attributes_for :open_reel_tm)
 	      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-        physical_object.bin = FactoryGirl.create(:bin)
+        physical_object.bin = FactoryBot.create(:bin)
         physical_object.save!
         split_show
       end
@@ -536,7 +536,7 @@ describe PhysicalObjectsController do
       context "on a boxed item" do
         before(:each) do
 	  physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-          physical_object.box = FactoryGirl.create(:box)
+          physical_object.box = FactoryBot.create(:box)
           physical_object.save!
         end
         include_examples "prevents split"
@@ -544,9 +544,9 @@ describe PhysicalObjectsController do
       context "on a binned item" do
         before(:each) do
           physical_object.format = "Open Reel Audio Tape"
-          physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+          physical_object.ensure_tm.assign_attributes(FactoryBot.attributes_for :open_reel_tm)
 	        physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-          physical_object.bin = FactoryGirl.create(:bin)
+          physical_object.bin = FactoryBot.create(:bin)
           physical_object.save!
         end
         include_examples "prevents split"
@@ -649,7 +649,7 @@ describe PhysicalObjectsController do
       let(:source_page) { "source_page" }
       before(:each) do
         physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-        physical_object.box = FactoryGirl.create(:box)
+        physical_object.box = FactoryBot.create(:box)
         physical_object.save!
       end
       include_examples "prevents split"
@@ -658,9 +658,9 @@ describe PhysicalObjectsController do
       let(:source_page) { "source_page" }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
-        physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+        physical_object.ensure_tm.assign_attributes(FactoryBot.attributes_for :open_reel_tm)
 	      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
-        physical_object.bin = FactoryGirl.create(:bin)
+        physical_object.bin = FactoryBot.create(:bin)
         physical_object.save!
       end
       include_examples "prevents split"
@@ -861,7 +861,7 @@ describe PhysicalObjectsController do
   describe "POST unbin" do
     let(:post_unbin) { post :unbin, id: physical_object.id }
     context "when in a box" do
-      let(:box) { FactoryGirl.create(:box) }
+      let(:box) { FactoryBot.create(:box) }
       before(:each) do
         physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = box
@@ -886,10 +886,10 @@ describe PhysicalObjectsController do
       end
     end
     context "when in a bin" do
-      let(:bin) { FactoryGirl.create(:bin) }
+      let(:bin) { FactoryBot.create(:bin) }
       before(:each) do
         physical_object.format = "Open Reel Audio Tape"
-        physical_object.ensure_tm.assign_attributes(FactoryGirl.attributes_for :open_reel_tm)
+        physical_object.ensure_tm.assign_attributes(FactoryBot.attributes_for :open_reel_tm)
 	      physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = nil
         physical_object.bin = bin
@@ -931,7 +931,7 @@ describe PhysicalObjectsController do
       end
     end
     context "when in a box" do
-      let(:box) { FactoryGirl.create(:box) }
+      let(:box) { FactoryBot.create(:box) }
       before(:each) do
         physical_object.mdpi_barcode = BarcodeHelper.valid_mdpi_barcode
         physical_object.box = box
@@ -1004,7 +1004,7 @@ describe PhysicalObjectsController do
       include_examples "unpicks the object"
     end
     context "when in a picklist" do
-      let(:picklist) { FactoryGirl.create(:picklist) }
+      let(:picklist) { FactoryBot.create(:picklist) }
       before(:each) do
         physical_object.picklist = picklist
         physical_object.save!
@@ -1071,7 +1071,7 @@ describe PhysicalObjectsController do
     end
     context "when the original group is not empty" do
       before(:each) do
-        grouped_object = FactoryGirl.create(:physical_object, :cdr, group_key: physical_object.group_key)
+        grouped_object = FactoryBot.create(:physical_object, :cdr, group_key: physical_object.group_key)
         original_group.reload
         expect(original_group.physical_objects.size).to eq 2
       end
@@ -1160,13 +1160,13 @@ describe PhysicalObjectsController do
     let(:start_date) { included_date - 3.days }
     let(:end_date) { included_date + 3.days }
     let(:excluded_date) { start_date - 3.days }
-    let(:uncontained_object) { FactoryGirl.create :physical_object, :barcoded, :boxable }
-    let(:included_boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable }
-    let(:excluded_boxed_object) { FactoryGirl.create :physical_object, :barcoded, :boxable }
-    let(:included_binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable }
-    let(:excluded_binned_object) { FactoryGirl.create :physical_object, :barcoded, :binnable }
-    let(:box) { FactoryGirl.create :box }
-    let(:bin) { FactoryGirl.create :bin }
+    let(:uncontained_object) { FactoryBot.create :physical_object, :barcoded, :boxable }
+    let(:included_boxed_object) { FactoryBot.create :physical_object, :barcoded, :boxable }
+    let(:excluded_boxed_object) { FactoryBot.create :physical_object, :barcoded, :boxable }
+    let(:included_binned_object) { FactoryBot.create :physical_object, :barcoded, :binnable }
+    let(:excluded_binned_object) { FactoryBot.create :physical_object, :barcoded, :binnable }
+    let(:box) { FactoryBot.create :box }
+    let(:bin) { FactoryBot.create :bin }
     let(:wst_ids) { WorkflowStatusTemplate.where(name: ['Binned', 'Boxed']).map(&:id) }
     before(:each) do
       uncontained_object

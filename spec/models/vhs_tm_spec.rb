@@ -1,9 +1,9 @@
 describe VhsTm do
-  let(:vhs) { FactoryGirl.create :vhs_tm, :valid }
-  let(:valid_vhs) { FactoryGirl.build :vhs_tm, :valid }
-  let(:invalid_vhs) { FactoryGirl.build :vhs_tm, :invalid }
+  let(:vhs) { FactoryBot.create :vhs_tm, :valid }
+  let(:valid_vhs) { FactoryBot.build :vhs_tm, :valid }
+  let(:invalid_vhs) { FactoryBot.build :vhs_tm, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(vhs).to be_valid
       expect(valid_vhs).to be_valid
@@ -43,7 +43,7 @@ describe VhsTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:vhs_tm, :valid)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:vhs_tm, :valid)
 
   describe "#master_copies" do
     it "returns 1" do

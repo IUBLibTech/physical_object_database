@@ -1,9 +1,9 @@
 describe BetamaxTm do
-  let(:betamax) { FactoryGirl.create :betamax_tm, :valid }
-  let(:valid_betamax) { FactoryGirl.build :betamax_tm, :valid }
-  let(:invalid_betamax) { FactoryGirl.build :betamax_tm, :invalid }
+  let(:betamax) { FactoryBot.create :betamax_tm, :valid }
+  let(:valid_betamax) { FactoryBot.build :betamax_tm, :valid }
+  let(:invalid_betamax) { FactoryBot.build :betamax_tm, :invalid }
 
-  describe "FactoryGirl" do
+  describe "FactoryBot" do
     it "provides a valid object" do
       expect(betamax).to be_valid
       expect(valid_betamax).to be_valid
@@ -43,7 +43,7 @@ describe BetamaxTm do
     end
   end
 
-  it_behaves_like "includes TechnicalMetadatumModule", FactoryGirl.build(:betamax_tm, :valid)
+  it_behaves_like "includes TechnicalMetadatumModule", FactoryBot.build(:betamax_tm, :valid)
 
   describe "#master_copies" do
     it "returns 1" do
