@@ -64,6 +64,7 @@ gem 'pundit'
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
+  gem 'rdoc', '~> 3.12.1'
 end
 
 # Use ActiveModel has_secure_password
@@ -91,7 +92,7 @@ group :development do
 end
 
 group :test do
-  gem 'selenium-webdriver', '2.35.1'
+  gem 'selenium-webdriver'
   gem 'capybara'
   #for capybara javascript access
   gem 'capybara-webkit'
