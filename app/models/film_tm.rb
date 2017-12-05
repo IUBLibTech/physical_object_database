@@ -23,7 +23,7 @@ class FilmTm < ActiveRecord::Base
   ON_DEMAND_VALUES = hashify ['', 'Yes', 'No']
   RETURN_ON_ORIGINAL_REEL_VALUES = hashify ['', 'Yes', 'No']
   MOLD_VALUES = hashify ['', 'Yes', 'No', 'Treated']
-  AD_STRIP_VALUES = hashify ['', '0.0', '0.5', '1.0', '1.5', '2.0', '2.5', '3.0']
+  AD_STRIP_VALUES = hashify ['', '0.0', '0.5', '1.0', '1.5', '2.0', '2.5', '3.0 (place for freezer)']
   TRACK_COUNT_VALUES = hashify ['', '1', '2', '3', '4', '5', '6']
   CONDITION_RATINGS = hashify ['0', '1', '2', '3', '4']
   BRITTLE_VALUES = CONDITION_RATINGS
