@@ -38,7 +38,7 @@ class ResponsesController < ActionController::Base
         @status = 200
         @success = true
       else
-        @status = 400
+        @status = 200
         @success = false
         @message = "Digital Provenance is missing or incomplete."
       end
