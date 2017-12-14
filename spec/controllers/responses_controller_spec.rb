@@ -169,8 +169,8 @@ describe ResponsesController do
         it "returns failure message XML" do
           expect(response.body).to match /<message>/
         end
-        it "returns a 400 status" do
-          expect(response).to have_http_status(400)
+        it "returns a 200 status" do
+          expect(response).to have_http_status(200)
         end
       end
     end
