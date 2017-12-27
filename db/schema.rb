@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171122135759) do
+ActiveRecord::Schema.define(version: 20171227193844) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -319,6 +319,18 @@ ActiveRecord::Schema.define(version: 20171122135759) do
     t.string  "mdpiBarcode", limit: 14, null: false
     t.integer "partNumber",  limit: 1,  null: false
     t.boolean "vendorQC"
+  end
+
+  create_table "dvd_tms", force: :cascade do |t|
+    t.string  "recording_standard",     limit: 255
+    t.string  "format_duration",        limit: 255
+    t.string  "image_format",           limit: 255
+    t.string  "dvd_type",               limit: 255
+    t.string  "stock_brand",            limit: 255
+    t.boolean "breakdown_of_materials"
+    t.boolean "fungus"
+    t.boolean "other_contaminants"
+    t.string  "damage",                 limit: 255
   end
 
   create_table "eight_millimeter_video_tms", force: :cascade do |t|

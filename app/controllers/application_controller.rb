@@ -122,6 +122,8 @@ class ApplicationController < ActionController::Base
         :oxide,
         # fields for cylinder
         :groove_pitch, :fragmented, :repaired_break, :damaged_core, :out_of_round, :efflorescence,
+        # fields for dvd
+        :dvd_type, :stock_brand,
         # fields for eight mm video
         :playback_speed, :binder_system,
         # fields of half inch open reel video
@@ -157,6 +159,8 @@ class ApplicationController < ActionController::Base
         :oxide => [],
         # fields for cylinder
         :groove_pitch => [], :fragmented => [], :repaired_break => [], :damaged_core => [], :out_of_round => [], :efflorescence => [],
+        # fields for dvd
+        :dvd_type => [],
         # fields for eight mm video
         :playback_speed => [], :binder_system => [],
         # fields for half inch open reel video
