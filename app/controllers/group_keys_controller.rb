@@ -142,7 +142,7 @@ class GroupKeysController < ApplicationController
     def set_group_key
       @group_key = GroupKey.find(params[:id])
       authorize @group_key
-      @physical_objects = @group_key.physical_objects.order(:group_position)
+      @physical_objects = @group_key.physical_objects.order('ABS(group_position)')
     end
 
     def authorize_collection

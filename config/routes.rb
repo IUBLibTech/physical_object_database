@@ -59,6 +59,7 @@ Pod::Application.routes.draw do
     get :contained, on: :collection
     get :generate_filename, on: :member
 
+    post :invert_group_position, on: :member
     patch :split_update, on: :member
     post :upload_update, on: :collection
     post :unbin, on: :member

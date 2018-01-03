@@ -68,4 +68,8 @@ describe "physical_objects" do
    expect(get "/physical_objects/1/generate_filename").to route_to("physical_objects#generate_filename", id: "1")
   end
 
+  it 'routes to invert_group_position' do
+    expect(post('/physical_objects/1/invert_group_position')).to route_to('physical_objects#invert_group_position', id: '1')
+  end
+
 end

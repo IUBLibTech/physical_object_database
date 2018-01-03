@@ -1291,6 +1291,31 @@ describe PhysicalObjectsController do
       let(:existing_object) { picklist_specification }
       include_examples "tm_form behaviors", :picklist_specification
     end
-
+  end
+  describe 'POST invert_group_position' do
+    let(:invert) { post :invert_group_position, id: physical_object.id }
+    shared_examples 'invert_group_position' do
+      it 'inverts the group position' do
+        gp = physical_object.group_position
+        invert
+        physical_object.reload
+        expect(physical_object.group_position).to eq (-1 * gp)
+      end
+      it 'sets flash success message' do
+        invert
+        expect(flash[:success]).to match /position.*changed/i
+      end
+      it 'redirects to the group_key' do
+        invert
+        expect(response).to redirect_to physical_object.group_key
+      end
+    end
+    context 'with a postitive group_position' do
+      include_examples 'invert_group_position'
+    end
+    context 'with a negative group_position' do
+      before(:each) { physical_object.update_attribute(:group_position, -2) }
+      include_examples 'invert_group_position'
+    end
   end
 end
