@@ -20,6 +20,7 @@ describe PhysicalObject do
     'CD-R' => :cdr_tm,
     'Cylinder' => :cylinder_tm,
     'DAT' => :dat_tm,
+    'DVD' => :dvd_tm,
     'LP' => :analog_sound_disc_tm,
     'Aluminum Disc' => :analog_sound_disc_tm,
     'Lacquer Disc' => :analog_sound_disc_tm,
