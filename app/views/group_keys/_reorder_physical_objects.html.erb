@@ -1,3 +1,4 @@
+<% if @group_key.physical_objects.all? { |po| po.group_position > 0 } %>
 <%= form_for(@group_key, url: { action: :reorder }) do |f| %>
   <ul id="sortable">
   <% expected_position = 1 %>
@@ -24,5 +25,8 @@
   </ul>
   <input id="reorder_submission" name="reorder_submission" type="hidden" value="">
   <%= f.submit "Reorder objects" %>
+<% end %>
+<% else %>
+Reordering is disabled when any objects have a negative position.
 <% end %>
 
