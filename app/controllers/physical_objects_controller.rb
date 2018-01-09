@@ -1,6 +1,6 @@
 class PhysicalObjectsController < ApplicationController
   include ApplicationHelper
-  before_action :set_physical_object, only: [:show, :edit, :edit_ephemera, :update, :update_ephemera, :destroy, :workflow_history, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup, :generate_filename]  
+  before_action :set_physical_object, only: [:show, :edit, :edit_ephemera, :update, :update_ephemera, :destroy, :workflow_history, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup, :generate_filename, :invert_group_position]
   before_action :set_new_physical_object, only: [:new, :create_multiple]
   before_action :set_new_physical_object_with_params, only: [:create]
   before_action :authorize_collection, only: [:index, :new, :create, :create_multiple, :download_spreadsheet_example, :upload_show, :has_ephemera, :is_archived, :create_multiple, :contained, :upload_update]
@@ -438,6 +438,12 @@ class PhysicalObjectsController < ApplicationController
 
   def generate_filename
     render plain: @physical_object.generate_filename(sequence: params[:sequence], use: params[:use], extension: params[:extension]), layout: false
+  end
+
+  def invert_group_position
+    @physical_object.update_attribute(:group_position, (-1 * @physical_object.group_position))
+    flash[:success] = "Group position changed to: #{@physical_object.group_position}."
+    redirect_to @group_key
   end
   
   private

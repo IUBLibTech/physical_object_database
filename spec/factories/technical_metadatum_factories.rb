@@ -25,6 +25,10 @@ FactoryBot.define do
      actable_type "DatTm"
      association :actable, factory: :dat_tm
    end
+   trait :dvd do
+     actable_type "DvdTm"
+     association :actable, factory: :dvd_tm
+   end
    trait :open_reel do
      actable_type "OpenReelTm"
      association :actable, factory: :open_reel_tm
@@ -146,6 +150,22 @@ FactoryBot.define do
     sample_rate_44_1_k 0
     sample_rate_48k 0
     sample_rate_96k 0
+  end
+
+  factory :dvd_tm, class: DvdTm do
+    recording_standard 'NTSC'
+    format_duration 'Unknown'
+    image_format 'Unknown'
+    dvd_type 'DVD±R'
+    stock_brand ''
+    breakdown_of_materials false
+    fungus false
+    other_contaminants false
+    damage 'None'
+
+    trait :invalid do
+      damage 'invalid value'
+    end
   end
 
   factory :open_reel_tm, class: OpenReelTm do

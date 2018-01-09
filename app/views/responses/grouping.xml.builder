@@ -8,7 +8,7 @@ xml.pod do
        xml.group_total @physical_object.group_key.group_total
        xml.physical_objects_count @physical_object.group_key.physical_objects_count
        xml.physical_objects do
-         @physical_object.group_key.physical_objects(sort: :group_position).each do |object|
+         @physical_object.group_key.physical_objects.order('ABS(group_position)').each do |object|
            xml.physical_object do
              xml.group_position object.group_position
              xml.mdpi_barcode object.mdpi_barcode

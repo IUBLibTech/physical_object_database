@@ -8,7 +8,7 @@
     </tr>
     <tr>
       <th>Position</th>
-      <td><%= number_field_tag :group_position, 1 %></td>
+      <td><%= number_field_tag :group_position, 1, min: 1 %></td>
     </tr>
   </table>
   <%= submit_tag("Submit") %>
