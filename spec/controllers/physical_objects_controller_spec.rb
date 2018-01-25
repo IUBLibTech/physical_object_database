@@ -3,6 +3,7 @@ describe PhysicalObjectsController do
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
   let(:physical_object) { FactoryBot.create(:physical_object, :cdr) }
+  let(:cylinder_object) { FactoryBot.create(:physical_object, :cylinder) }
   let(:picklist_specification) { FactoryBot.create(:picklist_specification, :cdr) }
   let(:barcoded_object) { FactoryBot.create(:physical_object, :cdr, :barcoded) }
   let(:second_object) { FactoryBot.create(:physical_object, :cdr, unit: physical_object.unit, group_key: physical_object.group_key, group_position: 2) }
@@ -89,6 +90,31 @@ describe PhysicalObjectsController do
     end
     it "renders the :edit template" do
       expect(response).to render_template(:edit) 
+    end
+  end
+
+  describe "GET cylinder_preload_edit" do
+    before(:each) { get :cylinder_preload_edit, id: cylinder_object.id }
+    it "locates the requested object" do
+      expect(assigns(:physical_object)).to eq cylinder_object
+    end
+    it "renders the :cylinder_preload_edit template" do
+      expect(response).to render_template(:cylinder_preload_edit) 
+    end
+  end
+
+  describe "POST cylinder_preload_update" do
+    let(:post_action) { post :cylinder_preload_update, id: cylinder_object.id, tm: cylinder_object.ensure_tm.attributes, cylinder_dp: { cylinder_dfp_speed_used: 42 }, digital_provenance: cylinder_object.digital_provenance.attributes }
+    it "locates the requested object" do
+      post_action
+      expect(assigns(:physical_object)).to eq cylinder_object
+    end
+    it 'generates dfp' do
+      expect { post_action }.to change(DigitalFileProvenance, :count).by(5)
+    end
+    it "redirects to digital provenance" do
+      post_action
+      expect(response).to redirect_to digital_provenance_path(cylinder_object)
     end
   end
 
