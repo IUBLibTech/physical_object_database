@@ -7,7 +7,29 @@ class DigitalProvenance < ActiveRecord::Base
 	MEMNON_DIGITIZING_ENTITY = "Memnon Archiving Services Inc"
 	DIGITIZING_ENTITY_VALUES = {
 	  IU_DIGITIZING_ENTITY => IU_DIGITIZING_ENTITY,
-	  MEMNON_DIGITIZING_ENTITY => MEMNON_DIGITIZING_ENTITY }
+	  MEMNON_DIGITIZING_ENTITY => MEMNON_DIGITIZING_ENTITY
+          }
+        CYLINDER_TEXT_COMMENTS = [
+          'Undersampled at 48kHz',
+          'Overmodulated grooves', 
+          'Grooves cut into the edge of cylinder',
+          'Captured in reverse',
+          'Groove echo',
+          'Low level mechanical noise',
+          'Irregularly cut grooves',
+          'Extremely low level content',
+          'No discernible content',
+          'Partial transfer',
+          'Locked grooves at the end',
+          'False start at the beginning'
+          ].freeze
+        CYLINDER_TIMESTAMP_COMMENTS = [
+          :locked_grooves,
+          :speed_change,
+          :speed_fluctuations,
+          :second_attempt
+          ].freeze
+
 	validates :physical_object, presence: true
 
 	def digitizing_entity_values
@@ -27,7 +49,7 @@ class DigitalProvenance < ActiveRecord::Base
     complete
   end
 
-  def ensure_dfp
+  def ensure_dfp(options = {})
     if digital_file_provenances.none? && physical_object&.format == 'Cylinder'
       [:pres, :presRef, :presInt, :intRef, :prod].each do |file_use|
         prefix = 'MDPI'
@@ -44,11 +66,33 @@ class DigitalProvenance < ActiveRecord::Base
         else
           reference_tone = nil
           signal_chain = SignalChain.where(name: 'Cylinder audio').first
-          speed_used = nil
-          stylus_size = nil
-          comment = nil
+          speed_used = options['cylinder_dfp_speed_used']
+          stylus_size = options['cylinder_dfp_stylus_size']
           if file_use == :prod
             comment = 'De-click, De-crackle, normalized to -7 dBfs. Then Spectral De-noise, EQ, normalized to -7 dBfs again.'
+            comment += "\n" if options['cylinder_dfp_comments']&.select(&:present?)&.any? 
+          end
+          comment ||= ''
+          comment += options['cylinder_dfp_comments']&.select(&:present?)&.join("\n").to_s
+          timestamp_comments = []
+          if file_use == :pres
+            CYLINDER_TIMESTAMP_COMMENTS.each do |timestamp_comment|
+              timestamps = ''
+              if timestamp_comment == :locked_grooves
+                timestamps = options["#{timestamp_comment}"] if timestamp_comment == :locked_grooves
+              else
+                minutes = options["#{timestamp_comment}(4i)"]
+                seconds = options["#{timestamp_comment}(5i)"]
+                timestamps = "#{minutes.rjust(2,'0')}:#{seconds.rjust(2,'0')}" if minutes.present? || seconds.present?
+              end
+              if timestamps.present?
+                timestamp_comments << "#{timestamp_comment.to_s.humanize} - #{timestamps}"
+              end
+            end
+            if timestamp_comments.any?
+              comment += "\n" if comment.present?
+              comment += timestamp_comments.join("\n")
+            end
           end
         end
         digital_file_provenances.create(filename: filename, reference_tone_frequency: reference_tone, signal_chain: signal_chain, speed_used: speed_used, stylus_size: stylus_size, comment: comment)

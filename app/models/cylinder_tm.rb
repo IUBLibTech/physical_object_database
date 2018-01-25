@@ -51,6 +51,17 @@ class CylinderTm < ActiveRecord::Base
     default_values
   end
 
+  def default_values_for_preload
+    {
+      size: 'Standard',
+      material: 'Wax',
+      groove_pitch: '100 tpi',
+      recording_method: 'Cut'
+    }.each do |k, v|
+      send("#{k}=", v) if send(k).in? [nil, 'Unknown']
+    end
+  end
+
   def damage
     structural_damage
   end

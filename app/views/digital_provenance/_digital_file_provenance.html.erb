@@ -135,6 +135,10 @@
       });
     </script>
     <% @signal_chain = f.object.signal_chain %>
-    <%= render 'signal_chains/ajax_show_signal_chain' %>
+    <% if @physical_object&.format == 'Cylinder' %>
+      <%= render 'signal_chains/cylinder_show_signal_chain' %>
+    <% else %>
+      <%= render 'signal_chains/ajax_show_signal_chain' %>
+    <% end %>
 </table>
 </div>

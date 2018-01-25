@@ -58,6 +58,7 @@ Pod::Application.routes.draw do
     get :edit_ephemera, on: :member
     get :contained, on: :collection
     get :generate_filename, on: :member
+    get :cylinder_preload_edit, on: :member
 
     post :invert_group_position, on: :member
     patch :split_update, on: :member
@@ -66,6 +67,7 @@ Pod::Application.routes.draw do
     post :unbox, on: :member
     post :ungroup, on: :member
     post :unpick, on: :member
+    patch :cylinder_preload_update, on: :member
     patch :update_ephemera, on: :member
 
   end

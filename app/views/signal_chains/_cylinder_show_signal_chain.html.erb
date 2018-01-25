@@ -1,0 +1,13 @@
+<%# apply padding for consistent layout %>
+<% padding = 4 - @signal_chain&.machines&.size.to_i %>
+<% @signal_chain&.machines&.each do |device| %>
+<tr class="signal_chain_tr">
+	<th></th>
+	<td>
+		<%= device.full_name %>
+	</td>
+</tr>
+<% end %>
+<% padding.times do |p| %>
+   <tr class="signal_chain_tr"><th></th><td>--</td></tr>
+<% end %>

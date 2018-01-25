@@ -176,7 +176,8 @@ class ApplicationController < ActionController::Base
     def dp_params
       params.require(:digital_provenance).permit(
         :digitizing_entity, :date, :comments, :created_by, :cleaning_date, :cleaning_comment, 
-        :baking, :repaired, :duration, :batch_processing_flag, digital_file_provenances_attributes: [
+        :baking, :repaired, :duration, :batch_processing_flag,
+        digital_file_provenances_attributes: [
           :id, :filename, :comment, :date_digitized, :display_date_digitized, :created_by,
           :speed_used, :signal_chain_id, :volume_units, :tape_fluxivity, :peak, :analog_output_voltage,
           :stylus_size, :turnover, :rolloff, :noise_reduction, :reference_tone_frequency, 
