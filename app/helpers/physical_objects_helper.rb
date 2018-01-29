@@ -35,7 +35,7 @@ module PhysicalObjectsHelper
     results = {}
     batch_lookups = { 'Batch identifier' => 'identifier', 'Batch description' => 'description' }
     bin_lookups = { 'Bin barcode' => 'mdpiBarcode', 'Bin identifier' => 'identifier' }
-    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Color space' => 'colorSpace', 'Mold' => 'mold', 'AD strip' => 'conditions/adStrip', 'Return to' => 'returnTo', 'Anamorphic' => 'anamorphic', 'Conservation actions' => 'conservationActions', 'Track count' => 'trackCount', 'Format duration' => 'duration', 'Footage' => 'footage', 'Title' => 'title', 'Collection name' => 'collectionName', 'Title control number' => 'iucatTitleControlNumber', 'Film title' => 'titleId', 'Return on original reel' => 'returnOnOriginalReel'
+    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Color space' => 'colorSpace', 'Mold' => 'mold', 'AD strip' => 'conditions/adStrip', 'Return to' => 'returnTo', 'Anamorphic' => 'anamorphic', 'Conservation actions' => 'conservationActions', 'Track count' => 'trackCount', 'Format duration' => 'duration', 'Footage' => 'footage', 'Title' => 'title', 'Collection name' => 'collectionName', 'Title control number' => 'iucatTitleControlNumber', 'Film title' => 'titleId', 'Return on original reel' => 'returnOnOriginalReel', 'Catalog key' => 'catalogKey'
      }
     multivalued_fieldsets = {
       'Aspect ratio' => {
