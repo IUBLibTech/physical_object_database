@@ -19,6 +19,7 @@
           <format>Film</format>
           <unit>B-IULMIA</unit>
           <title>La Roue</title>
+          <catalogKey>Sample catalog key</catalogKey>
           <titleId>123</titleId>
           <alternativeTitle/>
           <collectionName/>
