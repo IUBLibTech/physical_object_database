@@ -966,8 +966,9 @@ describe ResponsesController do
   end
 
   describe "#push_filmdb_objects" do
-    before(:each) { post :push_filmdb_objects, request_xml, content_type: 'application/xml' }
+    let(:existing_object) { FactoryBot.create(:physical_object, :film, mdpi_barcode: '40000000000028') }
     context 'with valid xml' do
+      before(:each) { post :push_filmdb_objects, request_xml, content_type: 'application/xml' }
       let(:request_xml) { File.read('spec/fixtures/filmdb.xml') }
       it "sets @success to true" do
         expect(assigns(:success)).to eq true
@@ -983,12 +984,72 @@ describe ResponsesController do
       end
     end
     context 'with invalid xml' do
+      before(:each) { post :push_filmdb_objects, request_xml, content_type: 'application/xml' }
       let(:request_xml) { File.read('spec/fixtures/filmdb_bad.xml') }
       it 'sets @success to false' do
         expect(assigns(:success)).to eq false
       end
       it 'sets @message to failure' do
         expect(assigns(:message)).to match /errors/i
+      end
+      it 'does not persist the spreadsheet' do
+        expect(assigns(:results)[:spreadsheet]).not_to be_persisted
+      end
+      it 'renders json' do
+        expect{JSON::parse(response.body)}.not_to raise_error
+        expect(JSON::parse(response.body)).to be_a Array
+      end
+    end
+    context 'with a replacement' do
+      let(:request_xml) { File.read('spec/fixtures/filmdb_replacement.xml') }
+      context 'and a match found' do
+        before(:each) do
+          existing_object
+          post :push_filmdb_objects, request_xml, content_type: 'application/xml'
+        end
+        it "sets @success to true" do
+          expect(assigns(:success)).to eq true
+        end
+        it "sets @message to success" do
+          expect(assigns(:message)).to match /success/i
+        end
+        it "persists a spreadsheet" do
+          expect(assigns(:results)[:spreadsheet]).to be_persisted
+        end
+        it "renders something" do
+          expect(response.body).to match /success/i
+        end
+      end
+      context 'and no match found' do
+        before(:each) { post :push_filmdb_objects, request_xml, content_type: 'application/xml' }
+        it 'sets @success to false' do
+          expect(assigns(:success)).to eq false
+        end
+        it 'sets @message to failure' do
+          expect(assigns(:message)).to match /errors/i
+          expect(assigns(:message)).to match /replacement.*but.*no.*match.*/i
+        end
+        it 'does not persist spreadsheet' do
+          expect(assigns(:results)[:spreadsheet]).not_to be_persisted
+        end
+        it 'renders json' do
+          expect{JSON::parse(response.body)}.not_to raise_error
+          expect(JSON::parse(response.body)).to be_a Array
+        end
+      end
+    end
+    context 'with an MDPI Barcode collision' do
+      before(:each) do
+        existing_object
+        post :push_filmdb_objects, request_xml, content_type: 'application/xml'
+      end
+      let(:request_xml) { File.read('spec/fixtures/filmdb.xml') }
+      it 'sets @success to false' do
+        expect(assigns(:success)).to eq false
+      end
+      it 'sets @message to failure' do
+        expect(assigns(:message)).to match /errors/i
+        expect(assigns(:message)).to match /barcode.*already.*assigned/i
       end
       it 'does not persist spreadsheet' do
         expect(assigns(:results)[:spreadsheet]).not_to be_persisted
