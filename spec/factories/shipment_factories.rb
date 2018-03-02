@@ -4,7 +4,7 @@ FactoryBot.define do
     identifier "FactoryBot shipment"
     description "FactoryBot shipment"
     physical_location ""
-    unit_id Unit.first.id
+    unit_id nil #Unit.first&.id
 
     trait :invalid do
       identifier nil

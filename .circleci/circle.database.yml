@@ -1,0 +1,19 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  database: <%= ENV["POD_DB"] %>
+  pool: 5
+  username: <%= ENV["POD_USER"] %>
+  password: <%= ENV["POD_PASSWORD"] %>
+  host: 127.0.0.1
+  port: 3306
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+  database: physical_object_database_test
+
+production:
+  <<: *default
