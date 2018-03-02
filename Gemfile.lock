@@ -129,6 +129,9 @@ GEM
     execjs (2.7.0)
     factory_bot (4.8.2)
       activesupport (>= 3.0.0)
+    factory_bot_rails (4.8.2)
+      factory_bot (~> 4.8.2)
+      railties (>= 3.0.0)
     ffi (1.9.23)
     formatador (0.2.5)
     gherkin (5.0.0)
@@ -332,7 +335,7 @@ DEPENDENCIES
   connection_pool
   cucumber-rails
   database_cleaner
-  factory_bot
+  factory_bot_rails
   guard-livereload
   guard-rspec
   jbuilder (~> 1.2)
