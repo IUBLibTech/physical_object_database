@@ -1,7 +1,9 @@
 ENV["RAILS_ENV"] ||= 'test'
 ENV["skip"] ||= 'false'
 require 'simplecov'
+require 'coveralls'
 SimpleCov.start('rails') unless ENV["skip"]=='true'
+Coveralls.wear!('rails')
 require 'webmock/rspec'
 WebMock.disable_net_connect!(allow_localhost: true)
 require File.expand_path("../../config/environment", __FILE__)

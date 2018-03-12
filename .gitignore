@@ -43,6 +43,7 @@ script/copy-prod-db
 
 # Ignore simplecov folder
 coverage
+.coveralls.yml
 
 # Ignore byebug history
 .byebug_history
