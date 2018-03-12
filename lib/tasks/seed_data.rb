@@ -109,6 +109,7 @@ end
 def seed_test_users
   if Rails.env.test?
     User::ROLES.each do |role|
+      next if User.where(username: role.to_s).any?
       u = User.new(username: role.to_s, name: role.to_s)
       u.send("#{role}=", true)
       puts "Saving new user: #{role.to_s}"

@@ -1,14 +1,14 @@
 describe PhysicalObjectPolicy do
-  subject { PhysicalObjectPolicy.new(user, physical_object) }
+  let(:policy) { PhysicalObjectPolicy.new(user, physical_object) }
   let(:physical_object) { FactoryBot.create :physical_object, :cdr }
-  WEB_ADMIN = User.find_by(username: "web_admin")
+  WEB_ADMIN = User.where(username: "web_admin").first
 
   context "web_admin user" do
     let(:user) { WEB_ADMIN }
 
-    specify { expect(subject).to authorize(:index) }
+    specify { expect(policy).to authorize(:index) }
 
-    specify { expect(subject).to authorize(:new) }
+    specify { expect(policy).to authorize(:new) }
   end
 
   pending "test other roles, policies"
