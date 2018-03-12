@@ -1,5 +1,5 @@
 === POD: Physical Object Database
+{<img src="https://circleci.com/gh/IUBLibTech/physical_object_database.svg?style=svg" alt="CircleCI" />}[https://circleci.com/gh/IUBLibTech/physical_object_database]
 {<img src="https://coveralls.io/repos/github/IUBLibTech/physical_object_database/badge.svg?branch=master" alt="Coverage Status" />}[https://coveralls.io/github/IUBLibTech/physical_object_database?branch=master]
-
 
 Inventory and digitization workflow tracking system for the {MDPI}[https://mdpi.iu.edu/] project at {Indiana University}[https://www.indiana.edu/].
