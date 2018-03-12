@@ -58,6 +58,7 @@ jobs:
         
       # Database setup
       - run: cp .circleci/circle.database.yml config/database.yml
+      - run: cp .circleci/circle.secrets.yml config/secrets.yml
       - run: bundle update rake
       - run: bundle install
       - run: bundle exec rake db:create RAILS_ENV=test
