@@ -204,6 +204,11 @@ ActiveRecord::Schema.define(version: 20171227193844) do
   add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
   add_index "condition_statuses", ["physical_object_id"], name: "index_condition_statuses_on_physical_object_id", using: :btree
 
+  create_table "containers", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "cylinder_tms", force: :cascade do |t|
     t.string  "size",               limit: 255
     t.string  "material",           limit: 255
@@ -293,6 +298,32 @@ ActiveRecord::Schema.define(version: 20171227193844) do
 
   add_index "digital_statuses", ["created_at", "state", "physical_object_id"], name: "quality_control_staging", using: :btree
   add_index "digital_statuses", ["physical_object_id"], name: "index_digital_statuses_on_physical_object_id", using: :btree
+
+  create_table "doFiles", id: false, force: :cascade do |t|
+    t.string  "mdpiBarcode", limit: 14,  null: false
+    t.integer "partNumber",  limit: 1
+    t.boolean "isMaster"
+    t.string  "fileUsage",   limit: 255
+    t.string  "md5",         limit: 32
+    t.integer "size",        limit: 8
+    t.float   "duration",    limit: 24
+  end
+
+  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+
+  create_table "doObjects", primary_key: "mdpiBarcode", force: :cascade do |t|
+    t.string   "digitizingEntity", limit: 255
+    t.string   "objectType",       limit: 255
+    t.datetime "acceptTime"
+    t.datetime "bagTime"
+    t.integer  "size",             limit: 8
+  end
+
+  create_table "doParts", id: false, force: :cascade do |t|
+    t.string  "mdpiBarcode", limit: 14, null: false
+    t.integer "partNumber",  limit: 1,  null: false
+    t.boolean "vendorQC"
+  end
 
   create_table "dvd_tms", force: :cascade do |t|
     t.string  "recording_standard",     limit: 255

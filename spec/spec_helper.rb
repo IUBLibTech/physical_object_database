@@ -94,6 +94,7 @@ RSpec.configure do |config|
     seed_users("add")
     seed_wst("add")
     seed_cst("add")
+    seed_test_users
   end
   config.around(:each) do |example|
     DatabaseCleaner.strategy = :deletion, {except: config.seed_tables}
