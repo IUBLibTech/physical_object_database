@@ -74,7 +74,6 @@ jobs:
             
             bundle exec rspec --format progress \
                             $TEST_FILES
-            COVERALLS_PARALLEL=true bundle exec rake coveralls:push
 
       # collect reports
       - store_test_results:
