@@ -2,13 +2,12 @@
 #
 # Check https://circleci.com/docs/2.0/language-ruby/ for more details
 #
-# FIXME: lower ruby version?
 version: 2
 jobs:
   build:
     docker:
       # specify the version you desire here
-       - image: circleci/ruby:2.3-node-browsers
+       - image: circleci/ruby:2.3.6-node-browsers
          environment:
          - RAILS_ENV: test
          - RACK_ENV: test
