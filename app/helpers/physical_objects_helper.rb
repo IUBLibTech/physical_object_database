@@ -35,7 +35,8 @@ module PhysicalObjectsHelper
     results = {}
     batch_lookups = { 'Batch identifier' => 'identifier', 'Batch description' => 'description' }
     bin_lookups = { 'Bin barcode' => 'mdpiBarcode', 'Bin identifier' => 'identifier' }
-    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Color space' => 'colorSpace', 'Mold' => 'mold', 'AD strip' => 'conditions/adStrip', 'Return to' => 'returnTo', 'Anamorphic' => 'anamorphic', 'Conservation actions' => 'conservationActions', 'Track count' => 'trackCount', 'Format duration' => 'duration', 'Footage' => 'footage', 'Title' => 'title', 'Collection name' => 'collectionName', 'Title control number' => 'iucatTitleControlNumber', 'Film title' => 'titleId', 'Return on original reel' => 'returnOnOriginalReel', 'Catalog key' => 'catalogKey'
+    # FIXME: add mapping for Replaces
+    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Color space' => 'colorSpace', 'Mold' => 'mold', 'AD strip' => 'conditions/adStrip', 'Return to' => 'returnTo', 'Anamorphic' => 'anamorphic', 'Conservation actions' => 'conservationActions', 'Track count' => 'trackCount', 'Format duration' => 'duration', 'Footage' => 'footage', 'Title' => 'title', 'Collection name' => 'collectionName', 'Title control number' => 'iucatTitleControlNumber', 'Film title' => 'titleId', 'Return on original reel' => 'returnOnOriginalReel', 'Catalog key' => 'catalogKey', 'Replaces' => 'replaces'
      }
     multivalued_fieldsets = {
       'Aspect ratio' => {
@@ -187,7 +188,6 @@ module PhysicalObjectsHelper
             # replace true/false from FilmDB with yes/no for Memnon
             po_values.map! { |e| e.match(/^true$/i) ? 'Yes' : e }
             po_values.map! { |e| e.match(/^false$/i) ? 'No' : e }
-# FIXME: add film title for group key, replaces
             condition_values = condition_ratings.values.map { |v| po.xpath(v)&.first&.content.to_s[0].to_i }
             multi_values = multivalued_fieldsets.values.map do |h|
               h.select { |k,v| po.xpath(v)&.first&.content.to_s == 'true' }.keys.join(', ')
@@ -332,31 +332,21 @@ module PhysicalObjectsHelper
 	  ].each do |field_name|
 	    r[field_name] = r[field_name].to_i if r[field_name].class == Float
 	  end
-    
-          po = PhysicalObject.new(
-              spreadsheet: spreadsheet,
-              author: r[PhysicalObject.human_attribute_name("author")],
-              bin_id: bin_id,
-              box_id: box_id,
-              call_number: r[PhysicalObject.human_attribute_name("call_number")],
-              catalog_key: r[PhysicalObject.human_attribute_name("catalog_key")],
-              collection_identifier: r[PhysicalObject.human_attribute_name("collection_identifier")],
-              collection_name: r[PhysicalObject.human_attribute_name("collection_name")],
-              format: r[PhysicalObject.human_attribute_name("format")],
-              generation: r[PhysicalObject.human_attribute_name("generation")],
-              group_key_id: group_key_id,
-              group_position: group_position,
-              home_location: r[PhysicalObject.human_attribute_name("home_location")],
-              iucat_barcode: r[PhysicalObject.human_attribute_name("iucat_barcode")] ? r[PhysicalObject.human_attribute_name("iucat_barcode")].to_i : "0",
-              mdpi_barcode: r[PhysicalObject.human_attribute_name("mdpi_barcode")] ? r[PhysicalObject.human_attribute_name("mdpi_barcode")].to_i : 0,
-              oclc_number: r[PhysicalObject.human_attribute_name("oclc_number")],
-              other_copies: !r[PhysicalObject.human_attribute_name("other_copies")].nil?,
-              has_ephemera: !r[PhysicalObject.human_attribute_name("has_ephemera")].nil?,
-              title: r[PhysicalObject.human_attribute_name("title")],
-              title_control_number: r[PhysicalObject.human_attribute_name("title_control_number")],
-              unit_id: unit_id,
-              year: r[PhysicalObject.human_attribute_name("year")]
-            )
+
+          # Convert string to Boolean
+          ['Replaces'].each do |field_name|
+            r[field_name] = r[field_name].present?
+          end
+   
+          po = PhysicalObjectsHelper.physical_object_for_row(r)
+
+          po.spreadsheet = spreadsheet
+          po.bin_id = bin_id
+          po.box_id = box_id
+          po.group_key_id = group_key_id
+          po.group_position = group_position
+          po.unit_id = unit_id
+
           po.picklist = picklist unless picklist.nil?
           po.shipment = shipment unless shipment.nil?
           po.assign_inferred_workflow_status
@@ -366,7 +356,9 @@ module PhysicalObjectsHelper
             tm.class.parse_tm(tm, r)
             tm.valid?
           end
-          if batch_id.nil? && r['Batch identifier'].present?
+          if po.errors.any?
+            failed << [index, po]
+          elsif batch_id.nil? && r['Batch identifier'].present?
             failed << [index, batch]
           #Need extra check on box_id as we nullify bin_id for non-nil box_id
           elsif bin_id.nil? && r["Bin barcode"].to_i > 0 && box_id.nil?
@@ -433,5 +425,48 @@ module PhysicalObjectsHelper
     group_key = GroupKey.where(filmdb_title_id: title_id).first if title_id.to_i > 0
     group_key = GroupKey.create(filmdb_title_id: title_id) if group_key.nil?
     group_key
+  end
+
+  def PhysicalObjectsHelper.physical_object_for_row(row)
+    po = PhysicalObject.where(mdpi_barcode: row[PhysicalObject.human_attribute_name("mdpi_barcode")].to_i).first if row[PhysicalObject.human_attribute_name("mdpi_barcode")].to_i.positive?
+    po ||= PhysicalObject.new
+    # FIXME: reset billable status?  digital_start?
+    # billed, date_billed
+    # staging_requested, staged, staging_request_timestamp
+    # workflow_status, workflow_index (physical)
+    # digital_workflow_status, digital_workflow_category, digital_start
+    # has_ephemera, ephemera_returned
+    # FIXME: remove commented attribute changes, below
+    po.assign_attributes({
+      #spreadsheet: spreadsheet,
+      author: row[PhysicalObject.human_attribute_name("author")],
+      #bin_id: bin_id,
+      #box_id: box_id,
+      call_number: row[PhysicalObject.human_attribute_name("call_number")],
+      catalog_key: row[PhysicalObject.human_attribute_name("catalog_key")],
+      collection_identifier: row[PhysicalObject.human_attribute_name("collection_identifier")],
+      collection_name: row[PhysicalObject.human_attribute_name("collection_name")],
+      format: row[PhysicalObject.human_attribute_name("format")],
+      generation: row[PhysicalObject.human_attribute_name("generation")],
+      #group_key_id: group_key_id,
+      #group_position: group_position,
+      home_location: row[PhysicalObject.human_attribute_name("home_location")],
+      iucat_barcode: row[PhysicalObject.human_attribute_name("iucat_barcode")] ? row[PhysicalObject.human_attribute_name("iucat_barcode")].to_i : "0",
+      mdpi_barcode: row[PhysicalObject.human_attribute_name("mdpi_barcode")] ? row[PhysicalObject.human_attribute_name("mdpi_barcode")].to_i : 0,
+      oclc_number: row[PhysicalObject.human_attribute_name("oclc_number")],
+      other_copies: row[PhysicalObject.human_attribute_name("other_copies")].present?,
+      has_ephemera: row[PhysicalObject.human_attribute_name("has_ephemera")].present?,
+      title: row[PhysicalObject.human_attribute_name("title")],
+      title_control_number: row[PhysicalObject.human_attribute_name("title_control_number")],
+      #unit_id: unit_id,
+      year: row[PhysicalObject.human_attribute_name("year")]
+    })
+    if row['Replaces'] && !po.persisted?
+      po.errors.add(:base, 'Physical Object marked as a replacement case, but no existing MDPI Barcode match found')
+    elsif !row['Replaces'] && po.persisted?
+      po.errors.add(:base, 'MDPI barcode has already been assigned to a Physical Object, and object was not marked as a replacement case')
+    end
+    po.send(:default_values)
+    po
   end
 end
