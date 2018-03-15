@@ -13,7 +13,7 @@ FactoryBot.define do
     trait :collection_owner do
       web_admin false
       collection_owner true
-      unit Unit.first
+      unit_id { Unit.first&.id }
     end
 
   end

@@ -227,5 +227,8 @@ shared_examples "includes TechnicalMetadatumModule" do |tm_object|
     context "for a video format" do
       include_examples "format_auto_accept_days examples", "U-matic", 30
     end
+    context "for a film format" do
+      include_examples "format_auto_accept_days examples", "Film", 30
+    end
   end
 end

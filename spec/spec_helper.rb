@@ -1,7 +1,9 @@
 ENV["RAILS_ENV"] ||= 'test'
 ENV["skip"] ||= 'false'
 require 'simplecov'
+require 'coveralls'
 SimpleCov.start('rails') unless ENV["skip"]=='true'
+Coveralls.wear!('rails')
 require 'webmock/rspec'
 WebMock.disable_net_connect!(allow_localhost: true)
 require File.expand_path("../../config/environment", __FILE__)
@@ -94,6 +96,7 @@ RSpec.configure do |config|
     seed_users("add")
     seed_wst("add")
     seed_cst("add")
+    seed_test_users
   end
   config.around(:each) do |example|
     DatabaseCleaner.strategy = :deletion, {except: config.seed_tables}
