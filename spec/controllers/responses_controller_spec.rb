@@ -1004,7 +1004,7 @@ describe ResponsesController do
       let(:request_xml) { File.read('spec/fixtures/filmdb_replacement.xml') }
       context 'and a match found' do
         before(:each) do
-          existing_object
+          existing_object.update_attributes(billed: true, date_billed: Time.now)
           post :push_filmdb_objects, request_xml, content_type: 'application/xml'
         end
         it "sets @success to true" do
@@ -1015,6 +1015,14 @@ describe ResponsesController do
         end
         it "persists a spreadsheet" do
           expect(assigns(:results)[:spreadsheet]).to be_persisted
+        end
+        it 'resets billed flag' do
+          existing_object.reload
+          expect(existing_object.billed).to be_falsey
+        end
+        it 'resets date_billed' do
+          existing_object.reload
+          expect(existing_object.date_billed).to be_nil
         end
         it "renders something" do
           expect(response.body).to match /success/i
