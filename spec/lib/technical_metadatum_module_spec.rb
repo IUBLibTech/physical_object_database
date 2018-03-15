@@ -6,8 +6,8 @@ describe TechnicalMetadatumModule do
     it "returns 30 for video" do
       expect(TechnicalMetadatumModule.format_auto_accept_days("U-matic")).to eq 30
     end
-    xit "returns 7 for film" do
-      puts "FIXME: need an actual film format"
-    end 
+    it "returns 30 for film" do
+      expect(TechnicalMetadatumModule.format_auto_accept_days("Film")).to eq 30
+    end
   end
 end
