@@ -6,13 +6,14 @@ class AudiocassetteTm < ActiveRecord::Base
   # TM module constants
   PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
     baking: false,
-
     speed_used: true,
     tape_fluxivity: false,
     volume_units: false,
     analog_output_voltage: false,
     peak: false,
-    noise_reduction: true
+    noise_reduction: true,
+    turnover: nil,
+    rolloff: nil
   })
   TM_FORMAT = ['Audiocassette']
   TM_SUBTYPE = false
