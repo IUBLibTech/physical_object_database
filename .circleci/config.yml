@@ -14,7 +14,7 @@ jobs:
          - MYSQL_HOST: 127.0.0.1
          - PGUSER: physical_object_database
 
-       - image: circleci/mysql:latest
+       - image: circleci/mysql:5.7
          environment:
          - MYSQL_ROOT_HOST: 127.0.0.1
          - POD_USER: physical_object_database

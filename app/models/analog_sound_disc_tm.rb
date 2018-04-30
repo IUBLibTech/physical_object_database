@@ -9,6 +9,7 @@ class AnalogSoundDiscTm < ActiveRecord::Base
     stylus_size: true,
     turnover: false,
     rolloff: false,
+    rumble_filter: false
   })
   TM_FORMAT = ['LP', 'Aluminum Disc', 'Lacquer Disc', '45', '78', 'Other Analog Sound Disc']
   TM_SUBTYPE = true
