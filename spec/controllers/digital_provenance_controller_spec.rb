@@ -49,7 +49,7 @@ describe DigitalProvenanceController do
       context 'with no digital file provenances' do
         it 'redirects' do
           get :edit, id: cylinder_object.id
-          expect(response).to redirect_to cylinder_preload_edit_physical_object_path(cylinder_object)
+          expect(response).to redirect_to dfp_preload_edit_physical_object_path(cylinder_object)
         end
       end
       context 'with digital file provenances' do

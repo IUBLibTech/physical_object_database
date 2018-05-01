@@ -10,7 +10,7 @@
   <% @tm ||= @physical_object.technical_metadatum.specific %>
   <%= error_messages_for(@physical_object) %>
   <%= error_messages_for(@tm) %>
-  <%= nested_form_for(@physical_object, url: { action: 'cylinder_preload_update' }) do |f| %>
+  <%= nested_form_for(@physical_object, url: { action: 'dfp_preload_update' }) do |f| %>
     <div class="clear" ><%= submit_tag(@submit_text) %></div>
     <%= render(partial: 'digital_provenance/digital_provenance_form') %>
     <div id="physicalObject" class="left">
@@ -29,12 +29,13 @@
               <%= f.select(:format, PhysicalObject.formats, {}, disabled: true) %>
             </td>
           </tr>
+<%# FIXME: add subformat %>
         </table>
       </div>
       <div id="technicalMetadatum">
         <%= render(:partial => tm_partial_path(@tm)) %>
       </div>
     </div>
-    <%= render(partial: 'physical_objects/cylinder_preload_fields_only', locals: { f: f }) %>
+    <%= render(partial: preload_partial_path(@tm), locals: { f: f }) %>
   <% end %>
 </div>

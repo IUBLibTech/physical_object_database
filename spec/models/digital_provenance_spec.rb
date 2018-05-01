@@ -62,6 +62,19 @@ describe DigitalProvenance, type: :model do
         expect { cylinder_dp.ensure_dfp }.to change(DigitalFileProvenance, :count).by(5)
       end
     end
+    context "for a Cylinder with filename collissions" do
+      let(:cylinder) { FactoryBot.create :physical_object, :cylinder }
+      let(:cylinder_dp) { FactoryBot.create :digital_provenance, physical_object: cylinder }
+      let(:duplicate) { FactoryBot.create :physical_object, :cylinder }
+      let(:duplicate_dp) { FactoryBot.create :digital_provenance, physical_object: cylinder }
+      before(:each) { cylinder_dp.ensure_dfp }
+      it "creates digital file provenance for first case, only" do
+        expect { duplicate_dp.ensure_dfp }.not_to change(DigitalFileProvenance, :count)
+      end
+      it 'returns array of objects with errors' do
+        expect(duplicate_dp.ensure_dfp.map(&:errors).map(&:any?).all?).to be true
+      end
+    end
   end
 
 end

@@ -15,8 +15,8 @@ class DigitalProvenanceController < ApplicationController
   def edit
     @edit_mode = true
     @hide_dp_na = true
-          if @physical_object&.format == 'Cylinder' && @dp&.digital_file_provenances.none?
-            redirect_to cylinder_preload_edit_physical_object_path(@physical_object)
+          if @physical_object&.format.in?(TechnicalMetadatumModule.preload_formats) && @dp&.digital_file_provenances.none?
+            redirect_to dfp_preload_edit_physical_object_path(@physical_object)
           end
   end
 

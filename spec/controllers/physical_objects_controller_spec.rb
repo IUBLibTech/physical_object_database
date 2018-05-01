@@ -93,18 +93,18 @@ describe PhysicalObjectsController do
     end
   end
 
-  describe "GET cylinder_preload_edit" do
-    before(:each) { get :cylinder_preload_edit, id: cylinder_object.id }
+  describe "GET dfp_preload_edit" do
+    before(:each) { get :dfp_preload_edit, id: cylinder_object.id }
     it "locates the requested object" do
       expect(assigns(:physical_object)).to eq cylinder_object
     end
-    it "renders the :cylinder_preload_edit template" do
-      expect(response).to render_template(:cylinder_preload_edit) 
+    it "renders the :dfp_preload_edit template" do
+      expect(response).to render_template(:dfp_preload_edit) 
     end
   end
 
-  describe "POST cylinder_preload_update" do
-    let(:post_action) { post :cylinder_preload_update, id: cylinder_object.id, tm: cylinder_object.ensure_tm.attributes, cylinder_dp: { cylinder_dfp_speed_used: 42 }, digital_provenance: cylinder_object.digital_provenance.attributes }
+  describe "POST dfp_preload_update" do
+    let(:post_action) { post :dfp_preload_update, id: cylinder_object.id, tm: cylinder_object.ensure_tm.attributes, cylinder_dp: { cylinder_dfp_speed_used: 42 }, digital_provenance: cylinder_object.digital_provenance.attributes }
     it "locates the requested object" do
       post_action
       expect(assigns(:physical_object)).to eq cylinder_object

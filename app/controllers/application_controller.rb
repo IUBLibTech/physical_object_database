@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   around_filter :scope_current_username
 
   helper_method :tm_partial_path
+  helper_method :preload_partial_path
 
   def pundit_user
     @pundit_user ||= User.find_by(username: current_username)
@@ -191,6 +192,10 @@ class ApplicationController < ActionController::Base
     # and not the super class TechnicalMetadatum
     def tm_partial_path(technical_metadatum)
       'technical_metadatum/' + TechnicalMetadatumModule.tm_partials[TechnicalMetadatumModule.tm_class_formats[technical_metadatum.class]]
+    end
+  
+    def preload_partial_path(technical_metadatum)
+      'physical_objects/' + TechnicalMetadatumModule.preload_partials[TechnicalMetadatumModule.tm_class_formats[technical_metadatum.class]]
     end
   
 end

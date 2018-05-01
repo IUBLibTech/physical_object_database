@@ -8,27 +8,7 @@ class DigitalProvenance < ActiveRecord::Base
 	DIGITIZING_ENTITY_VALUES = {
 	  IU_DIGITIZING_ENTITY => IU_DIGITIZING_ENTITY,
 	  MEMNON_DIGITIZING_ENTITY => MEMNON_DIGITIZING_ENTITY
-          }
-        CYLINDER_TEXT_COMMENTS = [
-          'Undersampled at 48kHz',
-          'Overmodulated grooves', 
-          'Grooves cut into the edge of cylinder',
-          'Captured in reverse',
-          'Groove echo',
-          'Low level mechanical noise',
-          'Irregularly cut grooves',
-          'Extremely low level content',
-          'No discernible content',
-          'Partial transfer',
-          'Locked grooves at the end',
-          'False start at the beginning'
-          ].freeze
-        CYLINDER_TIMESTAMP_COMMENTS = [
-          :locked_grooves,
-          :speed_change,
-          :speed_fluctuations,
-          :second_attempt
-          ].freeze
+        }
 
 	validates :physical_object, presence: true
 
@@ -50,54 +30,80 @@ class DigitalProvenance < ActiveRecord::Base
   end
 
   def ensure_dfp(options = {})
-    if digital_file_provenances.none? && physical_object&.format == 'Cylinder'
-      [:pres, :presRef, :presInt, :intRef, :prod].each do |file_use|
-        prefix = 'MDPI'
-        barcode = physical_object.mdpi_barcode
-        sequence = '01' #FIXME: format for integer padding
-        extension = (TechnicalMetadatumModule.tm_genres[physical_object.format] == :audio ? 'wav' : 'mkv')
-        filename = "MDPI_#{barcode}_#{sequence}_#{file_use}.#{extension}"
-        if file_use.to_s.match /Ref/
-          reference_tone = 440 if file_use.to_s.match /Ref/
-          signal_chain = SignalChain.where(name: 'Cylinder refTone').first
-          speed_used = 'N/A'
-          stylus_size = 'N/A'
-          comment = nil
-        else
-          reference_tone = nil
-          signal_chain = SignalChain.where(name: 'Cylinder audio').first
-          speed_used = options['cylinder_dfp_speed_used']
-          stylus_size = options['cylinder_dfp_stylus_size']
-          if file_use == :prod
-            comment = 'De-click, De-crackle, normalized to -7 dBfs. Then Spectral De-noise, EQ, normalized to -7 dBfs again.'
-            comment += "\n" if options['cylinder_dfp_comments']&.select(&:present?)&.any? 
-          end
-          comment ||= ''
-          comment += options['cylinder_dfp_comments']&.select(&:present?)&.join("\n").to_s
-          timestamp_comments = []
-          if file_use == :pres
-            CYLINDER_TIMESTAMP_COMMENTS.each do |timestamp_comment|
-              timestamps = ''
-              if timestamp_comment == :locked_grooves
-                timestamps = options["#{timestamp_comment}"] if timestamp_comment == :locked_grooves
-              else
-                minutes = options["#{timestamp_comment}(4i)"]
-                seconds = options["#{timestamp_comment}(5i)"]
-                timestamps = "#{minutes.rjust(2,'0')}:#{seconds.rjust(2,'0')}" if minutes.present? || seconds.present?
-              end
-              if timestamps.present?
-                timestamp_comments << "#{timestamp_comment.to_s.humanize} - #{timestamps}"
-              end
-            end
-            if timestamp_comments.any?
-              comment += "\n" if comment.present?
-              comment += timestamp_comments.join("\n")
-            end
-          end
-        end
-        digital_file_provenances.create(filename: filename, reference_tone_frequency: reference_tone, signal_chain: signal_chain, speed_used: speed_used, stylus_size: stylus_size, comment: comment)
+    results = []
+    if physical_object&.format.in?(TechnicalMetadatumModule.preload_formats) && digital_file_provenances.none?
+      preload_values = TechnicalMetadatumModule.tm_format_classes[physical_object.format].const_get(:PRELOAD_CONFIGURATION)
+      file_uses = file_uses(preload_values, options)
+      (1..preload_values[:sequence]).each do |sequence|
+        results += create_dfp_set(options: options, preload_values: preload_values, file_uses: file_uses, sequence: sequence)
       end
+    end
+    results
+  end
+
+  def create_dfp_set(options:, preload_values:, file_uses:, sequence:)
+    file_uses.map do |file_use|
+      attributes = preload_values[:uses_attributes][file_use].dup
+      attributes[:signal_chain] = SignalChain.where(name: attributes[:signal_chain]).first
+      preload_values[:form_attributes][file_use].each do |att, form_field|
+        attributes[att] = options[form_field.to_s]
+      end
+      attributes[:filename] = filename(physical_object, sequence, file_use)
+      attributes[:comment] = comment_string(attributes[:comment], options, file_use, preload_values)
+      dfp = digital_file_provenances.build(**attributes)
+      dfp.save
+      dfp
     end
   end
 
+  def file_uses(preload_values, options)
+    options['cylinder_dfp_default_uses'] ||= Array.wrap(preload_values.dig(:file_uses, :default))
+    options['cylinder_dfp_optional_uses'] ||= []
+    default_file_uses = options['cylinder_dfp_default_uses'].select(&:present?).map(&:to_sym)
+    optional_file_uses = options['cylinder_dfp_optional_uses'].select(&:present?).map(&:to_sym)
+    preload_values[:uses_attributes].keys & (default_file_uses | optional_file_uses)
+  end
+
+  def filename(physical_object, sequence, file_use)
+    extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule.tm_genres[physical_object.format]]
+    "MDPI_#{physical_object.mdpi_barcode}_#{sequence.to_s.rjust(2, '0')}_#{file_use}.#{extension}"
+  end
+
+  def comment_string(comment, options, file_use, preload_values)
+    comment ||= ''
+    comment = add_text_comment(comment, options, file_use, preload_values)
+    comment = add_timestamp_comment(comment, options, file_use, preload_values)
+  end
+
+  def add_text_comment(comment, options, file_use, preload_values)
+    text_comments = options['cylinder_dfp_comments']&.select(&:present?)&.select { |c| file_use.in?(preload_values[:text_comments][c]) }&.join("\n").to_s
+    if text_comments.present?
+      comment += "\n" if comment.present?
+      comment += text_comments
+    end
+    comment
+  end
+
+  def add_timestamp_comment(comment, options, file_use, preload_values)
+    timestamp_comments = []
+    preload_values[:timestamp_comments].select { |h,k| file_use.in?(k) }.keys.each do |timestamp_comment|
+      timestamps = ''
+      # locked_grooves uses raw text entry for timestamps
+      if timestamp_comment.in?([:locked_grooves])
+        timestamps = options["#{timestamp_comment}"]
+      else
+        minutes = options["#{timestamp_comment}(4i)"]
+        seconds = options["#{timestamp_comment}(5i)"]
+        timestamps = "#{minutes.rjust(2,'0')}:#{seconds.rjust(2,'0')}" if minutes.present? || seconds.present?
+      end
+      if timestamps.present?
+        timestamp_comments << "#{timestamp_comment.to_s.humanize} - #{timestamps}"
+      end
+    end
+    if timestamp_comments.any?
+      comment += "\n" if comment.present?
+      comment += timestamp_comments.join("\n")
+    end
+    comment
+  end
 end

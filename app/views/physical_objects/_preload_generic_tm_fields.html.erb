@@ -1,0 +1,49 @@
+<%= fields_for :cylinder_dp do |f| %>
+  <div id="cylinderPreload" class="left">
+    <h2><%= @physical_object.format %> Digital File Provenance Fields</h2>
+    <table>
+      <tr>
+        <th>File uses</th>
+        <td>
+          <%= f.select(:cylinder_dfp_default_uses, options_for_select(@preload_config[:file_uses][:default].map(&:to_s), @preload_config[:file_uses][:default].map(&:to_s)), {},  multiple: true, size: @preload_config[:file_uses][:default].size) %>
+          <%= f.select(:cylinder_dfp_optional_uses, options_for_select(@preload_config[:file_uses][:optional].map(&:to_s), []), {},  multiple: true, size: @preload_config[:file_uses][:optional].size) %>
+        </td>
+      </tr>
+      <tr>
+        <th colspan="2">Attributes</th>
+      </tr>
+      <% h = {} %>
+      <% @preload_config[:form_attributes].values.each { |v| h.merge!(v) } %>
+      <% h.each do |att, form_id| %>
+        <tr>
+          <th><%= DigitalFileProvenance.human_attribute_name(att) %></th>
+          <td>
+            <%= f.text_field(form_id) %>
+          </td>
+        </tr>
+      <% end %>
+      <tr>
+        <th colspan="2">Standard Comments</th>
+      </tr>
+      <tr>
+        <th>Comments</th>
+        <td>
+          <%= f.select(:cylinder_dfp_comments, options_for_select(@preload_config[:text_comments].keys.map { |c| [c.length < 51 ? c : c[0,50] + '...', c] }), {},  multiple: true, size: @preload_config[:text_comments].keys.size) %>
+        </td>
+      </tr>
+      <% @preload_config[:timestamp_comments].keys.each do |timestamp_comment| %>
+      <tr>
+        <th><%= timestamp_comment.to_s.humanize %>
+        <td>
+          <% if timestamp_comment == :locked_grooves %>
+          <%= f.text_field(timestamp_comment) %>
+          <% else %>
+          <%= f.time_select(timestamp_comment, prompt: { hour: 'mm', minute: 'ss' }) %>
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+    <div class="clear" ><%= submit_tag(@submit_text) %></div>
+  </div>
+<% end %>
