@@ -15,4 +15,28 @@ describe PhysicalObjectsHelper do
       end
     end
   end
+  describe '.parse_xml' do
+    let(:xml) { File.read(Rails.root.join('spec', 'fixtures', 'filmdb.xml')) }
+    let(:parse_action) { PhysicalObjectsHelper.parse_xml(xml, convert_only: convert_only) }
+    context 'in ingest mode' do
+      let(:convert_only) { false }
+      it 'ingests' do
+        expect { parse_action }.to change(PhysicalObject, :count)
+      end
+      it 'does not persist the tempfile' do
+        expect_any_instance_of(Tempfile).to receive(:unlink)
+        parse_action
+      end
+    end
+    context 'in conversion mode' do
+      let(:convert_only) { true }
+      it 'does not ingest' do
+        expect { parse_action }.not_to change(PhysicalObject, :count)
+      end
+      it 'persists the tempfile' do
+        expect_any_instance_of(Tempfile).not_to receive(:unlink)
+        parse_action
+      end
+    end
+  end
 end

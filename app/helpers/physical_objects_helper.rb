@@ -31,7 +31,7 @@ module PhysicalObjectsHelper
   end
 
   # For FilmDB XML
-  def PhysicalObjectsHelper.parse_xml(xml)
+  def PhysicalObjectsHelper.parse_xml(xml, convert_only: false)
     results = {}
     batch_lookups = { 'Batch identifier' => 'identifier', 'Batch description' => 'description' }
     bin_lookups = { 'Bin barcode' => 'mdpiBarcode', 'Bin identifier' => 'identifier' }
@@ -199,10 +199,10 @@ module PhysicalObjectsHelper
           end
         end
       end
-      results = PhysicalObjectsHelper.parse_csv(tempfile.path, true, nil, Pathname.new(tempfile.path).basename.to_s)
+      results = PhysicalObjectsHelper.parse_csv(tempfile.path, true, nil, Pathname.new(tempfile.path).basename.to_s) unless convert_only
     ensure
-      tempfile.close
-      tempfile.unlink
+      tempfile.close unless convert_only
+      tempfile.unlink unless convert_only
     end
     results
   end
@@ -334,7 +334,7 @@ module PhysicalObjectsHelper
 
           # Convert string to Boolean
           ['Replaces'].each do |field_name|
-            r[field_name] = r[field_name].present?
+            r[field_name] = r[field_name].present? && !r[field_name].to_s.match(/^(false|no)$/i)
           end
    
           po = PhysicalObjectsHelper.physical_object_for_row(r)
