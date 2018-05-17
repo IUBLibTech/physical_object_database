@@ -15,7 +15,7 @@
           <filmdbId>1</filmdbId>
           <titleId>75</titleId>
           <mdpiBarcode>40000000000028</mdpiBarcode>
-          <replaces>true</replaces>
+          <redigitize>true</redigitize>
           <iucatBarcode>30000065070611</iucatBarcode>
           <format>Film</format>
           <unit>B-IULMIA</unit>

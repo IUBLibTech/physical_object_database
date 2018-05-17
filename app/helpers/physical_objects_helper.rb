@@ -31,11 +31,11 @@ module PhysicalObjectsHelper
   end
 
   # For FilmDB XML
-  def PhysicalObjectsHelper.parse_xml(xml)
+  def PhysicalObjectsHelper.parse_xml(xml, convert_only: false)
     results = {}
     batch_lookups = { 'Batch identifier' => 'identifier', 'Batch description' => 'description' }
     bin_lookups = { 'Bin barcode' => 'mdpiBarcode', 'Bin identifier' => 'identifier' }
-    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Color space' => 'colorSpace', 'Mold' => 'mold', 'AD strip' => 'conditions/adStrip', 'Return to' => 'returnTo', 'Anamorphic' => 'anamorphic', 'Conservation actions' => 'conservationActions', 'Track count' => 'trackCount', 'Format duration' => 'duration', 'Footage' => 'footage', 'Title' => 'title', 'Collection name' => 'collectionName', 'Title control number' => 'iucatTitleControlNumber', 'Film title' => 'titleId', 'Return on original reel' => 'returnOnOriginalReel', 'Catalog key' => 'catalogKey', 'Replaces' => 'replaces'
+    po_lookups = { 'Format' => 'format', 'MDPI barcode' => 'mdpiBarcode', 'IUCAT barcode' => 'iucatBarcode', 'Unit' => 'unit', 'Gauge' => 'gauge', 'Frame rate' => 'frameRate', 'Sound' => 'sound', 'Clean' => 'clean', 'Resolution' => 'resolution', 'Color space' => 'colorSpace', 'Mold' => 'mold', 'AD strip' => 'conditions/adStrip', 'Return to' => 'returnTo', 'Anamorphic' => 'anamorphic', 'Conservation actions' => 'conservationActions', 'Track count' => 'trackCount', 'Format duration' => 'duration', 'Footage' => 'footage', 'Title' => 'title', 'Collection name' => 'collectionName', 'Title control number' => 'iucatTitleControlNumber', 'Film title' => 'titleId', 'Return on original reel' => 'returnOnOriginalReel', 'Catalog key' => 'catalogKey', 'Replaces' => 'redigitize'
      }
     multivalued_fieldsets = {
       'Aspect ratio' => {
@@ -199,10 +199,10 @@ module PhysicalObjectsHelper
           end
         end
       end
-      results = PhysicalObjectsHelper.parse_csv(tempfile.path, true, nil, Pathname.new(tempfile.path).basename.to_s)
+      results = PhysicalObjectsHelper.parse_csv(tempfile.path, true, nil, Pathname.new(tempfile.path).basename.to_s) unless convert_only
     ensure
-      tempfile.close
-      tempfile.unlink
+      tempfile.close unless convert_only
+      tempfile.unlink unless convert_only
     end
     results
   end
@@ -334,7 +334,7 @@ module PhysicalObjectsHelper
 
           # Convert string to Boolean
           ['Replaces'].each do |field_name|
-            r[field_name] = r[field_name].present?
+            r[field_name] = r[field_name].present? && !r[field_name].to_s.match(/^(false|no)$/i)
           end
    
           po = PhysicalObjectsHelper.physical_object_for_row(r)
