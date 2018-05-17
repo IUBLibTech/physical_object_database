@@ -463,7 +463,7 @@ class PhysicalObjectsController < ApplicationController
       tm_attributes = @preload_config[:tm_attributes]
       # tm_attributes only inherited if configured AND initially blank
       tm_attributes.each do |att, form_field|
-        spoofed_tm_params.merge!({ att.to_s => cylinder_dp_params[form_field.to_s] }) if spoofed_tm_params[att.to_s].blank?
+        spoofed_tm_params.merge!({ att.to_s => preload_dfp_params[form_field.to_s] }) if spoofed_tm_params[att.to_s].blank?
       end
       begin
         @tm.assign_attributes(spoofed_tm_params)
@@ -484,7 +484,7 @@ class PhysicalObjectsController < ApplicationController
         @physical_object.errors[:base] << "Technical Metadata format did not match, which was probably the result of a failed format change.  Verify physical object format and technical metadata, then resubmit."
       end
       if updated
-        results = @dp.ensure_dfp(cylinder_dp_params)
+        results = @dp.ensure_dfp(preload_dfp_params)
         if results.map { |dfp| dfp.errors.none? }.all?
           flash[:notice] = "Digital File Provenance objects successfully created".html_safe
         else
@@ -572,8 +572,8 @@ class PhysicalObjectsController < ApplicationController
       end
     end
 
-    def cylinder_dp_params
-      params.require(:cylinder_dp).permit(
+    def preload_dfp_params
+      params.require(:preload_dfp).permit(
         :cylinder_dfp_speed_used, :cylinder_dfp_stylus_size, :cylinder_dfp_comments,
         :cylinder_dfp_rumble_filter, :cylinder_dfp_turnover, :cylinder_dfp_rolloff,
         :locked_grooves, :speed_change, :speed_fluctuations, :second_attempt,
