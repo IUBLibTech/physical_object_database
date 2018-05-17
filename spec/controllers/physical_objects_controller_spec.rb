@@ -104,7 +104,7 @@ describe PhysicalObjectsController do
   end
 
   describe "POST dfp_preload_update" do
-    let(:post_action) { post :dfp_preload_update, id: cylinder_object.id, tm: cylinder_object.ensure_tm.attributes, cylinder_dp: { cylinder_dfp_speed_used: 42 }, digital_provenance: cylinder_object.digital_provenance.attributes }
+    let(:post_action) { post :dfp_preload_update, id: cylinder_object.id, tm: cylinder_object.ensure_tm.attributes, preload_dfp: { cylinder_dfp_speed_used: 42 }, digital_provenance: cylinder_object.digital_provenance.attributes }
     it "locates the requested object" do
       post_action
       expect(assigns(:physical_object)).to eq cylinder_object
