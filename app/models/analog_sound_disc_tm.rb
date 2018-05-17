@@ -15,8 +15,10 @@ class AnalogSoundDiscTm < ActiveRecord::Base
   TM_SUBTYPE = true
   TM_GENRE = :audio
   TM_PARTIAL = 'show_analog_sound_disc_tm'
+  PRELOAD_PARTIAL = 'preload_generic_tm_fields'
   BOX_FORMAT = true
   BIN_FORMAT = false
+  PRELOAD_FORMAT = true
   # TM simple fields
   SIMPLE_FIELDS = [
     "diameter", "speed", "groove_size", "groove_orientation",
@@ -60,6 +62,49 @@ class AnalogSoundDiscTm < ActiveRecord::Base
     "Groove type" => :groove_size,
     "Playback speed" => :speed,
     "Equalization" => :equalization
+  }
+  DEFAULT_VALUES_FOR_PRELOAD = {}
+  PRELOAD_CONFIGURATION = {
+    sequence: 2,
+    text_comments: {
+      'Tracking issues are recorded onto disc' => [:pres, :presInt, :prod],
+      'Irregularly cut grooves' => [:pres, :presInt, :prod],
+      'Overmodulated Grooves' => [:pres, :presInt, :prod],
+      'Poor Quality Recording' => [:pres, :presInt, :prod],
+      'Delamination around outer edges of disc' => [:pres, :presInt, :prod],
+      'Side 02 is blank' => [:pres, :presInt, :prod],
+      'Warped' => [:pres, :presInt, :prod],
+      'Grooves fall off edge of the disc' => [:pres, :presInt, :prod],
+      'Locked Grooves at the end' => [:pres],
+      'Grooves on side 2 are unmodulated.' => [:pres, :presInt, :prod],
+      'Intermittent wow.' => [:pres, :presInt, :prod],
+      'Signal breaks up intermittently.' => [:pres, :presInt, :prod],
+      'Disc is at 78 RPM but was played back at 33.3 RPM due to a warp causing tracking errors. File was speed shifted to 78 RPM using time stretching in wavelab with a target stretch factor of 42.593%.' => [:pres, :presInt, :prod],
+      'Audio quality is muffled at the beginning due to greater tracking error/tracking distortion near the center of the disc.' => [:pres, :presInt, :prod],
+      'Intermittent groove echo.' => [:pres, :presInt, :prod],
+      'Speed inconsistencies throughout.' => [:pres, :presInt, :prod],
+    }.freeze,
+    timestamp_comments: {
+      locked_grooves: [:pres],
+      speed_fluctuations: [:pres]
+    },
+    file_uses: {
+      default: [:pres, :presInt],
+      optional: [:prod]
+    },
+    uses_attributes: {
+      pres: { signal_chain: 'Studio 1 Time Step' }.freeze,
+      presInt: { signal_chain: 'Studio 1 Time Step' }.freeze,
+      prod: { signal_chain: 'Studio 1 Time Step', comment: 'De-click, Noise removal' }.freeze,
+    }.freeze,
+    # FIXME: drop support for volume_units?
+    # FIXME: find out what "equalization" maps to
+    form_attributes: {
+      pres: { speed_used: :cylinder_dfp_speed_used, stylus_size: :cylinder_dfp_stylus_size}.freeze,
+      presInt: { speed_used: :cylinder_dfp_speed_used, stylus_size: :cylinder_dfp_stylus_size, turnover: :cylinder_dfp_turnover, rolloff: :cylinder_dfp_rolloff, rumble_filter: :cylinder_dfp_rumble_filter, }.freeze,
+      prod: { speed_used: :cylinder_dfp_speed_used, stylus_size: :cylinder_dfp_stylus_size, turnover: :cylinder_dfp_turnover, rolloff: :cylinder_dfp_rolloff, rumble_filter: :cylinder_dfp_rumble_filter, }.freeze
+    }.freeze,
+    tm_attributes: {}
   }
   include TechnicalMetadatumModule
   include YearModule

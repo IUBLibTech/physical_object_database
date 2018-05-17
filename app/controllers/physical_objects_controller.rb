@@ -1,12 +1,12 @@
 class PhysicalObjectsController < ApplicationController
   include ApplicationHelper
-  before_action :set_physical_object, only: [:show, :edit, :edit_ephemera, :update, :update_ephemera, :destroy, :workflow_history, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup, :generate_filename, :invert_group_position]
+  before_action :set_physical_object, only: [:show, :edit, :edit_ephemera, :update, :update_ephemera, :destroy, :workflow_history, :split_show, :split_update, :unbin, :unbox, :unpick, :ungroup, :generate_filename, :invert_group_position, :dfp_preload_edit, :dfp_preload_update]
   before_action :set_new_physical_object, only: [:new, :create_multiple]
   before_action :set_new_physical_object_with_params, only: [:create]
   before_action :authorize_collection, only: [:index, :new, :create, :create_multiple, :download_spreadsheet_example, :upload_show, :has_ephemera, :is_archived, :create_multiple, :contained, :upload_update]
   before_action :set_box_and_bin_by_barcodes, only: [:create, :create_multiple, :update]
   before_action :set_picklists, only: [:edit]
-  before_action :normalize_dates, only: [:create, :update]
+  before_action :normalize_dates, only: [:create, :update, :dfp_preload_update]
   helper :all
 
   def download_spreadsheet_example
@@ -445,6 +445,59 @@ class PhysicalObjectsController < ApplicationController
     flash[:success] = "Group position changed to: #{@physical_object.group_position}."
     redirect_to @group_key
   end
+
+  def dfp_preload_edit
+    @action = 'update'
+    @edit_mode = true
+    @display_assigned = true
+    @tm.try(:default_values_for_preload)
+  end
+
+  def dfp_preload_update
+    PhysicalObject.transaction do
+      # initial save processes bin, box assignment
+      @original_tm = @physical_object.technical_metadatum
+      tm_assigned = true
+      @tm = @physical_object.ensure_tm
+      spoofed_tm_params = tm_params
+      tm_attributes = @preload_config[:tm_attributes]
+      # tm_attributes only inherited if configured AND initially blank
+      tm_attributes.each do |att, form_field|
+        spoofed_tm_params.merge!({ att.to_s => cylinder_dp_params[form_field.to_s] }) if spoofed_tm_params[att.to_s].blank?
+      end
+      begin
+        @tm.assign_attributes(spoofed_tm_params)
+      rescue
+        tm_assigned = false
+      end
+      # FIXME: check results?
+      @digital_provenance.assign_attributes(dp_params)
+      @digital_provenance.save
+      if @physical_object.errors.none? && @physical_object.valid? && @tm.valid? && tm_assigned
+        updated = @physical_object.save
+        @tm.reload
+        if @original_tm && @original_tm.specific && (@original_tm.specific.id != @tm.id)
+          @original_tm.destroy
+        end
+      end
+      if !tm_assigned
+        @physical_object.errors[:base] << "Technical Metadata format did not match, which was probably the result of a failed format change.  Verify physical object format and technical metadata, then resubmit."
+      end
+      if updated
+        results = @dp.ensure_dfp(cylinder_dp_params)
+        if results.map { |dfp| dfp.errors.none? }.all?
+          flash[:notice] = "Digital File Provenance objects successfully created".html_safe
+        else
+          flash[:warning] = "Errors creating Digital File Provenance: #{results.map { |dfp| dfp.filename + ': ' + dfp.errors.full_messages.join(', ') }.join('; ') }".html_safe
+        end
+        redirect_to digital_provenance_path(@physical_object.id)
+      else
+        @edit_mode = true
+        @display_assigned = true
+        render action: :dfp_preload_edit
+      end
+    end
+  end
   
   private
     def set_physical_object
@@ -453,6 +506,8 @@ class PhysicalObjectsController < ApplicationController
       @tm = @physical_object.technical_metadatum
       @tm = @physical_object.technical_metadatum.specific unless @tm.nil?
       @dp = @physical_object.ensure_digiprov
+      @digital_provenance = @dp
+      @preload_config = TechnicalMetadatumModule.tm_format_classes[@physical_object.format].const_get(:PRELOAD_CONFIGURATION)
       @bin = @physical_object.bin
       @box = @physical_object.box
       @group_key = @physical_object.group_key
@@ -517,4 +572,13 @@ class PhysicalObjectsController < ApplicationController
       end
     end
 
+    def cylinder_dp_params
+      params.require(:cylinder_dp).permit(
+        :cylinder_dfp_speed_used, :cylinder_dfp_stylus_size, :cylinder_dfp_comments,
+        :cylinder_dfp_rumble_filter, :cylinder_dfp_turnover, :cylinder_dfp_rolloff,
+        :locked_grooves, :speed_change, :speed_fluctuations, :second_attempt,
+        :cylinder_dfp_default_uses, :cylinder_dfp_optional_uses,
+        cylinder_dfp_comments: [], cylinder_dfp_default_uses: [], cylinder_dfp_optional_uses: []
+      )
+    end
 end

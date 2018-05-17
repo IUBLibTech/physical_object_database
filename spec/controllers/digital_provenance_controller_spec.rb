@@ -3,6 +3,7 @@ describe DigitalProvenanceController do
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
 
   let(:physical_object) { FactoryBot.create :physical_object, :cdr, :barcoded }
+  let(:cylinder_object) { FactoryBot.create :physical_object, :cylinder, :barcoded }
   let(:valid_dp) { FactoryBot.build :digital_provenance }
   let(:invalid_dp) { FactoryBot.build :digital_provenance, :invalid }
 
@@ -31,18 +32,35 @@ describe DigitalProvenanceController do
   end
 
   describe "GET edit" do
-    before(:each) { get :edit, id: physical_object.id }
-    include_examples "assigns objects"
-    it "assigns @edit_mode" do
-      expect(assigns(:edit_mode)).to eq true
+    context 'for a non-cylinder' do
+      before(:each) { get :edit, id: physical_object.id }
+      include_examples "assigns objects"
+      it "assigns @edit_mode" do
+        expect(assigns(:edit_mode)).to eq true
+      end
+      it 'assigns @hide_dp_na' do
+        expect(assigns(:hide_dp_na)).to eq true
+      end
+      it 'renders :edit' do
+        expect(response).to render_template :edit
+      end
     end
-    it 'assigns @hide_dp_na' do
-      expect(assigns(:hide_dp_na)).to eq true
+    context 'for a Cylinder' do
+      context 'with no digital file provenances' do
+        it 'redirects' do
+          get :edit, id: cylinder_object.id
+          expect(response).to redirect_to dfp_preload_edit_physical_object_path(cylinder_object)
+        end
+      end
+      context 'with digital file provenances' do
+        let!(:dfp) { FactoryBot.create(:digital_file_provenance, digital_provenance: cylinder_object.digital_provenance) }
+        it 'renders :edit' do
+          get :edit, id: cylinder_object.id
+          expect(response).to render_template :edit
+        end
+      end
     end
-    it "renders :edit" do
-      expect(response).to render_template :edit
-    end
-    pending "calls set_nexts"
+    pending 'calls set_nexts'
   end
 
   describe "PATCH update" do

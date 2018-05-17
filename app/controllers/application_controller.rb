@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   around_filter :scope_current_username
 
   helper_method :tm_partial_path
+  helper_method :preload_partial_path
 
   def pundit_user
     @pundit_user ||= User.find_by(username: current_username)
@@ -176,7 +177,8 @@ class ApplicationController < ActionController::Base
     def dp_params
       params.require(:digital_provenance).permit(
         :digitizing_entity, :date, :comments, :created_by, :cleaning_date, :cleaning_comment, 
-        :baking, :repaired, :duration, :batch_processing_flag, digital_file_provenances_attributes: [
+        :baking, :repaired, :duration, :batch_processing_flag,
+        digital_file_provenances_attributes: [
           :id, :filename, :comment, :date_digitized, :display_date_digitized, :created_by,
           :speed_used, :signal_chain_id, :volume_units, :tape_fluxivity, :peak, :analog_output_voltage,
           :stylus_size, :turnover, :rolloff, :noise_reduction, :reference_tone_frequency, 
@@ -190,6 +192,10 @@ class ApplicationController < ActionController::Base
     # and not the super class TechnicalMetadatum
     def tm_partial_path(technical_metadatum)
       'technical_metadatum/' + TechnicalMetadatumModule.tm_partials[TechnicalMetadatumModule.tm_class_formats[technical_metadatum.class]]
+    end
+  
+    def preload_partial_path(technical_metadatum)
+      'physical_objects/' + TechnicalMetadatumModule.preload_partials[TechnicalMetadatumModule.tm_class_formats[technical_metadatum.class]]
     end
   
 end

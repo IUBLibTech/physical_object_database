@@ -21,3 +21,12 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    attributes:
+      digital_file_provenance:
+        tape_fluxivity: Reference fluxivity (nWb/m)
+        volume_units: Gain (dB)
+        analog_output_voltage: Analog output voltage (dBu)
+        peak: Peak (dBfs)
+        rumble_filter: Rumble filter (Hz)
+        reference_tone_frequencey: Reference tone frequency (Hz)

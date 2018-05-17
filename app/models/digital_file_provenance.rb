@@ -3,6 +3,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 	before_save :nullify_na_values
 	belongs_to :digital_provenance
 	belongs_to :signal_chain
+        default_scope { order(:id) }
 
 	attr_accessor :display_date_digitized
 	validates :digital_provenance, presence: true

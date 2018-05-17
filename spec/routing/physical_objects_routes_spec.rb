@@ -72,4 +72,11 @@ describe "physical_objects" do
     expect(post('/physical_objects/1/invert_group_position')).to route_to('physical_objects#invert_group_position', id: '1')
   end
 
+  it 'routes to dfp_preload_edit' do
+    expect(get('/physical_objects/1/dfp_preload_edit')).to route_to('physical_objects#dfp_preload_edit', id: '1')
+  end
+
+  it 'routes to dfp_preload_update' do
+    expect(patch('/physical_objects/1/dfp_preload_update')).to route_to('physical_objects#dfp_preload_update', id: '1')
+  end
 end

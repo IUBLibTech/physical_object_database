@@ -24,6 +24,7 @@ module TechnicalMetadatumModule
   @@tm_subtypes ||= []
   @@box_formats ||= []
   @@bin_formats ||= []
+  @@preload_formats ||= []
   @@tm_genres ||= {}
   @@tm_format_classes ||= {}
   # This only maps a class to one subtype, but that's okay.
@@ -33,8 +34,9 @@ module TechnicalMetadatumModule
   @@tm_class_formats ||= {}
   @@tm_partials ||= { nil => 'show_unknown_tm' }
   @@tm_table_names ||= {}
+  @@preload_partials ||= { nil => 'preload_unknown_tm' }
 
-  mattr_reader :tm_formats_array, :tm_formats_hash, :tm_subtypes, :box_formats, :bin_formats, :tm_genres, :tm_format_classes, :tm_class_formats, :tm_partials, :tm_table_names
+  mattr_reader :tm_formats_array, :tm_formats_hash, :tm_subtypes, :box_formats, :bin_formats, :preload_formats, :tm_genres, :tm_format_classes, :tm_class_formats, :tm_partials, :tm_table_names, :preload_partials
 
   # Pre-set module constants
   GENRE_EXTENSIONS = {
@@ -71,7 +73,18 @@ module TechnicalMetadatumModule
     comment: false,
     created_by: true,
     signal_chain_id: true
-  } 
+  }
+  PRELOAD_FORMAT = false
+  DEFAULT_VALUES_FOR_PRELOAD = {}
+  PRELOAD_CONFIGURATION = {
+    sequence: 0,
+    text_comments: {},
+    timestamp_comments: {},
+    file_uses: { default: [], optional: [] },
+    uses_attributes: {},
+    form_attributes: {},
+    tm_attributes: {}
+  }
 
   # Track values from including classes
   def self.included(base)
@@ -83,6 +96,7 @@ module TechnicalMetadatumModule
       @@tm_subtypes += tm_formats if base.const_defined?(:TM_SUBTYPE) && base.const_get(:TM_SUBTYPE)
       @@box_formats += tm_formats if base.const_defined?(:BOX_FORMAT) && base.const_get(:BOX_FORMAT)
       @@bin_formats += tm_formats if base.const_defined?(:BIN_FORMAT) && base.const_get(:BIN_FORMAT)
+      @@preload_formats += tm_formats if base.const_defined?(:PRELOAD_FORMAT) && base.const_get(:PRELOAD_FORMAT)
       @@tm_class_formats = @@tm_class_formats.merge({ base => tm_formats.first })
       tm_formats.each do |tm_format|
         @@tm_genres = @@tm_genres.merge({ tm_format => base.const_get(:TM_GENRE)}) if base.const_defined?(:TM_GENRE)
@@ -90,6 +104,11 @@ module TechnicalMetadatumModule
           @@tm_partials = @@tm_partials.merge({ tm_format => base.const_get(:TM_PARTIAL)})
         else
           @@tm_partials = @@tm_partials.merge({ tm_format => 'show_generic_tm'})  
+        end
+        if base.const_defined?(:PRELOAD_PARTIAL)
+          @@preload_partials = @@preload_partials.merge({ tm_format => base.const_get(:PRELOAD_PARTIAL) })
+        else
+          @@preload_partials = @@preload_partials.merge({ tm_format => 'preload_unknown_tm' })
         end
         @@tm_format_classes = @@tm_format_classes.merge({ tm_format => base })
         @@tm_table_names = @@tm_table_names.merge({ tm_format => base.table_name})
@@ -234,4 +253,9 @@ module TechnicalMetadatumModule
     self.class::PROVENANCE_REQUIREMENTS
   end
 
+  def default_values_for_preload
+    self.class::DEFAULT_VALUES_FOR_PRELOAD.each do |k, v|
+      send("#{k}=", v) if send(k).in? [nil, 'Unknown']
+    end
+  end
 end
