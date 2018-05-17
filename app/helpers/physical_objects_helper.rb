@@ -334,7 +334,7 @@ module PhysicalObjectsHelper
 
           # Convert string to Boolean
           ['Replaces'].each do |field_name|
-            r[field_name] = r[field_name].present?
+            r[field_name] = r[field_name].present? && !r[field_name].to_s.match(/^(false|no)$/i)
           end
    
           po = PhysicalObjectsHelper.physical_object_for_row(r)
