@@ -34,7 +34,8 @@
     </Table>
   </Worksheet>
             <% end %>
-         <% @media_format = po.format %>
+         <%# Excel worksheet names exclude some characters and have 31-char max %>
+         <% @media_format = po.format.gsub(/[?:*\/\\\[\]]/, '_')[0,31] %>
   <Worksheet ss:Name="<%= @media_format %>">
     <Table>
         <% @metadata_headers = [] %>
