@@ -34,9 +34,9 @@
     </Table>
   </Worksheet>
             <% end %>
+         <% @media_format = po.format %>
          <%# Excel worksheet names exclude some characters and have 31-char max %>
-         <% @media_format = po.format.gsub(/[?:*\/\\\[\]]/, '_')[0,31] %>
-  <Worksheet ss:Name="<%= @media_format %>">
+  <Worksheet ss:Name="<%= @media_format.gsub(/[?:*\/\\\[\]]/, '_')[0,31] %>">
     <Table>
         <% @metadata_headers = [] %>
         <% @metadata_headers = po.technical_metadatum.specific.export_headers if po && po.technical_metadatum && po.technical_metadatum.specific %>
