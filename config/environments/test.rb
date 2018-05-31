@@ -48,4 +48,9 @@ Pod::Application.configure do
 
   # Test workaround for resolving routing issue in assets/images
   config.assets.debug = true
+
+  # this sets up log rotating first arg the log file location, second arg the number of files to rotate through
+  # third arg the size of each file
+  config.logger = Logger.new("#{Rails.root}/log/#{Rails.env}.log", 10, 10.megabytes)
+
 end
