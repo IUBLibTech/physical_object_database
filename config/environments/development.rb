@@ -38,6 +38,6 @@ Pod::Application.configure do
 
   # this sets up log rotating first arg the log file location, second arg the number of files to rotate through
   # third arg the size of each file
-  # config.logger = Logger.new("#{Rails.root}/log/#{Rails.env}.log", 10, 10.kilobyte)
+  config.logger = Logger.new("#{Rails.root}/log/#{Rails.env}.log", 10, 10.megabytes)
 
 end
