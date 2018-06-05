@@ -190,5 +190,7 @@
     });
     //set barcode focus, only if no warning div content was set
     if (!$.trim($("div.warning").html())) { $("#mdpi_barcode").focus() };
+    //alert if return_to notification
+    if ($.trim($("div.notice").html()).match(/Return to:.*notify/i)) { alert($.trim($("div.notice").html()).match(/Return to:.*notify.*/i)) }
   });
 </script>
