@@ -62,14 +62,12 @@ class CylinderTm < ActiveRecord::Base
       'Locked grooves at the end' => [:pres, :presInt, :prod],
       'False start at the beginning' => [:pres, :presInt, :prod]
     }.freeze,
-    text_comment_uses: [:pres, :presInt, :prod].freeze,
     timestamp_comments: {
-      :locked_grooves => [:pres, :presInt, :prod],
-      :speed_change => [:pres, :presInt, :prod],
-      :speed_fluctuations => [:pres, :presInt, :prod],
-      :second_attempt => [:pres, :presInt, :prod]
+      :locked_grooves => [:pres],
+      :speed_change => [:pres],
+      :speed_fluctuations => [:pres],
+      :second_attempt => [:pres]
     }.freeze,
-    timestamp_comment_uses: [:pres].freeze,
     file_uses: {
       default: [:pres, :presRef, :presInt, :intRef, :prod],
       optional: []
