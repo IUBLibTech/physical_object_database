@@ -574,11 +574,12 @@ class PhysicalObjectsController < ApplicationController
 
     def preload_dfp_params
       params.require(:preload_dfp).permit(
-        :cylinder_dfp_speed_used, :cylinder_dfp_stylus_size, :cylinder_dfp_comments,
+        :cylinder_dfp_speed_used, :cylinder_dfp_stylus_size, :cylinder_dfp_comments_1, :cylinder_dfp_comments_2,
         :cylinder_dfp_rumble_filter, :cylinder_dfp_turnover, :cylinder_dfp_rolloff,
-        :locked_grooves, :speed_change, :speed_fluctuations, :second_attempt,
+        :locked_grooves_1, :speed_change_1, :speed_fluctuations_1, :second_attempt_1,
+        :locked_grooves_2, :speed_change_2, :speed_fluctuations_2, :second_attempt_2,
         :cylinder_dfp_default_uses, :cylinder_dfp_optional_uses,
-        cylinder_dfp_comments: [], cylinder_dfp_default_uses: [], cylinder_dfp_optional_uses: []
+        cylinder_dfp_comments_1: [], cylinder_dfp_comments_2: [], cylinder_dfp_default_uses: [], cylinder_dfp_optional_uses: []
       )
     end
 end

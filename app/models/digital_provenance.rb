@@ -41,69 +41,70 @@ class DigitalProvenance < ActiveRecord::Base
     results
   end
 
-  def create_dfp_set(options:, preload_values:, file_uses:, sequence:)
-    file_uses.map do |file_use|
-      attributes = preload_values[:uses_attributes][file_use].dup
-      attributes[:signal_chain] = SignalChain.where(name: attributes[:signal_chain]).first
-      preload_values[:form_attributes][file_use].each do |att, form_field|
-        attributes[att] = options[form_field.to_s]
-      end
-      attributes[:filename] = filename(physical_object, sequence, file_use)
-      attributes[:comment] = comment_string(attributes[:comment], options, file_use, preload_values)
-      dfp = digital_file_provenances.build(**attributes)
-      dfp.save
-      dfp
-    end
-  end
-
-  def file_uses(preload_values, options)
-    options['cylinder_dfp_default_uses'] ||= Array.wrap(preload_values.dig(:file_uses, :default))
-    options['cylinder_dfp_optional_uses'] ||= []
-    default_file_uses = options['cylinder_dfp_default_uses'].select(&:present?).map(&:to_sym)
-    optional_file_uses = options['cylinder_dfp_optional_uses'].select(&:present?).map(&:to_sym)
-    preload_values[:uses_attributes].keys & (default_file_uses | optional_file_uses)
-  end
-
-  def filename(physical_object, sequence, file_use)
-    extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule.tm_genres[physical_object.format]]
-    "MDPI_#{physical_object.mdpi_barcode}_#{sequence.to_s.rjust(2, '0')}_#{file_use}.#{extension}"
-  end
-
-  def comment_string(comment, options, file_use, preload_values)
-    comment ||= ''
-    comment = add_text_comment(comment, options, file_use, preload_values)
-    comment = add_timestamp_comment(comment, options, file_use, preload_values)
-  end
-
-  def add_text_comment(comment, options, file_use, preload_values)
-    text_comments = options['cylinder_dfp_comments']&.select(&:present?)&.select { |c| file_use.in?(preload_values[:text_comments][c]) }&.join("\n").to_s
-    if text_comments.present?
-      comment += "\n" if comment.present?
-      comment += text_comments
-    end
-    comment
-  end
-
-  def add_timestamp_comment(comment, options, file_use, preload_values)
-    timestamp_comments = []
-    preload_values[:timestamp_comments].select { |h,k| file_use.in?(k) }.keys.each do |timestamp_comment|
-      timestamps = ''
-      # locked_grooves uses raw text entry for timestamps
-      if timestamp_comment.in?([:locked_grooves])
-        timestamps = options["#{timestamp_comment}"]
-      else
-        minutes = options["#{timestamp_comment}(4i)"]
-        seconds = options["#{timestamp_comment}(5i)"]
-        timestamps = "#{minutes.rjust(2,'0')}:#{seconds.rjust(2,'0')}" if minutes.present? || seconds.present?
-      end
-      if timestamps.present?
-        timestamp_comments << "#{timestamp_comment.to_s.humanize} - #{timestamps}"
+  private
+    def create_dfp_set(options:, preload_values:, file_uses:, sequence:)
+      file_uses.map do |file_use|
+        attributes = preload_values[:uses_attributes][file_use].dup
+        attributes[:signal_chain] = SignalChain.where(name: attributes[:signal_chain]).first
+        preload_values[:form_attributes][file_use].each do |att, form_field|
+          attributes[att] = options[form_field.to_s]
+        end
+        attributes[:filename] = filename(physical_object, sequence, file_use)
+        attributes[:comment] = comment_string(attributes[:comment], options, file_use, preload_values, sequence)
+        dfp = digital_file_provenances.build(**attributes)
+        dfp.save
+        dfp
       end
     end
-    if timestamp_comments.any?
-      comment += "\n" if comment.present?
-      comment += timestamp_comments.join("\n")
+
+    def file_uses(preload_values, options)
+      options['cylinder_dfp_default_uses'] ||= Array.wrap(preload_values.dig(:file_uses, :default))
+      options['cylinder_dfp_optional_uses'] ||= []
+      default_file_uses = options['cylinder_dfp_default_uses'].select(&:present?).map(&:to_sym)
+      optional_file_uses = options['cylinder_dfp_optional_uses'].select(&:present?).map(&:to_sym)
+      preload_values[:uses_attributes].keys & (default_file_uses | optional_file_uses)
     end
-    comment
-  end
+
+    def filename(physical_object, sequence, file_use)
+      extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule.tm_genres[physical_object.format]]
+      "MDPI_#{physical_object.mdpi_barcode}_#{sequence.to_s.rjust(2, '0')}_#{file_use}.#{extension}"
+    end
+
+    def comment_string(comment, options, file_use, preload_values, sequence)
+      comment ||= ''
+      comment = add_text_comment(comment, options, file_use, preload_values, sequence)
+      comment = add_timestamp_comment(comment, options, file_use, preload_values, sequence)
+    end
+
+    def add_text_comment(comment, options, file_use, preload_values, sequence)
+      text_comments = options["cylinder_dfp_comments_#{sequence}"]&.select(&:present?)&.select { |c| file_use.in?(preload_values[:text_comments][c]) }&.join("\n").to_s
+      if text_comments.present?
+        comment += "\n" if comment.present?
+        comment += text_comments
+      end
+      comment
+    end
+
+    def add_timestamp_comment(comment, options, file_use, preload_values, sequence)
+      timestamp_comments = []
+      preload_values[:timestamp_comments].select { |h,k| file_use.in?(k) }.keys.each do |timestamp_comment|
+        timestamps = ''
+        # locked_grooves uses raw text entry for timestamps
+        if timestamp_comment.in?([:locked_grooves])
+          timestamps = options["#{timestamp_comment}_#{sequence}"]
+        else
+          minutes = options["#{timestamp_comment}_#{sequence}(4i)"]
+          seconds = options["#{timestamp_comment}_#{sequence}(5i)"]
+          timestamps = "#{minutes.rjust(2,'0')}:#{seconds.rjust(2,'0')}" if minutes.present? || seconds.present?
+        end
+        if timestamps.present?
+          timestamp_comments << "#{timestamp_comment.to_s.humanize} - #{timestamps}"
+        end
+      end
+      if timestamp_comments.any?
+        comment += "\n" if comment.present?
+        comment += timestamp_comments.join("\n")
+      end
+      comment
+    end
 end
