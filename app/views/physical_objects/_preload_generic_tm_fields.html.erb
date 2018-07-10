@@ -22,26 +22,31 @@
           </td>
         </tr>
       <% end %>
-      <tr>
-        <th colspan="2">Standard Comments</th>
-      </tr>
-      <tr>
-        <th>Comments</th>
-        <td>
-          <%= f.select(:cylinder_dfp_comments, options_for_select(@preload_config[:text_comments].keys.map { |c| [c.length < 51 ? c : c[0,50] + '...', c] }), {},  multiple: true, size: @preload_config[:text_comments].keys.size) %>
-        </td>
-      </tr>
-      <% @preload_config[:timestamp_comments].keys.each do |timestamp_comment| %>
-      <tr>
-        <th><%= timestamp_comment.to_s.humanize %>
-        <td>
-          <% if timestamp_comment == :locked_grooves %>
-          <%= f.text_field(timestamp_comment) %>
-          <% else %>
-          <%= f.time_select(timestamp_comment, prompt: { hour: 'mm', minute: 'ss' }) %>
-          <% end %>
-        </td>
-      </tr>
+      <% (1..@preload_config[:sequence]).each do |sequence| %>
+        <tr>
+          <th colspan="2">Side #: <%= sequence %></th>
+        </tr>
+        <tr>
+          <th colspan="2">Standard Comments</th>
+        </tr>
+        <tr>
+          <th>Comments</th>
+          <td>
+            <%= f.select("cylinder_dfp_comments_#{sequence}".to_sym, options_for_select(@preload_config[:text_comments].keys.map { |c| [c.length < 51 ? c : c[0,50] + '...', c] }), {},  multiple: true, size: @preload_config[:text_comments].keys.size) %>
+          </td>
+        </tr>
+        <% @preload_config[:timestamp_comments].keys.each do |timestamp_comment| %>
+        <tr>
+          <th><%= timestamp_comment.to_s.humanize %>
+          <td>
+            <% if timestamp_comment == :locked_grooves %>
+            <%= f.text_field("#{timestamp_comment}_#{sequence}".to_sym) %>
+            <% else %>
+            <%= f.time_select("#{timestamp_comment}_#{sequence}".to_sym, prompt: { hour: 'mm', minute: 'ss' }) %>
+            <% end %>
+          </td>
+        </tr>
+        <% end %>
       <% end %>
     </table>
     <div class="clear" ><%= submit_tag(@submit_text) %></div>
