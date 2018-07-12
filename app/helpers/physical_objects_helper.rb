@@ -303,20 +303,15 @@ module PhysicalObjectsHelper
           current_group_key = r["Group key"]
           film_title = r["Film title"].to_i
           group_total = r["Group total"].to_i
-          group_total = 1 if group_total.zero?
           if current_group_key.blank?
             if film_title > 0
-              group_key = PhysicalObjectsHelper.group_key_for_filmdb_title(film_title)
-              group_key.group_total = group_total
-              group_key.save
+              group_key = PhysicalObjectsHelper.group_key_for_filmdb_title(film_title, group_total: group_total)
               group_key_id = group_key.id
             else
               group_key_id = nil
             end
           elsif current_group_key != previous_group_key
-            group_key = PhysicalObjectsHelper.group_key_for_filmdb_title(film_title)
-            group_key.group_total = group_total
-            group_key.save
+            group_key = PhysicalObjectsHelper.group_key_for_filmdb_title(film_title, group_total: group_total)
             group_key_id = group_key.id
             previous_group_key = current_group_key
           end
@@ -419,10 +414,20 @@ module PhysicalObjectsHelper
     {"succeeded" => succeeded, "failed" => failed, spreadsheet: spreadsheet}
   end
 
-  def PhysicalObjectsHelper.group_key_for_filmdb_title(title_id)
+  def PhysicalObjectsHelper.group_key_for_filmdb_title(title_id, group_total: 0)
     group_key = nil
     group_key = GroupKey.where(filmdb_title_id: title_id).first if title_id.to_i > 0
     group_key = GroupKey.create(filmdb_title_id: title_id) if group_key.nil?
+    if group_total.zero?
+      if group_key.persisted?
+        group_key.group_total = group_key.physical_objects.count + 1
+      else
+        group_key.group_total = 1
+      end
+    else
+      group_key.group_total = group_total
+    end
+    group_key.save
     group_key
   end
 
