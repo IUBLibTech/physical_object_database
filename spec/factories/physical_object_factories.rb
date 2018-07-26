@@ -25,6 +25,14 @@ FactoryBot.define do
       format "DAT"
       association :technical_metadatum, factory: [:technical_metadatum, :dat]
     end
+    trait :dv do
+      format "DV"
+      association :technical_metadatum, factory: [:technical_metadatum, :dv]
+    end
+    trait :dvd do
+      format "DVD"
+      association :technical_metadatum, factory: [:technical_metadatum, :dvd]
+    end
     trait :lp do
       format "LP"
       association :technical_metadatum, factory: [:technical_metadatum, :analog_sound_disc]

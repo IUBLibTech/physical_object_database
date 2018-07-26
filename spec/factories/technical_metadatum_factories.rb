@@ -25,6 +25,10 @@ FactoryBot.define do
      actable_type "DatTm"
      association :actable, factory: :dat_tm
    end
+   trait :dv do
+     actable_type "DvTm"
+     association :actable, factory: :dv_tm
+   end
    trait :dvd do
      actable_type "DvdTm"
      association :actable, factory: :dvd_tm
@@ -150,6 +154,23 @@ FactoryBot.define do
     sample_rate_44_1_k 0
     sample_rate_48k 0
     sample_rate_96k 0
+  end
+
+  factory :dv_tm, class: DvTm do
+    recording_standard 'NTSC'
+    format_duration 'Unknown'
+    image_format 'Unknown'
+    variant 'DV'
+    size 'Small'
+    stock_brand ''
+    breakdown_of_materials false
+    fungus false
+    other_contaminants false
+    damage 'None'
+
+    trait :invalid do
+      damage 'invalid value'
+    end
   end
 
   factory :dvd_tm, class: DvdTm do
