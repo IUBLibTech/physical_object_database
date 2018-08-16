@@ -11,9 +11,10 @@ class AudiocassetteTm < ActiveRecord::Base
     volume_units: false,
     analog_output_voltage: false,
     peak: false,
-    noise_reduction: true,
+    noise_reduction: false,
     turnover: nil,
-    rolloff: nil
+    rolloff: nil,
+    stylus_size: nil
   })
   TM_FORMAT = ['Audiocassette']
   TM_SUBTYPE = false
