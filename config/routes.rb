@@ -32,6 +32,7 @@ Pod::Application.routes.draw do
   get 'collection_owner/upload_spreadsheet', to: 'collection_owner#upload_spreadsheet', as: 'collection_owner_upload_spreadsheet'
   post 'collection_owner/search_results', to: 'collection_owner#search_results', as: 'collection_owner_search_results'
   get 'collection_owner/:id', to: 'collection_owner#show', as: 'collection_owner_show'
+  get 'collection_owner/:id/digiprov_xml', to: 'collection_owner#digiprov_xml', as: 'collection_owner_digiprov_xml'
 
   resources :condition_status_templates
 

@@ -1,4 +1,9 @@
 <%= render partial: 'collection_owner_context_menu' %>
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Digital Provenance XML", { controller: 'collection_owner', action: 'digiprov_xml', id: @physical_object.id}, class: 'action edit', target: :_blank) if policy(@physical_object).show? %>
+  </div>
+<% end %>
 <%= form_for(@physical_object) do |f| %>
   <%= render partial: 'physical_object', locals: { f: f } %>
 <% end %>
