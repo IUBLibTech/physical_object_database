@@ -143,4 +143,41 @@ describe CollectionOwnerController do
     end
   end
 
+  describe "#digiprov_xml" do
+    context "without a unit association" do
+      before(:each) { get :show, id: po_good.id }
+      include_examples "no unit affiliation"
+    end
+    context "with a unit association" do
+      before(:all) {
+        User.find_by_username('web_admin').update_attributes(unit_id: Unit.first.id)
+      }
+      after(:all) {
+        User.find_by_username('web_admin').update_attributes(unit_id: nil)
+      }
+      let(:no_xml_string) { 'No xml digiprov' }
+      let(:xml_string) { "<xml>\n  <foo>bar</foo>\n<xml" }
+      context 'with no digital provenance' do
+        before(:each) { po_good.digital_provenance&.destroy }
+        it 'returns a message about blank xml' do
+          get :digiprov_xml, id: po_good.id
+          expect(response.body).to match no_xml_string
+        end
+      end
+      context 'with blank digiprov xml' do
+        before(:each) { po_good.ensure_digiprov.update_attribute(:xml, nil) }
+        it 'returns a message about blank xml' do
+          get :digiprov_xml, id: po_good.id
+          expect(response.body).to match no_xml_string
+        end
+      end
+      context 'with digiprov xml' do
+        before(:each) { po_good.ensure_digiprov.update_attribute(:xml, xml_string) }
+        it 'returns the digiprov xml' do
+          get :digiprov_xml, id: po_good.id
+          expect(response.body).to match xml_string
+        end
+      end
+    end
+  end
 end

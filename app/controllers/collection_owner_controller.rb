@@ -2,6 +2,8 @@ class CollectionOwnerController < ApplicationController
   before_action :check_authorization
   SEARCH_RESULTS_LIMIT = 500
 
+  before_action :set_physical_object, only: [:show, :digiprov_xml]
+
   def index
     @physical_objects = PhysicalObject.collection_owner_filter(@unit.id)
     if request.format.html?
@@ -10,7 +12,6 @@ class CollectionOwnerController < ApplicationController
   end
 
   def show
-    @physical_object = PhysicalObject.collection_owner_filter(@unit.id).where(id: params[:id]).first
     if @physical_object.nil?
       flash[:warning] = "No Physical object found belonging to #{@unit.name} with ID: #{params[:id]}"
       redirect_to collection_owner_index_path
@@ -54,7 +55,19 @@ class CollectionOwnerController < ApplicationController
     render 'physical_objects/upload_show'
   end
 
+  # recreation of API #pull_memnon_qc in the collection manager UI
+  def digiprov_xml
+    msg = @dp&.xml.blank? ? "No xml digiprov" : @dp.xml
+    render plain: msg, status: 200
+  end
+
   private
+    def set_physical_object
+      @physical_object = PhysicalObject.collection_owner_filter(@unit.id).where(id: params[:id]).first
+      @tm = @physical_object&.ensure_tm
+      @dp = @physical_object&.ensure_digiprov
+    end
+
     def check_authorization
       authorize :collection_owner
       if @pundit_user.nil? || @pundit_user.unit.nil?
