@@ -14,5 +14,8 @@ describe CollectionOwnerController, type: :routing do
   it "routes to #upload_spreadsheet" do
     expect(get("/collection_owner/upload_spreadsheet")).to route_to("collection_owner#upload_spreadsheet")
   end
+  it "routes to #digiprov_xml" do
+    expect(get("/collection_owner/:id/digiprov_xml")).to route_to("collection_owner#digiprov_xml", id: ':id')
+  end
 end
 
