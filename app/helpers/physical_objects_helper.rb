@@ -465,17 +465,16 @@ module PhysicalObjectsHelper
       #unit_id: unit_id,
       year: row[PhysicalObject.human_attribute_name("year")]
     })
+    po.send(:default_values)
     if row['Replaces']
       if po.persisted?
-        po.billed = false
-        po.date_billed = nil
+        po.apply_resend_status(retain_flags: true)
       else
         po.errors.add(:base, 'Physical Object marked as a replacement case, but no existing MDPI Barcode match found')
       end
     elsif !row['Replaces'] && po.persisted?
       po.errors.add(:base, 'MDPI barcode has already been assigned to a Physical Object, and object was not marked as a replacement case')
     end
-    po.send(:default_values)
     po
   end
 end

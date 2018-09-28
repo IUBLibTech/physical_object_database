@@ -1016,13 +1016,13 @@ describe ResponsesController do
         it "persists a spreadsheet" do
           expect(assigns(:results)[:spreadsheet]).to be_persisted
         end
-        it 'resets billed flag' do
+        it 'does not reset billed flag' do
           existing_object.reload
-          expect(existing_object.billed).to be_falsey
+          expect(existing_object.billed).to be_truthy
         end
-        it 'resets date_billed' do
+        it 'does not reset date_billed' do
           existing_object.reload
-          expect(existing_object.date_billed).to be_nil
+          expect(existing_object.date_billed).to be_truthy
         end
         it "renders something" do
           expect(response.body).to match /success/i
