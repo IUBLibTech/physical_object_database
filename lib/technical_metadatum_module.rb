@@ -25,6 +25,7 @@ module TechnicalMetadatumModule
   @@box_formats ||= []
   @@bin_formats ||= []
   @@preload_formats ||= []
+  @@tm_digital_provenance_files ||= {}
   @@tm_genres ||= {}
   @@tm_format_classes ||= {}
   # This only maps a class to one subtype, but that's okay.
@@ -36,7 +37,7 @@ module TechnicalMetadatumModule
   @@tm_table_names ||= {}
   @@preload_partials ||= { nil => 'preload_unknown_tm' }
 
-  mattr_reader :tm_formats_array, :tm_formats_hash, :tm_subtypes, :box_formats, :bin_formats, :preload_formats, :tm_genres, :tm_format_classes, :tm_class_formats, :tm_partials, :tm_table_names, :preload_partials
+  mattr_reader :tm_formats_array, :tm_formats_hash, :tm_subtypes, :box_formats, :bin_formats, :preload_formats, :tm_digital_provenance_files, :tm_genres, :tm_format_classes, :tm_class_formats, :tm_partials, :tm_table_names, :preload_partials
 
   # Pre-set module constants
   GENRE_EXTENSIONS = {
@@ -59,6 +60,7 @@ module TechnicalMetadatumModule
   MULTIVALUED_FIELDSETS = {} # associates description to boolean fieldset
   FIELDSET_COLUMNS = {} # sets boolean fields shown per row
   MANIFEST_EXPORT = {} # configures headers, fields for shipping manifest export
+  DIGITAL_PROVENANCE_FILES = [] # file types for quick add in Digiprov UI
   # configures uniform required (true)/optional (false)/na (nil) provenance fields
   PROVENANCE_REQUIREMENTS = {
     comments: false,
@@ -99,6 +101,7 @@ module TechnicalMetadatumModule
       @@preload_formats += tm_formats if base.const_defined?(:PRELOAD_FORMAT) && base.const_get(:PRELOAD_FORMAT)
       @@tm_class_formats = @@tm_class_formats.merge({ base => tm_formats.first })
       tm_formats.each do |tm_format|
+        @@tm_digital_provenance_files = @@tm_digital_provenance_files.merge({ tm_format => base.const_get(:DIGITAL_PROVENANCE_FILES)}) if base.const_defined?(:DIGITAL_PROVENANCE_FILES)
         @@tm_genres = @@tm_genres.merge({ tm_format => base.const_get(:TM_GENRE)}) if base.const_defined?(:TM_GENRE)
         if base.const_defined?(:TM_PARTIAL)
           @@tm_partials = @@tm_partials.merge({ tm_format => base.const_get(:TM_PARTIAL)})

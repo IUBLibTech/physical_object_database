@@ -3,6 +3,7 @@ class CdrTm < ActiveRecord::Base
   after_initialize :default_values, if: :new_record?
   extend TechnicalMetadatumClassModule
   # TM module constants
+  DIGITAL_PROVENANCE_FILES = ['Digital Master', 'PresInt']
   # PROVENANCE_REQUIREMENTS unchanged from default
   TM_FORMAT = ['CD-R']
   TM_SUBTYPE = false

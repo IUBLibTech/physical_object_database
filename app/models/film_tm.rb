@@ -3,6 +3,7 @@ class FilmTm < ActiveRecord::Base
   after_initialize :default_values, if: :new_record?
   extend TechnicalMetadatumClassModule
   # TM module constants
+  DIGITAL_PROVENANCE_FILES = ['Digital Master', 'PresInt']
   # PROVENANCE_REQUIREMENTS unchanged from default
   TM_FORMAT = ['Film']
   TM_SUBTYPE = false
