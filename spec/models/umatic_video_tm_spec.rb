@@ -54,4 +54,9 @@ describe UmaticVideoTm do
     end
   end
 
+  describe 'digital provenance requirements' do
+    specify 'have customized list' do      
+      expect(described_class::DIGITAL_PROVENANCE_FILES).to eq ['Digital Master', 'PresInt']
+    end
+  end
 end

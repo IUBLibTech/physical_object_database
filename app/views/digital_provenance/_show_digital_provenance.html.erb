@@ -66,16 +66,9 @@
 		</div>
     <div class="clear">
       <% if @edit_mode && policy(@dp).edit? %>
-        <%= dp.link_to_add "Add Digital Master File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
-        &nbsp-&nbsp
-        <%= dp.link_to_add "Add PresInt File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
-        <% if @dp.physical_object.format == 'Cylinder' %>
-          &nbsp-&nbsp
-          <%= dp.link_to_add "Add Prod File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
-          &nbsp-&nbsp
-          <%= dp.link_to_add "Add PresRef File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
-          &nbsp-&nbsp
-          <%= dp.link_to_add "Add IntRef File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+        <% TechnicalMetadatumModule.tm_digital_provenance_files[@physical_object.format].each_with_index do |file_type, index| %>
+          <%= dp.link_to_add "Add #{file_type} File", :digital_file_provenances, :data => { :target => "#file_holder" } if policy(@dp).edit? %>
+          <%= "&nbsp;-&nbsp;".html_safe if (index + 1) < TechnicalMetadatumModule.tm_digital_provenance_files[@physical_object.format].size %>
         <% end %>
       <% end %>
     </div>

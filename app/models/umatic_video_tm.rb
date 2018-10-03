@@ -4,6 +4,7 @@ class UmaticVideoTm < ActiveRecord::Base
   extend TechnicalMetadatumClassModule
 
   # TM module constants
+  DIGITAL_PROVENANCE_FILES = ['Digital Master', 'PresInt']
   PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
     baking: false,
   })

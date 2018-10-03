@@ -3,6 +3,7 @@ class DatTm < ActiveRecord::Base
   #no default values needed
   extend TechnicalMetadatumClassModule
   # TM module constants
+  DIGITAL_PROVENANCE_FILES = ['Digital Master', 'PresInt']
   # PROVENANCE_REQUIREMENTS unchanged from default
   TM_FORMAT = ['DAT']
   TM_SUBTYPE = false

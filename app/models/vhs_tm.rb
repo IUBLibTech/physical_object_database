@@ -4,6 +4,7 @@ class VhsTm < ActiveRecord::Base
   extend TechnicalMetadatumClassModule
   validates :format_duration, presence: true
   # TM module constants
+  DIGITAL_PROVENANCE_FILES = ['Digital Master', 'PresInt']
   PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
     baking: false,
   })

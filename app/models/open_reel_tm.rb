@@ -4,6 +4,7 @@ class OpenReelTm < ActiveRecord::Base
   before_validation :infer_values
   extend TechnicalMetadatumClassModule
   # TM module constants
+  DIGITAL_PROVENANCE_FILES = ['Digital Master', 'PresInt']
   PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
     baking: false,
 
