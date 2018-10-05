@@ -1,6 +1,6 @@
 class DigitalProvenance < ActiveRecord::Base
 	belongs_to :physical_object
-	has_many :digital_file_provenances
+	has_many :digital_file_provenances, dependent: :destroy
 	accepts_nested_attributes_for :digital_file_provenances, allow_destroy: true
 
 	IU_DIGITIZING_ENTITY = "IU Media Digitization Studios"

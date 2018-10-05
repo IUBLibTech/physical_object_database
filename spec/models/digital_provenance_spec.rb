@@ -2,6 +2,7 @@ describe DigitalProvenance, type: :model do
   let(:dp) { FactoryBot.create :digital_provenance }
   let(:valid_dp) { FactoryBot.build :digital_provenance }
   let(:invalid_dp) { FactoryBot.build :digital_provenance, :invalid }
+  let(:dfp) { FactoryBot.create(:digital_file_provenance, digital_provenance: dp) }
 
   describe "FactoryBot" do
     it "provides a valid object" do
@@ -29,6 +30,16 @@ describe DigitalProvenance, type: :model do
       it "requires" do
         valid_dp.physical_object = nil
 	expect(valid_dp).not_to be_valid
+      end
+    end
+    describe 'digital_file_provenances' do
+      before(:each) { dfp }
+      it 'has many' do
+        expect(valid_dp).to respond_to :digital_file_provenances
+      end
+      it 'destroys the digital_file_provenances upon deletion' do
+        dp.destroy
+        expect{ dfp.reload }.to raise_error ActiveRecord::RecordNotFound
       end
     end
   end
