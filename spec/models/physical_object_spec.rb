@@ -1002,7 +1002,7 @@ describe "has required attributes:" do
         context "for #{genre} format" do
           before(:each) { barcoded_po.format = values[:format] }
           it "returns start date plus #{values[:day_count]} days" do
-            expect(barcoded_po.expires).to eq (created_at + values[:day_count].days)
+            expect(barcoded_po.expires.to_date).to eq (created_at + values[:day_count].days).to_date
           end
         end
       end

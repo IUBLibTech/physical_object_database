@@ -48,4 +48,10 @@ describe OneInchOpenReelVideoTm do
       expect(valid_one_inch_open_reel_video).to be_valid
     end
   end
+
+  describe 'digital provenance requirements' do
+    specify 'have customized list' do      
+      expect(described_class::DIGITAL_PROVENANCE_FILES).to eq ['Digital Master', 'PresInt']
+    end
+  end
 end
