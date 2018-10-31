@@ -1,5 +1,5 @@
 describe SignalChain do
-  let(:format) { "CD-R" }
+  let(:format) { "DAT" }
   let(:signal_chain) { FactoryBot.create :signal_chain }
   let(:dfp) { FactoryBot.create :digital_file_provenance, signal_chain: signal_chain }
   let(:machine) { FactoryBot.create :machine }
@@ -75,7 +75,6 @@ describe SignalChain do
     it "returns an array" do
       expect(valid_signal_chain.formats).to be_a Array 
     end
-    let(:format) { "CD-R" }
     it "includes format values" do
       valid_signal_chain.signal_chain_formats.new(format: format)
       expect(valid_signal_chain.formats).to include format
