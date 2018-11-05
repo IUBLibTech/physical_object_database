@@ -4,8 +4,7 @@ class DvTm < ActiveRecord::Base
   extend TechnicalMetadatumClassModule
   # TM module constants
   DIGITAL_PROVENANCE_FILES = ['Digital Master', 'PresInt']
-  PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
-  })
+  # PROVENANCE_REQUIREMENTS unchanged from default
   TM_FORMAT = ['DV']
   TM_SUBTYPE = false
   TM_GENRE = :video

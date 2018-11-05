@@ -2,7 +2,7 @@ describe SignalChainsController do
   render_views
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
  
-  let(:formats) { ['CD-R'] } 
+  let(:formats) { ['DAT'] } 
   let(:signal_chain) { FactoryBot.create(:signal_chain, :with_formats, formats: formats) }
   let(:valid_signal_chain) { FactoryBot.build(:signal_chain, :with_formats, formats: formats) }
   let(:invalid_signal_chain) { FactoryBot.build(:signal_chain, :invalid, :with_formats, formats: formats) }

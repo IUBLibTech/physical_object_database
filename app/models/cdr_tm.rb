@@ -4,7 +4,10 @@ class CdrTm < ActiveRecord::Base
   extend TechnicalMetadatumClassModule
   # TM module constants
   DIGITAL_PROVENANCE_FILES = ['Digital Master', 'PresInt']
-  # PROVENANCE_REQUIREMENTS unchanged from default
+  PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
+    duration: false
+  })
+
   TM_FORMAT = ['CD-R']
   TM_SUBTYPE = false
   TM_GENRE = :audio
