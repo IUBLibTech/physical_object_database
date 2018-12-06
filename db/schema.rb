@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180712195705) do
+ActiveRecord::Schema.define(version: 20181204200114) do
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -204,6 +204,11 @@ ActiveRecord::Schema.define(version: 20180712195705) do
   add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
   add_index "condition_statuses", ["physical_object_id"], name: "index_condition_statuses_on_physical_object_id", using: :btree
 
+  create_table "containers", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "cylinder_tms", force: :cascade do |t|
     t.string  "size",               limit: 255
     t.string  "material",           limit: 255
@@ -304,6 +309,7 @@ ActiveRecord::Schema.define(version: 20180712195705) do
     t.float   "duration",    limit: 24
   end
 
+  add_index "doFiles", ["fileUsage"], name: "doFiles_fileUsage", using: :btree
   add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
 
   create_table "doObjects", primary_key: "mdpiBarcode", force: :cascade do |t|
@@ -809,8 +815,8 @@ ActiveRecord::Schema.define(version: 20180712195705) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "name",             limit: 255
-    t.string   "username",         limit: 255
+    t.string   "name",              limit: 255
+    t.string   "username",          limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "smart_team_user"
@@ -819,8 +825,9 @@ ActiveRecord::Schema.define(version: 20180712195705) do
     t.boolean  "qc_admin"
     t.boolean  "web_admin"
     t.boolean  "engineer"
-    t.integer  "unit_id",          limit: 4
+    t.integer  "unit_id",           limit: 4
     t.boolean  "collection_owner"
+    t.boolean  "advanced_searcher"
   end
 
   add_index "users", ["unit_id"], name: "index_users_on_unit_id", using: :btree
@@ -873,7 +880,36 @@ ActiveRecord::Schema.define(version: 20180712195705) do
   add_index "workflow_statuses", ["bin_id", "workflow_status_template_id"], name: "index_ws_on_bin_and_wst", using: :btree
   add_index "workflow_statuses", ["physical_object_id", "workflow_status_template_id"], name: "index_ws_on_po_and_wst", using: :btree
 
-  add_foreign_key "physical_objects", "shipments"
-  add_foreign_key "picklists", "shipments"
-  add_foreign_key "shipments", "units"
+  create_table "xDigitizingEntity", force: :cascade do |t|
+    t.string   "diameter",           limit: 255
+    t.string   "speed",              limit: 255
+    t.string   "groove_size",        limit: 255
+    t.string   "groove_orientation", limit: 255
+    t.string   "recording_method",   limit: 255
+    t.string   "material",           limit: 255
+    t.string   "substrate",          limit: 255
+    t.string   "coating",            limit: 255
+    t.string   "equalization",       limit: 255
+    t.string   "country_of_origin",  limit: 255
+    t.boolean  "delamination"
+    t.boolean  "exudation"
+    t.boolean  "oxidation"
+    t.boolean  "cracked"
+    t.boolean  "warped"
+    t.boolean  "dirty"
+    t.boolean  "scratched"
+    t.boolean  "worn"
+    t.boolean  "broken"
+    t.boolean  "fungus"
+    t.string   "label",              limit: 255
+    t.string   "sound_field",        limit: 255
+    t.string   "subtype",            limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "xState", force: :cascade do |t|
+    t.string "state", limit: 255
+  end
+
 end
