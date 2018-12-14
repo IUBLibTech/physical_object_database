@@ -21,6 +21,7 @@ class PhysicalObject < ActiveRecord::Base
   belongs_to :box
   belongs_to :bin
   belongs_to :group_key
+  delegate :avalon_url, to: :group_key
   belongs_to :picklist
   belongs_to :shipment
   belongs_to :spreadsheet
