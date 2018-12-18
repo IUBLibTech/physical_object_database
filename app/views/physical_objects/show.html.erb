@@ -24,6 +24,12 @@
   <div class="contextMenuItem">
     <%= link_to("Digital Workflow", {:controller => 'digital_provenance', :action => 'show', :id => @physical_object.id}, :class => 'action edit') if policy(@physical_object.ensure_digiprov).show? %>
   </div>
+  <div class="contextMenuItem">
+    <%= link_to('Content Access', @physical_object.avalon_url, class: 'action edit', target: '_blank') if policy(@physical_object).show? && @physical_object.avalon_url.present? %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to('Master Access', 'http://master.mdpi.iu.edu/access/', class: 'action edit', target: '_blank') if policy(@physical_object).show? %>
+  </div>
 <% end %>
 
 <%= render partial: "physical_object_form" %>
