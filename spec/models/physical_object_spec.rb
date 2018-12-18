@@ -1234,6 +1234,13 @@ describe "has required attributes:" do
     end
   end
 
+  describe "delegated methods" do
+    specify "#avalon_url" do
+      expect(po.group_key).to receive(:avalon_url)
+      po.avalon_url
+    end
+  end
+
   describe "private methods" do
 # .physical_object_search
 # .add_search_terms
