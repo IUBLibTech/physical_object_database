@@ -25,6 +25,7 @@ describe PhysicalObject do
     'LP' => :analog_sound_disc_tm,
     'Aluminum Disc' => :analog_sound_disc_tm,
     'Lacquer Disc' => :analog_sound_disc_tm,
+    'Lacquer Disc-imaging' => :analog_sound_disc_imaging_tm,
     '45' => :analog_sound_disc_tm,
     '78' => :analog_sound_disc_tm,
     'Other Analog Sound Disc' => :analog_sound_disc_tm,

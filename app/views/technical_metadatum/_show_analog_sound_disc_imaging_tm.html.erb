@@ -1,0 +1,203 @@
+<%= fields_for :tm do |f| %>
+<%= f.hidden_field(:subtype) %>
+<h2><%= @tm.subtype %> Technical Metadata</h2>
+  <table>
+    <tr>
+      <th>Diameter</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select(:diameter, @tm.diameter_values, {include_blank: 'Select a value...'}) %>
+        <% else %>
+          <%= f.text_field(:diameter, readonly: true) %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Speed</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select(:speed, @tm.speed_values, {include_blank: 'Select a value...'}) %>
+        <% else %>
+          <%= f.text_field(:speed, readonly: true) %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Groove size</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select(:groove_size, @tm.groove_size_values, {include_blank: 'Select a value...'}) %>
+        <% else %>
+          <%= f.text_field(:groove_size, readonly: true) %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Groove orientation</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select(:groove_orientation, @tm.groove_orientation_values, {include_blank: 'Select a value...'}) %>
+        <% else %>
+          <%= f.text_field(:groove_orientation, readonly: true) %>
+        <% end %>
+      </td>
+    </tr>
+    
+
+    <%
+    # The next four table rows are related. The first row specifies the type of recording method. If "Pressed" is selected
+    # only the "material_row" sould be visible. If "Cut" is the selected method, only "substrate_row" and "coating_row"
+    # should be visible. This is handled by the view setting inline css for not editable forms and by javascript (see bottom)
+    # to handle rows toggling on/off when material is changed
+    %>
+    <tr>
+      <th>Recording method</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select(:recording_method, @tm.recording_method_values, {include_blank: 'Select a value...'}) %>
+        <% else %>
+          <%= f.text_field(:recording_method, readonly: true) %>
+        <% end %>
+      </td>
+    </tr>
+    <% material = (["Pressed","Pregrooved"].include?(@tm.recording_method)) %>
+    <tr id="material_row" style="display: <%= material ? "table-row" : "none" %>" >
+      <th>Material</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select(:material, @tm.material_values, {include_blank: 'Select a value...'}) %>
+        <% else %>
+          <%= f.text_field(:material, readonly: true) %>
+        <% end %>
+      </td>
+    </tr>
+    <tr id="substrate_row" style="display: <%= !material ? "table-row" : "none" %>" id="material_row" >
+      <th>Substrate</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select(:substrate, @tm.substrate_values, {include_blank: 'Select a value...'}) %>
+        <% else %>
+          <%= f.text_field(:substrate, readonly: true) %>
+        <% end %>
+      </td>
+    </tr>
+    <tr id="coating_row" style="display: <%= !material ? "table-row" : "none" %>" id="material_row" >
+      <th>Coating</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select(:coating, @tm.coating_values, {include_blank: 'Select a value...'}) %>
+        <% else %>
+          <%= f.text_field(:coating, readonly: true) %>
+        <% end %>
+      </td>
+    </tr>
+                <tr>
+                        <th>Sound field</th>
+                        <td>
+                                <% if @edit_mode %>
+                                        <%= f.select(:sound_field, @tm.sound_field_values, {include_blank: 'Select a value...'}) %>
+                                <% else %>
+                                        <%= f.text_field(:sound_field, readonly: true) %>
+                                <% end %>
+                        </td>
+                </tr>
+    <tr>
+      <th>Equalization</th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select(:equalization, @tm.equalization_values) %>
+        <% else %>
+          <%= f.text_field(:equalization, readonly: true) %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Country of origin</th>
+      <td>
+        <%= f.text_field(:country_of_origin, readonly: !@edit_mode) %>
+      </td>
+    </tr>
+                <tr>
+                        <th>Label</th>
+                        <td>
+                                <%= f.text_field(:label, readonly: !@edit_mode) %>
+                        </td>
+                </tr>
+    <tr>
+      <th>Preservation problems</th>
+      <td>
+        <% if @edit_mode %>
+          <table>
+              <tr>
+                <td>Delamination <%= f.check_box(:delamination) %></td>
+                <td>Exudation <%= f.check_box(:exudation) %></td>
+              </tr>
+              <tr>  
+                <td>Oxidation <%= f.check_box(:oxidation) %></td>
+              </tr>
+          </table>
+        <% else %>
+          <%= @tm.humanize_boolean_fields("delamination", "exudation", "oxidation") %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Damage</th>
+      <td>
+        <% if @edit_mode %>
+          <table>
+              <tr>
+                <td>Broken <%= f.check_box(:broken) %></td>
+                <td>Cracked <%= f.check_box(:cracked) %></td>
+                <td>Dirty <%= f.check_box(:dirty) %></td>
+                <td>Fungus <%= f.check_box(:fungus) %></td>
+              </tr>
+              <tr>  
+                <td>Scratched <%= f.check_box(:scratched) %></td>
+                <td>Warped <%= f.check_box(:warped) %></td>
+                <td>Worn <%= f.check_box(:worn) %></td>
+              </tr>
+          </table>
+        <% else %>
+          <%= @tm.humanize_boolean_fields("cracked", "warped", "dirty", "scratched", "worn", "broken", "fungus") %>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+<% end %>
+<% if @edit_mode %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#tm_recording_method").on("change", function() {
+        var f = $("#tm_subtype").val();
+        if (this.value == "Pressed" || this.value == "Pregrooved") {
+          //set coating/substrate to "N/A" and hide them, set material to "Plastic"
+          $("#tm_substrate option, #tm_coating option").filter(function() { return $(this).text() == "N/A"; }).prop('selected', true);
+          $("#substrate_row, #coating_row").css("display", "none");
+          //set default material select based on format
+          if (f == "LP" || f == "45") {
+            $("#tm_material option").filter(function() {
+              return $(this).text() == "Plastic"; 
+            }).prop('selected', true);
+          } else if (f == "78") {
+            $("#tm_material option").filter(function() {
+              return $(this).text() == "Shellac"; 
+            }).prop('selected', true);
+          }
+          
+          $("#material_row").css("display", "table-row");
+        } else {
+          //set material to "N/A" and hide the row
+          $("#tm_material option").filter(function() {
+              return $(this).text() == "N/A"; 
+          }).prop('selected', true);
+          $("#material_row").css("display", "none");
+          //set default substrate and coating based on subtype
+          $("#tm_substrate option:eq(0)").prop("selected", true);
+          $("#tm_coating option:eq(0)").prop("selected", true);
+          $("#substrate_row, #coating_row").css("display", "table-row");
+        }
+      });
+    });
+  </script>
+<% end %>
