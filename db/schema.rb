@@ -935,7 +935,6 @@ ActiveRecord::Schema.define(version: 20190307145232) do
     t.string "state", limit: 255
   end
 
-  add_foreign_key "doParts", "doObjects", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doParts_ibfk_1"
   add_foreign_key "physical_objects", "shipments"
   add_foreign_key "picklists", "shipments"
   add_foreign_key "shipments", "units"
