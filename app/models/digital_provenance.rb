@@ -66,8 +66,18 @@ class DigitalProvenance < ActiveRecord::Base
     end
 
     def filename(physical_object, sequence, file_use)
-      extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule.tm_genres[physical_object.format]]
-      "MDPI_#{physical_object.mdpi_barcode}_#{sequence.to_s.rjust(2, '0')}_#{file_use}.#{extension}"
+      "MDPI_#{physical_object.mdpi_barcode}_#{sequence.to_s.rjust(2, '0')}_#{file_use}.#{DigitalProvenance.file_extension(physical_object.format, file_use)}"
+    end
+
+    def self.file_extension(format, file_use)
+      extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule.tm_genres[format]]
+      # FIXME: write better special case logic
+      if format.in? AnalogSoundDiscImagingTm::TM_FORMAT
+        extension = 'tiff' if file_use.to_sym.in? [:pres]
+        extension = 'zip' if file_use.to_sym.in? [:files]
+        extension = 'mp4' if file_use.to_sym.in? [:access]
+      end
+      extension
     end
 
     def comment_string(comment, options, file_use, preload_values, sequence)

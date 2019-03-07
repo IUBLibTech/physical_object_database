@@ -11,7 +11,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181204200114) do
+ActiveRecord::Schema.define(version: 20190307145232) do
+
+  create_table "analog_sound_disc_imaging_tms", force: :cascade do |t|
+    t.string   "subtype",            limit: 255
+    t.string   "diameter",           limit: 255
+    t.string   "speed",              limit: 255
+    t.string   "groove_size",        limit: 255
+    t.string   "groove_orientation", limit: 255
+    t.string   "recording_method",   limit: 255
+    t.string   "material",           limit: 255
+    t.string   "substrate",          limit: 255
+    t.string   "coating",            limit: 255
+    t.string   "equalization",       limit: 255
+    t.string   "country_of_origin",  limit: 255
+    t.string   "label",              limit: 255
+    t.string   "sound_field",        limit: 255
+    t.boolean  "delamination"
+    t.boolean  "exudation"
+    t.boolean  "oxidation"
+    t.boolean  "cracked"
+    t.boolean  "warped"
+    t.boolean  "dirty"
+    t.boolean  "scratched"
+    t.boolean  "worn"
+    t.boolean  "broken"
+    t.boolean  "fungus"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
 
   create_table "analog_sound_disc_tms", force: :cascade do |t|
     t.string   "diameter",           limit: 255
@@ -203,11 +231,6 @@ ActiveRecord::Schema.define(version: 20181204200114) do
   add_index "condition_statuses", ["condition_status_template_id"], name: "index_condition_statuses_on_condition_status_template_id", using: :btree
   add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
   add_index "condition_statuses", ["physical_object_id"], name: "index_condition_statuses_on_physical_object_id", using: :btree
-
-  create_table "containers", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "cylinder_tms", force: :cascade do |t|
     t.string  "size",               limit: 255
@@ -912,4 +935,7 @@ ActiveRecord::Schema.define(version: 20181204200114) do
     t.string "state", limit: 255
   end
 
+  add_foreign_key "physical_objects", "shipments"
+  add_foreign_key "picklists", "shipments"
+  add_foreign_key "shipments", "units"
 end

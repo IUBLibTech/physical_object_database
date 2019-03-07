@@ -36,7 +36,8 @@ class DigitalFileProvenance < ActiveRecord::Base
 		 'access' => 'Access File Version',
 		 'presInt' => 'Preservation Master - Intermediate',
 		 'presRef' => 'Reference Tone - Preservation Master',
-                 'intRef' => 'Reference Tone - Intermediate'
+                 'intRef' => 'Reference Tone - Intermediate',
+                 'files' => 'Miscellaneous'
 		}
 	FILE_USE_VALUES = FILE_USE_HASH.keys
 
@@ -77,7 +78,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 	  components = self.filename.to_s.split('_').map { |e| e.split('.') }
 	  object = self.digital_provenance && self.digital_provenance.physical_object
 	  media_type = object && TechnicalMetadatumModule.tm_genres[object.format]
-	  media_ext = TechnicalMetadatumModule::GENRE_EXTENSIONS[media_type]
+	  media_ext = DigitalProvenance.file_extension(object&.format, components.flatten[3])
 	  if components.size == 4 && components.last.size == 2
 	    prefix, barcode, sequence, use, extension = components.flatten
 	    errors.add(:filename, "must start with MDPI") unless prefix == "MDPI"
