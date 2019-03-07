@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190228140630) do
+ActiveRecord::Schema.define(version: 20190307145232) do
 
   create_table "analog_sound_disc_imaging_tms", force: :cascade do |t|
     t.string   "subtype",            limit: 255
@@ -231,11 +231,6 @@ ActiveRecord::Schema.define(version: 20190228140630) do
   add_index "condition_statuses", ["condition_status_template_id"], name: "index_condition_statuses_on_condition_status_template_id", using: :btree
   add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
   add_index "condition_statuses", ["physical_object_id"], name: "index_condition_statuses_on_physical_object_id", using: :btree
-
-  create_table "containers", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "cylinder_tms", force: :cascade do |t|
     t.string  "size",               limit: 255
@@ -940,4 +935,8 @@ ActiveRecord::Schema.define(version: 20190228140630) do
     t.string "state", limit: 255
   end
 
+  add_foreign_key "doParts", "doObjects", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doParts_ibfk_1"
+  add_foreign_key "physical_objects", "shipments"
+  add_foreign_key "picklists", "shipments"
+  add_foreign_key "shipments", "units"
 end
