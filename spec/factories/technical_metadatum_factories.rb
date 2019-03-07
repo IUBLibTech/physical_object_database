@@ -9,6 +9,10 @@ FactoryBot.define do
      actable_type "AnalogSoundDiscTm"
      association :actable, factory: :analog_sound_disc_tm
    end
+   trait :analog_sound_disc_imaging do
+     actable_type "AnalogSoundDiscImagingTm"
+     association :actable, factory: :analog_sound_disc_imaging_tm
+   end
    trait :audiocassette do
      actable_type "AudiocassetteTm"
      association :actable, factory: :audiocassette_tm
@@ -85,6 +89,33 @@ FactoryBot.define do
     label ""
     sound_field "Mono"
     subtype "LP"
+
+    delamination 0
+    exudation 0
+    oxidation 0
+    cracked 0
+    warped 0
+    dirty 0
+    scratched 0
+    worn 0
+    broken 0
+    fungus 0
+  end
+
+  factory :analog_sound_disc_imaging_tm, class: AnalogSoundDiscImagingTm do
+    diameter "12"
+    speed "33.3"
+    groove_size "Micro"
+    groove_orientation "Lateral"
+    recording_method "Cut"
+    material "N/A"
+    substrate "Aluminum"
+    coating "Lacquer"
+    equalization "Other"
+    country_of_origin ""
+    label ""
+    sound_field "Mono"
+    subtype "Lacquer Disc-imaging"
 
     delamination 0
     exudation 0
