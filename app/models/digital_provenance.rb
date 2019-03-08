@@ -73,8 +73,7 @@ class DigitalProvenance < ActiveRecord::Base
       extension = TechnicalMetadatumModule::GENRE_EXTENSIONS[TechnicalMetadatumModule.tm_genres[format]]
       # FIXME: write better special case logic
       if format.in? AnalogSoundDiscImagingTm::TM_FORMAT
-        extension = 'tiff' if file_use.to_sym.in? [:pres]
-        extension = 'zip' if file_use.to_sym.in? [:files]
+        extension = 'zip' if file_use.to_sym.in? [:pres, :files]
         extension = 'mp4' if file_use.to_sym.in? [:access]
       end
       extension
