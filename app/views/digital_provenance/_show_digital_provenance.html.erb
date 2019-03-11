@@ -85,11 +85,9 @@
 			var ext = <%= (TechnicalMetadatumModule.tm_genres[@physical_object.format] == :audio ? "'wav'" : "'mkv'").html_safe%>;
 			// the "Add Digital File/PrestInt" link
 			var trig = event.currentTarget.activeElement;
-			// special case handling for .tiff, .zip, .mp4 files for imaging format
+			// special case handling for .zip, .mp4 files for imaging format
 			<% if @physical_object.format.in? AnalogSoundDiscImagingTm::TM_FORMAT %>
-			if (trig.text == 'Add Digital Master File') {
-				ext = 'tiff';
-                        } else if (trig.text == 'Add Miscellaneous File') {
+			if ((trig.text == 'Add Digital Master File') || (trig.text == 'Add Miscellaneous File')) {
 				ext = 'zip';
 			} else if (trig.text == 'Add Access File') {
 				ext = 'mp4';
