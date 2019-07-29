@@ -126,6 +126,7 @@ class DigitalFileAutoAcceptor
                                 end
 			end
                         film = DigitalStatus.expired_film_physical_objects
+                        aa_logger.info("Expired film objects: #{film.size}")
                         film.each do |po|
                                current_state = po.current_digital_status.state
                                 decided = STATE_UPDATES[current_state]
