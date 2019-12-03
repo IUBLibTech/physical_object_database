@@ -8,7 +8,13 @@
         <ul>
           <li>are case-insensitive; 'music' will also match against 'Music' and 'MUSIC'</li>
           <li>are exact matches unless wildcards are used; 'Music' will not match against 'The Sound of Music'</li>
-          <li>use an asterisk (*) as a wildcard character for approximate matches; '*Music' will match against 'The Sound of Music', but not 'Music for Listening To', while '*Music*' matches against both</li>
+          <li>with special operators:
+            <ul>
+              <li>use an asterisk (*), in conjunction with at least one other character, as a wildcard character for approximate matches; '*Music' will match against 'The Sound of Music', but not 'Music for Listening To', while '*Music*' matches against both</li>
+              <li>use an plus sign (+), alone, to match on <em>any</em> non-empty text value</li>
+              <li>use a tilde (~), alone, to match on empty text values, only</li>
+            </ul>
+          </li>
         </ul>
       </li> 
       <li>Searches are format-independent, unless a format is selected</li>
