@@ -539,7 +539,11 @@ private
       search_terms[name] = (value ? 1 : [0, nil]) if value.class.in? [TrueClass, FalseClass]
     end
     search_terms.each do |name, value|
-      if value.class == String && value.include?('*')
+      if value.class == String && value == '~'
+        query_results = query_results.where(table_name => { name => ['', nil] })
+      elsif value.class == String && value == '+'
+        query_results = query_results.where.not(table_name => { name => ['', nil] })
+      elsif value.class == String && value.include?('*')
         query_results = query_results.where.like(table_name => { name => value.gsub(/[*]/, '%')})
       else
         query_results = query_results.where(table_name => { name => value })
