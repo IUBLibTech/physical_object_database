@@ -135,10 +135,13 @@
         <%= link_to("Reports", controller: :reports, action: :index) if policy(:report).index? %>
         <ul class="nav">
           <li>
-		        <%= link_to("Advanced Search", search_index_path) if policy(:search).advanced_search? %>
+	     <%= link_to("Advanced Search", search_index_path) if policy(:search).advanced_search? %>
           </li>
           <li>
-		        <%= link_to("Workflow History Report", contained_physical_objects_path) if policy(PhysicalObject).contained? %>
+	     <%= link_to("Report Jobs", pod_reports_path) if policy(PodReport).index? %>
+          </li>
+          <li>
+	     <%= link_to("Workflow History Report", contained_physical_objects_path) if policy(PhysicalObject).contained? %>
           </li>
         </ul>
       </div>

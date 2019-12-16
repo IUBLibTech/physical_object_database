@@ -40,9 +40,11 @@ class SearchController < ApplicationController
 
   def advanced_search
     @search_mode = true
+    @search_params = search_params
     @full_results = PhysicalObject.physical_object_query(search_params).eager_load(:box, :bin, :box_bin, :box_batch, :bin_batch, :unit, :notes, :condition_statuses, :group_key, :technical_metadatum)
     if params[:workflow_status]
       ws_params = workflow_status_params
+      @ws_params = workflow_status_params
       if ws_params[:workflow_status_template_id] && ws_params[:workflow_status_template_id].any? && !ws_params[:created_at].blank? && !ws_params[:updated_at].blank?
         @full_results = @full_results.workflow_status_search(ws_params[:workflow_status_template_id], ws_params[:created_at], ws_params[:updated_at])
       end
@@ -59,6 +61,10 @@ class SearchController < ApplicationController
         @block_metadata = format_param.blank?
         @physical_objects = @full_results
         render 'show' 
+      end
+      format.report do
+        PodReportJob.perform_later(search_params, ws_params)
+        redirect_to pod_reports_path
       end
     end
   end

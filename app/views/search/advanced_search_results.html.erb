@@ -1,11 +1,8 @@
-<% content_for :context_menu do %>
-  <div class="contextMenuItem">
-    <%= link_to("Advanced Search", :controller => 'search', :action => 'index') if policy(:search).advanced_search? %>
-  </div>
-  <div class="contextMenuItem">
-    <%= link_to("Workflow History Report", controller: 'physical_objects', action: 'contained') if policy(PhysicalObject).contained? %>
-  </div>
-<% end %>
+<%= render 'search/search_menu' %>
+
 Download full search results as: <%= link_to('Excel (XLS) File', advanced_search_search_index_path(params.symbolize_keys.merge(format: :xls)), method: :post) if policy(:search).advanced_search? %>
+  <% if policy(PodReport).create? %>
+| Run as report job: <%= link_to('Excel (XLS) File', advanced_search_search_index_path(params.symbolize_keys.merge(format: :report)), method: :post) %>
+<% end %>
 <h2>Physical Objects<%= " [#{@results_count}]" if @search_mode %></h2>
 <%= render 'physical_objects/physical_objects_table' %>

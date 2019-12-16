@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190307145232) do
+ActiveRecord::Schema.define(version: 20191217211402) do
 
   create_table "analog_sound_disc_imaging_tms", force: :cascade do |t|
     t.string   "subtype",            limit: 255
@@ -341,12 +341,6 @@ ActiveRecord::Schema.define(version: 20190307145232) do
     t.datetime "acceptTime"
     t.datetime "bagTime"
     t.integer  "size",             limit: 8
-  end
-
-  create_table "doParts", id: false, force: :cascade do |t|
-    t.string  "mdpiBarcode", limit: 14, null: false
-    t.integer "partNumber",  limit: 1,  null: false
-    t.boolean "vendorQC"
   end
 
   create_table "dv_tms", force: :cascade do |t|
@@ -732,6 +726,13 @@ ActiveRecord::Schema.define(version: 20190307145232) do
   add_index "picklists", ["destination"], name: "index_picklists_on_destination", using: :btree
   add_index "picklists", ["name"], name: "index_picklists_on_name", unique: true, using: :btree
   add_index "picklists", ["shipment_id"], name: "index_picklists_on_shipment_id", using: :btree
+
+  create_table "pod_reports", force: :cascade do |t|
+    t.string   "status",     limit: 255
+    t.string   "filename",   limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "preservation_problems", force: :cascade do |t|
     t.integer  "open_reel_tm_id",      limit: 4
