@@ -1,5 +1,6 @@
 Pod::Application.routes.draw do
 
+
   get 'welcome/', to: 'welcome#index', as: 'welcome_index'
   root 'welcome#index'
 
@@ -193,6 +194,8 @@ Pod::Application.routes.draw do
   resources :status_templates, only: [:index]
 
   resources :reports, only: [:index]
+  
+  resources :pod_reports, only: [:index, :show, :destroy]
 
   match '/signin', to: 'sessions#new', via: :get
   match '/signout', to: 'sessions#destroy', via: :delete

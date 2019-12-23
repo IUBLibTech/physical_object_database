@@ -40,4 +40,5 @@ Pod::Application.configure do
   # third arg the size of each file
   config.logger = Logger.new("#{Rails.root}/log/#{Rails.env}.log", 10, 10.megabytes)
 
+  config.active_job.queue_adapter = :async
 end

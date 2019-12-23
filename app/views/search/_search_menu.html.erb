@@ -1,0 +1,11 @@
+<% content_for :context_menu do %>
+  <div class="contextMenuItem">
+    <%= link_to("Advanced Search", :controller => 'search', :action => 'index') if policy(:search).advanced_search? %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Report Jobs", pod_reports_url) if policy(PodReport).index? %>
+  </div>
+  <div class="contextMenuItem">
+    <%= link_to("Workflow History Report", controller: 'physical_objects', action: 'contained') if policy(PhysicalObject).contained? %>
+  </div>
+<% end %> 
