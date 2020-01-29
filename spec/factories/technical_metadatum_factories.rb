@@ -65,6 +65,10 @@ FactoryBot.define do
      actable_type "OneInchOpenReelVideoTm"
      association :actable, factory: :one_inch_open_reel_video_tm
    end
+   trait :two_inch_open_reel_video do
+     actable_type "TwoInchOpenReelVideoTm"
+     association :actable, factory: :two_inch_open_reel_video_tm
+   end
    trait :umatic do
      actable_type "UmaticVideoTm"
      association :actable, factory: :umatic_tm
@@ -479,6 +483,29 @@ FactoryBot.define do
     fungus false
     soft_binder_syndrome false
     other_contaminants false
+
+    trait :invalid do
+      pack_deformation "invalid value"
+    end
+    trait :valid do
+    end
+  end
+
+  factory :two_inch_open_reel_video_tm, class: TwoInchOpenReelVideoTm do
+    recording_standard 'NTSC'
+    format_duration 'Unknown'
+    reel_type 'metal reel'
+    format_version 'Quadruplex'
+    recording_mode 'unknown' 
+    tape_stock_brand ''
+    pack_deformation 'None'
+    structural_damage ''
+
+    fungus false
+    soft_binder_syndrome false
+    other_contaminants false
+    foam_with_seepage false
+    foam_without_seepage false
 
     trait :invalid do
       pack_deformation "invalid value"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191217211402) do
+ActiveRecord::Schema.define(version: 20200129210006) do
 
   create_table "analog_sound_disc_imaging_tms", force: :cascade do |t|
     t.string   "subtype",            limit: 255
@@ -341,6 +341,12 @@ ActiveRecord::Schema.define(version: 20191217211402) do
     t.datetime "acceptTime"
     t.datetime "bagTime"
     t.integer  "size",             limit: 8
+  end
+
+  create_table "doParts", id: false, force: :cascade do |t|
+    t.string  "mdpiBarcode", limit: 14, null: false
+    t.integer "partNumber",  limit: 1,  null: false
+    t.boolean "vendorQC"
   end
 
   create_table "dv_tms", force: :cascade do |t|
@@ -814,6 +820,24 @@ ActiveRecord::Schema.define(version: 20191217211402) do
   add_index "technical_metadata", ["physical_object_id"], name: "index_technical_metadata_on_physical_object_id", using: :btree
   add_index "technical_metadata", ["picklist_specification_id"], name: "index_technical_metadata_on_picklist_specification_id", using: :btree
 
+  create_table "two_inch_open_reel_video_tms", force: :cascade do |t|
+    t.string   "recording_standard",   limit: 255
+    t.string   "format_duration",      limit: 255
+    t.string   "reel_type",            limit: 255
+    t.string   "format_version",       limit: 255
+    t.string   "recording_mode",       limit: 255
+    t.string   "tape_stock_brand",     limit: 255
+    t.string   "pack_deformation",     limit: 255
+    t.string   "structural_damage",    limit: 255
+    t.boolean  "fungus"
+    t.boolean  "soft_binder_syndrome"
+    t.boolean  "other_contaminants"
+    t.boolean  "foam_with_seepage"
+    t.boolean  "foam_without_seepage"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
   create_table "umatic_video_tms", force: :cascade do |t|
     t.string   "pack_deformation",     limit: 255
     t.boolean  "fungus"
@@ -936,6 +960,7 @@ ActiveRecord::Schema.define(version: 20191217211402) do
     t.string "state", limit: 255
   end
 
+  add_foreign_key "doParts", "doObjects", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doParts_ibfk_1"
   add_foreign_key "physical_objects", "shipments"
   add_foreign_key "picklists", "shipments"
   add_foreign_key "shipments", "units"
