@@ -35,6 +35,7 @@ describe PhysicalObject do
     '8mm Video' => :eight_mm_tm,
     '1/2-Inch Open Reel Video Tape' => :half_inch_open_reel_video_tm,
     '1-Inch Open Reel Video Tape' => :one_inch_open_reel_video_tm,
+    '2-Inch Open Reel Video Tape' => :two_inch_open_reel_video_tm,
     'U-matic' => :umatic_tm,
     'VHS' => :vhs_tm,
     'Audiocassette' => :audiocassette_tm,
