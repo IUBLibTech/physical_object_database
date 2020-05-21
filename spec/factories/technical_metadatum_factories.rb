@@ -500,6 +500,8 @@ FactoryBot.define do
     tape_stock_brand ''
     pack_deformation 'None'
     structural_damage ''
+    cue_track_contains 'Other'
+    sound_field 'Unknown'
 
     fungus false
     soft_binder_syndrome false

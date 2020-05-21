@@ -14,7 +14,7 @@ describe TwoInchOpenReelVideoTm do
   end
 
   describe "has validated fields:" do
-    [:recording_standard, :format_duration, :reel_type, :format_version, :recording_mode, :pack_deformation].each do |field|
+    [:recording_standard, :format_duration, :reel_type, :format_version, :recording_mode, :pack_deformation, :cue_track_contains, :sound_field].each do |field|
       specify "#{field} value in list" do
         valid_two_inch_open_reel_video.send(field.to_s + "=", "invalid value")
         expect(valid_two_inch_open_reel_video).not_to be_valid
@@ -22,15 +22,30 @@ describe TwoInchOpenReelVideoTm do
     end
   end
 
-  # TODO: resolve pack_deformation vs damage
-  skip do
-    describe "has virtual fields:" do
-      specify "#damage for pack_deformation" do
-        expect(valid_two_inch_open_reel_video.damage).to eq valid_two_inch_open_reel_video.pack_deformation
+  describe "has default values" do
+    { recording_standard: 'NTSC',
+      format_duration: 'Unknown',
+      reel_type: 'metal reel',
+      format_version: 'Quadruplex',
+      pack_deformation: 'None',
+      cue_track_contains: 'Silence',
+      sound_field: 'Mono',
+    }.each do |field, value|
+      specify "#{field}: #{value}" do
+        valid_two_inch_open_reel_video.send("#{field}=", nil)
+        valid_two_inch_open_reel_video.default_values
+        expect(valid_two_inch_open_reel_video.send(field)).to eq value
       end
     end
   end
 
+  describe "has virtual fields:" do
+    specify "#damage for pack_deformation" do
+      expect(valid_two_inch_open_reel_video.damage).to eq valid_two_inch_open_reel_video.pack_deformation
+    end
+  end
+
+  # FIXME: verify
   describe "manifest export" do
     specify "has desired headers" do
       expect(valid_two_inch_open_reel_video.manifest_headers).to eq ["Recording standard", "Format duration", "Reel type", "Format version", "Recording mode", "Tape stock brand"]
