@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200129210006) do
+ActiveRecord::Schema.define(version: 20200521130834) do
 
   create_table "analog_sound_disc_imaging_tms", force: :cascade do |t|
     t.string   "subtype",            limit: 255
@@ -809,6 +809,8 @@ ActiveRecord::Schema.define(version: 20200129210006) do
     t.boolean  "foam_without_seepage"
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
+    t.string   "cue_track_contains",   limit: 255
+    t.string   "sound_field",          limit: 255
   end
 
   create_table "umatic_video_tms", force: :cascade do |t|
