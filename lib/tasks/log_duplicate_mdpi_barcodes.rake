@@ -7,7 +7,7 @@
 namespace :pod do
   desc "Log duplicate MDPI barcodes"
     task :log_duplicate_mdpi_barcodes => :environment do |task|
-      @logger = Logger.new(Rails.root.join('log', 'find_duplicate_barcodes.log'))
+      @logger = Logger.new(Rails.root.join('log', 'find_duplicate_barcodes.log'), 10, 10.megabytes)
       duplicates = PhysicalObject.where.not(mdpi_barcode: '0').select(:mdpi_barcode).group(:mdpi_barcode).having("count('mdpi_barcode') > 1").size
       if duplicates.empty?
         @logger.info 'No duplicates found'

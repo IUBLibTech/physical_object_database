@@ -2,7 +2,7 @@ module InvoiceHelper
 	require 'roo'
 
 	def self.logger
-		@@logger ||= Logger.new("#{Rails.root}/log/invoice_logger.log")
+		@@logger ||= Logger.new("#{Rails.root}/log/invoice_logger.log", 10, 10.megabytes)
 	end
 
 	@@mutex = Mutex.new
