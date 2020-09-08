@@ -4,7 +4,7 @@ module ApplicationHelper
 	# wikipedia provides a clear explanation of it: 
 	# http://en.wikipedia.org/wiki/Luhn_algorithm#Implementation_of_standard_Mod_10
 	def ApplicationHelper.valid_barcode?(barcode)
-		if barcode.is_a? Fixnum
+		if barcode.is_a? Numeric
 			barcode = barcode.to_s
 		end
 

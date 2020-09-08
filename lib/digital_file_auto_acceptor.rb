@@ -17,7 +17,7 @@ class DigitalFileAutoAcceptor
 	@@thread ||= nil
 
 	def aa_logger
-		@@aa_logger ||= Logger.new("#{Rails.root}/log/auto_accept.log")
+		@@aa_logger ||= Logger.new("#{Rails.root}/log/auto_accept.log", 10, 10.megabytes)
 	end
 
 	def thread_active?
