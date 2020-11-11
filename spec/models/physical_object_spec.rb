@@ -29,6 +29,7 @@ describe PhysicalObject do
     '45' => :analog_sound_disc_tm,
     '78' => :analog_sound_disc_tm,
     'Other Analog Sound Disc' => :analog_sound_disc_tm,
+    'Magnabelt' => :magnabelt_tm,
     'Open Reel Audio Tape' => :open_reel_tm,
     'Betacam' => :betacam_tm,
     'Betamax' => :betamax_tm,
