@@ -14,8 +14,8 @@ FactoryBot.define do
       workflow_status_template_id { WorkflowStatusTemplate.where(object_type: "Physical Object")[rand(WorkflowStatusTemplate.where(object_type: "Physical Object").size)].id }
     end
 
-    notes "Factory Girl workflow status"
-    user "test_user"
+    notes { 'Factory Girl workflow status' }
+    user { 'test_user' }
   end
 
 end

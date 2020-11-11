@@ -1,10 +1,10 @@
 FactoryBot.define do
 
   factory :message, class: Message do
-    content "FactoryBot message content"
+    content { "FactoryBot message content" }
 
     trait :invalid do
-      content ""
+      content { "" }
     end
   end
 

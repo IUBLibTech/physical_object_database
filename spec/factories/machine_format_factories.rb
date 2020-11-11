@@ -2,10 +2,10 @@ FactoryBot.define do
 
   factory :machine_format, class: MachineFormat do
     association :machine, factory: :machine
-    format "CD-R"
+    format { "CD-R" }
 
     trait :invalid do
-      format nil
+      format { nil }
     end
   end
 

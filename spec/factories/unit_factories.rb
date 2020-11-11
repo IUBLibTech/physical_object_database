@@ -3,13 +3,13 @@
 FactoryBot.define do
 
   factory :unit, class: Unit do
-    abbreviation "B-TEST"
-    name "Test Unit"
-    institution "Indiana University"
-    campus "Bloomington"
+    abbreviation { "B-TEST" }
+    name { "Test Unit" }
+    institution { "Indiana University" }
+    campus { "Bloomington" }
 
     trait :invalid do
-      abbreviation nil
+      abbreviation { nil }
     end
 
   end

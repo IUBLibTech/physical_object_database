@@ -1,19 +1,19 @@
 FactoryBot.define do
 
   factory :machine, class: Machine do
-    category "FactoryBot machine"
-    serial "serial"
-    manufacturer "manufacturer"
-    model "model"
+    category { "FactoryBot machine" }
+    serial { "serial" }
+    manufacturer { "manufacturer" }
+    model { "model" }
 
     trait :invalid do
-      category nil
-      serial nil
+      category { nil }
+      serial { nil }
     end
 
     trait :with_formats do
       transient do
-        formats []
+        formats { [] }
       end
       after(:build) do |machine, evaluator|
         evaluator.formats.each do |format|
