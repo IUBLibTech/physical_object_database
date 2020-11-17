@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200521130834) do
+ActiveRecord::Schema.define(version: 20201112135709) do
 
   create_table "analog_sound_disc_imaging_tms", force: :cascade do |t|
     t.string   "subtype",            limit: 255
@@ -231,6 +231,11 @@ ActiveRecord::Schema.define(version: 20200521130834) do
   add_index "condition_statuses", ["condition_status_template_id"], name: "index_condition_statuses_on_condition_status_template_id", using: :btree
   add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
   add_index "condition_statuses", ["physical_object_id"], name: "index_condition_statuses_on_physical_object_id", using: :btree
+
+  create_table "containers", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "cylinder_tms", force: :cascade do |t|
     t.string  "size",               limit: 255
@@ -542,6 +547,14 @@ ActiveRecord::Schema.define(version: 20200521130834) do
     t.string   "model",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "magnabelt_tms", force: :cascade do |t|
+    t.string   "size",        limit: 255
+    t.string   "stock_brand", limit: 255
+    t.string   "damage",      limit: 255
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   create_table "memnon_invoice_submissions", force: :cascade do |t|
@@ -903,6 +916,16 @@ ActiveRecord::Schema.define(version: 20200521130834) do
   add_index "workflow_statuses", ["bin_id", "workflow_status_template_id"], name: "index_ws_on_bin_and_wst", using: :btree
   add_index "workflow_statuses", ["physical_object_id", "workflow_status_template_id"], name: "index_ws_on_po_and_wst", using: :btree
 
+  create_table "xFormatClass", id: false, force: :cascade do |t|
+    t.integer "id",   limit: 4
+    t.string  "type", limit: 1
+  end
+
+  create_table "xState", force: :cascade do |t|
+    t.string "state", limit: 255
+  end
+
+  add_foreign_key "batches", "spreadsheets"
   add_foreign_key "physical_objects", "shipments"
   add_foreign_key "picklists", "shipments"
   add_foreign_key "shipments", "units"
