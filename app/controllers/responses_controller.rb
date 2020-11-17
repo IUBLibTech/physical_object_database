@@ -297,6 +297,8 @@ class ResponsesController < ActionController::Base
         spreadsheet.destroy
       end
       @success = false
+      @logger ||= Logger.new(Rails.root.join('log', 'push_filmdb_objects.log'), 10, 10.megabytes)
+      @logger.error(failures_to_hashes.to_s)
     end
 
     render plain: @message, status: @status
