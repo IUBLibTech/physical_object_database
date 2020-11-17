@@ -23,6 +23,9 @@ gem "nested_form"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 4.2.0'
 
+# backported fixes for rack
+gem 'rack', '~> 1.6.13', git: 'https://github.com/rails-lts/rack.git', branch: 'lts-1-6-stable'
+
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.4.10'
 
@@ -104,7 +107,7 @@ group :test do
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'simplecov', require: false
-  gem 'coveralls', require: false
+  gem 'coveralls', '~> 0.8.23', require: false
 end
 
 group :production do
