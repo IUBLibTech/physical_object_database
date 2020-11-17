@@ -14,63 +14,63 @@ FactoryBot.define do
     end
 
     trait :cdr do
-      format "CD-R"
+      format { "CD-R" }
       association :technical_metadatum, factory: [:technical_metadatum, :cdr]
     end
     trait :cylinder do
-      format "Cylinder"
+      format { "Cylinder" }
       association :technical_metadatum, factory: [:technical_metadatum, :cylinder]
     end
     trait :dat do
-      format "DAT"
+      format { "DAT" }
       association :technical_metadatum, factory: [:technical_metadatum, :dat]
     end
     trait :dv do
-      format "DV"
+      format { "DV" }
       association :technical_metadatum, factory: [:technical_metadatum, :dv]
     end
     trait :dvd do
-      format "DVD"
+      format { "DVD" }
       association :technical_metadatum, factory: [:technical_metadatum, :dvd]
     end
     trait :lp do
-      format "LP"
+      format { "LP" }
       association :technical_metadatum, factory: [:technical_metadatum, :analog_sound_disc]
     end
     trait :open_reel do
-      format "Open Reel Audio Tape"
+      format { "Open Reel Audio Tape" }
       association :technical_metadatum, factory: [:technical_metadatum, :open_reel]
     end
     trait :betacam do
-      format "Betacam"
+      format { "Betacam" }
       association :technical_metadatum, factory: [:technical_metadatum, :betacam]
     end
     trait :betamax do
-      format "Betamax"
+      format { "Betamax" }
       association :technical_metadatum, factory: [:technical_metadatum, :betamax]
     end
     trait :half_inch_open_reel_video do
-      format "1/2-Inch Open Reel Video Tape"
+      format { "1/2-Inch Open Reel Video Tape" }
       association :technical_metadatum, factory: [:technical_metadatum, :half_inch_open_reel_video]
     end
     trait :one_inch_open_reel_video do
-      format "1-Inch Open Reel Video Tape"
+      format { "1-Inch Open Reel Video Tape" }
       association :technical_metadatum, factory: [:technical_metadatum, :one_inch_open_reel_video]
     end
     trait :eight_mm do
-      format "8mm Video"
+      format { "8mm Video" }
       association :technical_metadatum, factory: [:technical_metadatum, :eight_mm]
     end
     trait :umatic do
-      format "U-matic"
+      format { "U-matic" }
       association :technical_metadatum, factory: [:technical_metadatum, :umatic]
     end
     trait :vhs do
-      format "VHS"
+      format { "VHS" }
       association :technical_metadatum, factory: [:technical_metadatum, :vhs]
     end
     trait :film do
-      format "Film"
+      format { "Film" }
       association :technical_metadatum, factory: [:technical_metadatum, :film]
     end
     trait :boxable do
@@ -84,7 +84,7 @@ FactoryBot.define do
     end
 
     transient do
-      final_status nil
+      final_status { nil }
     end
 
     trait :di_status do
@@ -98,22 +98,22 @@ FactoryBot.define do
       end
     end
 
-    generation ""
-    group_position 1
+    generation { "" }
+    group_position { 1 }
     association :group_key, factory: :group_key
     #association :digital_provenance, factory: :digital_provenance
     after(:build) do |po|
       po.digital_provenance ||= FactoryBot.build(:digital_provenance, physical_object: po)
     end
     #at least one must be set of MDPI barcode, IUCAT barcode, title, call number
-    title "FactoryBot object"
+    title { "FactoryBot object" }
     #mdpi_barcode { BarcodeHelper.valid_mdpi_barcode }
-    shipment_id nil
+    shipment_id { nil }
 
   end
 
   factory :invalid_physical_object, parent: :physical_object do
-    title nil
+    title { nil }
   end
 
 end

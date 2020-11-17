@@ -1,29 +1,29 @@
 FactoryBot.define do
 
   factory :picklist_specification, class: PicklistSpecification do
-    name "Test Pick List"
-    description "Lorem ipsum"
+    name { "Test Pick List" }
+    description { "Lorem ipsum" }
 
     trait :cdr do
-      format "CD-R"
+      format { "CD-R" }
       association :technical_metadatum, factory: [:technical_metadatum, :cdr]
     end
     trait :dat do
-      format "DAT"
+      format { "DAT" }
       association :technical_metadatum, factory: [:technical_metadatum, :dat]
     end
     trait :lp do
-      format "LP"
+      format { "LP" }
       association :technical_metadatum, factory: [:technical_metadatum, :lp]
     end
     trait :open_reel do
-      format "Open Reel Audio Tape"
+      format { "Open Reel Audio Tape" }
       association :technical_metadatum, factory: [:technical_metadatum, :open_reel]
     end
   end
 
   factory :invalid_picklist_specification, parent: :picklist_specification do
-    name nil
+    name { nil }
   end
 
 end

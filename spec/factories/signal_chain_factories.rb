@@ -1,15 +1,15 @@
 FactoryBot.define do
 
   factory :signal_chain, class: SignalChain do
-    name "FactoryBot signal chain"
+    name { "FactoryBot signal chain" }
 
     trait :invalid do
-      name nil
+      name { nil }
     end
 
     trait :with_formats do
       transient do
-        formats []
+        formats { [] }
       end
       after(:build) do |signal_chain, evaluator|
         evaluator.formats.each do |format|

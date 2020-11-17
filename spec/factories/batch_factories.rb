@@ -1,12 +1,12 @@
 FactoryBot.define do
 
   factory :batch, class: Batch do
-    identifier "Test Batch"
-    destination "IU"
+    identifier { 'Test Batch' }
+    destination { 'IU' }
   end
 
   factory :invalid_batch, parent: :batch do
-    identifier ""
+    identifier { '' }
   end
 
 end

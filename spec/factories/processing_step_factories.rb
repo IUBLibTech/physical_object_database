@@ -1,17 +1,17 @@
 FactoryBot.define do
 
   factory :processing_step, class: ProcessingStep do
-    position 1
+    position { 1 }
     association :signal_chain, factory: :signal_chain
     association :machine, factory: :machine
 
     trait :invalid do
-      position 0
+      position { 0 }
     end
 
     trait :with_formats do
       transient do
-        formats []
+        formats { [] }
       end
       after(:build) do |ps, evaluator|
         evaluator.formats.each do |format|
