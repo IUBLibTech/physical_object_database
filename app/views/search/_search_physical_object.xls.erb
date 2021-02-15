@@ -39,7 +39,7 @@
         <Cell><Data ss:Type="String"><%= po.other_notes(true) %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.condition_notes %></Data></Cell>
       <%# technical metadata info %>
-      <% if @metadata_headers.any? %>
+      <% if @metadata_headers&.any? %>
         <% po.ensure_tm.export_values.each do |value| %>
         <Cell><Data ss:Type="String"><%= value %></Data></Cell>
         <% end %>

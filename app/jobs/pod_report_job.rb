@@ -8,9 +8,13 @@ class PodReportJob < ActiveJob::Base
     pr = PodReport.new(filename: filename, status: "WAITING TO START")
     pr.save!
 
-    write_report(pr)
-
-    pr.update_attributes!(status: 'Available')
+    begin
+      write_report(pr)
+    rescue => error
+      logger.error "Error casued by: #{error.message}"
+      logger.error error.backtrace.join("\n")
+      pr.update_attributes!(status: 'ERROR')
+    end
   end
 
   private
@@ -18,13 +22,21 @@ class PodReportJob < ActiveJob::Base
       @filename ||= Time.now.to_formatted_s.split(' ')[0,2].join('_').gsub(':', '') + '.xls'
     end
 
+    def logger
+      @logger = Logger.new(Rails.root.join('log', 'pod_report_job.log'))
+    end
+
     def write_report(pr)
+      logger.info "Initializing report file: #{pr.full_path}"
+      logger.info "Search params: #{@search_params.inspect}"
+      logger.info "Workflow Status params: #{@ws_params.inspect}"
       File.write(pr.full_path, 
                  ApplicationController.new.render_to_string(
                    template: 'search/report_open.xls',
                    format: 'xls',
                    locals: { :@block_metadata => true } )
                 )
+      logger.info "Opening report for writing"
       f = File.open(pr.full_path, 'a')
 
       total = physical_objects.count
@@ -40,8 +52,11 @@ class PodReportJob < ActiveJob::Base
         if updated_percentage > percentage
           pr.update_attributes!(status: "#{updated_percentage}% (ETA: #{eta(pr.created_at, updated_percentage)})")
           percentage = updated_percentage
+          logger.info "Report updated to #{updated_percentage}"
         end
-      end 
+      end
+      logger.info "Report main loop completed."
+
       
       f.write(ApplicationController.new.render_to_string(
                 template: 'search/report_close.xls',
@@ -49,6 +64,10 @@ class PodReportJob < ActiveJob::Base
               )
 
       f.close
+      logger.info "Report file closed."
+
+      pr.update_attributes!(status: 'Available')
+      logger.info "Report status updated completed."
     end
 
     def eta(start_time, percentage)
