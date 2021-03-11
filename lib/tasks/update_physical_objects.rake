@@ -52,16 +52,38 @@ namespace :pod do
             msg = "unit: #{po.unit.abbreviation}, format: #{po.format}, title: #{po.title}, id: #{po.id}, #{po.mdpi_barcode}: "
             msg += "#{att}: "
             if po.send(att).to_s == value.to_s
-              msg += 'NO CHANGE: values match'
+              msg += "NO CHANGE: values (#{value}) match"
               logger.info(msg)
             else
               msg += "UPDATE: --#{value}-- replaces --#{po.send(att)}--"
               if mode == 'update'
                 # special handling for grouping
                 if att.to_s.in? ['group_total']
+                  if po.group_key.nil?
+                    if po.group_key_id.zero?
+                      po.ensure_group_key
+                      po.group_key.save
+                      po.save
+                    else
+                      GroupKey.create(id: po.group_key_id)
+                      po.reload
+                    end
+                  end
                   po.group_key.update_attribute(att, value)
                 else
                   po.update_attribute(att, value)
+                end
+                if att.to_s.in? ['group_key_id']
+                  if po.group_key.nil?
+                    if po.group_key_id.zero?
+                      po.ensure_group_key
+                      po.group_key.save
+                      po.save
+                    else
+                      GroupKey.create(id: po.group_key_id)
+                      po.reload
+                    end
+                  end
                 end
               end
               logger.info(msg)
