@@ -11,6 +11,7 @@
       <%# box information %>
         <Cell><Data ss:Type="String"><%= po.box&.mdpi_barcode.to_s %></Data></Cell>
       <%# object info %>
+        <Cell><Data ss:Type="String"><%= po.id %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.mdpi_barcode %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.format %></Data></Cell>
         <Cell><Data ss:Type="String"><%= po.unit.spreadsheet_descriptor %></Data></Cell>
