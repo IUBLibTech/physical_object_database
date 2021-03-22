@@ -35,5 +35,6 @@ ARGV.each do |file|
   end
   parsed_yml.map! { |h| h.transform_keys { |k| transform_key(k) } }
   parsed_yml.map! { |h| h.map { |k,v| h[k] = transform_key_value(k,v) }; h }
+  parsed_yml.map! { |h| h.reject { |k,v| k.to_s == 'group_key_id' && v.zero? } }
   File.write(file.gsub('xlsx', 'yml'), parsed_yml.to_yaml)
 end
