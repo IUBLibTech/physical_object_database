@@ -5,8 +5,8 @@ class SessionsController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
   include SessionsHelper
-  before_action :cas_ticket, only: [:new, :validate_login]
-  before_action :cas_user, only: [:validate_login]
+  before_action :set_cas_ticket, only: [:new, :validate_login]
+  before_action :set_cas_user, only: [:validate_login]
 
   def cas
     Pod.config[:cas_url]
@@ -29,6 +29,7 @@ class SessionsController < ActionController::Base
   end
 
   def validate_login
+    set_cas_user if @cas_user.blank?
     if @cas_user.present? && User.authenticate(@cas_user)
       sign_in(@cas_user) 
       redirect_back_or_to root_url
@@ -43,11 +44,11 @@ class SessionsController < ActionController::Base
   end
 
   private
-    def cas_ticket
+    def set_cas_ticket
       @cas_ticket = params[:ticket]
     end
 
-    def cas_user
+    def set_cas_user
       begin
         uri = URI.parse(validation_url(@cas_ticket, root_url))
         request = Net::HTTP.new(uri.host, uri.port)
