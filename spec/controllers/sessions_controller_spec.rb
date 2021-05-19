@@ -96,6 +96,10 @@ describe SessionsController do
           to_return(status: 200, body: success, headers: {})
       end
       before(:each) { get :validate_login, ticket: cas_ticket }
+      after(:each) do
+        sign_out
+        Thread.current[:current_username] = nil
+      end
       let(:cas_ticket) { 'valid' }
       it "assigns @cas_ticket" do
         expect(assigns(:cas_ticket)).to eq cas_ticket
