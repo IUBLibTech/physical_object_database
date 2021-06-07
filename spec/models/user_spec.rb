@@ -95,11 +95,11 @@ describe User do
   end
 
   describe ".current_username=" do
+    after(:each) { Thread.current[:current_username] = nil }
     it "sets Thread.current[:current_username]" do
       expect(Thread.current[:current_username]).to be_nil
       User.current_username = "test_user"
       expect(Thread.current[:current_username]).to eq "test_user" 
-      Thread.current[:current_username] = nil
     end
   end
 

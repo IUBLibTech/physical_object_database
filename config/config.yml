@@ -1,9 +1,22 @@
+auth: &auth
+  cas_host: https://idp-stg.login.iu.edu
+  cas_login_url: /idp/profile/cas/login
+  cas_validate_url: /idp/profile/cas/serviceValidate
+  cas_logout_url: /idp/profile/cas/logout
+  cas_callback_url: /users/auth/cas/callback
+
 development:
+  auth:
+    <<: *auth
   filmdb_update_url: 'http://sycamore.dlib.indiana.edu:8527/services/update_batch/'
 
 test:
+  auth:
+    <<: *auth
   filmdb_update_url: 'http://sycamore.dlib.indiana.edu:8529/services/update_batch/'
 
 production:
+  auth:
+    <<: *auth
+    cas_host: https://idp.login.iu.edu
   filmdb_update_url: 'http://sycamore.dlib.indiana.edu:8528/services/update_batch/'
-

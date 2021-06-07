@@ -71,7 +71,7 @@ describe SessionsHelper do
       expect(session[:return_to]).to eq 'http://test.host'
     end
   end
-  describe "#redirect_back_or_to(default=root_url)" do
+  describe "#redirect_back_or_to(default = secure_root_url)" do
     context "with a session[:return_to]" do
       before(:each) { session[:return_to] = 'http://test.host' }
       skip "cannot directly test redirect_to in helper test"
