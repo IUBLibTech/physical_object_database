@@ -25,22 +25,26 @@ class SessionsController < ActionController::Base
   end
 
   def new
-    @cas_ticket.present? ? validate_login : redirect_to(ticket_url(root_url))
+    @cas_ticket.present? ? validate_login : redirect_to(ticket_url(secure_root_url))
   end
 
   def validate_login
     set_cas_user if @cas_user.blank?
     if @cas_user.present? && User.authenticate(@cas_user)
       sign_in(@cas_user) 
-      redirect_back_or_to root_url
+      redirect_back_or_to secure_root_url
     else
-      redirect_to "#{root_url}denied.html"
+      redirect_to "#{secure_root_url}denied.html"
     end
   end
 
   def destroy
     sign_out
     redirect_to(logout_url)
+  end
+
+  def secure_root_url
+    root_url(protocol: :https)
   end
 
   private
@@ -50,7 +54,7 @@ class SessionsController < ActionController::Base
 
     def set_cas_user
       begin
-        uri = URI.parse(validation_url(@cas_ticket, root_url))
+        uri = URI.parse(validation_url(@cas_ticket, secure_root_url))
         request = Net::HTTP.new(uri.host, uri.port)
         request.use_ssl = true
         request.verify_mode = OpenSSL::SSL::VERIFY_NONE
