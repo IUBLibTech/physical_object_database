@@ -8,24 +8,8 @@ class SessionsController < ActionController::Base
   before_action :set_cas_ticket, only: [:new, :validate_login]
   before_action :set_cas_user, only: [:validate_login]
 
-  def cas
-    Pod.config[:cas_url]
-  end
-
-  def ticket_url(service)
-    "#{cas}/login?service=#{service}"
-  end
-
-  def validation_url(ticket, service)
-    "#{cas}/serviceValidate?ticket=#{ticket}&service=#{service}"
-  end
-
-  def logout_url
-    "#{cas}/logout"
-  end
-
   def new
-    @cas_ticket.present? ? validate_login : redirect_to(ticket_url(secure_root_url))
+    @cas_ticket.present? ? validate_login : redirect_to(cas_url(:login, service: secure_root_url))
   end
 
   def validate_login
@@ -40,21 +24,23 @@ class SessionsController < ActionController::Base
 
   def destroy
     sign_out
-    redirect_to(logout_url)
-  end
-
-  def secure_root_url
-    root_url(protocol: :https)
+    redirect_to(cas_url(:logout))
   end
 
   private
+    def cas_url(action = nil, **keywords)
+      url_string = Pod.config[:auth][:cas_host] + Pod.config[:auth]["cas_#{action}_url"].to_s
+      url_string += ("?" + keywords.map { |k, v| "#{k}=#{v}" }.join('&')) if keywords.any?
+      url_string
+    end
+
     def set_cas_ticket
       @cas_ticket = params[:ticket]
     end
 
     def set_cas_user
       begin
-        uri = URI.parse(validation_url(@cas_ticket, secure_root_url))
+        uri = URI.parse(cas_url(:validate, ticket: @cas_ticket, service: secure_root_url))
         request = Net::HTTP.new(uri.host, uri.port)
         request.use_ssl = true
         request.verify_mode = OpenSSL::SSL::VERIFY_NONE

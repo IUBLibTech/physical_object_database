@@ -14,48 +14,53 @@ describe SessionsController do
          E_TICKET_EXPIRED
        </cas:authenticationFailure>
      </cas:serviceResponse>' }
+  let(:secure_root_url) { root_url(protocol: :https) }
 
   describe "url helpers" do
     describe "#cas" do
-      it "returns a cas service root URL" do
-        expect(SessionsController.new.cas).to match /https.*login/
+      context "with no arguments" do
+        it "returns a cas service root URL" do
+          expect(SessionsController.new.send(:cas_url)).to match /https.*login/
+        end
       end
-    end
-  
-    describe "#ticket_url" do
-      it "returns a service URL to request a ticket" do
-        expect(SessionsController.new.ticket_url('')).to match /login.*service/
+      context "with invalid action" do
+        it "returns a cas service root URL" do
+          expect(SessionsController.new.send(:cas_url, :foo)).to eq SessionsController.new.send(:cas_url)
+        end
       end
-    end
-  
-    describe "#validation_url" do
-      it "returns a service URL to validate a specific ticket" do
-        expect(SessionsController.new.validation_url('', '')).to match /login.*validate.*ticket/i
+      context "with :logout" do
+        it "returns a cas service logout URL" do
+          expect(SessionsController.new.send(:cas_url, :logout)).to match /https.*login.*logout/
+        end
       end
-    end
-
-    describe "#logout_url" do
-      it "returns a service URL to log out of CAS" do
-        expect(SessionsController.new.logout_url).to match /login.*logout/i
+      context "with :login" do
+        it "returns a cas service login URL" do
+          expect(SessionsController.new.send(:cas_url, :login, service: 'foo')).to match /https.*login.*login.*foo/
+        end
+      end
+      context "with :validate" do
+        it "returns a cas service login URL" do
+          expect(SessionsController.new.send(:cas_url, :validate, ticket: 'foo', service: 'bar')).to match /https.*login.*serviceValidate.*foo.*bar/
+        end
       end
     end
   end
 
   describe "#new" do
     before(:each) do
-      stub_request(:get, /idp.login.iu.edu/).
+      stub_request(:get, /idp-stg.login.iu.edu/).
         with(headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
         to_return(status: 200, body: success, headers: {})
     end
     before(:each) { get :new }
     it "redirects to cas login" do
-      expect(response).to redirect_to SessionsController.new.ticket_url(root_url)
+      expect(response).to redirect_to SessionsController.new.send(:cas_url, :login, service: secure_root_url)
     end
   end
   describe "#validate_login" do
     context "with invalid ticket" do
       before(:each) do
-        stub_request(:get, /idp.login.iu.edu/).
+        stub_request(:get, /idp.*login.iu.edu/).
           with(headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
           to_return(status: 200, body: failure, headers: {})
       end
@@ -68,12 +73,12 @@ describe SessionsController do
         expect(assigns(:cas_user)).to be_blank
       end
       it "redirects to denial page" do
-        expect(response).to redirect_to "#{root_url}denied.html"
+        expect(response).to redirect_to "#{secure_root_url}denied.html"
       end
     end
     context "with invalid response" do
       before(:each) do
-        stub_request(:get, /idp.login.iu.edu/).
+        stub_request(:get, /idp.*login.iu.edu/).
           with(headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
           to_return(status: 200, body: 'non-parsing response', headers: {})
       end
@@ -86,12 +91,12 @@ describe SessionsController do
         expect(assigns(:cas_user)).to be_blank
       end
       it "redirects to denial page" do
-        expect(response).to redirect_to "#{root_url}denied.html"
+        expect(response).to redirect_to "#{secure_root_url}denied.html"
       end
     end
     context "with valid ticket" do
       before(:each) do
-        stub_request(:get, /idp.login.iu.edu/).
+        stub_request(:get, /idp.*login.iu.edu/).
           with(headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
           to_return(status: 200, body: success, headers: {})
       end
@@ -107,8 +112,8 @@ describe SessionsController do
       it "assigns @cas_user" do
         expect(assigns(:cas_user)).not_to be_blank
       end
-      it "redirects to root_url" do
-        expect(response).to redirect_to root_url
+      it "redirects to secure_root_url" do
+        expect(response).to redirect_to secure_root_url
       end
     end
   end
@@ -123,7 +128,7 @@ describe SessionsController do
     end
     it "redirects to logout service'" do
       destroy_session
-      expect(response).to redirect_to SessionsController.new.logout_url
+      expect(response).to redirect_to SessionsController.new.send(:cas_url, :logout)
     end
   end
   

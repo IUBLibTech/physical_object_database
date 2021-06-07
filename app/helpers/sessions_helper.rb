@@ -37,11 +37,16 @@ module SessionsHelper
   end
 
   def store_location
+    return if session[:return_to].present?
     session[:return_to] = request.url if request.get?
   end
   
-  def redirect_back_or_to(default=root_url)
+  def redirect_back_or_to(default = secure_root_url)
     redirect_to(session[:return_to] || default)
     session.delete(:return_to)
+  end
+
+  def secure_root_url
+    root_url(protocol: :https)
   end
 end
