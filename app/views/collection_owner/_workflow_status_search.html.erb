@@ -3,7 +3,7 @@
   <tr>
     <th>Status</th>
     <td>
-      <%= f.select :workflow_status_template_id, WorkflowStatusTemplate.where(object_type: 'Physical Object', name: PhysicalObject::COLLECTION_OWNER_STATUSES[0..2]).order(:sequence_index).collect { |wst| [wst.name, wst.id] }, { }, multiple: true, size: WorkflowStatusTemplate.where(object_type: 'Physical Object', name: PhysicalObject::COLLECTION_OWNER_STATUSES[0..2]).size %>
+      <%= f.select :workflow_status_template_id, target_object.workflow_status_id_options, { }, multiple: true, size: target_object.workflow_status_id_options.size %>
     </td>
   </tr>
   <tr>
