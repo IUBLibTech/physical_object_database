@@ -125,6 +125,14 @@
           <%= f.text_field(:mdpi_barcode, readonly: !@edit_mode, class: "mdpi") %>
         </td>
       </tr>
+      <% if @search_mode %>
+      <tr>
+        <th>MDPI barcode category</th>
+        <td>
+          <%= select_tag(:mdpi_barcode_category, options_for_select([['(No filter)', 'all'], ['Real barcodes only (no zeroes)', 'real'], ['Zero barcodes only', 'zero']])) %>
+        </td>
+      </tr>
+      <% end %>
       <tr>
         <th>Format</th>
         <td>
