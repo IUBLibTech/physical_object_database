@@ -121,7 +121,7 @@ class Bin < ActiveRecord::Base
     return unless self.format == 'Film'
     uri = URI.parse(Pod.config[:filmdb_update_url].to_s + self.mdpi_barcode.to_s)
     http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = false # FIXME: change to true?
+    http.use_ssl = true
     request = Net::HTTP::Post.new(uri.path)
     request.basic_auth(Settings.filmdb_user, Settings.filmdb_pass)
     result = http.request(request)
