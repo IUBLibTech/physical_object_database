@@ -317,10 +317,10 @@ describe Bin do
 
   describe "#post_to_filmdb" do
     before(:each) do
-      stub_request(:get, /sycamore/).
+      stub_request(:get, /filmdb/).
         with(headers: {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
         to_return(status: 200, body: "stubbed response", headers: {})
-      stub_request(:post, /sycamore/).
+      stub_request(:post, /filmdb/).
         with(headers: {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
         to_return(status: 200, body: "stubbed response", headers: {})
     end

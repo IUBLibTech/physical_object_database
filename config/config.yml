@@ -8,15 +8,15 @@ auth: &auth
 development:
   auth:
     <<: *auth
-  filmdb_update_url: 'http://sycamore.dlib.indiana.edu:8527/services/update_batch/'
+  filmdb_update_url: 'https://filmdb-dev.dlib.indiana.edu/services/update_batch/'
 
 test:
   auth:
     <<: *auth
-  filmdb_update_url: 'http://sycamore.dlib.indiana.edu:8529/services/update_batch/'
+  filmdb_update_url: 'https://filmdb-test.dlib.indiana.edu/services/update_batch/'
 
 production:
   auth:
     <<: *auth
     cas_host: https://idp.login.iu.edu
-  filmdb_update_url: 'http://sycamore.dlib.indiana.edu:8528/services/update_batch/'
+  filmdb_update_url: 'https://filmdb.dlib.indiana.edu/services/update_batch/'
