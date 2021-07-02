@@ -102,10 +102,11 @@ describe SearchController do
     let!(:picklist) { FactoryBot.create :picklist }
     let!(:attributes_1) { { title: "TITLE", has_ephemera: true, generation: "Unknown", picklist: nil } }
     let!(:attributes_2) { { title: "TITLE 2", has_ephemera: nil, generation: "", picklist: picklist } }
-    let!(:cdr_1) { FactoryBot.create :physical_object, :cdr, unit: Unit.all[0], **attributes_1 }
-    let!(:cdr_2) { FactoryBot.create :physical_object, :cdr, unit: Unit.all[1], **attributes_2 }
-    let!(:betacam_1) { FactoryBot.create :physical_object, :betacam, unit: Unit.all[2], **attributes_1 }
-    let!(:betacam_2) { FactoryBot.create :physical_object, :betacam, unit: Unit.all[3], **attributes_2 }
+    let!(:cdr_1) { FactoryBot.create :physical_object, :cdr, :barcoded, unit: Unit.all[0], **attributes_1 }
+    let!(:cdr_2) { FactoryBot.create :physical_object, :cdr, mdpi_barcode: 0, unit: Unit.all[1], **attributes_2 }
+    let!(:betacam_1) { FactoryBot.create :physical_object, :betacam, :barcoded, unit: Unit.all[2], **attributes_1 }
+    let!(:betacam_2) { FactoryBot.create :physical_object, :betacam, mdpi_barcode: 0, unit: Unit.all[3], **attributes_2 }
+    let(:mdpi_barcode_category) { nil } 
     let(:omit_picklisted) { nil }
     let(:po_terms) { {format: ""} }
     let(:tm_terms) { {fungus: ""} }
@@ -119,7 +120,11 @@ describe SearchController do
       end
     end
     context "with XLS results" do
-      before(:each) { post :advanced_search, omit_picklisted: omit_picklisted, physical_object: po_terms, format: "xls" }
+      before(:each) { post :advanced_search,
+                      mdpi_barcode_category: mdpi_barcode_category,
+                      omit_picklisted: omit_picklisted,
+                      physical_object: po_terms, 
+                      format: "xls" }
       context "without specifying a format" do
         it "assigns @block_metadata = true" do
           expect(assigns(:block_metadata)).to eq true
@@ -139,7 +144,10 @@ describe SearchController do
       end
     end
     context "searching physical object, only" do
-      before(:each) { post :advanced_search, omit_picklisted: omit_picklisted, physical_object: po_terms }
+      before(:each) { post :advanced_search,
+                      mdpi_barcode_category: mdpi_barcode_category,
+                      omit_picklisted: omit_picklisted,
+                      physical_object: po_terms }
       context "with no po terms" do
         context "with omit_picklisted = true" do
           let(:omit_picklisted) { 'true' }
@@ -219,6 +227,18 @@ describe SearchController do
           let(:po_terms) { {title: "unused*' OR 1=1); -- "} }
           let(:returned) { PhysicalObject.none }
           include_examples "returns item set", "(no items)"
+        end
+      end
+      context "with a barcode category" do
+        context "for real barcodes" do
+          let(:mdpi_barcode_category) { 'real' }
+          let(:returned) { items_1 }
+          include_examples "returns item set", "barcoded items"
+        end
+        context "for zero barcodes" do
+          let(:mdpi_barcode_category) { 'zero' }
+          let(:returned) { items_2 }
+          include_examples "returns item set", "barcoded items"
         end
       end
     end

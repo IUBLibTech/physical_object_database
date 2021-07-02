@@ -22,3 +22,8 @@ module ActionView::Helpers::JavaScriptHelper
 
   alias :j :escape_javascript
 end
+
+# Monkeypatch for actionpack CVE-2021-22904
+module ActionController::HttpAuthentication::Token
+  AUTHN_PAIR_DELIMITERS = /(?:,|;|\t)/
+end

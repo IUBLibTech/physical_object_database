@@ -13,7 +13,7 @@ class CollectionOwnerController < ApplicationController
 
   def show
     if @physical_object.nil?
-      flash[:warning] = "No Physical object found belonging to #{@unit.name} with ID: #{params[:id]}"
+      flash[:warning] = "No barcoded object found belonging to #{@unit.name} with ID: #{params[:id]}"
       redirect_to collection_owner_index_path
     end
   end

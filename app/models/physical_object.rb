@@ -91,6 +91,8 @@ class PhysicalObject < ActiveRecord::Base
 
   accepts_nested_attributes_for :technical_metadatum
 
+  scope :real_barcodes, lambda { where.not(mdpi_barcode: [nil, 0, '0']) }
+  scope :zero_barcodes, lambda { where(mdpi_barcode: [nil, 0, '0']) }
   scope :packing_sort, lambda { order(:call_number, :group_key_id, :group_position, :id) }
   scope :unpacked, lambda { where(bin_id: nil, box_id: nil) }
   scope :unpacked_or_id, lambda { |object_id| where("(bin_id is null and box_id is null) or id = ?", object_id) }
@@ -122,8 +124,10 @@ class PhysicalObject < ActiveRecord::Base
     joins(:workflow_statuses).where("workflow_statuses.workflow_status_template_id IN (?) AND workflow_statuses.created_at >= ? AND workflow_statuses.created_at <= ?", wst_ids, start_date, end_date).uniq
   }
 
+  # line below is no longer used in collection_owner_filter
   COLLECTION_OWNER_STATUSES = ['Boxed', 'Binned', 'Unpacked', 'Returned to Unit']
-  scope :collection_owner_filter, lambda { |unit_id| where(unit_id: unit_id, workflow_status: COLLECTION_OWNER_STATUSES) }
+  scope :unit_filter, lambda { |unit_id| where(unit_id: unit_id) }
+  scope :collection_owner_filter, lambda { |unit_id| real_barcodes.unit_filter(unit_id) }
 
   attr_accessor :generation_values
   def generation_values

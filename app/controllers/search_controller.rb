@@ -49,6 +49,14 @@ class SearchController < ApplicationController
         @full_results = @full_results.workflow_status_search(ws_params[:workflow_status_template_id], ws_params[:created_at], ws_params[:updated_at])
       end
     end
+    case params[:mdpi_barcode_category]
+      when 'real'
+        @full_results = @full_results.real_barcodes
+      when 'zero'
+        @full_results = @full_results.zero_barcodes
+      else
+        #noop
+    end
 #FIXME: add 2 note scopes, condition status scope
 #FIXME: figure out why tm is not included
     @physical_objects = @full_results.limit(SEARCH_RESULTS_LIMIT)
