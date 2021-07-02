@@ -3,11 +3,10 @@ describe CollectionOwnerController do
   before(:each) { sign_in; request.env['HTTP_REFERER'] = 'source_page' }
   let(:unit_good) { Unit.first }
   let(:unit_bad) { Unit.last }
-  let(:status_good) { 'Returned to Unit' }
-  let(:status_bad) { 'Unassigned' }
-  let!(:po_good) { FactoryBot.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_good, workflow_status: status_good ) }
-  let!(:po_bad_unit) { FactoryBot.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_bad, workflow_status: status_good ) }
-  let!(:po_bad_status) { FactoryBot.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_good, workflow_status: status_bad ) }
+  let(:status) { 'Returned to Unit' }
+  let!(:po_good) { FactoryBot.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_good, workflow_status: status) }
+  let!(:po_bad_unit) { FactoryBot.create( :physical_object, :cdr, mdpi_barcode: valid_mdpi_barcode, unit: unit_bad, workflow_status: status) }
+  let!(:po_bad_barcode) { FactoryBot.create( :physical_object, :cdr, mdpi_barcode: 0, unit: unit_good, workflow_status: status) }
 
   shared_examples "no unit affiliation" do
     before(:each) { expect(assigns(:pundit_user).unit).to be_nil }
@@ -31,7 +30,7 @@ describe CollectionOwnerController do
           results = assigns(:physical_objects)
           expect(results).to include po_good
           expect(results).not_to include po_bad_unit
-          expect(results).not_to include po_bad_status
+          expect(results).not_to include po_bad_barcode
         end
         it "renders :index template" do
           expect(response).to render_template :index
@@ -74,8 +73,8 @@ describe CollectionOwnerController do
         expect(response).to render_template(:show)
       end
   
-      it 'does not allow access to a physical object with unviewable workflow status' do
-        get :show, id: po_bad_status.id
+      it 'does not allow access to a physical object with a zero barcode' do
+        get :show, id: po_bad_barcode.id
         expect(assigns(:physical_object)).to be_nil
         expect(response).to redirect_to '/collection_owner'
       end
@@ -124,7 +123,7 @@ describe CollectionOwnerController do
       after(:all) { User.find_by_username('web_admin').update_attributes(unit_id: nil) }
       context "in HTML format" do
         before(:each) { post :search_results, format: 'html' }
-        it "assigns matching objects (with implicit unit, workflow status filter)" do
+        it "assigns matching objects (with implicit unit, barcode filter)" do
           expect(assigns(:physical_objects)).to match_array(PhysicalObject.collection_owner_filter(unit_good.id))
         end
         it "renders :search_results" do
@@ -133,7 +132,7 @@ describe CollectionOwnerController do
       end
       context "in XLS format" do
         before(:each) { post :search_results, format: 'xls' }
-        it "assigns matching objects (with implicit unit, workflow status filter)" do
+        it "assigns matching objects (with implicit unit, barcode filter)" do
           expect(assigns(:physical_objects)).to match_array(PhysicalObject.collection_owner_filter(unit_good.id))
         end
         it "renders :index XLS template" do
