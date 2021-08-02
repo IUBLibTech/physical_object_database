@@ -45,6 +45,9 @@ gem 'will_paginate', '~> 3.0'
 # below deprecated in favor of nodejs
 # gem 'therubyracer', platforms: :ruby
 
+# ruby 2.7 support for activesupport 4.2.x
+gem 'bigdecimal', '~> 1.4.4'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # User jquery-ui
