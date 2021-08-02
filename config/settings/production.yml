@@ -2,3 +2,11 @@ qc_user: qcProcess
 qc_pass: processPassword
 filmdb_user: filmdb_user
 filmdb_pass: filmdb_pass
+database:
+  pool: 5
+  host: pod_production_db_host
+  port: 3306
+  database: pod_production_database
+  username: pod_production_db_username
+  password: pod_production_db_password
+  timeout: 5000

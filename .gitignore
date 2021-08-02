@@ -18,17 +18,12 @@
 *.swp
 *.dmp
 /log/*.log.*
-
-# Ignore database configuration files
-/config/database.yml
-config/database.yml
-database.yml
 nohup.out
 
 # Ignore precompiled assets, if present
 /public/assets
 
-# Ignore config settings
+# Ignore localized config settings
 config/settings.yml
 config/settings.local.yml
 config/settings/*.local.yml
