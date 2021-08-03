@@ -1,7 +1,7 @@
 class Machine < ActiveRecord::Base
   validates :category, presence: true
   validates :serial, presence: true
-  default_scope { 
+  default_scope lambda { 
   	# FIXME:
   	# this order interferes with the processing_steps position order, but I think that removing this
   	# simply results in the order of machines in a device chain being the id order of the machine

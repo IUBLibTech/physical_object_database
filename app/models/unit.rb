@@ -1,5 +1,5 @@
 class Unit < ActiveRecord::Base
-  default_scope { order(:abbreviation) }
+  default_scope lambda { order(:abbreviation) }
   validates :abbreviation, presence: true, uniqueness: true
   validates :name, presence: true, uniqueness: { scope: [:institution, :campus] }
 

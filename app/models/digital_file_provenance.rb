@@ -3,7 +3,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 	before_save :nullify_na_values
 	belongs_to :digital_provenance
 	belongs_to :signal_chain
-        default_scope { order(:id) }
+	default_scope lambda { order(:filename) }
 
 	attr_accessor :display_date_digitized
 	validates :digital_provenance, presence: true
@@ -22,7 +22,7 @@ class DigitalFileProvenance < ActiveRecord::Base
 	validate :filename_validation
 	validate :validate_signal_chain
 
-	default_scope { order(:filename) }
+
 
         # File Uses:
         # pres for preservation master

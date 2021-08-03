@@ -3,7 +3,7 @@ class WorkflowStatus < ActiveRecord::Base
   XML_EXCLUDE = [:workflow_status_template_id, :physical_object_id, :bin_id, :batch_id, :notes]
   include XMLExportModule
 
-	default_scope { order(:id) }
+	default_scope lambda { order(:id) }
 
         belongs_to :workflow_status_template
         belongs_to :physical_object
