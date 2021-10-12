@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem "puma", "~> 4.3"
+gem "puma", "~> 5.5"
 #STANDARD CASES
 #active_record-acts_as handles polymoriphic associations (technical metadata and it subsequent subclasses: open reel technical metatdata, disc technical metadata, etc)
 gem "active_record-acts_as"
