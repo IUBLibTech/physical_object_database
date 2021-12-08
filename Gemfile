@@ -72,7 +72,7 @@ gem 'pundit'
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
-  gem 'rdoc', '~> 6.2.1'
+  gem 'rdoc'
 end
 
 # Use ActiveModel has_secure_password
