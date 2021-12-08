@@ -71,12 +71,36 @@ describe PodReport, type: :model do
       end
     end
     context "with file present" do
-      before(:each) do
-        allow(File).to receive(:size).and_return(2**20)
-        allow(pod_report).to receive(:complete?).and_return(true)
+      context "with incomplete status" do
+        before(:each) do
+          allow(pod_report).to receive(:complete?).and_return(false)
+          allow(pod_report).to receive(:size).and_return(42 * 2**20)
+          allow(pod_report).to receive(:status).and_return("42% (ETA: tomorrow)")
+        end
+        it "returns current, projected total" do
+          expect(pod_report.display_size).to match /projected total/
+        end
       end
-      it "returns filesize in MB" do
-        expect(pod_report.display_size).to eq '1'
+      context "with complete status" do
+        before(:each) do
+          allow(pod_report).to receive(:complete?).and_return(true)
+        end
+        context "with a small file" do
+          before(:each) do
+            allow(pod_report).to receive(:size).and_return(42)
+          end
+          it "returns minimum of 1 MB" do
+            expect(pod_report.display_size).to eq '1'
+          end
+        end
+        context "with a large file" do
+          before(:each) do
+            allow(pod_report).to receive(:size).and_return(42 * 2**20)
+          end
+          it "returns minimum of 1 MB" do
+            expect(pod_report.display_size).to eq '42'
+          end
+        end
       end
     end
   end
@@ -90,8 +114,8 @@ describe PodReport, type: :model do
     context "with file present" do
       let(:size) { 42 }
       before(:each) do
+        allow(File).to receive(:exist?).and_return(true)
         allow(File).to receive(:size).and_return(42)
-        allow(pod_report).to receive(:complete?).and_return(true)
       end
       it "returns filesize in MB" do
         expect(pod_report.size).to eq size

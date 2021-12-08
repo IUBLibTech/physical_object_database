@@ -20,6 +20,7 @@ class PodReport < ActiveRecord::Base
 
   def display_size
     megabytes = (size.to_f / 2**20).round(0)
+    megabytes = 1 if size > 0 && megabytes.zero? 
     if complete?
       megabytes.to_s
     elsif status.match '%'
@@ -30,10 +31,11 @@ class PodReport < ActiveRecord::Base
   end
 
   def size
-    begin
-      File.size(self.full_path)
-    rescue Errno::ENOENT
-      0
-    end
+    @size ||=
+      begin
+        File.exist?(self.full_path) ? File.size(self.full_path) : 0
+      rescue Errno::ENOENT
+        0
+      end
   end
 end
