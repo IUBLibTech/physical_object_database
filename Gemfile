@@ -103,7 +103,8 @@ group :test do
   gem 'selenium-webdriver'
   gem 'capybara'
   #for capybara javascript access
-  gem 'capybara-webkit'
+  gem 'selenium-webdriver'
+  gem 'webdrivers'
   gem 'launchy' # for viewing capybara pages
   gem 'connection_pool' # for sharing client/server session in capybara tests with js: true
   gem 'factory_bot_rails', '~> 4.8'
