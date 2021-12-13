@@ -13,7 +13,7 @@ class PodReportsController < ApplicationController
   def show
     respond_to do |format|
       response.headers['Content-Length'] = @pod_report.size.to_s
-      format.xls { send_file("public/reports/#{@pod_report.filename}", filename: @pod_report.filename) }
+      format.xls { send_file(Rails.root.join("public/reports/#{@pod_report.filename}"), filename: @pod_report.filename) }
     end
   end
 
