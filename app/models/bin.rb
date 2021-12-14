@@ -1,7 +1,7 @@
 class Bin < ActiveRecord::Base
   require 'net/http'
 
-	default_scope { order(:identifier) }
+	default_scope lambda { order(:identifier) }
 	after_initialize :default_values
         
         belongs_to :batch

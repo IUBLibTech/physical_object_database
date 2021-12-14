@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
 
   belongs_to :unit
 
-  default_scope { order(:name) }
+  default_scope lambda { order(:name) }
 
   def self.authenticate(username)
     return false if username.nil? || username.blank?

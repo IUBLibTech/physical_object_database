@@ -5,7 +5,7 @@ class ProcessingStep < ActiveRecord::Base
   validates :machine, presence: true
   validates :position, presence: true, numericality: { greater_than: 0 }, uniqueness: { scope: :signal_chain }
   validate :validate_format_compatibility
-  default_scope { order(:signal_chain_id, :position) }
+  default_scope lambda { order(:signal_chain_id, :position) }
 
   def validate_format_compatibility
     if signal_chain && machine

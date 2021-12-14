@@ -47,6 +47,8 @@ gem 'will_paginate', '~> 3.0'
 
 # ruby 2.7 support for activesupport 4.2.x
 gem 'bigdecimal', '~> 1.4.4'
+# ruby 3.0 support
+gem 'webrick'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -100,7 +102,6 @@ group :development do
 end
 
 group :test do
-  gem 'selenium-webdriver'
   gem 'capybara'
   #for capybara javascript access
   gem 'selenium-webdriver'
