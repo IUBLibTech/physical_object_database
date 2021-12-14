@@ -45,6 +45,9 @@ gem 'will_paginate', '~> 3.0'
 # below deprecated in favor of nodejs
 # gem 'therubyracer', platforms: :ruby
 
+# ruby 2.7 support for activesupport 4.2.x
+gem 'bigdecimal', '~> 1.4.4'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # User jquery-ui
@@ -69,7 +72,7 @@ gem 'pundit'
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
-  gem 'rdoc', '~> 6.2.1'
+  gem 'rdoc'
 end
 
 # Use ActiveModel has_secure_password
@@ -100,7 +103,8 @@ group :test do
   gem 'selenium-webdriver'
   gem 'capybara'
   #for capybara javascript access
-  gem 'capybara-webkit'
+  gem 'selenium-webdriver'
+  gem 'webdrivers'
   gem 'launchy' # for viewing capybara pages
   gem 'connection_pool' # for sharing client/server session in capybara tests with js: true
   gem 'factory_bot_rails', '~> 4.8'

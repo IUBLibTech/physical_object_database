@@ -12,10 +12,9 @@ feature "Picklist Processing", js: true do
       physical_object
     end
     context "on processing screen" do
-      scenario "should load without errors" do
+      scenario "should load without errors", js: true do
         visit process_list_picklists_path( picklist: { id: picklist.id} )
         conclude_jquery
-        expect(page).not_to have_errors
       end
       scenario "object is removed after popup confirmation" do
         visit process_list_picklists_path( picklist: { id: picklist.id} ) 
