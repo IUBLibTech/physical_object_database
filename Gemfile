@@ -100,7 +100,6 @@ group :development do
 end
 
 group :test do
-  gem 'selenium-webdriver'
   gem 'capybara'
   #for capybara javascript access
   gem 'selenium-webdriver'
