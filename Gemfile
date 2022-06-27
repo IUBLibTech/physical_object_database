@@ -117,3 +117,6 @@ end
 group :production do
   # gem "thin", "1.6.2"
 end
+
+# hold back to earlier spring to avoid newer rails requirement
+gem 'spring', '~>2.1'
