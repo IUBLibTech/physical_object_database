@@ -2,13 +2,14 @@ class DigitalStatus < ActiveRecord::Base
 	require 'json/ext'
 
 	serialize :options, Hash
+	serialize :options_json, JSON
 	belongs_to :physical_object
 	validates :physical_object, presence: true
 	validates :physical_object_mdpi_barcode, presence: true
 	before_validation :set_mdpi_barcode_from_object
 
 	DIGITAL_STATUS_START = "transferred"
-	serialized_empty_hash = "--- {}\n"
+        serialized_empty_hash = {}.to_yaml.to_s
 	# the number of hours after digitization start that a video physical object is auto-accepted
 	@@Video_File_Auto_Accept = TechnicalMetadatumModule::GENRE_AUTO_ACCEPT_DAYS[:video] * 24
 	# the number of hours after digitization start that an audio physical object is auto-accepted
