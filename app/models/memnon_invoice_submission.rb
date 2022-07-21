@@ -1,5 +1,4 @@
 class MemnonInvoiceSubmission < ActiveRecord::Base
-	serialize :problems_by_row
-	serialize :problems_by_row_json, JSON
+	serialize :problems_by_row, JSON
 	validates :filename, presence: true
 end
