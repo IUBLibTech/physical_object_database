@@ -117,3 +117,6 @@ end
 group :production do
   # gem "thin", "1.6.2"
 end
+
+# spring 3 requires stack upgrades
+gem 'spring', '~> 2.1.1'
