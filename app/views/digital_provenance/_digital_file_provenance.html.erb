@@ -43,6 +43,18 @@
         <%= f.text_field :speed_used, readonly: !@edit_mode, disabled: dp_na(:speed_used), value: dp_na(:speed_used) ? nil : f.object.speed_used %>
       </td>
     </tr>
+    <tr <%= 'style=display:none;' if dp_na(:sample_rate) && @hide_dp_na %>>
+      <th>Sample Rate<%= dp_requirement(:sample_rate) %></th>
+      <td>
+        <%= f.text_field :sample_rate, readonly: !@edit_mode, disabled: dp_na(:sample_rate), value: dp_na(:sample_rate) ? nil : f.object.sample_rate %>
+      </td>
+    </tr>
+    <tr <%= 'style=display:none;' if dp_na(:digital_to_analog) && @hide_dp_na %>>
+      <th>Digital to Analog<%= dp_requirement(:speed_used) %></th>
+      <td>
+        <%= f.check_box :digital_to_analog, readonly: !@edit_mode, disabled: dp_na(:digital_to_analog), value: dp_na(:digital_to_analog) ? nil : f.object.digital_to_analog %>
+      </td>
+    </tr>
     <tr <%= 'style=display:none;' if dp_na(:tape_fluxivity) && @hide_dp_na %>>
       <th>Reference Fluxivity (nWb/m)<%= dp_requirement(:tape_fluxivity) %></th>
       <td>
