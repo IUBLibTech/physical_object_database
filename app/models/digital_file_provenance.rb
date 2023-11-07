@@ -22,6 +22,10 @@ class DigitalFileProvenance < ActiveRecord::Base
 	validate :filename_validation
 	validate :validate_signal_chain
 
+        # validation for these?
+        # sample_rate
+        # digital_to_analog
+
 	default_scope { order(:filename) }
 
         # File Uses:

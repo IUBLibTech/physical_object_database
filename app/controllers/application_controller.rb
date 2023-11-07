@@ -190,6 +190,7 @@ class ApplicationController < ActionController::Base
           :id, :filename, :comment, :date_digitized, :display_date_digitized, :created_by,
           :speed_used, :signal_chain_id, :volume_units, :tape_fluxivity, :peak, :analog_output_voltage,
           :stylus_size, :turnover, :rolloff, :noise_reduction, :reference_tone_frequency, 
+          :sample_rate, :digital_to_analog,
           :rumble_filter, :_destroy]
       )
     end

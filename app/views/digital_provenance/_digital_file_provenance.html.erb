@@ -43,6 +43,26 @@
         <%= f.text_field :speed_used, readonly: !@edit_mode, disabled: dp_na(:speed_used), value: dp_na(:speed_used) ? nil : f.object.speed_used %>
       </td>
     </tr>
+    <tr <%= 'style=display:none;' if dp_na(:sample_rate) && @hide_dp_na %>>
+      <th>Sample Rate<%= dp_requirement(:sample_rate) %></th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select :sample_rate, options_for_select(DatTm::HUMANIZED_COLUMNS.values.collect{|v| [v,v]}, f.object.sample_rate || "48k") %>
+        <% else %>
+          <%= f.text_field :sample_rate, readonly: true, disabled: dp_na(:sample_rate), value: dp_na(:sample_rate) ? nil : f.object.sample_rate %>
+        <% end %>
+      </td>
+    </tr>
+    <tr <%= 'style=display:none;' if dp_na(:digital_to_analog) && @hide_dp_na %>>
+      <th>Transfer Type<%= dp_requirement(:speed_used) %></th>
+      <td>
+        <% if @edit_mode %>
+          <%= f.select :digital_to_analog, options_for_select([["Digital Transfer", false],["Analog Transfer", true]], f.object.digital_to_analog || false) %>
+        <% else %>
+          <%= text_field_tag 'foo', dp_na(:digital_to_analog) ? nil : (f.object.digital_to_analog ? "Analog Transfer" : "Digital Transfer"), { readonly: !@edit_mode, disabled: dp_na(:digital_to_analog) } %>
+        <% end %>
+      </td>
+    </tr>
     <tr <%= 'style=display:none;' if dp_na(:tape_fluxivity) && @hide_dp_na %>>
       <th>Reference Fluxivity (nWb/m)<%= dp_requirement(:tape_fluxivity) %></th>
       <td>

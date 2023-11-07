@@ -62,6 +62,8 @@ xml.pod("xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") do
                 xml.comment dfp.comment
                 xml.created_by dfp.created_by
                 xml.speed_used dfp.speed_used
+                xml.sample_rate dfp.sample_rate
+                xml.digital_to_analog dfp.digital_to_analog
                 xml.tape_fluxivity dfp.tape_fluxivity
                 xml.volume_units dfp.volume_units
                 xml.analog_output_voltage dfp.analog_output_voltage

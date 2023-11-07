@@ -30,6 +30,10 @@ config/settings/*.local.yml
 config/environments/*.local.yml
 config/secrets.yml
 
+# ignore local crt and key file for self signed ssl
+config/localhost.crt
+config/localhost.key
+
 # Ignore RubyMine files
 .idea/*
 .DS_Store
