@@ -4,7 +4,10 @@ class DatTm < ActiveRecord::Base
   extend TechnicalMetadatumClassModule
   # TM module constants
   DIGITAL_PROVENANCE_FILES = ['Digital Master', 'PresInt']
-  # PROVENANCE_REQUIREMENTS unchanged from default
+  PROVENANCE_REQUIREMENTS = TechnicalMetadatumModule::PROVENANCE_REQUIREMENTS.merge({
+    sample_rate: false,
+    digital_to_analog: false
+  })
   TM_FORMAT = ['DAT']
   TM_SUBTYPE = false
   TM_GENRE = :audio

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201112135709) do
+ActiveRecord::Schema.define(version: 20231010034326) do
 
   create_table "analog_sound_disc_imaging_tms", force: :cascade do |t|
     t.string   "subtype",            limit: 255
@@ -170,20 +170,8 @@ ActiveRecord::Schema.define(version: 20201112135709) do
   add_index "bins", ["workflow_index", "identifier"], name: "index_bins_on_workflow_index_and_identifier", using: :btree
   add_index "bins", ["workflow_status"], name: "index_bins_on_workflow_status", using: :btree
 
-  create_table "boxes", force: :cascade do |t|
-    t.integer  "bin_id",            limit: 8
-    t.integer  "mdpi_barcode",      limit: 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "spreadsheet_id",    limit: 4
-    t.boolean  "full",                            default: false
-    t.text     "description",       limit: 65535
-    t.string   "format",            limit: 255
-    t.string   "physical_location", limit: 255
-  end
-
-  add_index "boxes", ["bin_id"], name: "index_boxes_on_bin_id", using: :btree
-  add_index "boxes", ["spreadsheet_id"], name: "index_boxes_on_spreadsheet_id", using: :btree
+# Could not dump table "boxes" because of following FrozenError
+#   can't modify frozen String: "false"
 
   create_table "cassette_tape_tms", force: :cascade do |t|
     t.datetime "created_at"
@@ -205,16 +193,8 @@ ActiveRecord::Schema.define(version: 20201112135709) do
     t.datetime "updated_at"
   end
 
-  create_table "condition_status_templates", force: :cascade do |t|
-    t.string   "name",           limit: 255
-    t.text     "description",    limit: 65535
-    t.string   "object_type",    limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "blocks_packing",               default: false
-  end
-
-  add_index "condition_status_templates", ["object_type", "name"], name: "index_cst_on_object_and_name", using: :btree
+# Could not dump table "condition_status_templates" because of following FrozenError
+#   can't modify frozen String: "false"
 
   create_table "condition_statuses", force: :cascade do |t|
     t.integer  "condition_status_template_id", limit: 4
@@ -231,11 +211,6 @@ ActiveRecord::Schema.define(version: 20201112135709) do
   add_index "condition_statuses", ["condition_status_template_id"], name: "index_condition_statuses_on_condition_status_template_id", using: :btree
   add_index "condition_statuses", ["physical_object_id", "condition_status_template_id"], name: "index_cs_on_po_and_cst", using: :btree
   add_index "condition_statuses", ["physical_object_id"], name: "index_condition_statuses_on_physical_object_id", using: :btree
-
-  create_table "containers", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "cylinder_tms", force: :cascade do |t|
     t.string  "size",               limit: 255
@@ -287,6 +262,8 @@ ActiveRecord::Schema.define(version: 20201112135709) do
     t.string   "noise_reduction",          limit: 255
     t.integer  "rumble_filter",            limit: 4
     t.integer  "reference_tone_frequency", limit: 4
+    t.string   "sample_rate",              limit: 255
+    t.boolean  "digital_to_analog"
   end
 
   add_index "digital_file_provenances", ["filename"], name: "index_digital_file_provenances_on_filename", unique: true, using: :btree
@@ -310,22 +287,35 @@ ActiveRecord::Schema.define(version: 20201112135709) do
 
   add_index "digital_provenances", ["physical_object_id"], name: "index_digital_provenances_on_physical_object_id", using: :btree
 
-  create_table "digital_statuses", force: :cascade do |t|
-    t.integer  "physical_object_id",           limit: 4
-    t.integer  "physical_object_mdpi_barcode", limit: 8
-    t.string   "state",                        limit: 255
-    t.text     "message",                      limit: 65535
-    t.boolean  "accepted"
-    t.boolean  "attention"
-    t.text     "decided",                      limit: 65535
-    t.text     "options",                      limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "decided_manually",                           default: false
+# Could not dump table "digital_statuses" because of following FrozenError
+#   can't modify frozen String: "false"
+
+  create_table "doFiles", id: false, force: :cascade do |t|
+    t.string  "mdpiBarcode", limit: 14,  null: false
+    t.integer "partNumber",  limit: 1
+    t.boolean "isMaster"
+    t.string  "fileUsage",   limit: 255
+    t.string  "md5",         limit: 32
+    t.integer "size",        limit: 8
+    t.float   "duration",    limit: 24
   end
 
-  add_index "digital_statuses", ["created_at", "state", "physical_object_id"], name: "quality_control_staging", using: :btree
-  add_index "digital_statuses", ["physical_object_id"], name: "index_digital_statuses_on_physical_object_id", using: :btree
+  add_index "doFiles", ["fileUsage"], name: "doFiles_fileUsage", using: :btree
+  add_index "doFiles", ["mdpiBarcode", "partNumber"], name: "mdpiBarcode", using: :btree
+
+  create_table "doObjects", primary_key: "mdpiBarcode", force: :cascade do |t|
+    t.string   "digitizingEntity", limit: 255
+    t.string   "objectType",       limit: 255
+    t.datetime "acceptTime"
+    t.datetime "bagTime"
+    t.integer  "size",             limit: 8
+  end
+
+  create_table "doParts", id: false, force: :cascade do |t|
+    t.string  "mdpiBarcode", limit: 14, null: false
+    t.integer "partNumber",  limit: 1,  null: false
+    t.boolean "vendorQC"
+  end
 
   create_table "dv_tms", force: :cascade do |t|
     t.string   "recording_standard",     limit: 255
@@ -557,15 +547,8 @@ ActiveRecord::Schema.define(version: 20201112135709) do
     t.datetime "updated_at",              null: false
   end
 
-  create_table "memnon_invoice_submissions", force: :cascade do |t|
-    t.string   "filename",                      limit: 255
-    t.datetime "submission_date"
-    t.boolean  "successful_validation"
-    t.integer  "validation_completion_percent", limit: 4
-    t.boolean  "bad_headers",                                      default: false
-    t.text     "other_error",                   limit: 4294967295
-    t.text     "problems_by_row",               limit: 4294967295
-  end
+# Could not dump table "memnon_invoice_submissions" because of following FrozenError
+#   can't modify frozen String: "false"
 
   create_table "messages", force: :cascade do |t|
     t.text     "content",    limit: 65535
@@ -637,64 +620,8 @@ ActiveRecord::Schema.define(version: 20201112135709) do
     t.boolean  "dual_mono"
   end
 
-  create_table "physical_objects", force: :cascade do |t|
-    t.integer  "bin_id",                    limit: 4
-    t.integer  "box_id",                    limit: 8
-    t.integer  "picklist_id",               limit: 8
-    t.integer  "container_id",              limit: 8
-    t.text     "title",                     limit: 65535
-    t.string   "title_control_number",      limit: 255
-    t.string   "home_location",             limit: 255
-    t.string   "call_number",               limit: 255
-    t.string   "iucat_barcode",             limit: 255
-    t.string   "format",                    limit: 255
-    t.string   "collection_identifier",     limit: 255
-    t.integer  "mdpi_barcode",              limit: 8
-    t.string   "format_duration",           limit: 255
-    t.boolean  "has_ephemera"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "author",                    limit: 255
-    t.string   "catalog_key",               limit: 255
-    t.string   "collection_name",           limit: 255
-    t.string   "generation",                limit: 255
-    t.string   "oclc_number",               limit: 255
-    t.boolean  "other_copies"
-    t.string   "year",                      limit: 255
-    t.integer  "unit_id",                   limit: 4
-    t.integer  "group_key_id",              limit: 4
-    t.integer  "group_position",            limit: 4
-    t.boolean  "ephemera_returned"
-    t.integer  "spreadsheet_id",            limit: 4
-    t.string   "workflow_status",           limit: 255
-    t.integer  "workflow_index",            limit: 4
-    t.boolean  "staging_requested",                       default: false
-    t.boolean  "staged",                                  default: false
-    t.datetime "digital_start"
-    t.datetime "staging_request_timestamp"
-    t.boolean  "audio"
-    t.boolean  "video"
-    t.boolean  "memnon_qc_completed"
-    t.boolean  "billed",                                  default: false
-    t.datetime "date_billed"
-    t.string   "spread_sheet_filename",     limit: 255
-    t.integer  "shipment_id",               limit: 4
-    t.boolean  "film"
-    t.string   "digital_workflow_status",   limit: 255
-    t.integer  "digital_workflow_category", limit: 4,     default: 0
-  end
-
-  add_index "physical_objects", ["bin_id"], name: "index_physical_objects_on_bin_id", using: :btree
-  add_index "physical_objects", ["box_id"], name: "index_physical_objects_on_box_id", using: :btree
-  add_index "physical_objects", ["container_id"], name: "index_physical_objects_on_container_id", using: :btree
-  add_index "physical_objects", ["group_key_id"], name: "index_physical_objects_on_group_key_id", using: :btree
-  add_index "physical_objects", ["mdpi_barcode"], name: "index_physical_objects_on_mdpi_barcode", using: :btree
-  add_index "physical_objects", ["picklist_id", "group_key_id", "group_position", "id"], name: "index_physical_objects_on_packing_sort", using: :btree
-  add_index "physical_objects", ["shipment_id"], name: "index_physical_objects_on_shipment_id", using: :btree
-  add_index "physical_objects", ["spread_sheet_filename"], name: "index_physical_objects_on_spread_sheet_filename", using: :btree
-  add_index "physical_objects", ["spreadsheet_id"], name: "index_physical_objects_on_spreadsheet_id", using: :btree
-  add_index "physical_objects", ["unit_id"], name: "index_physical_objects_on_unit_id", using: :btree
-  add_index "physical_objects", ["workflow_status"], name: "index_physical_objects_on_workflow_status", using: :btree
+# Could not dump table "physical_objects" because of following FrozenError
+#   can't modify frozen String: "false"
 
   create_table "picklist_specifications", force: :cascade do |t|
     t.string   "name",        limit: 255
@@ -704,20 +631,8 @@ ActiveRecord::Schema.define(version: 20201112135709) do
     t.datetime "updated_at"
   end
 
-  create_table "picklists", force: :cascade do |t|
-    t.string   "name",        limit: 255
-    t.string   "description", limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "destination", limit: 255
-    t.boolean  "complete",                default: false
-    t.string   "format",      limit: 255
-    t.integer  "shipment_id", limit: 4
-  end
-
-  add_index "picklists", ["destination"], name: "index_picklists_on_destination", using: :btree
-  add_index "picklists", ["name"], name: "index_picklists_on_name", unique: true, using: :btree
-  add_index "picklists", ["shipment_id"], name: "index_picklists_on_shipment_id", using: :btree
+# Could not dump table "picklists" because of following FrozenError
+#   can't modify frozen String: "false"
 
   create_table "pod_reports", force: :cascade do |t|
     t.string   "status",     limit: 255
@@ -916,17 +831,59 @@ ActiveRecord::Schema.define(version: 20201112135709) do
   add_index "workflow_statuses", ["bin_id", "workflow_status_template_id"], name: "index_ws_on_bin_and_wst", using: :btree
   add_index "workflow_statuses", ["physical_object_id", "workflow_status_template_id"], name: "index_ws_on_po_and_wst", using: :btree
 
+  create_table "xDigitizingEntity", force: :cascade do |t|
+    t.string "name", limit: 255
+  end
+
   create_table "xFormatClass", id: false, force: :cascade do |t|
     t.integer "id",   limit: 4
     t.string  "type", limit: 1
   end
+
+  create_table "xObjectClass", force: :cascade do |t|
+    t.string "class", limit: 255
+  end
+
+  create_table "xObjectType", force: :cascade do |t|
+    t.string "type", limit: 255
+  end
+
+  create_table "xObjects", force: :cascade do |t|
+    t.string  "mdpiBarcode",        limit: 14,  null: false
+    t.boolean "active"
+    t.boolean "visible"
+    t.integer "transferTime",       limit: 4
+    t.integer "digitizingEntityId", limit: 4,   null: false
+    t.integer "objectTypeId",       limit: 4,   null: false
+    t.integer "stateId",            limit: 4,   null: false
+    t.integer "stateTime",          limit: 4
+    t.integer "objectClassId",      limit: 4,   null: false
+    t.string  "path",               limit: 255
+    t.integer "diskUsage",          limit: 8
+    t.float   "duration",           limit: 24
+  end
+
+  add_index "xObjects", ["digitizingEntityId"], name: "digitizingEntity", using: :btree
+  add_index "xObjects", ["digitizingEntityId"], name: "digitizingEntityId", using: :btree
+  add_index "xObjects", ["mdpiBarcode"], name: "mdpiBarcode", using: :btree
+  add_index "xObjects", ["objectClassId"], name: "objectClassId", using: :btree
+  add_index "xObjects", ["objectTypeId"], name: "objectTypeId", using: :btree
+  add_index "xObjects", ["path"], name: "path", using: :btree
+  add_index "xObjects", ["stateId"], name: "stateId", using: :btree
 
   create_table "xState", force: :cascade do |t|
     t.string "state", limit: 255
   end
 
   add_foreign_key "batches", "spreadsheets"
+  add_foreign_key "doFiles", "doParts", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doFiles_ibfk_1"
+  add_foreign_key "doFiles", "doParts", column: "partNumber", primary_key: "partNumber", name: "doFiles_ibfk_1"
+  add_foreign_key "doParts", "doObjects", column: "mdpiBarcode", primary_key: "mdpiBarcode", name: "doParts_ibfk_1"
   add_foreign_key "physical_objects", "shipments"
   add_foreign_key "picklists", "shipments"
   add_foreign_key "shipments", "units"
+  add_foreign_key "xObjects", "xDigitizingEntity", column: "digitizingEntityId", name: "xObjects_ibfk_2"
+  add_foreign_key "xObjects", "xObjectClass", column: "objectClassId", name: "xObjects_ibfk_4"
+  add_foreign_key "xObjects", "xObjectType", column: "objectTypeId", name: "xObjects_ibfk_3"
+  add_foreign_key "xObjects", "xState", column: "stateId", name: "xObjects_ibfk_1"
 end
